@@ -1,5 +1,11 @@
 # geohub
 
+## 1.20.0
+
+### Minor Changes
+
+- ed7e1a1: feat: add duplicate layer menu in geohub map.
+
 ## 1.19.15
 
 ### Patch Changes

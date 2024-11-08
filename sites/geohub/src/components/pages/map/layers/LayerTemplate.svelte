@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { getLayerStyle } from '$lib/helper';
-	import type { Layer, RasterTileMetadata } from '$lib/types';
+	import type { Layer, RasterTileMetadata, VectorLayerSpecification } from '$lib/types';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
@@ -26,8 +26,9 @@
 		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
-	import type { LngLatBoundsLike } from 'maplibre-gl';
+	import type { LngLatBoundsLike, RasterLayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import { v4 as uuidv4 } from 'uuid';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
@@ -273,6 +274,104 @@
 		showRenameDialog = false;
 	};
 
+	const handleDuplicateLayer = () => {
+		$tableMenuShownStore = false;
+		$editingMenuShownStore = false;
+		editingLayerStore.set(undefined);
+
+		const newStyle = $map.getStyle();
+
+		// copied Layer object
+		const targetLayer: Layer = JSON.parse(JSON.stringify(layer));
+		const sourceId = getLayerStyle($map, layer.id).source;
+		const source = newStyle.sources[sourceId];
+
+		let newSourceId = sourceId;
+
+		const mapLayer = getLayerStyle($map, layer.id);
+		if (mapLayer) {
+			// if it is not PMTiles layer, soruce also needs to be duplicated
+			if (['raster', 'hillshade'].includes(mapLayer.type)) {
+				// raster
+				newSourceId = uuidv4();
+			} else {
+				// vector
+				const dataType = targetLayer.dataset?.properties.tags?.find((t) => t.key === 'type')?.value;
+				const layerType = targetLayer.dataset?.properties.tags?.find(
+					(t) => t.key === 'layertype'
+				)?.value;
+				if (dataType === 'pgtileserv' && layerType === 'function') {
+					// pg_tileserv function layer
+					newSourceId = uuidv4();
+				} else {
+					// other vector layer reuse same vector source
+					newSourceId = sourceId;
+				}
+			}
+		}
+
+		if (newSourceId !== sourceId) {
+			// if new source id and old source id are different, add new source
+			newStyle.sources[newSourceId] = source;
+		}
+
+		if (mapLayer) {
+			const oldIndex = newStyle.layers.findIndex((l) => l.id === layer.id);
+
+			// generate new UUID and set to new layer
+			mapLayer.id = uuidv4();
+			targetLayer.id = mapLayer.id;
+			targetLayer.name = `Copied ${targetLayer.name}`;
+
+			// set new source id
+			mapLayer.source = newSourceId;
+			if (oldIndex === newStyle.layers.length - 1) {
+				// if layer is the last, add it to the last
+				newStyle.layers.push(mapLayer);
+			} else {
+				// if not, add layer after current layer
+				newStyle.layers.splice(oldIndex + 1, 0, mapLayer);
+			}
+
+			// if there are child layer like label
+			if (layer.children && layer.children.length > 0) {
+				targetLayer.children = [];
+				for (let i = 0; i < layer.children.length; i++) {
+					// copy child layer
+					const child: Layer = JSON.parse(JSON.stringify(layer.children[i]));
+					const oldChildIndex = newStyle.layers.findIndex((l) => l.id === child.id);
+					const childLayer = getLayerStyle($map, child.id) as
+						| VectorLayerSpecification
+						| RasterLayerSpecification;
+					// generate new UUID and set it to new child layer
+					childLayer.id = uuidv4();
+					childLayer.source = newSourceId;
+					child.id = childLayer.id;
+					child.parentId = targetLayer.id;
+					child.name = `Copied ${child.name}`;
+
+					// add child layer to new style
+					targetLayer.children.push(child);
+					if (oldChildIndex === newStyle.layers.length - 1) {
+						newStyle.layers.push(childLayer);
+					} else {
+						newStyle.layers.splice(oldChildIndex + 1, 0, childLayer);
+					}
+				}
+			}
+		}
+
+		$map.setStyle(newStyle);
+
+		const currentLayerIndex = $layerListStore.findIndex((item) => item.id === layer.id);
+		if (currentLayerIndex === 0) {
+			$layerListStore = [targetLayer, ...$layerListStore];
+		} else {
+			$layerListStore.splice(currentLayerIndex, 0, targetLayer);
+			$layerListStore = [...$layerListStore];
+		}
+	};
+
 	onMount(() => {
 		layerOpacity = getLayerOpacity();
 
@@ -386,6 +485,20 @@
 								<span class="is-flex">
 									<span class="icon mr-2 material-symbols-outlined"> edit </span>
 									<span>Rename layer title</span>
+								</span>
+							</a>
+
+							<!-- svelte-ignore a11y-missing-attribute -->
+							<a
+								class="dropdown-item"
+								role="button"
+								tabindex="0"
+								on:click={handleDuplicateLayer}
+								on:keydown={handleEnterKey}
+							>
+								<span class="is-flex">
+									<span class="icon mr-2 material-symbols-outlined"> content_copy </span>
+									<span>Duplicate layer</span>
 								</span>
 							</a>
 
