@@ -1,5 +1,12 @@
 # geohub
 
+## 1.19.15
+
+### Patch Changes
+
+- 6f3e0c4: feat: duplicate button to copy existing map
+- 6f3e0c4: fix: renamed EDIT button to EDIT METADATA button.
+
 ## 1.19.14
 
 ### Patch Changes
