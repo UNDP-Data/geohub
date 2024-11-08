@@ -67,13 +67,15 @@
 		<Loader size="small" />
 	</div>
 {:then legend}
-	{#if legend.legend.startsWith('http') || legend.legend.startsWith('https')}
-		<img src={legend.legend} alt={legend.name} />
-	{:else}
-		<div class="legend">
-			<!-- eslint-disable svelte/no-at-html-tags -->
-			{@html legend.legend}
-		</div>
+	{#if legend.legend}
+		{#if legend.legend.startsWith('http') || legend.legend.startsWith('https')}
+			<img src={legend.legend} alt={legend.name} />
+		{:else}
+			<div class="legend">
+				<!-- eslint-disable svelte/no-at-html-tags -->
+				{@html legend.legend}
+			</div>
+		{/if}
 	{/if}
 {/await}
 
