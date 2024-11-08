@@ -274,7 +274,7 @@
 						on:click={openEditDialog}
 						use:tippyTooltip={{ content: 'Edit metadata of this map' }}
 					>
-						edit
+						edit metadata
 					</button>
 				{/if}
 
