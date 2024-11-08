@@ -78,13 +78,13 @@
 		{ title: mapStyle.name, url: $page.url.href }
 	];
 
-	let mapLink = mapStyle.links.find((l) => l.rel === 'map')?.href;
-	let mapEditLink = mapStyle.links.find((l) => l.rel === 'mapedit')?.href;
-	let apiLink = mapStyle.links.find((l) => l.rel === 'self')?.href;
-	let stylejsonLink = mapStyle.links.find((l) => l.rel === 'stylejson')?.href;
-	let staticAutoLink = mapStyle.links.find((l) => l.rel === 'static-auto')?.href;
-	let staticBBOXLink = mapStyle.links.find((l) => l.rel === 'static-bbox')?.href;
-	let staticCenterLink = mapStyle.links.find((l) => l.rel === 'static-center')?.href;
+	let mapLink = '';
+	let mapEditLink = '';
+	let apiLink = '';
+	let stylejsonLink = '';
+	let staticAutoLink = '';
+	let staticBBOXLink = '';
+	let staticCenterLink = '';
 
 	let isEditDialogVisible = false;
 	let editMapTitle = '';
@@ -103,6 +103,24 @@
 	setContext(LAYERLISTSTORE_CONTEXT_KEY, layerListStore);
 
 	onMount(() => {
+		let protocol = new pmtiles.Protocol();
+		addProtocol('pmtiles', protocol.tile);
+		initializeLinks();
+		initializeTabs();
+		initialiseMap();
+	});
+
+	const initializeLinks = () => {
+		mapLink = mapStyle.links.find((l) => l.rel === 'map')?.href as string;
+		mapEditLink = mapStyle.links.find((l) => l.rel === 'mapedit')?.href as string;
+		apiLink = mapStyle.links.find((l) => l.rel === 'self')?.href as string;
+		stylejsonLink = mapStyle.links.find((l) => l.rel === 'stylejson')?.href as string;
+		staticAutoLink = mapStyle.links.find((l) => l.rel === 'static-auto')?.href as string;
+		staticBBOXLink = mapStyle.links.find((l) => l.rel === 'static-bbox')?.href as string;
+		staticCenterLink = mapStyle.links.find((l) => l.rel === 'static-center')?.href as string;
+	};
+
+	const initializeTabs = () => {
 		if (mapStyle.permission && mapStyle.permission >= Permission.READ) {
 			tabs = [
 				...tabs.filter((t) => t.id !== `#${TabNames.LINKS}`),
@@ -116,11 +134,7 @@
 
 		const hash = $page.url.hash;
 		activeTab = hash.length > 0 && tabs.find((t) => t.id === hash) ? hash : `#${TabNames.INFO}`;
-
-		let protocol = new pmtiles.Protocol();
-		addProtocol('pmtiles', protocol.tile);
-		initialiseMap();
-	});
+	};
 
 	const initialiseMap = () => {
 		const map = new Map({
@@ -244,6 +258,41 @@
 			isUpdating = false;
 		}
 	};
+
+	const handleDuplicate = async () => {
+		isUpdating = true;
+		try {
+			const copied: DashboardMapStyle = JSON.parse(JSON.stringify(mapStyle));
+
+			const data = {
+				name: copied.name,
+				style: copied.style,
+				layers: copied.layers,
+				access_level: copied.access_level
+			};
+
+			const res = await fetch('/api/style', {
+				method: 'POST',
+				body: JSON.stringify(data)
+			});
+			if (!res.ok) {
+				toast.push(`Failed to duplicate this map: ${res.statusText} (${res.status}0`);
+			}
+			mapStyle = await res.json();
+
+			goto(`/maps/${mapStyle.id}`, {
+				invalidateAll: true,
+				replaceState: false,
+				keepFocus: false,
+				noScroll: false
+			});
+			initializeLinks();
+			initializeTabs();
+			initialiseMap();
+		} finally {
+			isUpdating = false;
+		}
+	};
 </script>
 
 <HeroHeader
@@ -258,9 +307,11 @@
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<div class="p-2">
 			<div class="buttons mb-2">
-				{#if mapStyle.layers?.length > 0}
+				{#if mapStyle.layers && mapStyle.layers.length > 0}
 					<a
-						class="button is-link has-text-weight-bold is-uppercase"
+						class="button is-link has-text-weight-bold is-uppercase {isUpdating
+							? 'is-loading'
+							: ''}"
 						href={mapEditLink}
 						use:tippyTooltip={{ content: 'View this map in GeoHub map editor' }}
 					>
@@ -270,17 +321,22 @@
 
 				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission > Permission.READ) || $page.data.session.user.is_superuser)}
 					<button
-						class="button is-link is-outlined is-uppercase has-text-weight-bold"
+						class="button is-link is-outlined is-uppercase has-text-weight-bold {isUpdating
+							? 'is-loading'
+							: ''}"
 						on:click={openEditDialog}
 						use:tippyTooltip={{ content: 'Edit metadata of this map' }}
+						disabled={isUpdating}
 					>
-						edit
+						edit metadata
 					</button>
 				{/if}
 
 				{#if $page.data.session}
 					<a
-						class="button is-link is-outlined is-uppercase has-text-weight-bold"
+						class="button is-link is-outlined is-uppercase has-text-weight-bold {isUpdating
+							? 'is-loading'
+							: ''}"
 						href="/storymaps/edit?style={mapStyle.id}"
 						use:tippyTooltip={{ content: 'Create a storymap from this map' }}
 					>
@@ -288,11 +344,27 @@
 					</a>
 				{/if}
 
+				{#if $page.data.session && mapStyle.layers && mapStyle.layers.length > 0}
+					<button
+						class="button is-link is-outlined is-uppercase has-text-weight-bold {isUpdating
+							? 'is-loading'
+							: ''}"
+						on:click={handleDuplicate}
+						use:tippyTooltip={{ content: 'Duplicate this map' }}
+						disabled={isUpdating}
+					>
+						duplicate
+					</button>
+				{/if}
+
 				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
 					<button
-						class="button is-link is-outlined is-uppercase has-text-weight-bold"
+						class="button is-link is-outlined is-uppercase has-text-weight-bold {isUpdating
+							? 'is-loading'
+							: ''}"
 						on:click={() => (confirmDeleteDialogVisible = true)}
 						use:tippyTooltip={{ content: 'Delete this map' }}
+						disabled={isUpdating}
 					>
 						delete
 					</button>
@@ -390,7 +462,9 @@
 
 	{#if $page.data.session}
 		<div hidden={activeTab !== `#${TabNames.PERMISSIONS}`}>
-			<UserPermission api={new StylePermissionAPI(mapStyle)} />
+			{#key mapStyle}
+				<UserPermission api={new StylePermissionAPI(mapStyle)} />
+			{/key}
 		</div>
 	{/if}
 
