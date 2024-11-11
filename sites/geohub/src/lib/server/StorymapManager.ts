@@ -82,6 +82,12 @@ class StorymapManager {
 			a.byline, 
 			a.footer, 
 			a.template_id, 
+			json_build_object(
+				'center', ARRAY[ST_X(a.center), ST_Y(a.center)], 
+				'zoom', a.zoom, 
+				'bearing', a.bearing, 
+				'pitch', a.pitch
+			) as location,
 			a.style_id, 
 			a.base_style_id, 
 			a.access_level, 
@@ -513,6 +519,12 @@ class StorymapManager {
 					byline: this.storymap.byline,
 					footer: this.storymap.footer,
 					templateId: this.storymap.template_id,
+					center: sql.raw(
+						`ST_GeomFromText('POINT(${this.storymap.location.center.join(' ')})', 4326)`
+					),
+					zoom: this.storymap.location.zoom,
+					bearing: this.storymap.location.bearing,
+					pitch: this.storymap.location.pitch,
 					styleId: this.storymap.style_id,
 					baseStyleId: this.storymap.base_style_id,
 					accessLevel: this.storymap.access_level,
@@ -529,6 +541,12 @@ class StorymapManager {
 						byline: this.storymap.byline,
 						footer: this.storymap.footer,
 						templateId: this.storymap.template_id,
+						center: sql.raw(
+							`ST_GeomFromText('POINT(${this.storymap.location.center.join(' ')})', 4326)`
+						),
+						zoom: this.storymap.location.zoom,
+						bearing: this.storymap.location.bearing,
+						pitch: this.storymap.location.pitch,
 						styleId: this.storymap.style_id,
 						baseStyleId: this.storymap.base_style_id,
 						accessLevel: this.storymap.access_level,
@@ -569,9 +587,9 @@ class StorymapManager {
 				);
 				console.debug(`added ${this.storymap.created_user} as an owner of the storymap`);
 			}
-			console.debug(`ended upserting ${this.storymap.id}`);
-			return this.storymap;
 		});
+		console.debug(`ended upserting ${this.storymap.id}`);
+		return this.storymap;
 	}
 
 	public async delete(storymapId: string) {

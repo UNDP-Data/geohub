@@ -41,4 +41,26 @@ export interface StoryMapConfig {
 	 * If true, slide progress bar is shown at the right hand side of storymap. Default is true.
 	 */
 	showProgress: boolean;
+
+	/**
+	 * Details about the map display and camera view.
+	 */
+	location: {
+		/**
+		 * Center coordinates of the map, as longitude, latitude
+		 */
+		center: [number, number];
+		/**
+		 * Zoom level of the map.
+		 */
+		zoom: number;
+		/**
+		 * Angle of the map view. 0 is straight down, and 60 is highly tilted.
+		 */
+		pitch?: number;
+		/**
+		 * Degrees of rotation clockwise from North (0). Negative values represent counter-clockwise rotation.
+		 */
+		bearing?: number;
+	};
 }

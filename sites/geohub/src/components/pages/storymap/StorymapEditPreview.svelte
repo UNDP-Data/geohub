@@ -42,6 +42,7 @@
 	let mapStyle: StyleSpecification;
 
 	onMount(async () => {
+		if (!mapContainer) return;
 		const newStyle = await applyLayerEvent();
 
 		$mapStore = new Map({
@@ -100,6 +101,14 @@
 				} else {
 					mapStyle = $configStore.style;
 				}
+			}
+
+			if ($configStore.location.center && $configStore.location.center[0] !== null) {
+				// if center is not undefined, use location from config
+				mapStyle.bearing = $configStore.location.bearing ?? 0;
+				mapStyle.pitch = $configStore.location.pitch ?? 0;
+				mapStyle.center = $configStore.location.center;
+				mapStyle.zoom = $configStore.location.zoom;
 			}
 
 			return mapStyle;

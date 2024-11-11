@@ -1,6 +1,6 @@
 {
 	"name": "geohub",
-	"version": "1.20.0",
+	"version": "1.21.0",
 	"description": "GeoHub is a geospatial visualization data portal built by UNDP using sveltekit",
 	"scripts": {
 		"dev": "pnpm prebuild && vite dev",
@@ -86,7 +86,7 @@
 		"copyfiles": "^2.4.1",
 		"d3-format": "^3.1.0",
 		"dayjs": "^1.11.13",
-		"drizzle-kit": "^0.27.0",
+		"drizzle-kit": "^0.28.0",
 		"easymde": "^2.18.0",
 		"eslint": "^9.11.1",
 		"eslint-config-prettier": "^9.1.0",

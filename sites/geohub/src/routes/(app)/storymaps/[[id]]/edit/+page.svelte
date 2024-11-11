@@ -289,6 +289,7 @@
 	const handleHeaderChanged = () => {
 		if (!isHeaderSlideActive) return;
 		requireHeaderUpdated = !requireHeaderUpdated;
+		requirePreviewUpdated = !requirePreviewUpdated;
 	};
 
 	const handleSlideEdit = (e: { detail: { chapter: StoryMapChapter } }) => {
