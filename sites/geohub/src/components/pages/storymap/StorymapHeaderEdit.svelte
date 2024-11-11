@@ -14,6 +14,7 @@
 	} from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import ImageUploader from './ImageUploader.svelte';
+	import MapLocationSelector from './MapLocationSelector.svelte';
 	import StorymapStyleSelector, {
 		type StorymapBaseMapConfig
 	} from './StorymapStyleSelector.svelte';
@@ -40,6 +41,9 @@
 		style_id: ($configStore as StoryMapConfig).style_id,
 		style: ($configStore as StoryMapConfig).style
 	};
+
+	let mapLocationSelector: MapLocationSelector;
+	let mapLocationChanged = false;
 
 	const handleChange = () => {
 		dispatch('change');
@@ -171,6 +175,16 @@
 						</div>
 						<div slot="buttons">
 							<Help>Choose a default base map style for the storymap</Help>
+						</div>
+					</Accordion>
+					<Accordion title="Location" bind:isExpanded={expanded['maplocation']}>
+						<div slot="content">
+							{#key mapLocationChanged}
+								<MapLocationSelector on:change={handleChange} bind:this={mapLocationSelector} />
+							{/key}
+						</div>
+						<div slot="buttons">
+							<Help>Move a pin for the map location of the slide by dragging the map.</Help>
 						</div>
 					</Accordion>
 				</div>

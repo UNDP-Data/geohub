@@ -69,7 +69,7 @@
 
 	let sky: SkyControl;
 
-	onMount(() => {
+	onMount(async () => {
 		const styleInfo = getStyleInfo(config.style);
 		if (styleInfo) {
 			activeStyleId = styleInfo.id;
@@ -79,9 +79,32 @@
 			activeStyleOrigin = '';
 		}
 
+		let mapStyle: StyleSpecification;
+		if (typeof config.style === 'string') {
+			const res = await fetch(config.style);
+			mapStyle = await res.json();
+		} else [(mapStyle = config.style)];
+
+		if (config.location.center && config.location.center[0] !== null) {
+			// if center is not undefined, use location from config
+			mapStyle.bearing = config.location.bearing;
+			mapStyle.pitch = config.location.pitch;
+			mapStyle.center = config.location.center;
+			mapStyle.zoom = config.location.zoom;
+		}
+
+		const center = mapStyle.center ?? [0, 0];
+		const zoom = mapStyle.zoom ?? 0;
+		const bearing = mapStyle.bearing ?? 0;
+		const pitch = mapStyle.pitch ?? 0;
+
 		const map = new Map({
 			container: mapContainer,
-			style: config.style,
+			style: mapStyle,
+			center: [center[0], center[1]],
+			zoom,
+			bearing,
+			pitch,
 			hash: false,
 			interactive: true,
 			dragPan: false,
@@ -218,10 +241,10 @@
 			} else {
 				style = $configStore.style;
 			}
-			const center = (style.center as [number, number]) ?? [0, 0];
-			const zoom = style.zoom ?? 0;
-			const bearing = style.bearing ?? 0;
-			const pitch = style.pitch ?? 0;
+			const center = config.location.center ?? (style.center as [number, number]) ?? [0, 0];
+			const zoom = config.location.zoom ?? style.zoom ?? 0;
+			const bearing = config.location.bearing ?? style.bearing ?? 0;
+			const pitch = config.location.pitch ?? style.pitch ?? 0;
 			$mapStore.setBearing(bearing);
 			$mapStore.setPitch(pitch);
 			$mapStore.flyTo({ center: center, zoom: zoom });
