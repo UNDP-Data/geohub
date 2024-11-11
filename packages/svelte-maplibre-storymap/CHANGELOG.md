@@ -1,5 +1,11 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.4.0
+
+### Minor Changes
+
+- 28f275f: feat: add location property for storymap header to allow users to change default location of header slide.
+
 ## 0.3.28
 
 ### Patch Changes

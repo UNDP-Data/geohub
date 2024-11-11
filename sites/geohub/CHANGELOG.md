@@ -1,5 +1,16 @@
 # geohub
 
+## 1.21.0
+
+### Minor Changes
+
+- 28f275f: feat: add location property for storymap header to allow users to change default location of header slide.
+
+### Patch Changes
+
+- 86c88c8: fix: fixed bug of table filtration if a field name at the left side of operator consists of multiple words with whitespace.
+- 61bb4e7: fix: fixed drizzle schema.ts to use customType for geometry columns.
+
 ## 1.20.0
 
 ### Minor Changes
