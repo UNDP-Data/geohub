@@ -9,14 +9,16 @@ import {
 	serial,
 	timestamp,
 	boolean,
-	geometry,
+	// geometry,
 	uuid,
 	doublePrecision,
 	jsonb,
 	foreignKey,
 	primaryKey,
-	smallint
+	smallint,
+	customType
 } from 'drizzle-orm/pg-core';
+import type { Point, Polygon } from 'geojson';
 // import { sql } from 'drizzle-orm';
 
 export const geohub = pgSchema('geohub');
@@ -94,7 +96,13 @@ export const datasetInGeohub = geohub.table(
 		url: varchar('url').notNull(),
 		isRaster: boolean('is_raster').notNull(),
 		license: varchar('license'),
-		bounds: geometry('bounds', { type: 'polygon', srid: 4326 }).notNull(),
+		// to fix the bug of geometry, use customType for time-being
+		// https://github.com/drizzle-team/drizzle-orm/issues/3040#issuecomment-2451014133
+		bounds: customType<{ data: Polygon }>({
+			dataType() {
+				return 'geometry(Polygon,4326)';
+			}
+		})('bounds').notNull(),
 		createdat: timestamp('createdat', { withTimezone: true, mode: 'string' }).notNull(),
 		updatedat: timestamp('updatedat', { withTimezone: true, mode: 'string' }),
 		name: varchar('name'),
@@ -164,7 +172,13 @@ export const storymapChapterInGeohub = geohub.table('storymap_chapter', {
 	rotateAnimation: boolean('rotate_animation').default(false).notNull(),
 	spinglobe: boolean('spinglobe').default(false).notNull(),
 	hidden: boolean('hidden').default(false).notNull(),
-	center: geometry('center', { type: 'point', srid: 4326 }).notNull(),
+	// to fix the bug of geometry, use customType for time-being
+	// https://github.com/drizzle-team/drizzle-orm/issues/3040#issuecomment-2451014133
+	center: customType<{ data: Point }>({
+		dataType() {
+			return 'geometry(Point,4326)';
+		}
+	})('center').notNull(),
 	zoom: doublePrecision('zoom').notNull(),
 	bearing: doublePrecision('bearing').default(0).notNull(),
 	pitch: doublePrecision('pitch').default(0).notNull(),
