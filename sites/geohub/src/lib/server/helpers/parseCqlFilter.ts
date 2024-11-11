@@ -53,8 +53,14 @@ export const parseCqlFilter = (cqlFilter: string, data: Feature[]): Feature[] =>
 };
 
 const evaluateCondition = (item: Feature, condition: string): boolean => {
-	const regex = /(\w+)\s*(<=|>=|<>|=|<|>|LIKE|NOT IN|IN|IS NULL|BETWEEN)\s*(.*)/;
-	const match = condition.trim().match(regex);
+	const regexNotIn = /([\w\s]+)\s*(NOT IN)\s*(.*)/;
+	let match = condition.trim().match(regexNotIn);
+	if (!match) {
+		const regex = /([\w\s]+)\s*(<=|>=|<>|=|<|>|LIKE|IN|IS NULL|BETWEEN)\s*(.*)/;
+		match = condition.trim().match(regex);
+	}
+
+	// console.log(match);
 	if (!match) return false;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -62,7 +68,7 @@ const evaluateCondition = (item: Feature, condition: string): boolean => {
 
 	if (!item.properties) return false;
 	const targetField = Object.keys(item.properties).find(
-		(key) => key.toLowerCase() === field.toLowerCase()
+		(key) => key.toLowerCase() === field.toLowerCase().trim()
 	);
 	if (!targetField) return false;
 	let targetProp = item.properties[targetField];

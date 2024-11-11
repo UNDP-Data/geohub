@@ -24,7 +24,8 @@ const geoJsonData: FeatureCollection = {
 				sector: 'NYAMUGARI',
 				cell: 'NYAMUGARI',
 				latitude: -2.3083963,
-				longitude: 30.7502111
+				longitude: 30.7502111,
+				'type faciflity': 'Primary School'
 			}
 		},
 		{
@@ -45,7 +46,8 @@ const geoJsonData: FeatureCollection = {
 				sector: 'NYAMUGARI',
 				cell: 'NYAMUGARI',
 				latitude: -2.2820901,
-				longitude: 30.7575696
+				longitude: 30.7575696,
+				'type faciflity': 'Secondary School'
 			}
 		},
 		{
@@ -66,7 +68,8 @@ const geoJsonData: FeatureCollection = {
 				sector: 'NYAMUGARI',
 				cell: 'NYAMUGARI',
 				latitude: -2.2844123,
-				longitude: 30.7570905
+				longitude: 30.7570905,
+				'type faciflity': 'Secondary School'
 			}
 		},
 		{
@@ -176,5 +179,20 @@ describe('parseCqlFilter', () => {
 			geoJsonData.features
 		);
 		expect(result).toHaveLength(0);
+	});
+
+	it('should filter by EQUAL TO operator if field name consits of multiple words', () => {
+		const result = parseCqlFilter("type faciflity = 'Primary School'", geoJsonData.features);
+		expect(result).toHaveLength(1);
+	});
+
+	it('should filter by IN operator if field name consits of multiple words', () => {
+		const result = parseCqlFilter("type faciflity IN ('Primary School')", geoJsonData.features);
+		expect(result).toHaveLength(1);
+	});
+
+	it('should filter by NOT IN operator if field name consits of multiple words', () => {
+		const result = parseCqlFilter("type faciflity NOT IN ('Primary School')", geoJsonData.features);
+		expect(result).toHaveLength(2);
 	});
 });
