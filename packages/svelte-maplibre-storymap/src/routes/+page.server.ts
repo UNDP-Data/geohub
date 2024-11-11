@@ -10,6 +10,12 @@ export const load: PageServerLoad = async () => {
 		byline: 'Jin Igarashi',
 		footer: 'United Nations Development Programme',
 		showProgress: true,
+		location: {
+			center: [35.446, -0.12],
+			zoom: 4,
+			bearing: 0,
+			pitch: 0
+		},
 		chapters: [
 			{
 				id: 'kenya',

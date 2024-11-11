@@ -4,7 +4,11 @@
 	import { createMapLibreGlMapController } from '@maptiler/geocoding-control/maplibregl';
 	import GeocodingControl from '@maptiler/geocoding-control/svelte/GeocodingControl.svelte';
 	import type { MapController } from '@maptiler/geocoding-control/types';
-	import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
+	import {
+		layerTypes,
+		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
+		type StoryMapConfigStore
+	} from '@undp-data/svelte-maplibre-storymap';
 	import { FieldControl, Slider } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
@@ -15,11 +19,13 @@
 		Popup,
 		type StyleSpecification
 	} from 'maplibre-gl';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
-	export let chapter: StoryMapChapter;
+	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
+
+	export let chapter: StoryMapChapter | undefined = undefined;
 
 	let locationMapContainer: HTMLDivElement;
 	let locationMap: Map;
@@ -35,11 +41,27 @@
 
 	export const updateMapStyle = debounce(() => {
 		if (!locationMap) return;
-		if (!chapter) return;
-
-		tempLocation = JSON.parse(JSON.stringify(chapter.location));
+		if (chapter) {
+			tempLocation = JSON.parse(JSON.stringify(chapter.location));
+		} else {
+			tempLocation = JSON.parse(JSON.stringify($configStore.location));
+		}
 
 		applyLayerEvent().then((style) => {
+			if (!chapter) {
+				tempLocation.center = tempLocation.center ?? style.center;
+				tempLocation.zoom = tempLocation.zoom ?? style.zoom;
+				tempLocation.bearing = tempLocation.bearing ?? style.bearing;
+				tempLocation.pitch = tempLocation.pitch ?? style.pitch;
+			} else {
+				if ($configStore.location.center && $configStore.location.center[0] !== null) {
+					// if center is not undefined, use location from config
+					tempLocation.bearing = $configStore.location.bearing ?? 0;
+					tempLocation.pitch = $configStore.location.pitch ?? 0;
+					tempLocation.center = $configStore.location.center;
+					tempLocation.zoom = $configStore.location.zoom;
+				}
+			}
 			locationMap.setStyle(style);
 		});
 	});
@@ -47,9 +69,13 @@
 	const updateMarkerPosition = debounce(() => {
 		if (!locationMap) return;
 		if (!popupContainer) return;
-		if (!chapter) return;
+
 		if (!tempLocation) {
-			tempLocation = JSON.parse(JSON.stringify(chapter.location));
+			if (chapter) {
+				tempLocation = JSON.parse(JSON.stringify(chapter.location));
+			} else {
+				tempLocation = JSON.parse(JSON.stringify($configStore.location));
+			}
 		}
 
 		const lngLat = locationMap.getCenter();
@@ -72,16 +98,32 @@
 	const applyMarkerPosition = () => {
 		tempLocation.bearing = mapBearing[0];
 		tempLocation.pitch = mapPitch[0];
-		chapter.location = tempLocation;
+		if (!chapter) {
+			$configStore.location = tempLocation;
+		} else {
+			chapter.location = tempLocation;
+		}
 		dispatch('change');
 	};
 
-	const resetMarkerPosition = () => {
+	const resetMarkerPosition = async () => {
 		if (!locationMap) return;
-		if (!chapter) return;
 
-		tempLocation = JSON.parse(JSON.stringify(chapter.location));
-
+		if (chapter) {
+			tempLocation = JSON.parse(JSON.stringify(chapter.location));
+			locationMap.setCenter(tempLocation.center);
+			locationMap.setZoom(tempLocation.zoom);
+			locationMap.setBearing(tempLocation.bearing);
+			locationMap.setPitch(tempLocation.pitch);
+		} else {
+			const style = await applyLayerEvent();
+			tempLocation = {
+				center: style.center ? [style.center[0], style.center[1]] : [0, 0],
+				zoom: style.zoom ?? 0,
+				bearing: style.bearing ?? 0,
+				pitch: style.pitch ?? 0
+			};
+		}
 		locationMap.setCenter(tempLocation.center);
 		locationMap.setZoom(tempLocation.zoom);
 		locationMap.setBearing(tempLocation.bearing);
@@ -127,19 +169,38 @@
 
 	const applyLayerEvent = async () => {
 		let mapStyle: StyleSpecification;
-		if (typeof chapter.style === 'string') {
-			const res = await fetch(chapter.style);
+
+		const orgStyle = chapter ? chapter.style : $configStore.style;
+
+		if (typeof orgStyle === 'string') {
+			const res = await fetch(orgStyle);
 			mapStyle = await res.json();
 		} else {
-			mapStyle = JSON.parse(JSON.stringify(chapter.style));
+			mapStyle = JSON.parse(JSON.stringify(orgStyle));
 		}
 
-		mapStyle.bearing = chapter.location.bearing;
-		mapStyle.pitch = chapter.location.pitch;
-		mapStyle.center = chapter.location.center;
-		mapStyle.zoom = chapter.location.zoom;
+		if (chapter) {
+			mapStyle.bearing = chapter.location.bearing;
+			mapStyle.pitch = chapter.location.pitch;
+			mapStyle.center = chapter.location.center;
+			mapStyle.zoom = chapter.location.zoom;
+		} else {
+			if ($configStore.location.center && $configStore.location.center[0] !== null) {
+				// if center is not undefined, use location from config
+				mapStyle.bearing = $configStore.location.bearing;
+				mapStyle.pitch = $configStore.location.pitch;
+				mapStyle.center = $configStore.location.center;
+				mapStyle.zoom = $configStore.location.zoom;
+			}
+		}
+		tempLocation = {
+			center: mapStyle.center ? [mapStyle.center[0], mapStyle.center[1]] : [0, 0],
+			zoom: mapStyle.zoom ?? 0,
+			bearing: mapStyle.bearing ?? 0,
+			pitch: mapStyle.pitch ?? 0
+		};
 
-		chapter.onChapterEnter?.forEach((layer: { layer: string; opacity: number }) => {
+		chapter?.onChapterEnter?.forEach((layer: { layer: string; opacity: number }) => {
 			const index = mapStyle.layers.findIndex((l) => l.id === layer.layer);
 			if (index === -1) return;
 			const l = mapStyle.layers[index];
@@ -217,7 +278,9 @@
 </div>
 
 {#if tempLocation}
-	{@const resetDisabled = JSON.stringify(tempLocation) === JSON.stringify(chapter.location)}
+	{@const resetDisabled =
+		(chapter && JSON.stringify(tempLocation) === JSON.stringify(chapter.location)) ||
+		(!chapter && JSON.stringify(tempLocation) === JSON.stringify($configStore.location))}
 	<div class="is-flex is-flex-direction-column mt-2">
 		<FieldControl title="Bearing" showHelp={true}>
 			<div slot="control">

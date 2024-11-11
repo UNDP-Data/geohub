@@ -150,6 +150,16 @@ export const storymapInGeohub = geohub.table('storymap', {
 	byline: varchar('byline'),
 	footer: varchar('footer'),
 	templateId: varchar('template_id').notNull(),
+	// to fix the bug of geometry, use customType for time-being
+	// https://github.com/drizzle-team/drizzle-orm/issues/3040#issuecomment-2451014133
+	center: customType<{ data: Point }>({
+		dataType() {
+			return 'geometry(Point,4326)';
+		}
+	})('center'),
+	zoom: doublePrecision('zoom'),
+	bearing: doublePrecision('bearing').default(0).notNull(),
+	pitch: doublePrecision('pitch').default(0).notNull(),
 	styleId: integer('style_id'),
 	baseStyleId: varchar('base_style_id'),
 	accessLevel: integer('access_level').default(1).notNull(),
