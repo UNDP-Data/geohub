@@ -59,8 +59,6 @@ const evaluateCondition = (item: Feature, condition: string): boolean => {
 		const regex = /([\w\s]+)\s*(<=|>=|<>|=|<|>|LIKE|IN|IS NULL|BETWEEN)\s*(.*)/;
 		match = condition.trim().match(regex);
 	}
-
-	// console.log(match);
 	if (!match) return false;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
