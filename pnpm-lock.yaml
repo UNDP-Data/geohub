@@ -700,6 +700,9 @@ importers:
       '@carbon/charts-svelte':
         specifier: ^1.22.0
         version: 1.22.0(svelte@4.2.19)
+      '@maplibre/maplibre-gl-geocoder':
+        specifier: ^1.7.0
+        version: 1.7.0(maplibre-gl@4.7.1)
       '@maptiler/geocoding-control':
         specifier: ^1.4.1
         version: 1.4.1(maplibre-gl@4.7.1)(ol@10.2.1)(react@18.3.1)(svelte@4.2.19)
@@ -1942,6 +1945,12 @@ packages:
   '@mapbox/whoots-js@3.1.0':
     resolution: {integrity: sha512-Es6WcD0nO5l+2BOQS4uLfNPYQaNDfbot3X1XUoloz+x0mPDS3eeORZJl06HXjwBG1fOGwCRnzK88LMdxKRrd6Q==}
     engines: {node: '>=6.0.0'}
+
+  '@maplibre/maplibre-gl-geocoder@1.7.0':
+    resolution: {integrity: sha512-w6WnEPf+sIzcyRzTcI7mYNkz8MKjepZf/sROqBUwDX/hb0BvhrhwaDSRa2e+jGQ3RYdKWvxLDjmszn4bVJyESQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      maplibre-gl: '>=4.0.0'
 
   '@maplibre/maplibre-gl-style-spec@20.4.0':
     resolution: {integrity: sha512-AzBy3095fTFPjDjmWpR2w6HVRAZJ6hQZUCwk5Plz6EyfnfuQW1odeW5i2Ai47Y6TBA2hQnC+azscjBSALpaWgw==}
@@ -3953,6 +3962,10 @@ packages:
   functional-red-black-tree@1.0.1:
     resolution: {integrity: sha512-dsKNQNdj6xA3T+QlADDA7mOSlX0qiMINjn0cgr+eGHGsbSHzTabcIogz2+p/iqP1Xs6EP/sS2SbqH+brGTbq0g==}
 
+  fuzzy@0.1.3:
+    resolution: {integrity: sha512-/gZffu4ykarLrCiP3Ygsa86UAo1E5vEVlvTrpkKywXSbP9Xhln3oSp9QSV57gEq3JFFpGJ4GZ+5zdEp3FcUh4w==}
+    engines: {node: '>= 0.6.0'}
+
   gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
     engines: {node: '>=6.9.0'}
@@ -5382,6 +5395,12 @@ packages:
 
   strnum@1.0.5:
     resolution: {integrity: sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==}
+
+  subtag@0.5.0:
+    resolution: {integrity: sha512-CaIBcTSb/nyk4xiiSOtZYz1B+F12ZxW8NEp54CdT+84vmh/h4sUnHGC6+KQXUfED8u22PQjCYWfZny8d2ELXwg==}
+
+  suggestions-list@0.0.2:
+    resolution: {integrity: sha512-Yw0fdq14c6RQWQIfE1/8WEi9Dp8rjyCD6FhYA/Tit2/ADbE9Y4ADG4ezlvivsa8Civ5nz++pyVVBMjOMlgIUJw==}
 
   suncalc@1.9.0:
     resolution: {integrity: sha512-vMJ8Byp1uIPoj+wb9c1AdK4jpkSKVAywgHX0lqY7zt6+EWRRC3Z+0Ucfjy/0yxTVO1hwwchZe4uoFNqrIC24+A==}
@@ -6939,6 +6958,15 @@ snapshots:
       pbf: 4.0.1
 
   '@mapbox/whoots-js@3.1.0': {}
+
+  '@maplibre/maplibre-gl-geocoder@1.7.0(maplibre-gl@4.7.1)':
+    dependencies:
+      events: 3.3.0
+      lodash.debounce: 4.0.8
+      maplibre-gl: 4.7.1
+      subtag: 0.5.0
+      suggestions-list: 0.0.2
+      xtend: 4.0.2
 
   '@maplibre/maplibre-gl-style-spec@20.4.0':
     dependencies:
@@ -9240,6 +9268,8 @@ snapshots:
 
   functional-red-black-tree@1.0.1: {}
 
+  fuzzy@0.1.3: {}
+
   gensync@1.0.0-beta.2: {}
 
   geo-coordinates-parser@1.7.4: {}
@@ -10837,6 +10867,13 @@ snapshots:
   strip-json-comments@3.1.1: {}
 
   strnum@1.0.5: {}
+
+  subtag@0.5.0: {}
+
+  suggestions-list@0.0.2:
+    dependencies:
+      fuzzy: 0.1.3
+      xtend: 4.0.2
 
   suncalc@1.9.0: {}
 

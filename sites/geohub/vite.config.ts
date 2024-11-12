@@ -11,7 +11,8 @@ export default defineConfig({
 			'svelte-carousel',
 			'simply-reactive',
 			'maplibre-gl',
-			'@maptiler/geocoding-control'
+			'@maptiler/geocoding-control',
+			'@maplibre/maplibre-gl-geocoder'
 		]
 	},
 	resolve: {
