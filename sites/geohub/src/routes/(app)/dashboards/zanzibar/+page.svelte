@@ -9,15 +9,19 @@
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import { MaplibreLegendControl } from '@undp-data/svelte-maplibre-storymap';
+	import { Accordion, FieldControl, ModalTemplate, Tabs } from '@undp-data/svelte-undp-components';
 	import { SkyControl } from '@watergis/maplibre-gl-sky';
+	import dayjs from 'dayjs';
 	import maplibregl, {
 		addProtocol,
 		AttributionControl,
 		GeolocateControl,
 		Map,
+		MapMouseEvent,
 		NavigationControl,
 		ScaleControl,
 		TerrainControl,
+		type MapGeoJSONFeature,
 		type TerrainSpecification
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
@@ -37,9 +41,29 @@
 
 	let geocoderData: MaplibreGeocoderFeatureResults;
 
+	let clickedFeatures: MapGeoJSONFeature[] = [];
+	let showDialog = false;
+	let selectedTab: string;
+	let dialogTitle = '';
+
 	const terrainOptions: TerrainSpecification = {
 		source: 'terrarium',
 		exaggeration: 1
+	};
+
+	const getTabs = () => {
+		const tabs = clickedFeatures.map((f) => {
+			return { label: f.properties.name as string, id: `${f.id}` };
+		});
+		return tabs;
+	};
+
+	const getDialogTitle = () => {
+		if (clickedFeatures.length === 0) {
+			return 'Tourism information';
+		}
+		const names = clickedFeatures.map((f) => f.properties.name);
+		return `${names[0]}${names.length > 1 ? `, etc` : ''}`;
 	};
 
 	const mapInitializeAfterLoading = async () => {
@@ -56,6 +80,64 @@
 				map.setTerrain(terrainOptions);
 			}, 500);
 		}
+
+		if (data.style.layers) {
+			const layerIds = data.style.layers.map((l) => l.id);
+			for (const id of layerIds) {
+				map.on('click', id, (e: MapMouseEvent) => {
+					const visibleLayers = map.getStyle().layers.filter((l) => {
+						let visibility = 'visible';
+						if (l.layout && l.layout.visibility) {
+							visibility = l.layout.visibility;
+						}
+						return visibility === 'visible';
+					});
+					const visibleLayerIds = visibleLayers.map((l) => l.id);
+					const layersVisible = layerIds.filter((id) => visibleLayerIds.includes(id));
+					expanded = {};
+					if (layersVisible.length > 0) {
+						clickedFeatures = map.queryRenderedFeatures(e.point, {
+							layers: layersVisible
+						});
+						showDialog = clickedFeatures.length > 0;
+						if (clickedFeatures.length > 0) {
+							expanded = { photos: true };
+							selectedTab = `${clickedFeatures[0].id}`;
+						}
+					}
+					dialogTitle = getDialogTitle();
+				});
+			}
+		}
+	};
+
+	const getFeatureData = (feature: MapGeoJSONFeature) => {
+		return {
+			// 'Site name': feature.properties.name,
+			'Tourism type': feature.properties['type tourism'],
+			uniqueness: feature.properties['uniqueness'],
+			// 'short history': feature.properties['short history'],
+			'social economic activity': feature.properties['social economic activity'],
+			'Types tourist attraction': feature.properties['Types tourist attraction'],
+			'tourist activities': feature.properties['tourist activities'],
+			'Site Functionality Status':
+				feature.properties['Site Functionality Status'] === true ? 'functional' : 'non functional',
+			'custom tradition': feature.properties['custom tradtion yes'],
+			'surrounded services': feature.properties['surrounded services yes'],
+			'Site address': [
+				feature.properties['addr ward'],
+				feature.properties['addr street'],
+				feature.properties['add region'],
+				feature.properties['addr district']
+			]
+				.filter((v) => v !== undefined)
+				.join(', '),
+			accesibility: feature.properties['accesibility'],
+			direction: feature.properties['direction'],
+			'submittion time': dayjs(feature.properties['submission time']).format(
+				'HH:mm:ss, MMMM D, YYYY'
+			)
+		} as { [key: string]: string };
 	};
 
 	const getAttributeData = async (fgbLink: string) => {
@@ -115,9 +197,7 @@
 
 		map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
 
-		styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {
-			defaultStyle: MapStyles[0].title
-		});
+		styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {});
 		map.addControl(styleSwitcher, 'bottom-left');
 
 		if (data.style.layers && data.style.layers.length > 0) {
@@ -177,6 +257,24 @@
 
 		map.once('styledata', mapInitializeAfterLoading);
 	});
+
+	let expanded: { [key: string]: boolean } = {};
+	// to allow only an accordion to be expanded
+	let expandedId: string;
+	$: {
+		let expandedData = Object.keys(expanded).filter(
+			(key) => expanded[key] === true && key !== expandedId
+		);
+		if (expandedData.length > 0) {
+			expandedId = expandedData[0];
+			Object.keys(expanded)
+				.filter((key) => key !== expandedId)
+				.forEach((key) => {
+					expanded[key] = false;
+				});
+			expanded[expandedData[0]] = true;
+		}
+	}
 </script>
 
 <svelte:window bind:innerHeight={windowHeight} />
@@ -193,9 +291,59 @@
 	{/if}
 </div>
 
+<ModalTemplate bind:title={dialogTitle} bind:show={showDialog}>
+	<div slot="content" class="dialog-contents">
+		{#if clickedFeatures.length > 1}
+			<Tabs
+				tabs={getTabs()}
+				bind:activeTab={selectedTab}
+				fontWeight="bold"
+				isBoxed={false}
+				isFullwidth={false}
+				isCentered={false}
+				isUppercase={true}
+			></Tabs>
+		{/if}
+		{#each clickedFeatures as f}
+			{@const contents = getFeatureData(f)}
+			<div hidden={`${f.id}` !== selectedTab}>
+				<FieldControl title={f.properties.name} showHelp={false} fontWeight="bold">
+					<div slot="control">
+						{f.properties['short history']}
+					</div>
+				</FieldControl>
+				<Accordion title="Photos" bind:isExpanded={expanded['photos']} padding="px-0">
+					<div slot="content">Coming soon</div>
+				</Accordion>
+				<Accordion title="Metadata" bind:isExpanded={expanded['metadata']} padding="px-0">
+					<div slot="content">
+						<table class="table is-narrow is-hoverable is-fullwidth">
+							<tbody>
+								{#each Object.keys(contents) as key}
+									{#if contents[key] && contents[key].length > 0}
+										<tr>
+											<th><p class="is-capitalized">{key}</p></th>
+											<td><p class="is-capitalized">{contents[key]}</p></td>
+										</tr>
+									{/if}
+								{/each}
+							</tbody>
+						</table>
+					</div>
+				</Accordion>
+			</div>
+		{/each}
+	</div>
+</ModalTemplate>
+
 <style lang="scss">
 	.map {
 		position: relative;
 		width: 100%;
+	}
+
+	.dialog-contents {
+		max-height: 500px;
+		overflow-y: auto;
 	}
 </style>
