@@ -12,7 +12,8 @@ export default defineConfig({
 			'simply-reactive',
 			'maplibre-gl',
 			'@maptiler/geocoding-control',
-			'@maplibre/maplibre-gl-geocoder'
+			'@maplibre/maplibre-gl-geocoder',
+			'@watergis/maplibre-gl-export'
 		]
 	},
 	resolve: {

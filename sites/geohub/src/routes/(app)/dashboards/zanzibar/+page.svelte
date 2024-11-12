@@ -10,6 +10,7 @@
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import { MaplibreLegendControl } from '@undp-data/svelte-maplibre-storymap';
 	import { Accordion, FieldControl, ModalTemplate, Tabs } from '@undp-data/svelte-undp-components';
+	import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import dayjs from 'dayjs';
 	import maplibregl, {
@@ -80,6 +81,19 @@
 				map.setTerrain(terrainOptions);
 			}, 500);
 		}
+
+		const MaplibreExportControl = (await import('@watergis/maplibre-gl-export'))
+			.MaplibreExportControl;
+		const exportControl = new MaplibreExportControl({
+			PageSize: [297, 210],
+			PageOrientation: 'landscape',
+			Format: 'png',
+			DPI: 96,
+			Crosshair: true,
+			PrintableArea: true,
+			Local: 'en'
+		});
+		map.addControl(exportControl, 'top-right');
 
 		if (data.style.layers) {
 			const layerIds = data.style.layers.map((l) => l.id);
