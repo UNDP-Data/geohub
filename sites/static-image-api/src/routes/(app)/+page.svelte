@@ -4,8 +4,14 @@
 		StaticImageControl,
 		type ControlOptions
 	} from '@undp-data/svelte-geohub-static-image-controls';
-	import { CopyToClipboard, FieldControl, Sidebar } from '@undp-data/svelte-undp-components';
-	import { Map, NavigationControl, ScaleControl, addProtocol } from 'maplibre-gl';
+	import {
+		CopyToClipboard,
+		FieldControl,
+		handleEnterKey,
+		isValidUrl,
+		Sidebar
+	} from '@undp-data/svelte-undp-components';
+	import { addProtocol, Map, NavigationControl, ScaleControl } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { getContext, onMount } from 'svelte';
 	import type { Writable } from 'svelte/store';
@@ -22,6 +28,7 @@
 	$: sidebarHeight = innerHeight - $headerHeight;
 
 	let isExporting = false;
+	let showStyleDropdown = false;
 
 	let options: ControlOptions = {
 		width: 300,
@@ -85,7 +92,7 @@
 		}
 	};
 
-	const handleExampleChanged = () => {
+	const handleLoadStyle = () => {
 		if (apiUrl) {
 			const newUrl = new URL(apiUrl);
 			newUrl.searchParams.set('url', styleUrl);
@@ -108,16 +115,61 @@
 		<nav class="panel">
 			<p class="panel-heading">Export settings</p>
 			<div class="panel-block">
-				<FieldControl title="Maplibre Style Examples" fontWeight="normal" showHelp={false}>
+				<FieldControl
+					title="Maplibre Style URL"
+					fontWeight="normal"
+					showHelp={true}
+					showHelpPopup={false}
+				>
 					<div slot="control">
-						<div class="select is-fullwidth">
-							<select bind:value={styleUrl} on:change={handleExampleChanged}>
-								{#each data.examples as example}
-									<option value={example}>{example}</option>
-								{/each}
-							</select>
+						<div
+							class="dropdown {showStyleDropdown ? 'is-active' : ''}"
+							role="menu"
+							tabindex="-1"
+							on:mouseleave={() => {
+								showStyleDropdown = false;
+							}}
+						>
+							<div class="dropdown-trigger is-flex">
+								<input
+									class="input style-input"
+									type="text"
+									aria-haspopup="true"
+									aria-controls="dropdown-menu"
+									bind:value={styleUrl}
+									on:mouseenter={() => {
+										showStyleDropdown = true;
+									}}
+								/>
+								<button
+									class="button is-link is-uppercase has-text-weight-bold"
+									disabled={!isValidUrl(styleUrl)}
+									on:click={handleLoadStyle}>Load</button
+								>
+							</div>
+							<div class="dropdown-menu" id="dropdown-menu" role="menu">
+								<div class="dropdown-content">
+									{#each data.examples as example}
+										<!-- svelte-ignore a11y-missing-attribute -->
+										<a
+											class="dropdown-item"
+											role="menuitem"
+											tabindex="-1"
+											on:click={(e) => {
+												e.preventDefault();
+												styleUrl = example;
+												showStyleDropdown = false;
+											}}
+											on:keydown={handleEnterKey}
+										>
+											{example}
+										</a>
+									{/each}
+								</div>
+							</div>
 						</div>
 					</div>
+					<div slot="help">Select an example from dropdown, or paste your own style URL.</div>
 				</FieldControl>
 			</div>
 
@@ -183,5 +235,9 @@
 	.sidebar-content {
 		overflow-y: auto;
 		overflow-x: hidden;
+
+		.style-input {
+			width: 240px;
+		}
 	}
 </style>
