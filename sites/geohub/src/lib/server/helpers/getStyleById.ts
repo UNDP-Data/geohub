@@ -172,26 +172,29 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 			// 	// skip if not geohub layer
 			if (baseStyle.layers.find((l) => l.id === savedLayer.id)) continue;
 			const currentIndex = style.style.layers.indexOf(savedLayer);
-
-			if (currentIndex > totalBaseLayerLength) {
-				// if it exists in the last part of layers
-				updatedLayers.push(savedLayer);
-			} else {
-				// if it exists in the middle of layers (for raster mostly)
-				const beforeOld = style.style.layers[currentIndex - 1];
-				const beforeNew = updatedLayers[currentIndex - 1];
-				if (beforeOld.id === beforeNew.id) {
-					// if layer IDs before this layer are the same, insert it at the same index
-					updatedLayers.splice(currentIndex, 0, savedLayer);
+			if (savedLayer.type === 'raster' || savedLayer.type === 'hillshade') {
+				if (currentIndex > totalBaseLayerLength) {
+					// if it exists in the last part of layers
+					updatedLayers.push(savedLayer);
 				} else {
-					// otherwise insert layer before first symbol layer (style structure might have been changed at all)
-					const firstSymbolLayerId = getFirstSymbolLayerId(updatedLayers);
-					let idx = updatedLayers.length - 1;
-					if (firstSymbolLayerId) {
-						idx = updatedLayers.findIndex((l) => l.id === firstSymbolLayerId);
+					// if it exists in the middle of layers (for raster mostly)
+					const beforeOld = style.style.layers[currentIndex - 1];
+					const beforeNew = updatedLayers[currentIndex - 1];
+					if (beforeOld.id === beforeNew.id) {
+						// if layer IDs before this layer are the same, insert it at the same index
+						updatedLayers.splice(currentIndex, 0, savedLayer);
+					} else {
+						// otherwise insert layer before first symbol layer (style structure might have been changed at all)
+						const firstSymbolLayerId = getFirstSymbolLayerId(updatedLayers);
+						let idx = updatedLayers.length - 1;
+						if (firstSymbolLayerId) {
+							idx = updatedLayers.findIndex((l) => l.id === firstSymbolLayerId);
+						}
+						updatedLayers.splice(idx, 0, savedLayer);
 					}
-					updatedLayers.splice(idx, 0, savedLayer);
 				}
+			} else {
+				updatedLayers.push(savedLayer);
 			}
 		}
 		style.style.layers = [...updatedLayers];
