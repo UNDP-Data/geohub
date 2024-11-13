@@ -1,5 +1,11 @@
 # geohub
 
+## 1.21.1
+
+### Patch Changes
+
+- 80519a2: fix: fixed bug of changing symbol layer order when style is saved.
+
 ## 1.21.0
 
 ### Minor Changes
