@@ -18,6 +18,17 @@
 				'This dashboard maps the Clean Energy Equity Index (CEEI) for the area. The dashboard allows the user to adjust the data computation to simulate various scenarios for the CEEI value.',
 			linkName: 'Open dashboard',
 			linkUrl: '/dashboards/ceei'
+		},
+		{
+			tag: 'Dashboard',
+			imageUrl: 'https://www.undp.org/sites/g/files/zskgke326/files/2022-07/Zanzibar%20tourism.jpg',
+			title: 'Zanzibar tourism',
+			description: `
+			This dashboard maps the beauty of the world famous and popular destination - Zanzibar, Tanzania.
+			The UNDP Accelerator Lab collaborated with OpenMap Development Tanzania and the State University of Zanzibar's youth mappers chapter to map unpopular tourist attractions with the goal of assessing the existing situation through crowd mapping and mobile surveys.
+			`,
+			linkName: 'Open dashboard',
+			linkUrl: '/dashboards/zanzibar'
 		}
 	];
 </script>

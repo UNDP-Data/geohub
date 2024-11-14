@@ -8,6 +8,8 @@ import type { LngLatLike, MapGeoJSONFeature } from 'maplibre-gl';
 export const load: PageServerLoad = async ({ fetch }) => {
 	const styleId = 373;
 	const styleUrl = `/api/style/${styleId}`;
+	const blogUrl =
+		'https://www.undp.org/tanzania/blog/using-crowd-mapping-and-mobile-survey-unravel-unfrequented-tourist-attractions';
 
 	const res = await fetch(styleUrl);
 	const style: DashboardMapStyle = await res.json();
@@ -16,10 +18,11 @@ export const load: PageServerLoad = async ({ fetch }) => {
 
 	return {
 		title: 'Zanzibar Tourism | Dashboards | GeoHub',
-		content: 'Zanzibar Tourism Dashboard',
+		content: 'Zanzibar Tourism',
 		style: style,
 		center,
-		zoom
+		zoom,
+		blogUrl
 	};
 };
 

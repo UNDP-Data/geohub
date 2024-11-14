@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { page } from '$app/stores';
 	import { attribution, MapStyles } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import MaplibreGeocoder, {
@@ -10,7 +11,15 @@
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import { MaplibreLegendControl } from '@undp-data/svelte-maplibre-storymap';
-	import { FieldControl, ModalTemplate, Tabs } from '@undp-data/svelte-undp-components';
+	import {
+		Breadcrumbs,
+		FieldControl,
+		HeroLink,
+		ModalTemplate,
+		Tabs,
+		type BreadcrumbPage
+	} from '@undp-data/svelte-undp-components';
+	import { Button } from '@undp-data/svelte-undp-design';
 	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import dayjs from 'dayjs';
 	import maplibregl, {
@@ -36,6 +45,12 @@
 	const headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 	let windowHeight = 0;
 	$: mapHeight = windowHeight - $headerHeightStore;
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'dashboards', url: '/dashboards' },
+		{ title: data.content, url: $page.url.href }
+	];
 
 	let mapContainer: HTMLDivElement;
 	let map: Map;
@@ -290,11 +305,45 @@
 			expanded[expandedData[0]] = true;
 		}
 	}
+
+	const handleExploreClicked = () => {
+		scrollTo('zanzibar-map');
+		if (map) {
+			map.flyTo({ center: data.center, zoom: data.zoom });
+		}
+	};
+
+	const scrollTo = (hash: string) => {
+		if (browser) {
+			const anchor = document.getElementById(hash);
+			if (anchor) {
+				window.scrollTo({
+					top: anchor.offsetTop - 110,
+					behavior: 'smooth'
+				});
+			}
+		}
+	};
 </script>
 
 <svelte:window bind:innerHeight={windowHeight} />
 
-<div bind:this={mapContainer} class="map" style="height: {mapHeight}px;">
+<div class="hero background" style="height: {mapHeight}px;">
+	<div class="breadcrumbs-overlay">
+		<Breadcrumbs pages={breadcrumbs} />
+	</div>
+	<div class="title-overlay has-text-white">
+		<h1 class="title is-1 has-text-white">Welcome to Zanzibar</h1>
+		<p class="is-size-3 pb-4">
+			Explore the beauty of Zanzibar and experience its rich culture and heritage.
+		</p>
+		<div class="explore-button">
+			<Button title="Explore Zanzibar" on:clicked={handleExploreClicked} isArrow={true} />
+		</div>
+	</div>
+</div>
+
+<div bind:this={mapContainer} id="zanzibar-map" class="map" style="height: {mapHeight}px;">
 	{#if map}
 		<MaplibreLegendControl
 			bind:map
@@ -305,6 +354,19 @@
 		/>
 	{/if}
 </div>
+
+<section class="crowd-mapping">
+	<HeroLink
+		title="Crowd Mapping for tourism"
+		linkName="Read more about cloud mapping"
+		href={data.blogUrl}
+	>
+		The UNDP Accelerator Lab collaborated with OpenMap Development Tanzania and the State University
+		of Zanzibar's youth mappers chapter to map unpopular tourist attractions with the goal of
+		assessing the existing situation through crowd mapping and mobile surveys prior to creating this
+		web map.
+	</HeroLink>
+</section>
 
 <ModalTemplate bind:title={dialogTitle} bind:show={showDialog}>
 	<div slot="content" class="dialog-contents">
@@ -368,6 +430,35 @@
 </ModalTemplate>
 
 <style lang="scss">
+	.hero {
+		&.background {
+			position: relative;
+			width: 100%;
+			height: 100vh;
+			background-image: url('https://www.undp.org/sites/g/files/zskgke326/files/2022-07/Zanzibar%20tourism.jpg');
+			background-size: cover;
+			background-position: center;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			.breadcrumbs-overlay {
+				position: absolute;
+				top: 100px;
+				left: 77px;
+			}
+			.title-overlay {
+				position: absolute;
+				left: 77px;
+				width: 500px;
+
+				.explore-button {
+					width: 300px;
+				}
+			}
+		}
+	}
+
 	.map {
 		position: relative;
 		width: 100%;
@@ -381,6 +472,12 @@
 			border: 1px solid #d4d6d8;
 			object-fit: contain;
 			max-height: 350px;
+		}
+	}
+
+	.crowd-mapping {
+		:global(.hero) {
+			margin-top: 0 !important;
 		}
 	}
 </style>
