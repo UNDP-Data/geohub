@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { attribution, MapStyles } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import MaplibreGeocoder, {
@@ -9,7 +10,7 @@
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import { MaplibreLegendControl } from '@undp-data/svelte-maplibre-storymap';
-	import { Accordion, FieldControl, ModalTemplate, Tabs } from '@undp-data/svelte-undp-components';
+	import { FieldControl, ModalTemplate, Tabs } from '@undp-data/svelte-undp-components';
 	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import dayjs from 'dayjs';
 	import maplibregl, {
@@ -27,6 +28,7 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { Protocol } from 'pmtiles';
 	import { getContext, onMount } from 'svelte';
+	import Carousel from 'svelte-carousel';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -140,6 +142,19 @@
 		} as { [key: string]: string };
 	};
 
+	const getPhotoUrls = (feature: MapGeoJSONFeature) => {
+		const keys = Object.keys(feature.properties).filter((k) => {
+			const match = k.toLowerCase().match(/^picture \d+ link$/);
+			if (match) {
+				const pictureKey = k.replace('link', '').trim(); // `picture N` を取得
+				return feature.properties[pictureKey] && feature.properties[pictureKey].length > 0;
+			}
+			return false;
+		});
+		const urls = keys.map((k) => feature.properties[k]);
+		return urls;
+	};
+
 	const getAttributeData = async (fgbLink: string) => {
 		const fc: MaplibreGeocoderFeatureResults = {
 			type: 'FeatureCollection',
@@ -167,8 +182,8 @@
 		map = new Map({
 			container: mapContainer,
 			style: data.style.style,
-			// center: [0, 0],
-			// zoom: 3,
+			center: data.center,
+			zoom: data.zoom,
 			hash: true,
 			maxPitch: 85,
 			attributionControl: false
@@ -279,16 +294,6 @@
 
 <svelte:window bind:innerHeight={windowHeight} />
 
-<svelte:head>
-	<link
-		rel="stylesheet"
-		href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-export@3.8.3/dist/maplibre-gl-export.min.css"
-	/>
-	<script
-		src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-export@3.8.3/dist/maplibre-gl-export.umd.min.js"
-	></script>
-</svelte:head>
-
 <div bind:this={mapContainer} class="map" style="height: {mapHeight}px;">
 	{#if map}
 		<MaplibreLegendControl
@@ -319,14 +324,30 @@
 			<div hidden={`${f.id}` !== selectedTab}>
 				<FieldControl title={f.properties.name} showHelp={false} fontWeight="bold">
 					<div slot="control">
-						{f.properties['short history']}
+						{#if browser}
+							{@const images = getPhotoUrls(f)}
+							{#if images.length > 0}
+								<Carousel
+									autoplay
+									autoplayDuration={1000 * images.length}
+									autoplayProgressVisible
+									arrows={false}
+								>
+									{#each images as imageSrc}
+										<img src={imageSrc} alt={f.properties.name} class="photo" loading="eager" />
+									{/each}
+								</Carousel>
+							{/if}
+						{/if}
+
+						{#if f.properties['short history']}
+							{f.properties['short history']}
+						{/if}
 					</div>
 				</FieldControl>
-				<Accordion title="Photos" bind:isExpanded={expanded['photos']} padding="px-0">
-					<div slot="content">Coming soon</div>
-				</Accordion>
-				<Accordion title="Metadata" bind:isExpanded={expanded['metadata']} padding="px-0">
-					<div slot="content">
+
+				<FieldControl title="Metadata" showHelp={false} fontWeight="bold">
+					<div slot="control">
 						<table class="table is-narrow is-hoverable is-fullwidth">
 							<tbody>
 								{#each Object.keys(contents) as key}
@@ -340,7 +361,7 @@
 							</tbody>
 						</table>
 					</div>
-				</Accordion>
+				</FieldControl>
 			</div>
 		{/each}
 	</div>
@@ -355,5 +376,11 @@
 	.dialog-contents {
 		max-height: 500px;
 		overflow-y: auto;
+
+		.photo {
+			border: 1px solid #d4d6d8;
+			object-fit: contain;
+			max-height: 350px;
+		}
 	}
 </style>

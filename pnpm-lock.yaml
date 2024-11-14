@@ -916,6 +916,9 @@ importers:
       svelte-awesome-color-picker:
         specifier: ^3.1.4
         version: 3.1.4(svelte@4.2.19)
+      svelte-carousel:
+        specifier: ^1.0.25
+        version: 1.0.25
       svelte-check:
         specifier: ^4.0.4
         version: 4.0.6(picomatch@4.0.2)(svelte@4.2.19)(typescript@5.6.3)

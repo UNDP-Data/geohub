@@ -3,19 +3,23 @@ import type { DashboardMapStyle } from '$lib/types';
 import { fail } from '@sveltejs/kit';
 import { geojson } from 'flatgeobuf';
 import bbox from '@turf/bbox';
-import type { MapGeoJSONFeature } from 'maplibre-gl';
+import type { LngLatLike, MapGeoJSONFeature } from 'maplibre-gl';
 
 export const load: PageServerLoad = async ({ fetch }) => {
-	const styleId = 372;
+	const styleId = 373;
 	const styleUrl = `/api/style/${styleId}`;
 
 	const res = await fetch(styleUrl);
 	const style: DashboardMapStyle = await res.json();
+	const center: LngLatLike = [39.58, -5.6472];
+	const zoom = 8.5;
 
 	return {
 		title: 'Zanzibar Tourism | Dashboards | GeoHub',
 		content: 'Zanzibar Tourism Dashboard',
-		style: style
+		style: style,
+		center,
+		zoom
 	};
 };
 
