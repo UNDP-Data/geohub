@@ -14,6 +14,7 @@
 	import {
 		Breadcrumbs,
 		FieldControl,
+		handleEnterKey,
 		HeroLink,
 		ModalTemplate,
 		Tabs,
@@ -44,7 +45,9 @@
 
 	const headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 	let windowHeight = 0;
+	let windowWidth = 0;
 	$: mapHeight = windowHeight - $headerHeightStore;
+	$: isMobile = windowWidth < 768;
 
 	let breadcrumbs: BreadcrumbPage[] = [
 		{ title: 'home', url: '/' },
@@ -326,7 +329,7 @@
 	};
 </script>
 
-<svelte:window bind:innerHeight={windowHeight} />
+<svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
 
 <div class="hero background" style="height: {mapHeight}px;">
 	<div class="breadcrumbs-overlay">
@@ -341,10 +344,24 @@
 			<Button title="Explore Zanzibar" on:clicked={handleExploreClicked} isArrow={true} />
 		</div>
 	</div>
+
+	<div class="scroll-down-arrow">
+		<!-- svelte-ignore a11y-missing-attribute -->
+		<a
+			role="button"
+			tabindex="0"
+			on:click={handleExploreClicked}
+			on:keydown={handleEnterKey}
+			data-sveltekit-preload-data="off"
+			data-sveltekit-preload-code="off"
+		>
+			<span class="icon has-text-dark"><i class="fa-solid fa-angle-down fa-4x"></i></span>
+		</a>
+	</div>
 </div>
 
 <div bind:this={mapContainer} id="zanzibar-map" class="map" style="height: {mapHeight}px;">
-	{#if map}
+	{#if map && !isMobile}
 		<MaplibreLegendControl
 			bind:map
 			bind:styleId={data.style.id}
@@ -446,14 +463,75 @@
 				position: absolute;
 				top: 100px;
 				left: 77px;
+
+				@media (max-width: 48em) {
+					top: 48px;
+					left: 16px;
+				}
 			}
 			.title-overlay {
 				position: absolute;
 				left: 77px;
 				width: 500px;
 
+				@media (max-width: 48em) {
+					left: 16px;
+					width: 350px;
+				}
+
 				.explore-button {
 					width: 300px;
+				}
+			}
+
+			.scroll-down-arrow {
+				position: absolute;
+				bottom: 40px;
+				left: 50%;
+				transform: translateX(-50%);
+				cursor: pointer;
+
+				a {
+					padding-top: 70px;
+
+					span {
+						position: absolute;
+						bottom: 15px;
+						left: 50%;
+						width: 24px;
+						height: 24px;
+						margin-left: -12px;
+						-webkit-animation: sdb05 1.5s infinite;
+						animation: sdb05 1.5s infinite;
+						box-sizing: border-box;
+
+						@-webkit-keyframes sdb05 {
+							0% {
+								-webkit-transform: translate(0, 0);
+								opacity: 0;
+							}
+							50% {
+								opacity: 1;
+							}
+							100% {
+								-webkit-transform: translate(0, 20px);
+								opacity: 0;
+							}
+						}
+						@keyframes sdb05 {
+							0% {
+								transform: translate(0, 0);
+								opacity: 0;
+							}
+							50% {
+								opacity: 1;
+							}
+							100% {
+								transform: translate(0, 20px);
+								opacity: 0;
+							}
+						}
+					}
 				}
 			}
 		}
