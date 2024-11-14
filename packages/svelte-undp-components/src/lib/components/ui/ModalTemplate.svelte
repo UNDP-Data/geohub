@@ -33,7 +33,7 @@
 	/>
 
 	<div class="modal-card" style={width ? `width: ${width};` : ''}>
-		<section class="modal-card-body p-6">
+		<section class="modal-card-body">
 			{#if showClose}
 				<button class="delete is-large" aria-label="close" title="Close" on:click={close} />
 			{/if}
@@ -66,10 +66,21 @@
 			cursor: default;
 
 			.modal-card-body {
+				padding: 3rem;
+
+				@media (max-width: 48em) {
+					padding: 1rem 0.5rem !important;
+				}
+
 				.delete {
 					position: absolute;
 					top: 1rem;
 					right: 1rem;
+
+					@media (max-width: 48em) {
+						top: 0.5rem;
+						right: 0.5rem;
+					}
 				}
 			}
 		}
