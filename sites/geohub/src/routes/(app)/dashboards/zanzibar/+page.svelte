@@ -119,10 +119,12 @@
 						clickedFeatures = map.queryRenderedFeatures(e.point, {
 							layers: layersVisible
 						});
-						showDialog = clickedFeatures.length > 0;
 						if (clickedFeatures.length > 0) {
+							openModal();
 							expanded = { photos: true };
 							selectedTab = `${clickedFeatures[0].id}`;
+						} else {
+							closeModal();
 						}
 					}
 					dialogTitle = getDialogTitle();
@@ -191,6 +193,14 @@
 		const features = JSON.parse(data[0]);
 		fc.features = features.features;
 		return fc;
+	};
+
+	const openModal = () => {
+		showDialog = true;
+	};
+
+	const closeModal = () => {
+		showDialog = false;
 	};
 
 	onMount(() => {
@@ -373,11 +383,7 @@
 </div>
 
 <section class="crowd-mapping">
-	<HeroLink
-		title="Crowd Mapping for tourism"
-		linkName="Read more about cloud mapping"
-		href={data.blogUrl}
-	>
+	<HeroLink title="Crowd Mapping for tourism" linkName="Read more" href={data.blogUrl}>
 		The UNDP Accelerator Lab collaborated with OpenMap Development Tanzania and the State University
 		of Zanzibar's youth mappers chapter to map unpopular tourist attractions with the goal of
 		assessing the existing situation through crowd mapping and mobile surveys prior to creating this
@@ -410,7 +416,7 @@
 									autoplay
 									autoplayDuration={1000 * images.length}
 									autoplayProgressVisible
-									arrows={false}
+									arrows={true}
 								>
 									{#each images as imageSrc}
 										<img src={imageSrc} alt={f.properties.name} class="photo" loading="eager" />
@@ -425,7 +431,7 @@
 					</div>
 				</FieldControl>
 
-				<FieldControl title="Metadata" showHelp={false} fontWeight="bold">
+				<FieldControl title="Touristic Information" showHelp={false} fontWeight="bold">
 					<div slot="control">
 						<table class="table is-narrow is-hoverable is-fullwidth">
 							<tbody>
