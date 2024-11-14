@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import LayerVisibilitySwitcher from '$components/pages/map/plugins/LayerVisibilitySwitcher.svelte';
 	import { attribution, MapStyles } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import MaplibreGeocoder, {
@@ -33,6 +34,9 @@
 		ScaleControl,
 		TerrainControl,
 		type MapGeoJSONFeature,
+		type RasterLayerSpecification,
+		type RasterSourceSpecification,
+		type StyleSpecification,
 		type TerrainSpecification
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
@@ -55,6 +59,7 @@
 		{ title: data.content, url: $page.url.href }
 	];
 
+	const OAM_LAYERID = 'openaerialmap';
 	let mapContainer: HTMLDivElement;
 	let map: Map;
 	let styleSwitcher: MaplibreStyleSwitcherControl;
@@ -203,9 +208,44 @@
 		showDialog = false;
 	};
 
+	const addOpenAerialMap = (style: StyleSpecification) => {
+		const source: RasterSourceSpecification = {
+			type: 'raster',
+			tiles: ['https://apps.kontur.io/raster-tiler/oam/mosaic/{z}/{x}/{y}.png'],
+			attribution: `<a href="https://map.openaerialmap.org">OpenAerialMap</a>, <a href="https://www.kontur.io/">Kontur</a>`,
+			minzoom: 0,
+			maxzoom: 18
+		};
+
+		if (!style.sources[OAM_LAYERID]) {
+			style.sources[OAM_LAYERID] = source;
+		}
+
+		if (style.layers.find((l) => l.id === OAM_LAYERID)) return;
+
+		const layer: RasterLayerSpecification = {
+			id: OAM_LAYERID,
+			type: 'raster',
+			source: OAM_LAYERID,
+			layout: {
+				visibility: 'visible'
+			}
+		};
+
+		const geohubLayerIds = data.style.layers?.map((l) => l.id) ?? [];
+		const firstGeoHubLayerIndex = style.layers.findIndex((l) => geohubLayerIds.includes(l.id));
+		if (firstGeoHubLayerIndex === -1) {
+			style.layers.push(layer);
+		} else {
+			style.layers.splice(firstGeoHubLayerIndex, 1, layer);
+		}
+	};
+
 	onMount(() => {
 		const protocol = new Protocol();
 		addProtocol('pmtiles', protocol.tile);
+
+		addOpenAerialMap(data.style.style as StyleSpecification);
 
 		map = new Map({
 			container: mapContainer,
@@ -372,6 +412,12 @@
 
 <div bind:this={mapContainer} id="zanzibar-map" class="map" style="height: {mapHeight}px;">
 	{#if map && !isMobile}
+		<LayerVisibilitySwitcher
+			bind:map
+			position="bottom-right"
+			target={OAM_LAYERID}
+			faIcon="fas fa-plane"
+		/>
 		<MaplibreLegendControl
 			bind:map
 			bind:styleId={data.style.id}

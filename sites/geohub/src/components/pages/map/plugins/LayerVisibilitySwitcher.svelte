@@ -111,7 +111,7 @@
 <button
 	class="maplibregl-ctrl-{target}-visibility maplibre-ctrl-icon is-flex is-align-items-center"
 	bind:this={visiblilityButton}
-	use:tippyTooltip={{ content: `${!isVisible ? 'Show hillshade' : 'Hide hillshade'}` }}
+	use:tippyTooltip={{ content: `${!isVisible ? `Show ${target}` : `Hide ${target}`}` }}
 	disabled={isLoading}
 >
 	<i class="{faIcon} fa-xl align-center {isVisible ? 'has-text-success' : ''}" />
