@@ -1,5 +1,11 @@
 # geohub
 
+## 1.21.2
+
+### Patch Changes
+
+- a642f99: fix: improved logic to update saved map's base style from the latest if any different is presented
+
 ## 1.21.1
 
 ### Patch Changes
