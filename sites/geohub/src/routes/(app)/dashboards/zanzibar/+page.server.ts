@@ -6,7 +6,7 @@ import bbox from '@turf/bbox';
 import type { LngLatLike, MapGeoJSONFeature } from 'maplibre-gl';
 
 export const load: PageServerLoad = async ({ fetch }) => {
-	const styleId = 373;
+	const styleId = 377;
 	const styleUrl = `/api/style/${styleId}`;
 	const blogUrl =
 		'https://www.undp.org/tanzania/blog/using-crowd-mapping-and-mobile-survey-unravel-unfrequented-tourist-attractions';
