@@ -6,9 +6,9 @@ import MicrosoftPlanetaryStac from '$lib/stac/MicrosoftPlanetaryStac';
 import type {
 	BackgroundLayerSpecification,
 	HillshadeLayerSpecification,
-	LayerSpecification,
 	RasterLayerSpecification,
 	RasterSourceSpecification,
+	SpriteSpecification,
 	StyleSpecification,
 	VectorSourceSpecification
 } from 'maplibre-gl';
@@ -26,9 +26,11 @@ import voyagerStyle from '@undp-data/style/dist/style.json';
 import darkStyle from '@undp-data/style/dist/dark.json';
 import positronStyle from '@undp-data/style/dist/positron.json';
 import aerialStyle from '@undp-data/style/dist/aerialstyle.json';
+import blankStyle from '@undp-data/style/dist/blank.json';
 import { DefaultUserConfig } from '$lib/config/DefaultUserConfig';
 import { db } from '$lib/server/db';
 import { sql } from 'drizzle-orm';
+import { isEqual } from 'lodash-es';
 
 export const getStyleById = async (id: number, url: URL, email?: string, is_superuser = false) => {
 	const data = await db.execute(
@@ -131,19 +133,24 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 		// Here, it updates base style from the latest.
 
 		// check which base style is used
-		let baseStyle: StyleSpecification = voyagerStyle as unknown as StyleSpecification;
+		let baseStyle: StyleSpecification = JSON.parse(
+			JSON.stringify(voyagerStyle)
+		) as unknown as StyleSpecification;
 		if (style.style.sources['bing']) {
 			// aerial
-			baseStyle = aerialStyle as unknown as StyleSpecification;
+			baseStyle = JSON.parse(JSON.stringify(aerialStyle)) as unknown as StyleSpecification;
 		} else {
 			// check color of background layer to identify base style
 			const backgroudLayer: BackgroundLayerSpecification = style.style.layers.find(
 				(l) => l.type === 'background'
 			) as BackgroundLayerSpecification;
 			if (backgroudLayer) {
-				if (backgroudLayer.paint['background-color'] === '#0e0e0e') {
+				if (backgroudLayer.id === 'background-blank') {
+					// blank style: https://github.com/UNDP-Data/style/blob/main/assets/dark/background.yml
+					baseStyle = JSON.parse(JSON.stringify(blankStyle)) as unknown as StyleSpecification;
+				} else if (backgroudLayer.paint['background-color'] === '#0e0e0e') {
 					// dark style: https://github.com/UNDP-Data/style/blob/main/assets/dark/background.yml
-					baseStyle = darkStyle as unknown as StyleSpecification;
+					baseStyle = JSON.parse(JSON.stringify(darkStyle)) as unknown as StyleSpecification;
 				} else if (backgroudLayer.paint['background-color'] === '#fafaf8') {
 					// positron style: https://github.com/UNDP-Data/style/blob/main/assets/positron/background.yml
 					baseStyle = positronStyle as unknown as StyleSpecification;
@@ -152,52 +159,41 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 		}
 
 		// update sprite and glyphs
-		style.style.sprite = resolveSpriteUrl(baseStyle.sprite, url.origin);
-		style.style.glyphs = baseStyle.glyphs;
+		baseStyle.sprite = resolveSpriteUrl(baseStyle.sprite as SpriteSpecification, url.origin);
 
+		const geohubLayerIds = style.layers?.map((l) => l.id);
+		const layersExludesGeoHub = style.style.layers.filter((l) => geohubLayerIds?.includes(l.id));
+		// compare base style and saved style by layers excluding geohub.
+		// they should be the same if no update from base style.
+		// if layers on basemap are different, add geohub layers to base style
 		// add source from the latest style if does not exist
-		Object.keys(baseStyle.sources).forEach((srcName) => {
-			if (style.style.sources[srcName]) return;
-			const newSource = baseStyle.sources[srcName];
-			style.style.sources[srcName] = newSource;
-		});
-
-		// update base layer style
-		const updatedLayers: LayerSpecification[] = JSON.parse(JSON.stringify(baseStyle.layers));
-		// get the total layer length exclude geohub layer for saved style
-		const totalBaseLayerLength = style.style.layers.filter(
-			(l) => style.layers.map((_l) => _l.id).includes(l.id) === false
-		).length;
-		for (const savedLayer of style.style.layers) {
-			// 	// skip if not geohub layer
-			if (baseStyle.layers.find((l) => l.id === savedLayer.id)) continue;
-			const currentIndex = style.style.layers.indexOf(savedLayer);
-			if (savedLayer.type === 'raster' || savedLayer.type === 'hillshade') {
-				if (currentIndex > totalBaseLayerLength) {
-					// if it exists in the last part of layers
-					updatedLayers.push(savedLayer);
-				} else {
-					// if it exists in the middle of layers (for raster mostly)
-					const beforeOld = style.style.layers[currentIndex - 1];
-					const beforeNew = updatedLayers[currentIndex - 1];
-					if (beforeOld.id === beforeNew.id) {
-						// if layer IDs before this layer are the same, insert it at the same index
-						updatedLayers.splice(currentIndex, 0, savedLayer);
-					} else {
-						// otherwise insert layer before first symbol layer (style structure might have been changed at all)
-						const firstSymbolLayerId = getFirstSymbolLayerId(updatedLayers);
-						let idx = updatedLayers.length - 1;
-						if (firstSymbolLayerId) {
-							idx = updatedLayers.findIndex((l) => l.id === firstSymbolLayerId);
-						}
-						updatedLayers.splice(idx, 0, savedLayer);
-					}
+		if (!isEqual(baseStyle.layers, layersExludesGeoHub)) {
+			Object.keys(style.style.sources).forEach((srcName) => {
+				if (baseStyle.sources[srcName]) return;
+				const newSource = style.style?.sources[srcName];
+				if (newSource) {
+					baseStyle.sources[srcName] = newSource;
 				}
-			} else {
-				updatedLayers.push(savedLayer);
+			});
+
+			for (const layer of style.style.layers) {
+				if (!geohubLayerIds?.includes(layer.id)) continue;
+
+				if (['raster', 'hillshade'].includes(layer.type)) {
+					// if raster or hillshade, insert befpre first symbol layer
+					const firstSymbolLayerId = getFirstSymbolLayerId(baseStyle.layers);
+					let idx = baseStyle.layers.length - 1;
+					if (firstSymbolLayerId) {
+						idx = baseStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
+					}
+					baseStyle.layers.splice(idx, 0, layer);
+				} else {
+					// for vector, insert them to the last
+					baseStyle.layers.push(layer);
+				}
 			}
 		}
-		style.style.layers = [...updatedLayers];
+		style.style = JSON.parse(JSON.stringify(baseStyle));
 	}
 
 	// if text-font is not set, use default font.
