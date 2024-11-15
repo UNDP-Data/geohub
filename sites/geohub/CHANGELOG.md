@@ -1,5 +1,17 @@
 # geohub
 
+## 1.21.5
+
+### Patch Changes
+
+- 6644fcf: fix: fixed bug of /api/style endpoint to return incorrect style saved from database.
+
+## 1.21.4
+
+### Patch Changes
+
+- 90da200: fix: changed text-radial-offset from 0.5 to 1.0 since there is some overlaps between icon and label.
+
 ## 1.21.3
 
 ### Patch Changes
