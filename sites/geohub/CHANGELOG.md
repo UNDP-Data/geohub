@@ -1,5 +1,11 @@
 # geohub
 
+## 1.21.3
+
+### Patch Changes
+
+- ef17132: fix: set default text color and halo color appropriately when label is created.
+
 ## 1.21.2
 
 ### Patch Changes
