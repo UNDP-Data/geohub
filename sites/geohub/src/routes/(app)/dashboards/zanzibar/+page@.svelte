@@ -455,7 +455,7 @@
 		class="map section-item"
 		style="height: {mapHeight}px;"
 	>
-		{#if map && !isMobile}
+		{#if map}
 			<MaplibreLocationSwitchControl bind:map position="top-right" bind:places={data.places} />
 			<LayerVisibilitySwitcher
 				bind:map
@@ -463,13 +463,15 @@
 				target={OAM_LAYERID}
 				faIcon="fas fa-plane"
 			/>
-			<MaplibreLegendControl
-				bind:map
-				bind:styleId={data.style.id}
-				position="bottom-left"
-				showInteractive={false}
-				showInvisibleLayers={false}
-			/>
+			{#if !isMobile}
+				<MaplibreLegendControl
+					bind:map
+					bind:styleId={data.style.id}
+					position="bottom-left"
+					showInteractive={false}
+					showInvisibleLayers={false}
+				/>
+			{/if}
 		{/if}
 
 		<div class="scroll-down-arrow">
