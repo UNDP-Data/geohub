@@ -471,7 +471,7 @@
 				data-sveltekit-preload-data="off"
 				data-sveltekit-preload-code="off"
 			>
-				<span class="icon has-text-white"><i class="fa-solid fa-angle-down fa-4x"></i></span>
+				<span class="icon has-text-grey"><i class="fa-solid fa-angle-down fa-4x"></i></span>
 			</a>
 		</div>
 	</div>
