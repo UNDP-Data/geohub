@@ -124,9 +124,16 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 		const adminLayerName = 'cgaz';
 		if (style.style.sources[adminLayerName]) {
 			style.style.layers = style.style.layers.filter(
-				(l) => 'source' in l && l.source !== adminLayerName
+				(l) => ('source' in l && l.source !== adminLayerName) || l.type === 'background'
 			);
 			delete style.style.sources[adminLayerName];
+		}
+		const fullGeomLayerName = 'full-geom';
+		if (style.style.sources[fullGeomLayerName]) {
+			style.style.layers = style.style.layers.filter(
+				(l) => ('source' in l && l.source !== fullGeomLayerName) || l.type === 'background'
+			);
+			delete style.style.sources[fullGeomLayerName];
 		}
 
 		// there might be some updated on base style between saved style and original one.
@@ -153,7 +160,7 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 					baseStyle = JSON.parse(JSON.stringify(darkStyle)) as unknown as StyleSpecification;
 				} else if (backgroudLayer.paint['background-color'] === '#fafaf8') {
 					// positron style: https://github.com/UNDP-Data/style/blob/main/assets/positron/background.yml
-					baseStyle = positronStyle as unknown as StyleSpecification;
+					baseStyle = JSON.parse(JSON.stringify(positronStyle)) as unknown as StyleSpecification;
 				}
 			}
 		}
@@ -162,7 +169,7 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 		baseStyle.sprite = resolveSpriteUrl(baseStyle.sprite as SpriteSpecification, url.origin);
 
 		const geohubLayerIds = style.layers?.map((l) => l.id);
-		const layersExludesGeoHub = style.style.layers.filter((l) => geohubLayerIds?.includes(l.id));
+		const layersExludesGeoHub = style.style.layers.filter((l) => !geohubLayerIds?.includes(l.id));
 		// compare base style and saved style by layers excluding geohub.
 		// they should be the same if no update from base style.
 		// if layers on basemap are different, add geohub layers to base style
@@ -175,10 +182,8 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 					baseStyle.sources[srcName] = newSource;
 				}
 			});
-
-			for (const layer of style.style.layers) {
+			for (const layer of style.style.layers.filter((l) => geohubLayerIds?.includes(l.id))) {
 				if (!geohubLayerIds?.includes(layer.id)) continue;
-
 				if (['raster', 'hillshade'].includes(layer.type)) {
 					// if raster or hillshade, insert befpre first symbol layer
 					const firstSymbolLayerId = getFirstSymbolLayerId(baseStyle.layers);
@@ -192,8 +197,8 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 					baseStyle.layers.push(layer);
 				}
 			}
+			style.style = JSON.parse(JSON.stringify(baseStyle));
 		}
-		style.style = JSON.parse(JSON.stringify(baseStyle));
 	}
 
 	// if text-font is not set, use default font.
@@ -244,7 +249,9 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 							// update style.sources.[layer id].tiles/url (vector and raster)
 							const is_raster = l.dataset.properties.is_raster;
 							const blobUrl = l.dataset.properties.url;
-							let source = style.style.sources[l.id] as
+							const mapLayer = style.style.layers.find((layer) => layer.id === l.id);
+							if (!(mapLayer && 'source' in mapLayer)) continue;
+							let source = style.style.sources[mapLayer.source] as
 								| RasterSourceSpecification
 								| VectorSourceSpecification;
 							let tileUrl = blobUrl;
@@ -265,7 +272,6 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 									});
 								}
 							}
-
 							if (source.tiles) {
 								const newTiles = [];
 								for (const tile of source.tiles) {
