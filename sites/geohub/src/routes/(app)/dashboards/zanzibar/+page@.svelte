@@ -258,6 +258,7 @@
 			zoom: data.zoom,
 			hash: true,
 			maxPitch: 85,
+			maxBounds: data.maxExtent,
 			attributionControl: false
 		});
 

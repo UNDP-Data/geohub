@@ -3,7 +3,7 @@ import type { DashboardMapStyle } from '$lib/types';
 import { fail } from '@sveltejs/kit';
 import { geojson } from 'flatgeobuf';
 import bbox from '@turf/bbox';
-import type { LngLatLike, MapGeoJSONFeature } from 'maplibre-gl';
+import type { LngLatBoundsLike, LngLatLike, MapGeoJSONFeature } from 'maplibre-gl';
 
 export const load: PageServerLoad = async ({ fetch }) => {
 	const styleId = 377;
@@ -14,7 +14,11 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	const res = await fetch(styleUrl);
 	const style: DashboardMapStyle = await res.json();
 	const center: LngLatLike = [39.58, -5.6472];
-	const zoom = 8.5;
+	const zoom = 6;
+	const maxExtent: LngLatBoundsLike = [
+		[37.657592, -7.246684],
+		[40.915039, -3.983451]
+	];
 
 	return {
 		title: 'Zanzibar Tourism | Dashboards | GeoHub',
@@ -22,6 +26,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		style: style,
 		center,
 		zoom,
+		maxExtent,
 		blogUrl
 	};
 };
