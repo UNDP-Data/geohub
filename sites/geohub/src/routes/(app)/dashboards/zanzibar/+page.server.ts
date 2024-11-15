@@ -6,11 +6,12 @@ import bbox from '@turf/bbox';
 import type { LngLatBoundsLike, LngLatLike, MapGeoJSONFeature } from 'maplibre-gl';
 import type { LocationSwitchPlaces } from '$components/pages/map/plugins/MaplibreLocationSwitchControl.svelte';
 
-export const load: PageServerLoad = async ({ fetch }) => {
+export const load: PageServerLoad = async ({ fetch, url }) => {
 	const styleId = 377;
 	const styleUrl = `/api/style/${styleId}`;
 	const blogUrl =
 		'https://www.undp.org/tanzania/blog/using-crowd-mapping-and-mobile-survey-unravel-unfrequented-tourist-attractions';
+	const socialImage = `${url.origin}/assets/zanzibar-snapshot.png`;
 
 	const res = await fetch(styleUrl);
 	const style: DashboardMapStyle = await res.json();
@@ -47,12 +48,14 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	return {
 		title: 'Zanzibar Tourism | Dashboards | GeoHub',
 		content: 'Zanzibar Tourism',
+		site_description: `This dashboard maps the beauty of the world famous and popular destination - Zanzibar, Tanzania. The UNDP Accelerator Lab collaborated with OpenMap Development Tanzania and the State University of Zanzibar's youth mappers chapter to map unpopular tourist attractions with the goal of assessing the existing situation through crowd mapping and mobile surveys.`,
 		style: style,
 		center,
 		zoom,
 		maxExtent,
 		places,
-		blogUrl
+		blogUrl,
+		socialImage
 	};
 };
 
