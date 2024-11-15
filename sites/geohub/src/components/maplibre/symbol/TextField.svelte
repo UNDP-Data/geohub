@@ -100,6 +100,10 @@
 				if (style.layout['text-font']) {
 					map.setLayoutProperty(layerId, 'text-font', style.layout['text-font']);
 				}
+
+				map.setPaintProperty(layerId, 'text-color', 'rgba(0,0,0,1)');
+				map.setPaintProperty(layerId, 'text-halo-color', 'rgba(255,255,255,1)');
+				map.setPaintProperty(layerId, 'text-halo-width', Number(config.LabelHaloWidth));
 			}
 
 			let fieldType = getTextFieldDataType(
@@ -153,6 +157,11 @@
 				map.setLayoutProperty(layerId, 'text-radial-offset', undefined);
 				map.setLayoutProperty(layerId, 'text-justify', undefined);
 				map.setLayoutProperty(layerId, 'text-font', undefined);
+				map.setLayoutProperty(layerId, 'text-size', undefined);
+				map.setLayoutProperty(layerId, 'text-max-width', undefined);
+				map.setPaintProperty(layerId, 'text-color', undefined);
+				map.setPaintProperty(layerId, 'text-halo-color', undefined);
+				map.setPaintProperty(layerId, 'text-halo-width', undefined);
 			}
 		}
 		dispatch('change', {
