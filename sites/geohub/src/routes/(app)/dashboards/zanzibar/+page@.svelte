@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Header from '$components/header/Header.svelte';
 	import LayerVisibilitySwitcher from '$components/pages/map/plugins/LayerVisibilitySwitcher.svelte';
@@ -347,6 +348,10 @@
 		map.once('styledata', mapInitializeAfterLoading);
 	});
 
+	afterNavigate(() => {
+		scrollTo('hero', scrollSnapParent, 'instant');
+	});
+
 	let expanded: { [key: string]: boolean } = {};
 	// to allow only an accordion to be expanded
 	let expandedId: string;
@@ -372,19 +377,23 @@
 		}
 	};
 
-	const scrollTo = (hash: string, parentElement?: HTMLElement) => {
+	const scrollTo = (
+		hash: string,
+		parentElement?: HTMLElement,
+		behavior: 'auto' | 'instant' | 'smooth' = 'smooth'
+	) => {
 		if (browser) {
 			const anchor = document.getElementById(hash);
 			if (anchor) {
 				if (parentElement) {
 					parentElement.scrollTo({
 						top: anchor.offsetTop,
-						behavior: 'smooth'
+						behavior: behavior
 					});
 				} else {
 					window.scrollTo({
 						top: anchor.offsetTop - 110,
-						behavior: 'smooth'
+						behavior: behavior
 					});
 				}
 			}
@@ -409,7 +418,7 @@
 	style="height: {mapHeight}px; margin-top: {$headerHeightStore}px"
 	bind:this={scrollSnapParent}
 >
-	<div class="hero background section-item" style="height: {mapHeight}px;">
+	<div class="hero background section-item" id="hero" style="height: {mapHeight}px;">
 		<div class="breadcrumbs-overlay">
 			<Breadcrumbs pages={breadcrumbs} />
 		</div>
