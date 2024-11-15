@@ -52,6 +52,7 @@
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
 	let windowHeight = 0;
 	let windowWidth = 0;
+	let crowdmappingHeight = 0;
 	$: mapHeight = windowHeight - $headerHeightStore;
 	$: isMobile = windowWidth < 768;
 
@@ -391,7 +392,15 @@
 
 <svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
 
-<Header />
+<svelte:head>
+	<style>
+		body {
+			overflow: hidden;
+		}
+	</style>
+</svelte:head>
+
+<Header isPositionFixed={true} />
 
 <div
 	class="scroll-snap-parent"
@@ -455,7 +464,7 @@
 				role="button"
 				tabindex="0"
 				on:click={() => {
-					scrollTo('crowd-mapping', scrollSnapParent);
+					scrollTo('footer-section', scrollSnapParent);
 				}}
 				on:keydown={handleEnterKey}
 				data-sveltekit-preload-data="off"
@@ -466,17 +475,24 @@
 		</div>
 	</div>
 
-	<section id="crowd-mapping" class="crowd-mapping section-item">
-		<HeroLink title="Crowd Mapping for tourism" linkName="Read more" href={data.blogUrl}>
-			The UNDP Accelerator Lab collaborated with OpenMap Development Tanzania and the State
-			University of Zanzibar's youth mappers chapter to map unpopular tourist attractions with the
-			goal of assessing the existing situation through crowd mapping and mobile surveys prior to
-			creating this web map.
-		</HeroLink>
-	</section>
+	<section
+		id="footer-section"
+		class="crowd-mapping section-item"
+		style="height: {crowdmappingHeight}px;"
+	>
+		<div bind:clientHeight={crowdmappingHeight}>
+			<HeroLink title="Crowd Mapping for tourism" linkName="Read more" href={data.blogUrl}>
+				The UNDP Accelerator Lab collaborated with OpenMap Development Tanzania and the State
+				University of Zanzibar's youth mappers chapter to map unpopular tourist attractions with the
+				goal of assessing the existing situation through crowd mapping and mobile surveys prior to
+				creating this web map.
+			</HeroLink>
 
-	<section id="footer-section" class="crowd-mapping section-item">
-		<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" bind:footerItems={data.footerLinks} />
+			<Footer
+				logoUrl="/assets/undp-images/undp-logo-white.svg"
+				bind:footerItems={data.footerLinks}
+			/>
+		</div>
 	</section>
 </div>
 
@@ -547,7 +563,7 @@
 		scroll-snap-type: y mandatory;
 
 		.section-item {
-			scroll-snap-align: start;
+			scroll-snap-align: end;
 		}
 	}
 
