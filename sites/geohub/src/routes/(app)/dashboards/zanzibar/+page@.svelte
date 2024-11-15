@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 	import Header from '$components/header/Header.svelte';
 	import LayerVisibilitySwitcher from '$components/pages/map/plugins/LayerVisibilitySwitcher.svelte';
+	import MaplibreLocationSwitchControl from '$components/pages/map/plugins/MaplibreLocationSwitchControl.svelte';
 	import { attribution, MapStyles } from '$lib/config/AppConfig';
 	import { createHeaderHeightStore, HEADER_HEIGHT_CONTEXT_KEY } from '$stores';
 	import MaplibreGeocoder, {
@@ -444,6 +445,7 @@
 		style="height: {mapHeight}px;"
 	>
 		{#if map && !isMobile}
+			<MaplibreLocationSwitchControl bind:map position="top-right" bind:places={data.places} />
 			<LayerVisibilitySwitcher
 				bind:map
 				position="bottom-right"

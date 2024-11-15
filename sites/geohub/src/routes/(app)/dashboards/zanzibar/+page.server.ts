@@ -4,6 +4,7 @@ import { fail } from '@sveltejs/kit';
 import { geojson } from 'flatgeobuf';
 import bbox from '@turf/bbox';
 import type { LngLatBoundsLike, LngLatLike, MapGeoJSONFeature } from 'maplibre-gl';
+import type { LocationSwitchPlaces } from '$components/pages/map/plugins/MaplibreLocationSwitchControl.svelte';
 
 export const load: PageServerLoad = async ({ fetch }) => {
 	const styleId = 377;
@@ -19,6 +20,29 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		[37.657592, -7.246684],
 		[40.915039, -3.983451]
 	];
+	const places: LocationSwitchPlaces[] = [
+		{
+			name: 'Unguja (main) island',
+			bounds: [
+				[38.967079, -6.524425],
+				[39.714149, -5.621784]
+			]
+		},
+		{
+			name: 'Pemba Island',
+			bounds: [
+				[39.436798, -5.502539],
+				[39.984741, -4.81047]
+			]
+		},
+		{
+			name: 'Stone town',
+			bounds: [
+				[39.181479, -6.176574],
+				[39.206842, -6.150078]
+			]
+		}
+	];
 
 	return {
 		title: 'Zanzibar Tourism | Dashboards | GeoHub',
@@ -27,6 +51,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		center,
 		zoom,
 		maxExtent,
+		places,
 		blogUrl
 	};
 };
