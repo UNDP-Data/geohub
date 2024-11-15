@@ -87,8 +87,8 @@ jobs:
               - 'backends/k8s/stac-pipeline/yaml/deployment.yaml'
               - '.github/workflows/ci.yml'
 
-  lint_build:
-    name: lint, build and test for GeoHub
+  lint:
+    name: lint, format and test for GeoHub
     needs: changes
     if: ${{ needs.changes.outputs.geohub == 'true' }}
     runs-on: ubuntu-latest
@@ -113,9 +113,6 @@ jobs:
 
       - name: Run lint
         run: pnpm lint
-
-      - name: build
-        run: pnpm build
 
       - name: Run unit tests
         run: pnpm test
