@@ -71,7 +71,7 @@
 		if (textFieldValue) {
 			// variable label placement settings: https://docs.mapbox.com/mapbox-gl-js/example/variable-label-placement/
 			style.layout['text-variable-anchor'] = ['top', 'bottom', 'left', 'right'];
-			style.layout['text-radial-offset'] = 0.5;
+			style.layout['text-radial-offset'] = 1;
 			style.layout['text-justify'] = 'auto';
 
 			const glyph = $map.getStyle().glyphs;

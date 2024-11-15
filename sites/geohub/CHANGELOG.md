@@ -1,5 +1,11 @@
 # geohub
 
+## 1.21.4
+
+### Patch Changes
+
+- 90da200: fix: changed text-radial-offset from 0.5 to 1.0 since there is some overlaps between icon and label.
+
 ## 1.21.3
 
 ### Patch Changes
