@@ -1,5 +1,11 @@
 # geohub
 
+## 1.21.5
+
+### Patch Changes
+
+- 6644fcf: fix: fixed bug of /api/style endpoint to return incorrect style saved from database.
+
 ## 1.21.4
 
 ### Patch Changes
