@@ -2,7 +2,6 @@ import type { PageServerLoad } from './$types';
 import type { DashboardMapStyle } from '$lib/types';
 import { fail } from '@sveltejs/kit';
 import { geojson } from 'flatgeobuf';
-import bbox from '@turf/bbox';
 import type { LngLatBoundsLike, LngLatLike, MapGeoJSONFeature } from 'maplibre-gl';
 import type { LocationSwitchPlaces } from '$components/pages/map/plugins/MaplibreLocationSwitchControl.svelte';
 
@@ -90,8 +89,7 @@ export const actions = {
 				place_name: placeName.join(', '),
 				properties: feature.properties,
 				text: placeName.join(', '),
-				place_type: [placeType],
-				bbox: bbox(feature) as [number, number, number, number]
+				place_type: [placeType]
 			};
 
 			features.push(point);

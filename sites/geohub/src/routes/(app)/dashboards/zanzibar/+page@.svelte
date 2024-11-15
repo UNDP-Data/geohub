@@ -234,7 +234,7 @@
 			type: 'raster',
 			source: OAM_LAYERID,
 			layout: {
-				visibility: 'visible'
+				visibility: 'none'
 			}
 		};
 
@@ -260,6 +260,7 @@
 			zoom: data.zoom,
 			hash: true,
 			maxPitch: 85,
+			maxZoom: 18,
 			maxBounds: data.maxExtent,
 			attributionControl: false
 		});
@@ -339,7 +340,8 @@
 					limit: 10,
 					maplibregl: maplibregl,
 					collapsed: false,
-					showResultsWhileTyping: true
+					showResultsWhileTyping: true,
+					showResultMarkers: true
 				});
 				map.addControl(geocoder, 'top-left');
 			}
@@ -489,7 +491,7 @@
 
 	<section
 		id="footer-section"
-		class="crowd-mapping section-item"
+		class="crowd-mapping section-item-start"
 		style="height: {crowdmappingHeight}px;"
 	>
 		<div bind:clientHeight={crowdmappingHeight}>
@@ -576,6 +578,10 @@
 
 		.section-item {
 			scroll-snap-align: end;
+		}
+
+		.section-item-start {
+			scroll-snap-align: start;
 		}
 	}
 
