@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import Header from '$components/header/Header.svelte';
 	import LayerVisibilitySwitcher from '$components/pages/map/plugins/LayerVisibilitySwitcher.svelte';
 	import { attribution, MapStyles } from '$lib/config/AppConfig';
-	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
+	import { createHeaderHeightStore, HEADER_HEIGHT_CONTEXT_KEY } from '$stores';
 	import MaplibreGeocoder, {
 		type MaplibreGeocoderApiConfig,
 		type MaplibreGeocoderFeatureResults
@@ -21,7 +22,7 @@
 		Tabs,
 		type BreadcrumbPage
 	} from '@undp-data/svelte-undp-components';
-	import { Button } from '@undp-data/svelte-undp-design';
+	import { Button, Footer } from '@undp-data/svelte-undp-design';
 	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import dayjs from 'dayjs';
 	import maplibregl, {
@@ -41,13 +42,14 @@
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { Protocol } from 'pmtiles';
-	import { getContext, onMount } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 	import Carousel from 'svelte-carousel';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 
-	const headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
+	const headerHeightStore = createHeaderHeightStore();
+	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
 	let windowHeight = 0;
 	let windowWidth = 0;
 	$: mapHeight = windowHeight - $headerHeightStore;
@@ -63,6 +65,7 @@
 	let mapContainer: HTMLDivElement;
 	let map: Map;
 	let styleSwitcher: MaplibreStyleSwitcherControl;
+	let scrollSnapParent: HTMLDivElement;
 
 	let geocoderData: MaplibreGeocoderFeatureResults;
 
@@ -360,20 +363,27 @@
 	}
 
 	const handleExploreClicked = () => {
-		scrollTo('zanzibar-map');
+		scrollTo('zanzibar-map', scrollSnapParent);
 		if (map) {
 			map.flyTo({ center: data.center, zoom: data.zoom });
 		}
 	};
 
-	const scrollTo = (hash: string) => {
+	const scrollTo = (hash: string, parentElement?: HTMLElement) => {
 		if (browser) {
 			const anchor = document.getElementById(hash);
 			if (anchor) {
-				window.scrollTo({
-					top: anchor.offsetTop - 110,
-					behavior: 'smooth'
-				});
+				if (parentElement) {
+					parentElement.scrollTo({
+						top: anchor.offsetTop,
+						behavior: 'smooth'
+					});
+				} else {
+					window.scrollTo({
+						top: anchor.offsetTop - 110,
+						behavior: 'smooth'
+					});
+				}
 			}
 		}
 	};
@@ -381,61 +391,94 @@
 
 <svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
 
-<div class="hero background" style="height: {mapHeight}px;">
-	<div class="breadcrumbs-overlay">
-		<Breadcrumbs pages={breadcrumbs} />
-	</div>
-	<div class="title-overlay has-text-white">
-		<h1 class="title is-1 has-text-white">Welcome to Zanzibar</h1>
-		<p class="is-size-3 pb-4">
-			Explore the beauty of Zanzibar and experience its rich culture and heritage.
-		</p>
-		<div class="explore-button">
-			<Button title="Explore Zanzibar" on:clicked={handleExploreClicked} isArrow={true} />
+<Header />
+
+<div
+	class="scroll-snap-parent"
+	style="height: {mapHeight}px; margin-top: {$headerHeightStore}px"
+	bind:this={scrollSnapParent}
+>
+	<div class="hero background section-item" style="height: {mapHeight}px;">
+		<div class="breadcrumbs-overlay">
+			<Breadcrumbs pages={breadcrumbs} />
+		</div>
+		<div class="title-overlay has-text-white">
+			<h1 class="title is-1 has-text-white">Welcome to Zanzibar</h1>
+			<p class="is-size-3 pb-4">
+				Explore the beauty of Zanzibar and experience its rich culture and heritage.
+			</p>
+			<div class="explore-button">
+				<Button title="Explore Zanzibar" on:clicked={handleExploreClicked} isArrow={true} />
+			</div>
+		</div>
+
+		<div class="scroll-down-arrow">
+			<!-- svelte-ignore a11y-missing-attribute -->
+			<a
+				role="button"
+				tabindex="0"
+				on:click={handleExploreClicked}
+				on:keydown={handleEnterKey}
+				data-sveltekit-preload-data="off"
+				data-sveltekit-preload-code="off"
+			>
+				<span class="icon has-text-white"><i class="fa-solid fa-angle-down fa-4x"></i></span>
+			</a>
 		</div>
 	</div>
 
-	<div class="scroll-down-arrow">
-		<!-- svelte-ignore a11y-missing-attribute -->
-		<a
-			role="button"
-			tabindex="0"
-			on:click={handleExploreClicked}
-			on:keydown={handleEnterKey}
-			data-sveltekit-preload-data="off"
-			data-sveltekit-preload-code="off"
-		>
-			<span class="icon has-text-white"><i class="fa-solid fa-angle-down fa-4x"></i></span>
-		</a>
+	<div
+		bind:this={mapContainer}
+		id="zanzibar-map"
+		class="map section-item"
+		style="height: {mapHeight}px;"
+	>
+		{#if map && !isMobile}
+			<LayerVisibilitySwitcher
+				bind:map
+				position="bottom-right"
+				target={OAM_LAYERID}
+				faIcon="fas fa-plane"
+			/>
+			<MaplibreLegendControl
+				bind:map
+				bind:styleId={data.style.id}
+				position="bottom-left"
+				showInteractive={false}
+				showInvisibleLayers={false}
+			/>
+		{/if}
+
+		<div class="scroll-down-arrow">
+			<!-- svelte-ignore a11y-missing-attribute -->
+			<a
+				role="button"
+				tabindex="0"
+				on:click={() => {
+					scrollTo('crowd-mapping', scrollSnapParent);
+				}}
+				on:keydown={handleEnterKey}
+				data-sveltekit-preload-data="off"
+				data-sveltekit-preload-code="off"
+			>
+				<span class="icon has-text-white"><i class="fa-solid fa-angle-down fa-4x"></i></span>
+			</a>
+		</div>
 	</div>
-</div>
 
-<div bind:this={mapContainer} id="zanzibar-map" class="map" style="height: {mapHeight}px;">
-	{#if map && !isMobile}
-		<LayerVisibilitySwitcher
-			bind:map
-			position="bottom-right"
-			target={OAM_LAYERID}
-			faIcon="fas fa-plane"
-		/>
-		<MaplibreLegendControl
-			bind:map
-			bind:styleId={data.style.id}
-			position="bottom-left"
-			showInteractive={false}
-			showInvisibleLayers={false}
-		/>
-	{/if}
-</div>
+	<section id="crowd-mapping" class="crowd-mapping section-item">
+		<HeroLink title="Crowd Mapping for tourism" linkName="Read more" href={data.blogUrl}>
+			The UNDP Accelerator Lab collaborated with OpenMap Development Tanzania and the State
+			University of Zanzibar's youth mappers chapter to map unpopular tourist attractions with the
+			goal of assessing the existing situation through crowd mapping and mobile surveys prior to
+			creating this web map.
+		</HeroLink>
+	</section>
 
-<section class="crowd-mapping">
-	<HeroLink title="Crowd Mapping for tourism" linkName="Read more" href={data.blogUrl}>
-		The UNDP Accelerator Lab collaborated with OpenMap Development Tanzania and the State University
-		of Zanzibar's youth mappers chapter to map unpopular tourist attractions with the goal of
-		assessing the existing situation through crowd mapping and mobile surveys prior to creating this
-		web map.
-	</HeroLink>
-</section>
+	<section id="footer-section" class="crowd-mapping section-item">
+		<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" bind:footerItems={data.footerLinks} />
+	</section>
+</div>
 
 <ModalTemplate bind:title={dialogTitle} bind:show={showDialog}>
 	<div slot="content" class="dialog-contents">
@@ -499,6 +542,15 @@
 </ModalTemplate>
 
 <style lang="scss">
+	.scroll-snap-parent {
+		overflow: auto;
+		scroll-snap-type: y mandatory;
+
+		.section-item {
+			scroll-snap-align: start;
+		}
+	}
+
 	.hero {
 		&.background {
 			position: relative;
@@ -535,57 +587,6 @@
 					width: 300px;
 				}
 			}
-
-			.scroll-down-arrow {
-				position: absolute;
-				bottom: 40px;
-				left: 50%;
-				transform: translateX(-50%);
-				cursor: pointer;
-
-				a {
-					padding-top: 70px;
-
-					span {
-						position: absolute;
-						bottom: 15px;
-						left: 50%;
-						width: 24px;
-						height: 24px;
-						margin-left: -12px;
-						-webkit-animation: sdb05 1.5s infinite;
-						animation: sdb05 1.5s infinite;
-						box-sizing: border-box;
-
-						@-webkit-keyframes sdb05 {
-							0% {
-								-webkit-transform: translate(0, 0);
-								opacity: 0;
-							}
-							50% {
-								opacity: 1;
-							}
-							100% {
-								-webkit-transform: translate(0, 20px);
-								opacity: 0;
-							}
-						}
-						@keyframes sdb05 {
-							0% {
-								transform: translate(0, 0);
-								opacity: 0;
-							}
-							50% {
-								opacity: 1;
-							}
-							100% {
-								transform: translate(0, 20px);
-								opacity: 0;
-							}
-						}
-					}
-				}
-			}
 		}
 	}
 
@@ -608,6 +609,58 @@
 	.crowd-mapping {
 		:global(.hero) {
 			margin-top: 0 !important;
+		}
+	}
+
+	.scroll-down-arrow {
+		position: absolute;
+		bottom: 40px;
+		left: 50%;
+		transform: translateX(-50%);
+		cursor: pointer;
+		z-index: 10;
+
+		a {
+			padding-top: 70px;
+
+			span {
+				position: absolute;
+				bottom: 15px;
+				left: 50%;
+				width: 24px;
+				height: 24px;
+				margin-left: -12px;
+				-webkit-animation: sdb05 1.5s infinite;
+				animation: sdb05 1.5s infinite;
+				box-sizing: border-box;
+
+				@-webkit-keyframes sdb05 {
+					0% {
+						-webkit-transform: translate(0, 0);
+						opacity: 0;
+					}
+					50% {
+						opacity: 1;
+					}
+					100% {
+						-webkit-transform: translate(0, 20px);
+						opacity: 0;
+					}
+				}
+				@keyframes sdb05 {
+					0% {
+						transform: translate(0, 0);
+						opacity: 0;
+					}
+					50% {
+						opacity: 1;
+					}
+					100% {
+						transform: translate(0, 20px);
+						opacity: 0;
+					}
+				}
+			}
 		}
 	}
 </style>
