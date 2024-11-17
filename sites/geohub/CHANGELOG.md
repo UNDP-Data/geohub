@@ -1,5 +1,11 @@
 # geohub
 
+## 1.21.6
+
+### Patch Changes
+
+- 7540f34: fix: fixed bug of style endpoint. only update saved style of sprite, glyphs, sources and layers if any differences are present instead of copying entire base style.
+
 ## 1.21.5
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
 	"name": "geohub",
-	"version": "1.21.5",
+	"version": "1.21.6",
 	"description": "GeoHub is a geospatial visualization data portal built by UNDP using sveltekit",
 	"scripts": {
 		"dev": "pnpm prebuild && vite dev",
@@ -103,7 +103,7 @@
 		"jszip": "^3.10.1",
 		"lodash-es": "^4.17.21",
 		"maplibre-gl": "^4.7.1",
-		"marked": "^14.1.2",
+		"marked": "^15.0.0",
 		"mathjs": "^13.1.1",
 		"millify": "^6.1.0",
 		"pako": "^2.1.0",

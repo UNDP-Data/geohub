@@ -166,7 +166,8 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 		}
 
 		// update sprite and glyphs
-		baseStyle.sprite = resolveSpriteUrl(baseStyle.sprite as SpriteSpecification, url.origin);
+		style.style.sprite = resolveSpriteUrl(baseStyle.sprite as SpriteSpecification, url.origin);
+		style.style.glyphs = baseStyle.glyphs;
 
 		const geohubLayerIds = style.layers?.map((l) => l.id);
 		const layersExludesGeoHub = style.style.layers.filter((l) => !geohubLayerIds?.includes(l.id));
@@ -197,7 +198,8 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 					baseStyle.layers.push(layer);
 				}
 			}
-			style.style = JSON.parse(JSON.stringify(baseStyle));
+			style.style.sources = JSON.parse(JSON.stringify(baseStyle.sources));
+			style.style.layers = JSON.parse(JSON.stringify(baseStyle.layers));
 		}
 	}
 
