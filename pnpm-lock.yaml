@@ -176,8 +176,8 @@ importers:
         specifier: ^4.7.1
         version: 4.7.1
       marked:
-        specifier: ^14.1.2
-        version: 14.1.4
+        specifier: ^15.0.0
+        version: 15.0.0
       scrollama:
         specifier: ^3.2.0
         version: 3.2.0
@@ -506,8 +506,8 @@ importers:
         specifier: ^10.1.6
         version: 10.1.6
       marked:
-        specifier: ^14.1.2
-        version: 14.1.4
+        specifier: ^15.0.0
+        version: 15.0.0
       svelte-carousel:
         specifier: ^1.0.25
         version: 1.0.25
@@ -878,8 +878,8 @@ importers:
         specifier: ^4.7.1
         version: 4.7.1
       marked:
-        specifier: ^14.1.2
-        version: 14.1.4
+        specifier: ^15.0.0
+        version: 15.0.0
       mathjs:
         specifier: ^13.1.1
         version: 13.2.1
@@ -4601,8 +4601,8 @@ packages:
   markdown-table@3.0.4:
     resolution: {integrity: sha512-wiYz4+JrLyb/DqW2hkFJxP7Vd7JuTDm77fvbM8VfEQdmSMqcImWeeRbHwZjBjIFki/VaMK2BhFi7oUUZeM5bqw==}
 
-  marked@14.1.4:
-    resolution: {integrity: sha512-vkVZ8ONmUdPnjCKc5uTRvmkRbx4EAi2OkTOXmfTDhZz3OFqMNBM1oTTWwTr4HY4uAEojhzPf+Fy8F1DWa3Sndg==}
+  marked@15.0.0:
+    resolution: {integrity: sha512-0mouKmBROJv/WSHJBPZZyYofUgawMChnD5je/g+aOBXsHDjb/IsnTQj7mnhQZu+qPJmRQ0ecX3mLGEUm3BgwYA==}
     engines: {node: '>= 18'}
     hasBin: true
 
@@ -9967,7 +9967,7 @@ snapshots:
 
   markdown-table@3.0.4: {}
 
-  marked@14.1.4: {}
+  marked@15.0.0: {}
 
   marked@4.3.0: {}
 
