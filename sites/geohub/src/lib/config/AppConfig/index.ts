@@ -32,7 +32,6 @@ export * from './StorymapSortingColumns';
 export * from './SupportedTableFormats';
 export * from './TabNames';
 export * from './TokenExpiryPeriodMsec';
-export * from './TourOptions';
 export * from './AcceptedOrganisationDomains';
 export * from './UniqueValueThreshold';
 export * from './VectorApplyToTypes';
