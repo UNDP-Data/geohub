@@ -120,6 +120,7 @@
 	let tourOptions: IntroJsOptions = {
 		showAsDefault: true,
 		dontShowAgain: true,
+		dontShowAgainCookie: 'geohub-map-introjs-dontShowAgain',
 		steps: [
 			{
 				title: 'Welcome to UNDP GeoHub!',
