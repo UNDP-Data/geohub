@@ -269,7 +269,7 @@
 </script>
 
 <div
-	class="contents"
+	class="maplibre-ctrl-legend contents"
 	bind:this={contentDiv}
 	hidden={numberOfVisibleLayers === 0 && !isLoading}
 	style="width: {width}px;"
