@@ -163,7 +163,7 @@
             <br>
             <b>Organisations</b>: If you click a logo of institution like UNDP, UNICEF, etc., you can find datasets come from that organisation.
             `,
-				element: '.data-view-container',
+				element: '.tab-data',
 				position: 'right',
 				step: 3,
 				scrollTo: 'off'
@@ -171,7 +171,7 @@
 			{
 				title: 'Search datasets by keywords',
 				intro: `You can search datasets by typing keywords in this searching window. The results will be shown at the below of searching window. Open a accordion of a dataset to find more detailed metadata, then add the dataset to the map for further analysis`,
-				element: '.search-field',
+				element: '.tab-data',
 				position: 'bottom',
 				step: 1,
 				scrollTo: 'off'

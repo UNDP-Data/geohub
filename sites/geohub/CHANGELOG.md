@@ -1,5 +1,17 @@
 # geohub
 
+## 1.21.9
+
+### Patch Changes
+
+- d6aea7c: fix: fixed bug of tour of map editor when layers tab is active.
+
+## 1.21.8
+
+### Patch Changes
+
+- 96ad5ae: fix: forgot to pass donwShowAgainCookie value to introjs instance.
+
 ## 1.21.7
 
 ### Patch Changes
