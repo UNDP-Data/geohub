@@ -7,7 +7,7 @@
 	export let map: Map;
 	export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' = 'top-right';
 	export let target = 'hillshade';
-	export let faIcon = 'fa-solid fa-mountain';
+	export let icon = 'fa-solid fa-mountain';
 
 	const isLayerVisible = () => {
 		if (!map.getLayer(target)) return false;
@@ -111,10 +111,20 @@
 <button
 	class="maplibregl-ctrl-{target}-visibility maplibre-ctrl-icon is-flex is-align-items-center"
 	bind:this={visiblilityButton}
-	use:tippyTooltip={{ content: `${!isVisible ? 'Show hillshade' : 'Hide hillshade'}` }}
+	use:tippyTooltip={{ content: `${!isVisible ? `Show ${target}` : `Hide ${target}`}` }}
 	disabled={isLoading}
 >
-	<i class="{faIcon} fa-xl align-center {isVisible ? 'has-text-success' : ''}" />
+	{#if icon.startsWith('fas')}
+		<i class="{icon} fa-xl align-center {isVisible ? 'has-text-success' : ''}" />
+	{:else}
+		<span
+			class="material-symbols-outlined material-icon align-center {isVisible
+				? 'has-text-success'
+				: ''}"
+		>
+			{icon}
+		</span>
+	{/if}
 </button>
 
 <style lang="scss">
@@ -127,5 +137,9 @@
 	.align-center {
 		width: max-content;
 		margin: auto;
+	}
+
+	.material-icon {
+		font-size: 28px;
 	}
 </style>

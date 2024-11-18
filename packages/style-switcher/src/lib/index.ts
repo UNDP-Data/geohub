@@ -199,11 +199,23 @@ export default class MaplibreStyleSwitcherControl implements IControl {
 					nextStyle.layers.splice(layerIndex, 1);
 				}
 				if (layer.type === 'raster') {
-					const firstSymbolIndex = nextStyle.layers.findIndex((l) => l.id === firstSymbolId);
-					if (firstSymbolIndex !== -1) {
-						nextStyle.layers.splice(firstSymbolIndex, 0, layer);
+					const beforeLayerIndex = layerIndex - 1;
+					const beforeLayer = nextStyle.layers[beforeLayerIndex];
+					if (beforeLayer && beforeLayer.type !== 'background') {
+						nextStyle.layers.splice(beforeLayerIndex + 1, 0, layer);
 					} else {
-						nextStyle.layers.push(layer);
+						const afterLayerIndex = layerIndex + 1;
+						const afterLayer = nextStyle.layers[afterLayerIndex];
+						if (afterLayer && afterLayer.type !== 'background') {
+							nextStyle.layers.splice(afterLayerIndex - 1, 0, layer);
+						} else {
+							const firstSymbolIndex = nextStyle.layers.findIndex((l) => l.id === firstSymbolId);
+							if (firstSymbolIndex !== -1) {
+								nextStyle.layers.splice(firstSymbolIndex, 0, layer);
+							} else {
+								nextStyle.layers.push(layer);
+							}
+						}
 					}
 				} else {
 					nextStyle.layers.push(layer);

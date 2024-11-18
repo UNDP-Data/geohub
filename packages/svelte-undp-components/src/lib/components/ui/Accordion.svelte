@@ -11,6 +11,7 @@
 	export let isSelected = false;
 	export let showHoveredColor = false;
 	export let isUppercase = true;
+	export let padding = 'px-4';
 
 	const tippyTooltip = initTooltipTippy();
 
@@ -25,7 +26,7 @@
 </script>
 
 <div
-	class="accordion px-4 {`${
+	class="accordion {padding} {`${
 		showHoveredColor
 			? `${
 					isSelected

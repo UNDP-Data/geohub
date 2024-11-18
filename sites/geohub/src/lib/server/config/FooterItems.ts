@@ -71,6 +71,10 @@ export const getFooterItems = (types: FooterItemType[], is_superuser = false) =>
 					{
 						title: 'CEEI Dashboard',
 						url: '/dashboards/ceei'
+					},
+					{
+						title: 'Zanzibar Tourism',
+						url: '/dashboards/zanzibar'
 					}
 				];
 				break;

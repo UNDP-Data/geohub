@@ -2,12 +2,12 @@
 	import type { ControlPosition, IControl, LngLatBoundsLike, Map } from 'maplibre-gl';
 	import { onDestroy, onMount } from 'svelte';
 
-	export class TourControl implements IControl {
+	export class MaplibreLocationSwitchControl implements IControl {
 		private map?: Map;
 		private controlContainer?: HTMLElement;
-		private contentDiv: HTMLButtonElement;
+		private contentDiv: HTMLDivElement;
 
-		constructor(contentDiv: HTMLButtonElement) {
+		constructor(contentDiv: HTMLDivElement) {
 			this.contentDiv = contentDiv;
 		}
 
@@ -48,38 +48,17 @@
 </script>
 
 <script lang="ts">
-	import type { IntroJsOptions } from '$lib/types';
-	import introJs from 'intro.js';
-	import 'intro.js/introjs.css';
-
 	export let map: Map;
 	export let position: ControlPosition = 'top-right';
-	export let options: IntroJsOptions;
+	export let places: LocationSwitchPlaces[] = [];
 
-	let control: TourControl | undefined;
-	let contentDiv: HTMLButtonElement;
-
-	export const start = (init = true) => {
-		introJs()
-			.setOptions({
-				steps: options.steps,
-				dontShowAgain: init === true ? (options.dontShowAgain ?? false) : false,
-				dontShowAgainCookie: options.dontShowAgainCookie,
-				dontShowAgainCookieDays: options.dontShowAgainCookieDays,
-				scrollTo: options.scrollTo,
-				scrollToElement: options.scrollToElement
-			})
-			.start();
-	};
+	let control: MaplibreLocationSwitchControl | undefined;
+	let contentDiv: HTMLDivElement;
 
 	onMount(() => {
 		if (!map) return;
-		control = new TourControl(contentDiv);
+		control = new MaplibreLocationSwitchControl(contentDiv);
 		map.addControl(control, position);
-
-		if (options.showAsDefault === true) {
-			start(true);
-		}
 	});
 
 	onDestroy(() => {
@@ -89,14 +68,32 @@
 		}
 	});
 
-	const handleStart = () => {
-		start(false);
+	const zoomTo = (bounds: LngLatBoundsLike) => {
+		if (map) {
+			map.fitBounds(bounds);
+		}
 	};
 </script>
 
-<button class="tour-control-button" bind:this={contentDiv} on:click={handleStart}>
-	<span class="material-symbols-outlined"> help </span>
-</button>
+<div class="location-switch-control" bind:this={contentDiv}>
+	{#each places as place}
+		<button
+			class="button is-light is-fullwidth p-2"
+			on:click={() => {
+				zoomTo(place.bounds);
+			}}
+		>
+			<span>{place.name}</span>
+		</button>
+	{/each}
+</div>
 
 <style lang="scss">
+	.location-switch-control {
+		background-color: white;
+		z-index: 10;
+		width: fit-content;
+
+		font-family: 'ProximaNova', sans-serif;
+	}
 </style>
