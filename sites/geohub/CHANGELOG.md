@@ -1,5 +1,12 @@
 # geohub
 
+## 1.21.7
+
+### Patch Changes
+
+- db4dd2d: fix: add intro.js option to change cookie key.
+- 452fd49: fix: replaced tour plugin from tourgudejs to intro.js since it has don't show again option.
+
 ## 1.21.6
 
 ### Patch Changes
