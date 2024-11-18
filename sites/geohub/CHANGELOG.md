@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.0
+
+### Minor Changes
+
+- 1ee0033: feat: added new dashboard for Zanzibar tourism attractions.
+
 ## 1.21.9
 
 ### Patch Changes

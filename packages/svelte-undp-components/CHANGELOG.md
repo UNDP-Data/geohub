@@ -1,5 +1,12 @@
 # @undp-data/svelte-undp-components
 
+## 1.5.7
+
+### Patch Changes
+
+- 1ee0033: fix: add property of padding in accordion component.
+- 1ee0033: fix: adjust padding of ModalTemplate for responsive
+
 ## 1.5.6
 
 ### Patch Changes
