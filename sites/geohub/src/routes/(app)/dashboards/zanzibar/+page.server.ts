@@ -17,8 +17,8 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 	const center: LngLatLike = [39.58, -5.6472];
 	const zoom = 6;
 	const maxExtent: LngLatBoundsLike = [
-		[38.8971, -6.893],
-		[40.0507, -4.5757]
+		[32.88723, -8.222704],
+		[45.631371, -2.537355]
 	];
 	const places: LocationSwitchPlaces[] = [
 		{
