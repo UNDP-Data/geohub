@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 2.0.8
+
+### Patch Changes
+
+- 1ee0033: fix: fixed bug of raster layer position when style is switched.
+
 ## 2.0.7
 
 ### Patch Changes

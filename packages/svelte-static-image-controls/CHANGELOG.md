@@ -1,5 +1,13 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 2.0.31
+
+### Patch Changes
+
+- Updated dependencies [1ee0033]
+- Updated dependencies [1ee0033]
+  - @undp-data/svelte-undp-components@1.5.7
+
 ## 2.0.30
 
 ### Patch Changes

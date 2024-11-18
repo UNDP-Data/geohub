@@ -1,5 +1,14 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.4.1
+
+### Patch Changes
+
+- 1ee0033: fix: add a class name for LegendControl
+- Updated dependencies [1ee0033]
+- Updated dependencies [1ee0033]
+  - @undp-data/svelte-undp-components@1.5.7
+
 ## 0.4.0
 
 ### Minor Changes
