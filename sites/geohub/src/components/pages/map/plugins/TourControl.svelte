@@ -59,20 +59,26 @@
 	let control: TourControl | undefined;
 	let contentDiv: HTMLButtonElement;
 
+	export const start = (init = true) => {
+		introJs()
+			.setOptions({
+				steps: options.steps,
+				dontShowAgain: init === true ? (options.dontShowAgain ?? false) : false,
+				dontShowAgainCookie: options.dontShowAgainCookie,
+				dontShowAgainCookieDays: options.dontShowAgainCookieDays,
+				scrollTo: options.scrollTo,
+				scrollToElement: options.scrollToElement
+			})
+			.start();
+	};
+
 	onMount(() => {
 		if (!map) return;
 		control = new TourControl(contentDiv);
 		map.addControl(control, position);
 
 		if (options.showAsDefault === true) {
-			introJs()
-				.setOptions({
-					steps: options.steps,
-					dontShowAgain: options.dontShowAgain ?? false,
-					dontShowAgainCookie: options.dontShowAgainCookie,
-					dontShowAgainCookieDays: options.dontShowAgainCookieDays
-				})
-				.start();
+			start(true);
 		}
 	});
 
@@ -84,13 +90,7 @@
 	});
 
 	const handleStart = () => {
-		introJs()
-			.setOptions({
-				steps: options.steps,
-				dontShowAgainCookie: options.dontShowAgainCookie,
-				dontShowAgainCookieDays: options.dontShowAgainCookieDays
-			})
-			.start();
+		start(false);
 	};
 </script>
 

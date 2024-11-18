@@ -1,4 +1,4 @@
-import type { IntroStep } from 'intro.js/src/core/steps';
+import type { IntroStep, ScrollTo } from 'intro.js/src/core/steps';
 
 export interface IntroJsOptions {
 	/**
@@ -6,6 +6,8 @@ export interface IntroJsOptions {
 	 * See https://introjs.com/docs/tour/examples/json-config
 	 */
 	steps: IntroStep[];
+	scrollTo?: ScrollTo | undefined;
+	scrollToElement?: boolean | undefined;
 	dontShowAgain?: boolean;
 	/**
 	 * "Don't show again" cookie name

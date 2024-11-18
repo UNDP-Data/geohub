@@ -5,7 +5,9 @@
 	import Header from '$components/header/Header.svelte';
 	import LayerVisibilitySwitcher from '$components/pages/map/plugins/LayerVisibilitySwitcher.svelte';
 	import MaplibreLocationSwitchControl from '$components/pages/map/plugins/MaplibreLocationSwitchControl.svelte';
+	import TourControl from '$components/pages/map/plugins/TourControl.svelte';
 	import { attribution, MapStyles } from '$lib/config/AppConfig';
+	import type { IntroJsOptions } from '$lib/types';
 	import { createHeaderHeightStore, HEADER_HEIGHT_CONTEXT_KEY } from '$stores';
 	import MaplibreGeocoder, {
 		type MaplibreGeocoderApiConfig,
@@ -82,6 +84,8 @@
 		exaggeration: 1
 	};
 
+	let tourOptions: IntroJsOptions | undefined = undefined;
+
 	const getTabs = () => {
 		const tabs = clickedFeatures.map((f) => {
 			return { label: f.properties.name as string, id: `${f.id}` };
@@ -142,6 +146,39 @@
 				});
 			}
 		}
+
+		tourOptions = {
+			showAsDefault: false,
+			scrollToElement: false,
+			dontShowAgain: true,
+			dontShowAgainCookie: 'geohub-map-introjs-dontShowAgain',
+			steps: [
+				{
+					title: 'Welcome to Zanzibar!',
+					intro: `This tutorial is going to take you around the main features of Zanzibar tourism dashboard to get you on board. <br> Let's begin!`,
+					position: 'floating',
+					step: 1,
+					scrollTo: 'off'
+				},
+				{
+					title: 'Searching tourism sites',
+					intro: 'Type any keywords here to search siteseeing spots in islands!',
+					element: scrollSnapParent.querySelector('.maplibregl-ctrl-geocoder') as HTMLElement,
+					position: 'bottom',
+					step: 2,
+					scrollTo: 'off'
+				},
+				{
+					title: 'Tour completed!',
+					intro:
+						'You have completed map editor tour. Now you can start exploring GeoHub to create a beautiful map. You can always come back to the tour by clicking this button',
+					element: scrollSnapParent.querySelector('.tour-control-button') as HTMLElement,
+					position: 'left',
+					step: 3,
+					scrollTo: 'off'
+				}
+			]
+		};
 	};
 
 	const getFeatureData = (feature: MapGeoJSONFeature) => {
@@ -463,6 +500,10 @@
 				target={OAM_LAYERID}
 				faIcon="fas fa-plane"
 			/>
+
+			{#if tourOptions}
+				<TourControl bind:map position="bottom-right" bind:options={tourOptions} />
+			{/if}
 			{#if !isMobile}
 				<MaplibreLegendControl
 					bind:map
