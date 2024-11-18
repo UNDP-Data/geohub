@@ -461,7 +461,7 @@
 				bind:map
 				position="bottom-right"
 				target={OAM_LAYERID}
-				faIcon="fas fa-plane"
+				icon="satellite"
 			/>
 			{#if !isMobile}
 				<MaplibreLegendControl
