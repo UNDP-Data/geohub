@@ -1,5 +1,11 @@
 # geohub
 
+## 1.21.8
+
+### Patch Changes
+
+- 96ad5ae: fix: forgot to pass donwShowAgainCookie value to introjs instance.
+
 ## 1.21.7
 
 ### Patch Changes
