@@ -4,9 +4,9 @@
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
 	import StyleShareControl from '$components/pages/map/plugins/StyleShareControl.svelte';
 	import SplitControl from '$components/util/SplitControl.svelte';
-	import { AdminControlOptions, MapStyles, TourOptions, attribution } from '$lib/config/AppConfig';
+	import { AdminControlOptions, MapStyles, attribution } from '$lib/config/AppConfig';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
-	import type { Layer, VectorLayerSpecification } from '$lib/types';
+	import type { IntroJsOptions, Layer, VectorLayerSpecification } from '$lib/types';
 	import {
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		HEADER_HEIGHT_CONTEXT_KEY,
@@ -34,7 +34,6 @@
 	} from '@undp-data/svelte-geohub-static-image-controls';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
 	import { SkyControl } from '@watergis/maplibre-gl-sky';
-	import type { TourGuideOptions } from '@watergis/svelte-maplibre-tour';
 	import {
 		AttributionControl,
 		GeolocateControl,
@@ -50,6 +49,7 @@
 	import { getContext, onMount, setContext } from 'svelte';
 	import LayerEdit from './layers/LayerEdit.svelte';
 	import VectorTable from './layers/vector/VectorTable.svelte';
+	import TourControl from './plugins/TourControl.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const pageDataLoadingStore: PageDataLoadingStore = getContext(PAGE_DATA_LOADING_CONTEXT_KEY);
@@ -66,9 +66,6 @@
 	$: mapWidth = windowWidth - ($sidebarMenuShownStore === true ? $sidebarWidthStore : 0);
 	$: splitHeight = windowHeight - $headerHeightStore;
 	$: tableHeight = windowHeight - $headerHeightStore - mapHeight;
-
-	let tourOptions: TourGuideOptions;
-	let tourLocalStorageKey = `geohub-map-${$page.url.host}`;
 
 	let container: HTMLDivElement;
 	let styleSwitcher: MaplibreStyleSwitcherControl;
@@ -118,6 +115,169 @@
 		extension: 'png',
 		pageSize: 'A4',
 		orientation: 'landscape'
+	};
+
+	let tourOptions: IntroJsOptions = {
+		showAsDefault: true,
+		dontShowAgain: true,
+		dontShowAgainCookie: 'geohub-map-introjs-dontShowAgain',
+		steps: [
+			{
+				title: 'Welcome to UNDP GeoHub!',
+				intro: `This tutorial is going to take you around the main features of GeoHub map editor to get you on board. <br> Let's begin!`,
+				position: 'floating',
+				step: 1,
+				scrollTo: 'off'
+			},
+			{
+				title: 'Sign in',
+				intro: `If you have an account in UNDP, please sign in to your account from here. So, you will have full functionalities on GeoHub!
+            <br>Please continue next step if you are not UNDP staff.`,
+				element: '.signin-button',
+				position: 'bottom',
+				step: 2,
+				scrollTo: 'off'
+			},
+			{
+				title: 'Explore datasets',
+				intro: `You can explore datasets from <b>Data</b> tab. Let's start looking how you can search the datasets!`,
+				element: '.tab-data',
+				position: 'bottom',
+				step: 3,
+				scrollTo: 'off'
+			},
+			{
+				title: 'Explore by shortcuts',
+				intro: `
+            You can find datasets from the shortcuts' menu.
+            <br><br>
+            <b>SDG</b>: You can search datasets by Sustainable Development Goal (SDG)
+            <br>
+            <b>Continent</b>: You can search datasets from continent > selected country
+            <br>
+            Note. Currently, most of our datasets are global data, that means you may be able to find less data if you explore by a country.
+            <br>
+            <b>Microsoft Planetary</b>: Satellite imagery powered by Microsoft Planetary Computer is also available from this shortcut menu.
+            <br>
+            <b>Dynamic vector data</b>: The datasets under this category enables you to dynamically change the parameters to simulate the datasets for advanced analysis.
+            <br>
+            <b>Organisations</b>: If you click a logo of institution like UNDP, UNICEF, etc., you can find datasets come from that organisation.
+            `,
+				element: '.data-view-container',
+				position: 'right',
+				step: 3,
+				scrollTo: 'off'
+			},
+			{
+				title: 'Search datasets by keywords',
+				intro: `You can search datasets by typing keywords in this searching window. The results will be shown at the below of searching window. Open a accordion of a dataset to find more detailed metadata, then add the dataset to the map for further analysis`,
+				element: '.search-field',
+				position: 'bottom',
+				step: 1,
+				scrollTo: 'off'
+			},
+			{
+				title: 'Switch to Layers tab',
+				intro: `
+            Once you add a dataset to the map, you can switch it to <b>Layers</b> tab to see other menu to style and analyse the dataset.
+            <br>
+            This layer panel provides you full functionality of visualing and analysing the dataset. If you want to edit styling of a layer, click a palette icon to open editing panel at the opposite side of sidebar.
+            `,
+				element: '.tab-layers',
+				position: 'bottom',
+				step: 4,
+				scrollTo: 'off'
+			},
+			{
+				title: 'Map operations',
+				intro: `
+            From this step, we are going to show you main operations on the map.
+            `,
+				element: '.map',
+				position: 'floating',
+				step: 5,
+				scrollTo: 'off'
+			},
+			{
+				title: 'Switching basemap',
+				intro: `
+            You can toggle this button to switch basemap either OpenStreetMap or Bing Aerial
+            `,
+				element: '.maplibregl-style-switcher-control',
+				position: 'top',
+				step: 6,
+				scrollTo: 'off'
+			},
+			{
+				title: 'Show/hide sidebar',
+				intro: `
+            You can show or hide sidebar container by toggling this button.
+            `,
+				element: '.toggle-button',
+				position: 'right',
+				step: 7,
+				scrollTo: 'off'
+			},
+			{
+				title: 'Querying the information',
+				intro: `
+            If this tool is enabled, you can query the information by clicking any position on the map. A popup will be shown for further detailed information.
+            `,
+				element: '.maplibregl-ctrl-query',
+				position: 'left',
+				step: 8,
+				scrollTo: 'off'
+			},
+			{
+				title: 'Save your work to share with your colleagues',
+				intro: `
+            Once you sign in to your account, this button will be enabled. You can save your current work to share it with your colleagues.
+            `,
+				element: '.maplibregl-ctrl-styleshare',
+				position: 'left',
+				step: 9,
+				scrollTo: 'off'
+			},
+			{
+				title: 'Exporting map image',
+				intro: `
+            You can export the current map image with your preferences such as paper size, orientation, file format, etc.
+            `,
+				element: '.legend-button',
+				position: 'left',
+				step: 10,
+				scrollTo: 'off'
+			},
+			{
+				title: 'Disable hillshade layer',
+				intro: `
+            As default, a hillshade layer is shown on the basemap. You can also disable hillshade layer if you want.
+            `,
+				element: '.maplibregl-ctrl-hillshade-visibility',
+				position: 'left',
+				step: 11,
+				scrollTo: 'off'
+			},
+			{
+				title: 'Positioning your current location',
+				intro: `
+            Your current location will be visible on the map if you enable this GNSS control.
+            `,
+				element: '.maplibregl-ctrl-geolocate',
+				position: 'left',
+				step: 12,
+				scrollTo: 'off'
+			},
+			{
+				title: 'Tour completed!',
+				intro:
+					'You have completed map editor tour. Now you can start exploring GeoHub to create a beautiful map. You can always come back to the tour by clicking this button',
+				element: '.tour-control-button',
+				position: 'left',
+				step: 13,
+				scrollTo: 'off'
+			}
+		]
 	};
 
 	onMount(() => {
@@ -328,16 +488,6 @@
 		$map.resize();
 		await styleSwitcher.initialise();
 
-		const { MaplibreTourControl } = await import('@watergis/maplibre-gl-tour');
-
-		tourOptions = TourOptions;
-		$map.addControl(
-			new MaplibreTourControl(tourOptions, {
-				localStorageKey: tourLocalStorageKey
-			}),
-			'top-right'
-		);
-
 		layerListStore.subscribe((value) => {
 			const layerList: Layer[] | null = fromLocalStorage(layerListStorageKey, []);
 			const storageValue = value ? value : layerList && layerList.length > 0 ? layerList : null;
@@ -444,14 +594,13 @@
 		hiddenApiTypes={true}
 		position="top-right"
 	/>
+	<TourControl bind:map={$map} position="top-right" bind:options={tourOptions} />
 {/if}
 
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
 	@import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	@import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
-	@import '@sjmc11/tourguidejs/dist/css/tour.min.css';
-	@import '@watergis/maplibre-gl-tour/dist/maplibre-tour-control.css';
 
 	.map {
 		position: absolute;

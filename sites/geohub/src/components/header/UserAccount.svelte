@@ -57,7 +57,7 @@
 <div
 	role="button"
 	tabindex="0"
-	class="download-dropdown dropdown is-right {showdDropdown ? 'is-active' : ''}"
+	class="signin-button download-dropdown dropdown is-right {showdDropdown ? 'is-active' : ''}"
 	on:mouseenter={() => {
 		showdDropdown = true;
 	}}
