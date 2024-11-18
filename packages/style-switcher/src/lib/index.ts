@@ -181,15 +181,6 @@ export default class MaplibreStyleSwitcherControl implements IControl {
 		if (this.activeStyle.style) {
 			const nextStyle: StyleSpecification = JSON.parse(JSON.stringify(this.activeStyle.style));
 
-			// restore additional layers and sources to new style
-			let firstSymbolId: string | undefined = undefined;
-			for (const layer of nextStyle.layers) {
-				if (layer.type === 'symbol') {
-					firstSymbolId = layer.id;
-					break;
-				}
-			}
-
 			Object.keys(currentStyle.sources).forEach((key) => {
 				nextStyle.sources[key] = currentStyle.sources[key];
 			});
@@ -199,9 +190,10 @@ export default class MaplibreStyleSwitcherControl implements IControl {
 					nextStyle.layers.splice(layerIndex, 1);
 				}
 				if (layer.type === 'raster') {
-					const firstSymbolIndex = nextStyle.layers.findIndex((l) => l.id === firstSymbolId);
-					if (firstSymbolIndex !== -1) {
-						nextStyle.layers.splice(firstSymbolIndex, 0, layer);
+					const beforeLayerIndex = layerIndex - 1;
+					const beforeLayerId = nextStyle.layers[beforeLayerIndex]?.id;
+					if (beforeLayerId) {
+						nextStyle.layers.splice(beforeLayerIndex + 1, 0, layer);
 					} else {
 						nextStyle.layers.push(layer);
 					}
