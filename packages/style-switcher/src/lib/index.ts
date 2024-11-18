@@ -221,7 +221,7 @@ export default class MaplibreStyleSwitcherControl implements IControl {
 					nextStyle.layers.push(layer);
 				}
 			});
-			console.log(currentStyle, nextStyle);
+
 			this.map.setStyle(nextStyle);
 		}
 		this.hideActiveStyleOption();

@@ -664,8 +664,8 @@ importers:
         specifier: ^2.0.3
         version: 2.0.3
       '@undp-data/style':
-        specifier: ^2.3.1
-        version: 2.3.1
+        specifier: ^2.3.2
+        version: 2.3.2
       crypto-js:
         specifier: ^4.2.0
         version: 4.2.0
@@ -2875,8 +2875,8 @@ packages:
     peerDependencies:
       svelte: ^3.24.0 || ^4.0.0 || ^5.0.0
 
-  '@undp-data/style@2.3.1':
-    resolution: {integrity: sha512-IgzDIg2fTava2RPgdchezZc78t0/sIP9hK8+UnYoPRvU2i/dfQ6+uMAPeGbGSZsNUWUFB4fD1X+xoRqluppJiQ==}
+  '@undp-data/style@2.3.2':
+    resolution: {integrity: sha512-Yqpp7PV3C5NNQv94adQ8LkEPrld/jDa7SnQipBwF4YBi6qr0ljfJWXD7fkfvV0tGS2CRJ7dqMRt/51R5QOEB1w==}
     engines: {pnpm: ^9.0.0}
 
   '@undp-data/svelte-file-dropzone@2.0.3':
@@ -8128,7 +8128,7 @@ snapshots:
     dependencies:
       svelte: 4.2.19
 
-  '@undp-data/style@2.3.1': {}
+  '@undp-data/style@2.3.2': {}
 
   '@undp-data/svelte-file-dropzone@2.0.3(svelte@4.2.19)':
     dependencies:
