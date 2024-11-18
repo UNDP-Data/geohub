@@ -68,7 +68,9 @@
 			introJs()
 				.setOptions({
 					steps: options.steps,
-					dontShowAgain: options.dontShowAgain ?? false
+					dontShowAgain: options.dontShowAgain ?? false,
+					dontShowAgainCookie: options.dontShowAgainCookie,
+					dontShowAgainCookieDays: options.dontShowAgainCookieDays
 				})
 				.start();
 		}
@@ -84,7 +86,9 @@
 	const handleStart = () => {
 		introJs()
 			.setOptions({
-				steps: options.steps
+				steps: options.steps,
+				dontShowAgainCookie: options.dontShowAgainCookie,
+				dontShowAgainCookieDays: options.dontShowAgainCookieDays
 			})
 			.start();
 	};
