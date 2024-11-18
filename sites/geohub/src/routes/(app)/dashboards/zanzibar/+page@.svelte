@@ -84,6 +84,7 @@
 		exaggeration: 1
 	};
 
+	let tourControlInstance: TourControl | undefined = undefined;
 	let tourOptions: IntroJsOptions | undefined = undefined;
 
 	const getTabs = () => {
@@ -151,7 +152,7 @@
 			showAsDefault: false,
 			scrollToElement: false,
 			dontShowAgain: true,
-			dontShowAgainCookie: 'geohub-map-introjs-dontShowAgain',
+			dontShowAgainCookie: 'geohub-zanzibar-introjs-dontShowAgain',
 			steps: [
 				{
 					title: 'Welcome to Zanzibar!',
@@ -169,16 +170,57 @@
 					scrollTo: 'off'
 				},
 				{
-					title: 'Tour completed!',
-					intro:
-						'You have completed map editor tour. Now you can start exploring GeoHub to create a beautiful map. You can always come back to the tour by clicking this button',
-					element: scrollSnapParent.querySelector('.tour-control-button') as HTMLElement,
-					position: 'left',
+					title: 'Zoom to a location',
+					intro: 'Select a place to zoom in on the map!',
+					element: scrollSnapParent.querySelector('.location-switch-control') as HTMLElement,
+					position: 'bottom',
 					step: 3,
+					scrollTo: 'off'
+				},
+				{
+					title: 'Enable aerial image',
+					intro:
+						'Toggle this button to enable or diable high resolution aerial photos caputered by Zanzibar Mapping Initialitve from OpenAerialMap',
+					element: scrollSnapParent.querySelector(
+						'.maplibregl-ctrl-openaerialmap-visibility'
+					) as HTMLElement,
+					position: 'bottom',
+					step: 4,
+					scrollTo: 'off'
+				},
+				{
+					title: 'Switch to other base maps',
+					intro: 'You can switch to different base map from the default one.',
+					element: scrollSnapParent.querySelector(
+						'.maplibregl-style-switcher-control'
+					) as HTMLElement,
+					position: 'top',
+					step: 5,
 					scrollTo: 'off'
 				}
 			]
 		};
+
+		if (!isMobile) {
+			tourOptions.steps.push({
+				title: 'Map legend',
+				intro: 'Legend for each map layer can be seen here.',
+				element: '.maplibre-ctrl-legend',
+				position: 'top',
+				step: tourOptions.steps.length + 1,
+				scrollTo: 'off'
+			});
+		}
+
+		tourOptions.steps.push({
+			title: 'Tour completed!',
+			intro:
+				'Now you can start exploring Zanzibar to find beautiful spots! You can always come back to the tour by clicking this button',
+			element: '.tour-control-button',
+			position: 'left',
+			step: tourOptions.steps.length + 1,
+			scrollTo: 'off'
+		});
 	};
 
 	const getFeatureData = (feature: MapGeoJSONFeature) => {
@@ -414,6 +456,9 @@
 		if (map) {
 			map.flyTo({ center: data.center, zoom: data.zoom });
 		}
+		if (tourControlInstance) {
+			tourControlInstance.start(true);
+		}
 	};
 
 	const scrollTo = (
@@ -502,7 +547,12 @@
 			/>
 
 			{#if tourOptions}
-				<TourControl bind:map position="bottom-right" bind:options={tourOptions} />
+				<TourControl
+					bind:map
+					position="bottom-right"
+					bind:options={tourOptions}
+					bind:this={tourControlInstance}
+				/>
 			{/if}
 			{#if !isMobile}
 				<MaplibreLegendControl

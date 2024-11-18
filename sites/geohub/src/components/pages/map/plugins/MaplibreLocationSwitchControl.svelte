@@ -75,7 +75,7 @@
 	};
 </script>
 
-<div class="contents" bind:this={contentDiv}>
+<div class="location-switch-control" bind:this={contentDiv}>
 	{#each places as place}
 		<button
 			class="button is-light is-fullwidth p-2"
@@ -89,7 +89,7 @@
 </div>
 
 <style lang="scss">
-	.contents {
+	.location-switch-control {
 		background-color: white;
 		z-index: 10;
 		width: fit-content;
