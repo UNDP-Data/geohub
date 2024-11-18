@@ -11,6 +11,7 @@ export * from './DatasetFeatureCollection';
 export * from './DatasetDeaultLayerStyle';
 export * from './IngestingDataset';
 export * from './IngestingWebsocketMessage';
+export * from './IntroJsOptions';
 export * from './ColorMapRow';
 export * from './Layer';
 export * from './LayerCreationInfo';

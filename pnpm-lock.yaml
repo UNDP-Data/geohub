@@ -706,9 +706,6 @@ importers:
       '@neodrag/svelte':
         specifier: ^2.0.6
         version: 2.0.6
-      '@sjmc11/tourguidejs':
-        specifier: ^0.0.18
-        version: 0.0.18
       '@sveltejs/adapter-node':
         specifier: ^5.2.5
         version: 5.2.9(@sveltejs/kit@2.8.0(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.10(@types/node@22.9.0)(sass@1.80.6)))(svelte@4.2.19)(vite@5.4.10(@types/node@22.9.0)(sass@1.80.6)))
@@ -796,9 +793,6 @@ importers:
       '@watergis/maplibre-gl-sky':
         specifier: ^0.0.8
         version: 0.0.8
-      '@watergis/maplibre-gl-tour':
-        specifier: ^1.0.5
-        version: 1.0.5(svelte@4.2.19)
       '@watergis/svelte-splitter':
         specifier: ^2.0.0
         version: 2.0.0(svelte@4.2.19)
@@ -856,6 +850,9 @@ importers:
       hex-to-css-filter:
         specifier: ^5.4.0
         version: 5.4.0
+      intro.js:
+        specifier: ^7.2.0
+        version: 7.2.0
       joi:
         specifier: ^17.13.3
         version: 17.13.3
@@ -1826,15 +1823,6 @@ packages:
     resolution: {integrity: sha512-CXtq5nR4Su+2I47WPOlWud98Y5Lv8Kyxp2ukhgFx/eW6Blm18VXJO5WuQylPugRo8nbluoi6GvvxBLqHcvqUUw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@floating-ui/core@1.6.8':
-    resolution: {integrity: sha512-7XJ9cPU+yI2QeLS+FCSlqNFZJq8arvswefkZrYI1yQBbftw6FyrZOxYSh+9S7z7TpeWlRt9zJ5IhM1WIL334jA==}
-
-  '@floating-ui/dom@1.6.12':
-    resolution: {integrity: sha512-NP83c0HjokcGVEMeoStg317VD9W7eDlGK7457dMBANbKA6GJZdc7rjujdgqzTaz93jkGgc5P/jeWbaCHnMNc+w==}
-
-  '@floating-ui/utils@0.2.8':
-    resolution: {integrity: sha512-kym7SodPp8/wloecOpcmSnWJsK7M0E5Wg8UcFA+uO4B9s5d0ywXOEro/8HM9x0rW+TljRzul/14UYz3TleT3ig==}
-
   '@hapi/hoek@9.3.0':
     resolution: {integrity: sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ==}
 
@@ -2232,12 +2220,6 @@ packages:
 
   '@sideway/pinpoint@2.0.0':
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
-
-  '@sjmc11/tourguidejs@0.0.16':
-    resolution: {integrity: sha512-NpK7OyW1l0R1XCajbWp+ibJAJbQK7dpBfqy+Etcy4fj/+qk3JPKY8RwoSX1UzzfBauuriNKJiv1KmTB3RHajQg==}
-
-  '@sjmc11/tourguidejs@0.0.18':
-    resolution: {integrity: sha512-86r93XK22WCXLQtr5ZKQxZVfxZ8pfxN3YpdrtoEyU1h9p/m9W39bOesLT6PWo2GDyhVsfsSOEDYBzLlDJB5jwQ==}
 
   '@storybook/addon-actions@8.4.2':
     resolution: {integrity: sha512-+hA200XN5aeA4T3jq8IifQq6Y+9FyNQ0Q+blM1L0Tl7WLzBc7B1kHQnKvhSj5pvMSBWc/Q/kY7Ev5t9gdOu13g==}
@@ -2939,11 +2921,6 @@ packages:
   '@watergis/maplibre-gl-sky@0.0.8':
     resolution: {integrity: sha512-llVOocqHoCdYR/48EZIF5+2QpjSLIKYwjr3j2AR49B1TkvBgjdIZt7uDxa+QIlolClzAanLH4KW5Qqq9UGvmiA==}
     engines: {pnpm: ^9.0.0}
-
-  '@watergis/maplibre-gl-tour@1.0.5':
-    resolution: {integrity: sha512-nEh29pegMQ4gKcssKAVJeY1fsFwSY3/FBLG2RsjQ33jm2bXcR21KTG78+hFp7iI1fn6c7V9g82HimLj2AV1Vsw==}
-    peerDependencies:
-      svelte: ^4.0.0
 
   '@watergis/svelte-splitter@2.0.0':
     resolution: {integrity: sha512-EcHai7HdzvtOQ7EfTPscZ/cER4oSEiqORUVnYsOCfhOsu3a9Sh0fILc6sowXEa7MXJ7YkFYzDX6vKl+G+ybQpQ==}
@@ -4210,6 +4187,9 @@ packages:
 
   intersection-observer@0.12.2:
     resolution: {integrity: sha512-7m1vEcPCxXYI8HqnL8CKI6siDyD+eIWSwgB3DZA+ZTogxk9I4CDnj4wilt9x/+/QbHI4YG5YZNmC6458/e9Ktg==}
+
+  intro.js@7.2.0:
+    resolution: {integrity: sha512-qbMfaB70rOXVBceIWNYnYTpVTiZsvQh/MIkfdQbpA9di9VBfj1GigUPfcCv3aOfsbrtPcri8vTLTA4FcEDcHSQ==}
 
   is-arguments@1.1.1:
     resolution: {integrity: sha512-8Q7EARjzEnKpt/PCD7e1cgUS0a6X8u5tdSiMqXhojOdoV9TsMsiO+9VLC5vAmO8N7/GmXn7yjR8qnA6bVAEzfA==}
@@ -6868,17 +6848,6 @@ snapshots:
     dependencies:
       levn: 0.4.1
 
-  '@floating-ui/core@1.6.8':
-    dependencies:
-      '@floating-ui/utils': 0.2.8
-
-  '@floating-ui/dom@1.6.12':
-    dependencies:
-      '@floating-ui/core': 1.6.8
-      '@floating-ui/utils': 0.2.8
-
-  '@floating-ui/utils@0.2.8': {}
-
   '@hapi/hoek@9.3.0': {}
 
   '@hapi/topo@5.1.0':
@@ -7207,16 +7176,6 @@ snapshots:
   '@sideway/formula@3.0.1': {}
 
   '@sideway/pinpoint@2.0.0': {}
-
-  '@sjmc11/tourguidejs@0.0.16':
-    dependencies:
-      '@floating-ui/dom': 1.6.12
-      sass: 1.80.6
-
-  '@sjmc11/tourguidejs@0.0.18':
-    dependencies:
-      '@floating-ui/dom': 1.6.12
-      sass: 1.80.6
 
   '@storybook/addon-actions@8.4.2(storybook@8.4.2(prettier@3.3.3))':
     dependencies:
@@ -8227,12 +8186,6 @@ snapshots:
     dependencies:
       maplibre-gl: 4.7.1
       suncalc: 1.9.0
-
-  '@watergis/maplibre-gl-tour@1.0.5(svelte@4.2.19)':
-    dependencies:
-      '@sjmc11/tourguidejs': 0.0.16
-      maplibre-gl: 4.7.1
-      svelte: 4.2.19
 
   '@watergis/svelte-splitter@2.0.0(svelte@4.2.19)':
     dependencies:
@@ -9564,6 +9517,8 @@ snapshots:
   internmap@2.0.3: {}
 
   intersection-observer@0.12.2: {}
+
+  intro.js@7.2.0: {}
 
   is-arguments@1.1.1:
     dependencies:
