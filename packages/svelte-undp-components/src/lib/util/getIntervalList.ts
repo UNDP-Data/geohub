@@ -33,7 +33,6 @@ export const getIntervalList = (
 		if (layerMin === layerMax) {
 			return [layerMin, layerMax];
 		} else {
-			console.log(jenks(randomSample, numberOfClasses));
 			intervalList = jenks(randomSample, numberOfClasses)?.map((element) => {
 				return isInteger ? Math.round(element) : Number(element.toFixed(2));
 			});
