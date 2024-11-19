@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { ColorMapRow } from '$components/maplibre/LegendColorMapRow.svelte';
 	import {
 		checkVectorLayerHighlySkewed,
 		convertFunctionToExpression,
@@ -14,6 +13,7 @@
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,
 		PropertySelect,
+		type ColorMapRow,
 		type MapStore,
 		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';

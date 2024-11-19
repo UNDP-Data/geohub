@@ -1,8 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import LegendColorMapRow, {
-		type ColorMapRow
-	} from '$components/maplibre/LegendColorMapRow.svelte';
 	import {
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
@@ -33,10 +30,12 @@
 		ClassificationMethodTypes,
 		ColorMapPicker,
 		FieldControl,
+		LegendColorMapRow,
 		MaplibreColorPicker,
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,
 		PropertySelect,
+		type ColorMapRow,
 		type MapStore,
 		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';

@@ -1,7 +1,4 @@
 <script lang="ts">
-	import LegendColorMapRow, {
-		type ColorMapRow
-	} from '$components/maplibre/LegendColorMapRow.svelte';
 	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
 	import {
 		generateColorMap,
@@ -29,8 +26,10 @@
 		ClassificationMethods,
 		ColorMapPicker,
 		FieldControl,
+		LegendColorMapRow,
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,
+		type ColorMapRow,
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';

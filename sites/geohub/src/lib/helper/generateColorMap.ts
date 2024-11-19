@@ -3,8 +3,7 @@ import { getSampleFromInterval } from './getSampleFromInterval';
 import { getSampleFromHistogram } from './getSampleFromHistogram';
 import { getIntervalList } from './getIntervalList';
 import { NumberOfRandomSamplingPoints } from '$lib/config/AppConfig';
-import type { ClassificationMethodTypes } from '@undp-data/svelte-undp-components';
-import type { ColorMapRow } from '$components/maplibre/LegendColorMapRow.svelte';
+import type { ClassificationMethodTypes, ColorMapRow } from '@undp-data/svelte-undp-components';
 
 export const generateColorMap = (
 	layerMin: number,

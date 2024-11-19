@@ -9,7 +9,9 @@
 </script>
 
 <script lang="ts">
-	import { ColorPicker, handleEnterKey, initTippy } from '@undp-data/svelte-undp-components';
+	import ColorPicker from '$lib/components/ui/ColorPicker.svelte';
+	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
+	import { initTippy } from '$lib/util/initTippy.js';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
 	import type { RgbaColor } from 'svelte-awesome-color-picker';
@@ -19,9 +21,24 @@
 	});
 	let tooltipContent: HTMLElement;
 
+	/**
+	 * Color row data
+	 */
 	export let colorMapRow: ColorMapRow;
+
+	/**
+	 * Colormap name. If colormap name is changed, color will be reset.
+	 */
 	export let colorMapName: string;
+
+	/**
+	 * If true, it will be unique value mode instead of ranged value mode.
+	 */
 	export let hasUniqueValues: boolean;
+
+	/**
+	 * If true, it becomes readonly mode.
+	 */
 	export let readonly = false;
 
 	let signal;
