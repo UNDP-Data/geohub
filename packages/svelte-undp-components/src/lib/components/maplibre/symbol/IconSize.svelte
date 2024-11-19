@@ -37,7 +37,6 @@
 	let stepValue = 0.25;
 
 	let cssIconFilter = '';
-	let isUpaded = false;
 
 	const setCssIconFilter = () => {
 		if (!defaultColor) return;
@@ -57,10 +56,6 @@
 
 	onMount(() => {
 		setCssIconFilter();
-
-		$map?.on('styledata', () => {
-			isUpaded = !isUpaded;
-		});
 	});
 
 	const loadIconImage = async () => {
@@ -77,7 +72,6 @@
 	};
 </script>
 
-<!-- {#key isUpaded} -->
 {#await loadIconImage()}
 	<div class="is-flex is-justify-content-center">
 		<Loader size="small" />
@@ -108,4 +102,3 @@
 		</Notification>
 	{/if}
 {/await}
-<!-- {/key} -->
