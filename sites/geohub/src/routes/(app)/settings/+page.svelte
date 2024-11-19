@@ -5,7 +5,6 @@
 	import { page } from '$app/stores';
 	import ImageUploader from '$components/pages/storymap/ImageUploader.svelte';
 	import {
-		ClassificationMethods,
 		DatasetSortingColumns,
 		IconOverlapPriority,
 		IngestingDatasetSortingColumns,
@@ -22,6 +21,7 @@
 	import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
 	import { imageUrlToBase64 } from '$lib/helper';
 	import {
+		ClassificationMethods,
 		FieldControl,
 		HeroHeader,
 		IconImageSelector,

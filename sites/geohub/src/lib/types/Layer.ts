@@ -1,7 +1,10 @@
-import type { ClassificationMethodTypes, TabNames } from '$lib/config/AppConfig';
+import type { TabNames } from '$lib/config/AppConfig';
 import type { RasterTileMetadata } from './RasterTileMetadata';
 import type { DatasetFeature } from './DatasetFeature';
-import type { VectorTileMetadata } from '@undp-data/svelte-undp-components';
+import type {
+	VectorTileMetadata,
+	ClassificationMethodTypes
+} from '@undp-data/svelte-undp-components';
 
 export interface Layer {
 	id: string;

@@ -2,8 +2,6 @@
 	import { page } from '$app/stores';
 	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
 	import {
-		ClassificationMethods,
-		ClassificationMethodTypes,
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
 		NumberOfRandomSamplingPoints,
@@ -30,6 +28,8 @@
 		type NumberOfClassesStore
 	} from '$stores';
 	import {
+		ClassificationMethods,
+		ClassificationMethodTypes,
 		ColorMapPicker,
 		FieldControl,
 		MaplibreColorPicker,

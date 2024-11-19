@@ -1,10 +1,6 @@
 <script lang="ts">
 	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
-	import {
-		ClassificationMethods,
-		NumberOfClassesMaximum,
-		NumberOfClassesMinimum
-	} from '$lib/config/AppConfig';
+	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
 	import {
 		generateColorMap,
 		getActiveBandIndex,
@@ -28,6 +24,7 @@
 		type RasterRescaleStore
 	} from '$stores';
 	import {
+		ClassificationMethods,
 		ColorMapPicker,
 		FieldControl,
 		MAPSTORE_CONTEXT_KEY,

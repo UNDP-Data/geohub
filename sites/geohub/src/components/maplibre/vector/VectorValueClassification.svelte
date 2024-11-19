@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { ClassificationMethods, ClassificationMethodTypes } from '$lib/config/AppConfig';
 	import {
 		checkVectorLayerHighlySkewed,
 		convertFunctionToExpression,
@@ -9,6 +8,8 @@
 	} from '$lib/helper';
 	import type { ColorMapRow } from '$lib/types';
 	import {
+		ClassificationMethods,
+		ClassificationMethodTypes,
 		FieldControl,
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,

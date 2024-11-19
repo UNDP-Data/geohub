@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { getSampleFromInterval } from './getSampleFromInterval';
 import { getIntervalList } from './getIntervalList';
-import { ClassificationMethodTypes } from '../config/AppConfig';
+import { ClassificationMethodTypes } from '@undp-data/svelte-undp-components';
 
 describe('getIntervalList', () => {
 	it('should return an interval list : natural breaks', () => {
