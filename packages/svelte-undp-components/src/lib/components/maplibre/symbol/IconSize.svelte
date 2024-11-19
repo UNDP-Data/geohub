@@ -6,7 +6,6 @@
 
 <script lang="ts">
 	import VectorValueClassification from '$lib/components/maplibre/util/VectorValueClassification.svelte';
-	import Notification from '$lib/components/ui/Notification.svelte';
 	import { ClassificationMethodTypes } from '$lib/constants/ClassificationMethod.js';
 	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
@@ -37,6 +36,7 @@
 	let stepValue = 0.25;
 
 	let cssIconFilter = '';
+	let icon: IconImageType | undefined;
 
 	const setCssIconFilter = () => {
 		if (!defaultColor) return;
@@ -55,7 +55,12 @@
 	$: defaultColor, setCssIconFilter();
 
 	onMount(() => {
+		loadIconImage();
 		setCssIconFilter();
+
+		$map.on('styledata', () => {
+			loadIconImage();
+		});
 	});
 
 	const loadIconImage = async () => {
@@ -68,37 +73,31 @@
 			}
 		}
 
-		return icons[name] ?? undefined;
+		icon = icons[name] ?? undefined;
 	};
 </script>
 
-{#await loadIconImage()}
+{#if icon}
+	<VectorValueClassification
+		{layerId}
+		{metadata}
+		bind:defaultValue={defaultIconSize}
+		{minValue}
+		{maxValue}
+		{stepValue}
+		{propertyName}
+		styleType="layout"
+		legendCssTemplate={`margin-left: auto; margin-right: auto; width: calc(1em * {value}); height: calc(1em * {value}); filter: ${cssIconFilter}; background-image: url("${icon.src}"); background-repeat: no-repeat; background-size: contain;`}
+		dataLabel="Icon size"
+		bind:numberOfClasses
+		{numberOfClassesMinimum}
+		{numberOfClassesMaximum}
+		{defaultNumberOfClasses}
+		bind:classificationMethod
+		{numberOfRandomSamplingPoints}
+	/>
+{:else}
 	<div class="is-flex is-justify-content-center">
 		<Loader size="small" />
 	</div>
-{:then icon}
-	{#if icon}
-		<VectorValueClassification
-			{layerId}
-			{metadata}
-			bind:defaultValue={defaultIconSize}
-			{minValue}
-			{maxValue}
-			{stepValue}
-			{propertyName}
-			styleType="layout"
-			legendCssTemplate={`margin-left: auto; margin-right: auto; width: calc(1em * {value}); height: calc(1em * {value}); filter: ${cssIconFilter}; background-image: url("${icon.src}"); background-repeat: no-repeat; background-size: contain;`}
-			dataLabel="Icon size"
-			bind:numberOfClasses
-			{numberOfClassesMinimum}
-			{numberOfClassesMaximum}
-			{defaultNumberOfClasses}
-			bind:classificationMethod
-			{numberOfRandomSamplingPoints}
-		/>
-	{:else}
-		<Notification type="danger" showCloseButton={false} showIcon={false}>
-			Failed to load icon image.
-		</Notification>
-	{/if}
-{/await}
+{/if}
