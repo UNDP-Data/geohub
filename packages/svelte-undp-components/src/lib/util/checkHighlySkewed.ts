@@ -9,7 +9,7 @@
  * @param std std value
  * @returns
  */
-export const calcMedianSkewness = (mean: number, median: number, std: number) => {
+const calcMedianSkewness = (mean: number, median: number, std: number) => {
 	return 3 * ((mean - median) / std);
 };
 
@@ -22,7 +22,7 @@ export const calcMedianSkewness = (mean: number, median: number, std: number) =>
  * @param histogramData histogram data from /statistics api of titiler
  * @returns
  */
-export const calcModeSkewness = (mean: number, std: number, histogramData: number[][]) => {
+const calcModeSkewness = (mean: number, std: number, histogramData: number[][]) => {
 	const modeIndex = histogramData[0].indexOf(Math.max(...histogramData[0]));
 
 	// use average value of min/max as mode value

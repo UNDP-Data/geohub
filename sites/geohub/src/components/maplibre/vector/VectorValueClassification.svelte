@@ -1,12 +1,12 @@
 <script lang="ts">
 	import {
-		checkVectorLayerHighlySkewed,
 		convertFunctionToExpression,
 		getIntervalList,
 		getSampleFromHistogram,
 		getSampleFromInterval
 	} from '$lib/helper';
 	import {
+		checkVectorLayerHighlySkewed,
 		ClassificationMethods,
 		ClassificationMethodTypes,
 		FieldControl,

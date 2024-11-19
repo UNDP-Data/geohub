@@ -7,7 +7,6 @@
 		UniqueValueThreshold
 	} from '$lib/config/AppConfig';
 	import {
-		checkVectorLayerHighlySkewed,
 		convertFunctionToExpression,
 		getIntervalList,
 		getSampleFromHistogram,
@@ -26,6 +25,7 @@
 		type NumberOfClassesStore
 	} from '$stores';
 	import {
+		checkVectorLayerHighlySkewed,
 		ClassificationMethods,
 		ClassificationMethodTypes,
 		ColorMapPicker,
