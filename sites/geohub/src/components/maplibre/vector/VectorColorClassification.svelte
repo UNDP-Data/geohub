@@ -6,13 +6,7 @@
 		NumberOfRandomSamplingPoints,
 		UniqueValueThreshold
 	} from '$lib/config/AppConfig';
-	import {
-		getIntervalList,
-		getSampleFromHistogram,
-		getSampleFromInterval,
-		getVectorDefaultColor,
-		updateIntervalValues
-	} from '$lib/helper';
+	import { getVectorDefaultColor, updateIntervalValues } from '$lib/helper';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
@@ -30,6 +24,9 @@
 		ColorMapPicker,
 		convertFunctionToExpression,
 		FieldControl,
+		getIntervalList,
+		getSampleFromHistogram,
+		getSampleFromInterval,
 		LegendColorMapRow,
 		MaplibreColorPicker,
 		MAPSTORE_CONTEXT_KEY,

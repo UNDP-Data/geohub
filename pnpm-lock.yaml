@@ -366,6 +366,9 @@ importers:
       maplibre-gl:
         specifier: ^4.7.1
         version: 4.7.1
+      simple-statistics:
+        specifier: ^7.8.7
+        version: 7.8.7
       svelte-awesome-color-picker:
         specifier: ^3.1.4
         version: 3.1.4(svelte@4.2.19)
@@ -904,9 +907,6 @@ importers:
       sass:
         specifier: ^1.79.4
         version: 1.80.6
-      simple-statistics:
-        specifier: ^7.8.7
-        version: 7.8.7
       svelte:
         specifier: ^4.2.19
         version: 4.2.19

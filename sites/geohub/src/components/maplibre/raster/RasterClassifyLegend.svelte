@@ -7,7 +7,6 @@
 		getLayerStyle,
 		getValueFromRasterTileUrl,
 		isUniqueValueRaster,
-		remapInputValue,
 		updateIntervalValues,
 		updateParamsInURL
 	} from '$lib/helper';
@@ -29,6 +28,7 @@
 		LegendColorMapRow,
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,
+		remapInputValue,
 		type ColorMapRow,
 		type MapStore
 	} from '@undp-data/svelte-undp-components';

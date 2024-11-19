@@ -1,11 +1,13 @@
 <script lang="ts">
-	import { getIntervalList, getSampleFromHistogram, getSampleFromInterval } from '$lib/helper';
 	import {
 		checkVectorLayerHighlySkewed,
 		ClassificationMethods,
 		ClassificationMethodTypes,
 		convertFunctionToExpression,
 		FieldControl,
+		getIntervalList,
+		getSampleFromHistogram,
+		getSampleFromInterval,
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,
 		PropertySelect,
@@ -39,8 +41,8 @@
 
 	$: classificationMethod, handleClassificationMethodChanged();
 
-	const maplibreLayerId = $map.getLayer(layerId).sourceLayer;
-	let statLayer = metadata.json.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
+	const maplibreLayerId = $map.getLayer(layerId)?.sourceLayer as string;
+	let statLayer = metadata.json?.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
 
 	$: isConstantValue = propertySelectValue?.length === 0;
 
@@ -108,14 +110,14 @@
 			}
 		} else if (values[0] === 'step') {
 			// interval
-			const attribute = statLayer.attributes?.find((a) => a.attribute === propertySelectValue);
+			const attribute = statLayer?.attributes?.find((a) => a.attribute === propertySelectValue);
 			for (let i = 2; i < values.length; i = i + 2) {
 				const attrValue = values[i + 1];
 
 				const row: ColorMapRow = {
 					index: rows.length,
 					value: values[i] as number,
-					start: rows.length === 0 ? attribute.min : rows[rows.length - 1].end,
+					start: rows.length === 0 ? attribute?.min : rows[rows.length - 1].end,
 					end: (attrValue as number) ?? undefined
 				};
 				rows.push(row);
@@ -139,7 +141,7 @@
 
 		if (!randomSample[attribute.attribute]) {
 			if (attribute.values) {
-				randomSample[attribute.attribute] = attribute.values;
+				randomSample[attribute.attribute] = attribute.values as number[];
 			} else if (attribute.histogram) {
 				randomSample[attribute.attribute] = getSampleFromHistogram(
 					attribute.histogram,
@@ -147,8 +149,8 @@
 				);
 			} else {
 				randomSample[attribute.attribute] = getSampleFromInterval(
-					attribute.min,
-					attribute.max,
+					attribute.min as number,
+					attribute.max as number,
 					numberOfRandomSamplingPoints
 				);
 			}
@@ -156,8 +158,8 @@
 		const sample = randomSample[attribute.attribute];
 		const intervalList = getIntervalList(
 			classificationMethod,
-			attribute.min,
-			attribute.max,
+			attribute.min as number,
+			attribute.max as number,
 			sample,
 			numberOfClasses - 1 // the last row is for default value
 		);
