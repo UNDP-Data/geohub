@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
+	import LegendColorMapRow, {
+		type ColorMapRow
+	} from '$components/maplibre/LegendColorMapRow.svelte';
 	import {
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
@@ -16,7 +18,6 @@
 		getVectorDefaultColor,
 		updateIntervalValues
 	} from '$lib/helper';
-	import type { ColorMapRow } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,

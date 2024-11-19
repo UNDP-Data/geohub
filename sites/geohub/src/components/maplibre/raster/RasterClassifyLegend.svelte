@@ -1,5 +1,7 @@
 <script lang="ts">
-	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
+	import LegendColorMapRow, {
+		type ColorMapRow
+	} from '$components/maplibre/LegendColorMapRow.svelte';
 	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
 	import {
 		generateColorMap,
@@ -12,7 +14,7 @@
 		updateIntervalValues,
 		updateParamsInURL
 	} from '$lib/helper';
-	import type { BandMetadata, ColorMapRow, RasterLayerStats, RasterTileMetadata } from '$lib/types';
+	import type { BandMetadata, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,

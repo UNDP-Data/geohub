@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { updateIntervalValues } from '$lib/helper';
-import type { ColorMapRow } from '$lib/types';
+import type { ColorMapRow } from '$components/maplibre/LegendColorMapRow.svelte';
 
 describe('updateIntervalValues', () => {
 	it('should return the colorMapRows with the updated values', async () => {

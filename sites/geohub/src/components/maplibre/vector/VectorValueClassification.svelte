@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { ColorMapRow } from '$components/maplibre/LegendColorMapRow.svelte';
 	import {
 		checkVectorLayerHighlySkewed,
 		convertFunctionToExpression,
@@ -6,7 +7,6 @@
 		getSampleFromHistogram,
 		getSampleFromInterval
 	} from '$lib/helper';
-	import type { ColorMapRow } from '$lib/types';
 	import {
 		ClassificationMethods,
 		ClassificationMethodTypes,

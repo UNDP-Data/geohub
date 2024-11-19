@@ -1,5 +1,14 @@
+<script lang="ts" context="module">
+	export interface ColorMapRow {
+		index?: number;
+		color?: number[];
+		start?: number | string;
+		end?: number | string;
+		value?: number;
+	}
+</script>
+
 <script lang="ts">
-	import type { ColorMapRow } from '$lib/types';
 	import { ColorPicker, handleEnterKey, initTippy } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';

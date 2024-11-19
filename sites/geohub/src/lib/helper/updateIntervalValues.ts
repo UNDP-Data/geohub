@@ -1,4 +1,4 @@
-import type { ColorMapRow } from '$lib/types';
+import type { ColorMapRow } from '$components/maplibre/LegendColorMapRow.svelte';
 
 export const updateIntervalValues = (event: CustomEvent, colorMapRows: ColorMapRow[]) => {
 	const rowIndex = event.detail.index;
