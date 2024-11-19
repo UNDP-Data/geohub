@@ -4,7 +4,14 @@
 	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
 	import { getLayerSourceUrl, loadArgumentsInDynamicLayers } from '$lib/helper';
 	import type { Tag } from '$lib/types';
-	import { DEFAULTCOLOR_CONTEXT_KEY, type DefaultColorStore } from '$stores';
+	import {
+		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
+		DEFAULTCOLOR_CONTEXT_KEY,
+		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
+		type ClassificationMethodStore,
+		type DefaultColorStore,
+		type NumberOfClassesStore
+	} from '$stores';
 	import {
 		Accordion,
 		CircleRadius,
@@ -33,6 +40,10 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const defaultColorStore: DefaultColorStore = getContext(DEFAULTCOLOR_CONTEXT_KEY);
+	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY_2);
+	const classificationMethodStore: ClassificationMethodStore = getContext(
+		CLASSIFICATION_METHOD_CONTEXT_KEY_2
+	);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -242,6 +253,9 @@
 					styleType="paint"
 					legendCssTemplate={`margin-top: 13px; width: 40px; height: {value}px; background-color: ${$defaultColorStore};`}
 					dataLabel="Line width"
+					bind:numberOfClasses={$numberOfClassesStore}
+					defaultNumberOfClasses={$page.data.config.NumberOfClasses}
+					bind:classificationMethod={$classificationMethodStore}
 				/>
 			</div>
 			<div slot="buttons">

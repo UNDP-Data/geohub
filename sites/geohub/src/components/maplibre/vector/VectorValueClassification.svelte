@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import {
 		ClassificationMethods,
 		ClassificationMethodTypes,
@@ -16,12 +15,6 @@
 	} from '$lib/helper';
 	import type { ColorMapRow } from '$lib/types';
 	import {
-		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
-		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
-		type ClassificationMethodStore,
-		type NumberOfClassesStore
-	} from '$stores';
-	import {
 		FieldControl,
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,
@@ -33,7 +26,6 @@
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY_2);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -46,10 +38,12 @@
 	export let legendCssTemplate: string; // should include {value} for the replacement
 	export let styleType: 'layout' | 'paint' = 'paint';
 	export let dataLabel = 'Value';
-	export let classificationContextKey = CLASSIFICATION_METHOD_CONTEXT_KEY_2;
+	export let numberOfClasses: number;
+	export let defaultNumberOfClasses = 5;
+	export let classificationMethod: ClassificationMethodTypes =
+		ClassificationMethodTypes.NATURAL_BREAK;
 
-	const classificationMethodStore: ClassificationMethodStore = getContext(classificationContextKey);
-	$: $classificationMethodStore, handleClassificationMethodChanged();
+	$: classificationMethod, handleClassificationMethodChanged();
 
 	const maplibreLayerId = $map.getLayer(layerId).sourceLayer;
 	let statLayer = metadata.json.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
@@ -88,14 +82,14 @@
 	};
 
 	const resetClassificationMethods = () => {
-		if (!$classificationMethodStore) {
+		if (!classificationMethod) {
 			const highlySkewed = checkVectorLayerHighlySkewed(
 				metadata,
 				maplibreLayerId,
 				propertySelectValue
 			);
 			if (highlySkewed) {
-				$classificationMethodStore = ClassificationMethodTypes.LOGARITHMIC;
+				classificationMethod = ClassificationMethodTypes.LOGARITHMIC;
 			}
 		}
 	};
@@ -132,9 +126,9 @@
 				};
 				rows.push(row);
 			}
-			$numberOfClassesStore = rows.length;
+			numberOfClasses = rows.length;
 		} else {
-			$numberOfClassesStore = $page.data.config.NumberOfClasses;
+			numberOfClasses = defaultNumberOfClasses;
 		}
 		return rows;
 	};
@@ -167,11 +161,11 @@
 		}
 		const sample = randomSample[attribute.attribute];
 		const intervalList = getIntervalList(
-			$classificationMethodStore,
+			classificationMethod,
 			attribute.min,
 			attribute.max,
 			sample,
-			$numberOfClassesStore - 1 // the last row is for default value
+			numberOfClasses - 1 // the last row is for default value
 		);
 
 		// create interval list (start / end)
@@ -287,7 +281,7 @@
 					<div slot="control">
 						<div class="select is-normal is-fullwidth">
 							<select
-								bind:value={$classificationMethodStore}
+								bind:value={classificationMethod}
 								on:change={handleClassificationMethodChanged}
 							>
 								{#each ClassificationMethods as classificationMethod}
@@ -307,7 +301,7 @@
 					<div slot="help">Increate or decrease the number of classes</div>
 					<div slot="control">
 						<NumberInput
-							bind:value={$numberOfClassesStore}
+							bind:value={numberOfClasses}
 							minValue={NumberOfClassesMinimum}
 							maxValue={NumberOfClassesMaximum}
 							on:change={handleIncrementDecrementClasses}

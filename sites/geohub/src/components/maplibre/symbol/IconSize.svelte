@@ -6,7 +6,14 @@
 	import { page } from '$app/stores';
 	import VectorValueClassification from '$components/maplibre/vector/VectorValueClassification.svelte';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { DEFAULTCOLOR_CONTEXT_KEY, type DefaultColorStore } from '$stores';
+	import {
+		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
+		DEFAULTCOLOR_CONTEXT_KEY,
+		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
+		type ClassificationMethodStore,
+		type DefaultColorStore,
+		type NumberOfClassesStore
+	} from '$stores';
 	import {
 		MAPSTORE_CONTEXT_KEY,
 		Notification,
@@ -22,6 +29,10 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const defaultColorStore: DefaultColorStore = getContext(DEFAULTCOLOR_CONTEXT_KEY);
+	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY_2);
+	const classificationMethodStore: ClassificationMethodStore = getContext(
+		CLASSIFICATION_METHOD_CONTEXT_KEY_2
+	);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -94,6 +105,9 @@
 				styleType="layout"
 				legendCssTemplate={`margin-left: auto; margin-right: auto; width: calc(1em * {value}); height: calc(1em * {value}); filter: ${cssIconFilter}; background-image: url("${icon.src}"); background-repeat: no-repeat; background-size: contain;`}
 				dataLabel="Icon size"
+				bind:numberOfClasses={$numberOfClassesStore}
+				defaultNumberOfClasses={$page.data.config.NumberOfClasses}
+				bind:classificationMethod={$classificationMethodStore}
 			/>
 		{:else}
 			<Notification type="danger" showCloseButton={false} showIcon={false}>
