@@ -7,7 +7,6 @@
 		UniqueValueThreshold
 	} from '$lib/config/AppConfig';
 	import {
-		convertFunctionToExpression,
 		getIntervalList,
 		getSampleFromHistogram,
 		getSampleFromInterval,
@@ -29,6 +28,7 @@
 		ClassificationMethods,
 		ClassificationMethodTypes,
 		ColorMapPicker,
+		convertFunctionToExpression,
 		FieldControl,
 		LegendColorMapRow,
 		MaplibreColorPicker,

@@ -1,6 +1,7 @@
 export * from './checkHighlySkewed.js';
 export * from './checkVectorLayerHighlySkewed.js';
 export * from './clean.js';
+export * from './convertFunctionToExpression.js';
 export * from './handleEnterKey.js';
 export * from './initTippy.js';
 export * from './getPropertyValueFromExpression.js';

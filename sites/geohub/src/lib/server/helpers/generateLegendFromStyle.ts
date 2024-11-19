@@ -1,10 +1,4 @@
-import {
-	convertFunctionToExpression,
-	fetchUrl,
-	getActiveBandIndex,
-	getDecimalPlaces,
-	isRgbRaster
-} from '$lib/helper';
+import { fetchUrl, getActiveBandIndex, getDecimalPlaces, isRgbRaster } from '$lib/helper';
 import chroma from 'chroma-js';
 import { hexToCSSFilter } from 'hex-to-css-filter';
 import { SvgLegendCreator, type SvgLegendCreatorOptions } from '$lib/server/SvgLegendCreator';
@@ -25,7 +19,10 @@ import type {
 import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
 import { clipSprite } from './clipSprite';
 import { recolorPngToSvg } from './recolorPngDataUrl';
-import type { VectorTileMetadata } from '@undp-data/svelte-undp-components';
+import {
+	type VectorTileMetadata,
+	convertFunctionToExpression
+} from '@undp-data/svelte-undp-components';
 
 /**
  * LegendLayer interface to contain layer legend information

@@ -1,14 +1,10 @@
 <script lang="ts">
-	import {
-		convertFunctionToExpression,
-		getIntervalList,
-		getSampleFromHistogram,
-		getSampleFromInterval
-	} from '$lib/helper';
+	import { getIntervalList, getSampleFromHistogram, getSampleFromInterval } from '$lib/helper';
 	import {
 		checkVectorLayerHighlySkewed,
 		ClassificationMethods,
 		ClassificationMethodTypes,
+		convertFunctionToExpression,
 		FieldControl,
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,

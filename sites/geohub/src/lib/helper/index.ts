@@ -40,7 +40,6 @@ export * from './isRgbRaster';
 export * from './isUniqueValueRaster';
 export * from './isVectorIntervalExpression';
 export * from './generateHashKey';
-export * from './convertFunctionToExpression';
 export * from './resolveRelativeUrl';
 export * from './getMinMaxValuesInMode';
 export * from './getDefaultLayerStyleForStacProducts';
