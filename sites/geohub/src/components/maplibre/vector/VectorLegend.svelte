@@ -2,6 +2,11 @@
 	import { page } from '$app/stores';
 	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
 	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
+	import {
+		NumberOfClassesMaximum,
+		NumberOfClassesMinimum,
+		NumberOfRandomSamplingPoints
+	} from '$lib/config/AppConfig';
 	import { getLayerSourceUrl, loadArgumentsInDynamicLayers } from '$lib/helper';
 	import type { Tag } from '$lib/types';
 	import {
@@ -254,8 +259,11 @@
 					legendCssTemplate={`margin-top: 13px; width: 40px; height: {value}px; background-color: ${$defaultColorStore};`}
 					dataLabel="Line width"
 					bind:numberOfClasses={$numberOfClassesStore}
+					numberOfClassesMinimum={NumberOfClassesMinimum}
+					numberOfClassesMaximum={NumberOfClassesMaximum}
 					defaultNumberOfClasses={$page.data.config.NumberOfClasses}
 					bind:classificationMethod={$classificationMethodStore}
+					numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
 				/>
 			</div>
 			<div slot="buttons">

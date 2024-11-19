@@ -1,11 +1,5 @@
 <script lang="ts">
-	import {
-		ClassificationMethods,
-		ClassificationMethodTypes,
-		NumberOfClassesMaximum,
-		NumberOfClassesMinimum,
-		NumberOfRandomSamplingPoints
-	} from '$lib/config/AppConfig';
+	import { ClassificationMethods, ClassificationMethodTypes } from '$lib/config/AppConfig';
 	import {
 		checkVectorLayerHighlySkewed,
 		convertFunctionToExpression,
@@ -39,9 +33,12 @@
 	export let styleType: 'layout' | 'paint' = 'paint';
 	export let dataLabel = 'Value';
 	export let numberOfClasses: number;
+	export let numberOfClassesMinimum = 2;
+	export let numberOfClassesMaximum = 25;
 	export let defaultNumberOfClasses = 5;
 	export let classificationMethod: ClassificationMethodTypes =
 		ClassificationMethodTypes.NATURAL_BREAK;
+	export let numberOfRandomSamplingPoints = 1000;
 
 	$: classificationMethod, handleClassificationMethodChanged();
 
@@ -149,13 +146,13 @@
 			} else if (attribute.histogram) {
 				randomSample[attribute.attribute] = getSampleFromHistogram(
 					attribute.histogram,
-					NumberOfRandomSamplingPoints
+					numberOfRandomSamplingPoints
 				);
 			} else {
 				randomSample[attribute.attribute] = getSampleFromInterval(
 					attribute.min,
 					attribute.max,
-					NumberOfRandomSamplingPoints
+					numberOfRandomSamplingPoints
 				);
 			}
 		}
@@ -302,8 +299,8 @@
 					<div slot="control">
 						<NumberInput
 							bind:value={numberOfClasses}
-							minValue={NumberOfClassesMinimum}
-							maxValue={NumberOfClassesMaximum}
+							minValue={numberOfClassesMinimum}
+							maxValue={numberOfClassesMaximum}
 							on:change={handleIncrementDecrementClasses}
 							size="normal"
 						/>

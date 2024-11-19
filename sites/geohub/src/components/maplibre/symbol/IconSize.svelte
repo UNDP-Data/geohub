@@ -5,6 +5,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import VectorValueClassification from '$components/maplibre/vector/VectorValueClassification.svelte';
+	import {
+		NumberOfClassesMaximum,
+		NumberOfClassesMinimum,
+		NumberOfRandomSamplingPoints
+	} from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
@@ -106,8 +111,11 @@
 				legendCssTemplate={`margin-left: auto; margin-right: auto; width: calc(1em * {value}); height: calc(1em * {value}); filter: ${cssIconFilter}; background-image: url("${icon.src}"); background-repeat: no-repeat; background-size: contain;`}
 				dataLabel="Icon size"
 				bind:numberOfClasses={$numberOfClassesStore}
+				numberOfClassesMinimum={NumberOfClassesMinimum}
+				numberOfClassesMaximum={NumberOfClassesMaximum}
 				defaultNumberOfClasses={$page.data.config.NumberOfClasses}
 				bind:classificationMethod={$classificationMethodStore}
+				numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
 			/>
 		{:else}
 			<Notification type="danger" showCloseButton={false} showIcon={false}>
