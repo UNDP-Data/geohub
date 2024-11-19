@@ -1,6 +1,7 @@
 import IconImage from './IconImage.svelte';
 import IconOffset from './IconOffset.svelte';
 import IconOverlap from './IconOverlap.svelte';
+import IconSize from './IconSize.svelte';
 import SymbolPlacement from './SymbolPlacement.svelte';
 import TextFieldDecimalPosition, {
 	getDecimalPosition,
@@ -16,6 +17,7 @@ export {
 	IconImage,
 	IconOffset,
 	IconOverlap,
+	IconSize,
 	SymbolPlacement,
 	TextFieldDecimalPosition,
 	TextFont,

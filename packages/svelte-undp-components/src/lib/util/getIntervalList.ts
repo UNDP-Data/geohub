@@ -33,14 +33,19 @@ export const getIntervalList = (
 		if (layerMin === layerMax) {
 			return [layerMin, layerMax];
 		} else {
-			intervalList = jenks(randomSample, numberOfClasses).map((element) => {
+			console.log(jenks(randomSample, numberOfClasses));
+			intervalList = jenks(randomSample, numberOfClasses)?.map((element) => {
 				return isInteger ? Math.round(element) : Number(element.toFixed(2));
 			});
-			if (intervalList[0] > layerMin) {
-				intervalList[0] = layerMin;
-			}
-			if (intervalList[intervalList.length - 1] < layerMax) {
-				intervalList[intervalList.length - 1] = layerMax;
+			if (intervalList) {
+				if (intervalList[0] > layerMin) {
+					intervalList[0] = layerMin;
+				}
+				if (intervalList[intervalList.length - 1] < layerMax) {
+					intervalList[intervalList.length - 1] = layerMax;
+				}
+			} else {
+				intervalList = [layerMin, layerMax];
 			}
 		}
 	} else if (

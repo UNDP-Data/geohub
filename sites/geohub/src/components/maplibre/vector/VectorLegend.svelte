@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
 	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
 	import {
 		NumberOfClassesMaximum,
@@ -33,15 +32,16 @@
 		Help,
 		IconImage,
 		IconOverlap,
+		IconSize,
 		LinePattern,
 		MAPSTORE_CONTEXT_KEY,
+		VectorValueClassification,
 		type MapStore,
 		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 	import VectorParamsPanel from './VectorParamsPanel.svelte';
-	import VectorValueClassification from './VectorValueClassification.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const defaultColorStore: DefaultColorStore = getContext(DEFAULTCOLOR_CONTEXT_KEY);
@@ -201,7 +201,18 @@
 
 		<Accordion title="Icon size" bind:isExpanded={expanded['icon-size']}>
 			<div class="pb-2" slot="content">
-				<IconSize {layerId} {metadata} />
+				<IconSize
+					{layerId}
+					{metadata}
+					bind:defaultIconSize={$page.data.config.IconSize}
+					bind:defaultColor={$defaultColorStore}
+					bind:numberOfClasses={$numberOfClassesStore}
+					numberOfClassesMinimum={NumberOfClassesMinimum}
+					numberOfClassesMaximum={NumberOfClassesMaximum}
+					defaultNumberOfClasses={$page.data.config.NumberOfClasses}
+					bind:classificationMethod={$classificationMethodStore}
+					numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
+				/>
 			</div>
 			<div slot="buttons">
 				<Help>Change icon color by using single color or selected property.</Help>
