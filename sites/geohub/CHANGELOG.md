@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.2
+
+### Patch Changes
+
+- b13abe6: fix: change map cursor to crosshair if mouse hovers on features.
+
 ## 1.22.1
 
 ### Patch Changes
