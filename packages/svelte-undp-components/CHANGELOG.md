@@ -1,5 +1,12 @@
 # @undp-data/svelte-undp-components
 
+## 1.5.8
+
+### Patch Changes
+
+- d1f8bd8: refactor: migrated VectorValueClassificaiton component and related util funcitons and sub components.
+- 154e218: fix: fixed bug of IconSize not being updated when icon-image is changed
+
 ## 1.5.7
 
 ### Patch Changes
