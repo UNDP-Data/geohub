@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.1
+
+### Patch Changes
+
+- d1f8bd8: refactor: migrated VectorValueClassificaiton component and related util funcitons and sub components.
+
 ## 1.22.0
 
 ### Minor Changes
