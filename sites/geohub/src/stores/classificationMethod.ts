@@ -1,4 +1,4 @@
-import type { ClassificationMethodTypes } from '$lib/config/AppConfig';
+import type { ClassificationMethodTypes } from '@undp-data/svelte-undp-components';
 import { writable, type Writable } from 'svelte/store';
 
 // for color classify component
@@ -14,5 +14,5 @@ export const CLASSIFICATION_METHOD_CONTEXT_KEY_LABEL = 'classification-method-st
 export type ClassificationMethodStore = Writable<ClassificationMethodTypes>;
 
 export const createClassificationMethodStore = () => {
-	return writable(<ClassificationMethodTypes>undefined);
+	return writable(<ClassificationMethodTypes>(<unknown>undefined));
 };

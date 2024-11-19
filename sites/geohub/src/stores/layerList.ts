@@ -1,5 +1,6 @@
-import type { ClassificationMethodTypes, TabNames } from '$lib/config/AppConfig';
+import type { TabNames } from '$lib/config/AppConfig';
 import type { Layer } from '$lib/types';
+import type { ClassificationMethodTypes } from '@undp-data/svelte-undp-components';
 import { writable } from 'svelte/store';
 
 export const LAYERLISTSTORE_CONTEXT_KEY = 'maplibre-layerlist-store';

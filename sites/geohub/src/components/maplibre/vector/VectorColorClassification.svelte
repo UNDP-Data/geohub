@@ -1,24 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
 	import {
-		ClassificationMethods,
-		ClassificationMethodTypes,
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
 		NumberOfRandomSamplingPoints,
 		UniqueValueThreshold
 	} from '$lib/config/AppConfig';
-	import {
-		checkVectorLayerHighlySkewed,
-		convertFunctionToExpression,
-		getIntervalList,
-		getSampleFromHistogram,
-		getSampleFromInterval,
-		getVectorDefaultColor,
-		updateIntervalValues
-	} from '$lib/helper';
-	import type { ColorMapRow } from '$lib/types';
+	import { getVectorDefaultColor, updateIntervalValues } from '$lib/helper';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
@@ -30,12 +18,21 @@
 		type NumberOfClassesStore
 	} from '$stores';
 	import {
+		checkVectorLayerHighlySkewed,
+		ClassificationMethods,
+		ClassificationMethodTypes,
 		ColorMapPicker,
+		convertFunctionToExpression,
 		FieldControl,
+		getIntervalList,
+		getSampleFromHistogram,
+		getSampleFromInterval,
+		LegendColorMapRow,
 		MaplibreColorPicker,
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,
 		PropertySelect,
+		type ColorMapRow,
 		type MapStore,
 		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';

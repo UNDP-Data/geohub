@@ -2,8 +2,8 @@ import type {
 	VectorLayerTileStatAttribute,
 	VectorLayerTileStatLayer,
 	VectorTileMetadata
-} from '@undp-data/svelte-undp-components';
-import { isDataHighlySkewed } from './checkHighlySkewed';
+} from '../interfaces/index.js';
+import { isDataHighlySkewed } from './checkHighlySkewed.js';
 
 /**
  * Check whether a property of a vector layer has highly skewed value

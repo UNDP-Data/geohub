@@ -11,7 +11,6 @@ import { DataPageSearchQueryOperator } from './DataPageSearchQueryOperator';
 import { DataPageTagSearchOperator } from './DataPageTagSearchOperator';
 import { TagSearchOperator } from './TagSearchOperator';
 import { SidebarPosition } from './SidebarPosition';
-import type { ClassificationMethodTypes } from '$lib/config/AppConfig';
 import { ClassificationMethod } from '$lib/config/DefaultUserConfig/ClassificationMethod';
 import { LabelFontSize } from '$lib/config/DefaultUserConfig/LabelFontSize';
 import { LabelHaloWidth } from '$lib/config/DefaultUserConfig/LabelHaloWidth';
@@ -32,7 +31,10 @@ import { StacDateFilterOption } from './StacDateFilterOption';
 import { FillExtrusionDefaultPitch } from './FillExtrusionDefaultPitch';
 import type { TableViewType } from '$lib/types';
 import { DataPageTableViewType } from './DataPageTableViewType';
-import type { SidebarPosition as SidebarPositionType } from '@undp-data/svelte-undp-components';
+import type {
+	ClassificationMethodTypes,
+	SidebarPosition as SidebarPositionType
+} from '@undp-data/svelte-undp-components';
 import { HomePageMapSearchLimit } from './HomePageMapSearchLimit';
 import { HomePageMapSortingColumn } from './HomePageMapSortingColumn';
 import { MaplibreDevMode } from './MaplibreDevMode';

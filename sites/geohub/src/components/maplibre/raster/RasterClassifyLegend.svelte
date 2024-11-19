@@ -1,10 +1,5 @@
 <script lang="ts">
-	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
-	import {
-		ClassificationMethods,
-		NumberOfClassesMaximum,
-		NumberOfClassesMinimum
-	} from '$lib/config/AppConfig';
+	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
 	import {
 		generateColorMap,
 		getActiveBandIndex,
@@ -12,11 +7,10 @@
 		getLayerStyle,
 		getValueFromRasterTileUrl,
 		isUniqueValueRaster,
-		remapInputValue,
 		updateIntervalValues,
 		updateParamsInURL
 	} from '$lib/helper';
-	import type { BandMetadata, ColorMapRow, RasterLayerStats, RasterTileMetadata } from '$lib/types';
+	import type { BandMetadata, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
@@ -28,10 +22,14 @@
 		type RasterRescaleStore
 	} from '$stores';
 	import {
+		ClassificationMethods,
 		ColorMapPicker,
 		FieldControl,
+		LegendColorMapRow,
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,
+		remapInputValue,
+		type ColorMapRow,
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
