@@ -45,8 +45,10 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const defaultColorStore: DefaultColorStore = getContext(DEFAULTCOLOR_CONTEXT_KEY);
-	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY_2);
-	const classificationMethodStore: ClassificationMethodStore = getContext(
+	const numberOfClassesValueStore: NumberOfClassesStore = getContext(
+		NUMBER_OF_CLASSES_CONTEXT_KEY_2
+	);
+	const classificationMethodValueStore: ClassificationMethodStore = getContext(
 		CLASSIFICATION_METHOD_CONTEXT_KEY_2
 	);
 
@@ -206,11 +208,11 @@
 					{metadata}
 					bind:defaultIconSize={$page.data.config.IconSize}
 					bind:defaultColor={$defaultColorStore}
-					bind:numberOfClasses={$numberOfClassesStore}
+					bind:numberOfClasses={$numberOfClassesValueStore}
 					numberOfClassesMinimum={NumberOfClassesMinimum}
 					numberOfClassesMaximum={NumberOfClassesMaximum}
 					defaultNumberOfClasses={$page.data.config.NumberOfClasses}
-					bind:classificationMethod={$classificationMethodStore}
+					bind:classificationMethod={$classificationMethodValueStore}
 					numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
 				/>
 			</div>
@@ -269,11 +271,11 @@
 					styleType="paint"
 					legendCssTemplate={`margin-top: 13px; width: 40px; height: {value}px; background-color: ${$defaultColorStore};`}
 					dataLabel="Line width"
-					bind:numberOfClasses={$numberOfClassesStore}
+					bind:numberOfClasses={$numberOfClassesValueStore}
 					numberOfClassesMinimum={NumberOfClassesMinimum}
 					numberOfClassesMaximum={NumberOfClassesMaximum}
 					defaultNumberOfClasses={$page.data.config.NumberOfClasses}
-					bind:classificationMethod={$classificationMethodStore}
+					bind:classificationMethod={$classificationMethodValueStore}
 					numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
 				/>
 			</div>
