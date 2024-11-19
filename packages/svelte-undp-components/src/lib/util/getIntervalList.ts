@@ -1,8 +1,8 @@
-import { ClassificationMethodTypes } from '$lib/config/AppConfig';
+import { ClassificationMethodTypes } from '$lib/constants/ClassificationMethod.js';
 import chroma from 'chroma-js';
-import { remapInputValue } from './remapInputValue';
-import { isInt } from '@undp-data/svelte-undp-components';
 import { jenks } from 'simple-statistics';
+import { isInt } from './isInt.js';
+import { remapInputValue } from './remapInputValue.js';
 
 export const getIntervalList = (
 	classificationMethod: ClassificationMethodTypes,
@@ -33,14 +33,18 @@ export const getIntervalList = (
 		if (layerMin === layerMax) {
 			return [layerMin, layerMax];
 		} else {
-			intervalList = jenks(randomSample, numberOfClasses).map((element) => {
+			intervalList = jenks(randomSample, numberOfClasses)?.map((element) => {
 				return isInteger ? Math.round(element) : Number(element.toFixed(2));
 			});
-			if (intervalList[0] > layerMin) {
-				intervalList[0] = layerMin;
-			}
-			if (intervalList[intervalList.length - 1] < layerMax) {
-				intervalList[intervalList.length - 1] = layerMax;
+			if (intervalList) {
+				if (intervalList[0] > layerMin) {
+					intervalList[0] = layerMin;
+				}
+				if (intervalList[intervalList.length - 1] < layerMax) {
+					intervalList[intervalList.length - 1] = layerMax;
+				}
+			} else {
+				intervalList = [layerMin, layerMax];
 			}
 		}
 	} else if (

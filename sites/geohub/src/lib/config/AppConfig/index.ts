@@ -2,7 +2,6 @@ export * from './AcceptedExtensions';
 export * from './AccessLevel';
 export * from './AdminControlOptions';
 export * from './attribution';
-export * from './ClassificationMethod';
 export * from './DataCategories';
 export * from './DatasetSearchQueryParams';
 export * from './DatasetSortingColumns';

@@ -1,10 +1,12 @@
-import type { ColorMapRow } from '$lib/types';
-import { ClassificationMethodTypes } from '$lib/config/AppConfig';
 import chroma from 'chroma-js';
-import { getSampleFromInterval } from './getSampleFromInterval';
-import { getSampleFromHistogram } from './getSampleFromHistogram';
-import { getIntervalList } from './getIntervalList';
 import { NumberOfRandomSamplingPoints } from '$lib/config/AppConfig';
+import {
+	getIntervalList,
+	ClassificationMethodTypes,
+	type ColorMapRow,
+	getSampleFromInterval,
+	getSampleFromHistogram
+} from '@undp-data/svelte-undp-components';
 
 export const generateColorMap = (
 	layerMin: number,

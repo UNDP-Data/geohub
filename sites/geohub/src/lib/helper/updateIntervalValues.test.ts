@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { updateIntervalValues } from '$lib/helper';
-import type { ColorMapRow } from '$lib/types';
+import type { ColorMapRow } from '@undp-data/svelte-undp-components';
 
 describe('updateIntervalValues', () => {
 	it('should return the colorMapRows with the updated values', async () => {

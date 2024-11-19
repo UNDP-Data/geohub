@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getSampleFromHistogram } from './getSampleFromHistogram';
+import { getSampleFromHistogram } from './getSampleFromHistogram.js';
 
 describe('getSampleFromHistogram', () => {
 	it('tilestats histogram) should have the length of the resulting array be equal to the numberOfSamples', () => {

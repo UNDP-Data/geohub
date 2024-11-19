@@ -1,4 +1,4 @@
-import type { ColorMapRow } from '$lib/types';
+import type { ColorMapRow } from '@undp-data/svelte-undp-components';
 
 export const updateIntervalValues = (event: CustomEvent, colorMapRows: ColorMapRow[]) => {
 	const rowIndex = event.detail.index;

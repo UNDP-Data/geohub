@@ -145,6 +145,14 @@
 					}
 					dialogTitle = getDialogTitle();
 				});
+
+				map.on('mouseenter', id, () => {
+					map.getCanvas().style.cursor = 'crosshair';
+				});
+
+				map.on('mouseleave', id, () => {
+					map.getCanvas().style.cursor = '';
+				});
 			}
 		}
 

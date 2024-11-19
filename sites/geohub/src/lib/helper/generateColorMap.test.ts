@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { generateColorMap } from './generateColorMap';
-import { ClassificationMethodTypes } from '$lib/config/AppConfig';
+import { ClassificationMethodTypes } from '@undp-data/svelte-undp-components';
 
 describe('generateColorMap', () => {
 	it('should generate a color map with equidistant classification method', () => {

@@ -5,8 +5,10 @@ import type {
 } from 'maplibre-gl';
 import type { VectorLayerSpecification } from './VectorLayerSpecification';
 import type { RasterTileMetadata } from './RasterTileMetadata';
-import type { VectorTileMetadata } from '@undp-data/svelte-undp-components';
-import type { ClassificationMethodTypes } from '$lib/config/AppConfig';
+import type {
+	VectorTileMetadata,
+	ClassificationMethodTypes
+} from '@undp-data/svelte-undp-components';
 import type { DatasetDefaultLayerStyle } from '.';
 
 export interface LayerCreationInfo {

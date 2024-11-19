@@ -360,12 +360,18 @@ importers:
       esm-env:
         specifier: ^1.0.0
         version: 1.1.4
+      hex-to-css-filter:
+        specifier: ^5.4.0
+        version: 5.4.0
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
       maplibre-gl:
         specifier: ^4.7.1
         version: 4.7.1
+      simple-statistics:
+        specifier: ^7.8.7
+        version: 7.8.7
       svelte-awesome-color-picker:
         specifier: ^3.1.4
         version: 3.1.4(svelte@4.2.19)
@@ -904,9 +910,6 @@ importers:
       sass:
         specifier: ^1.79.4
         version: 1.80.6
-      simple-statistics:
-        specifier: ^7.8.7
-        version: 7.8.7
       svelte:
         specifier: ^4.2.19
         version: 4.2.19

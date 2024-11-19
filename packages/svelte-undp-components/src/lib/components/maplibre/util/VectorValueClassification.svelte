@@ -1,39 +1,23 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import FieldControl from '$lib/components/ui/FieldControl.svelte';
+	import NumberInput from '$lib/components/ui/NumberInput.svelte';
 	import {
 		ClassificationMethods,
-		ClassificationMethodTypes,
-		NumberOfClassesMaximum,
-		NumberOfClassesMinimum,
-		NumberOfRandomSamplingPoints
-	} from '$lib/config/AppConfig';
-	import {
-		checkVectorLayerHighlySkewed,
-		convertFunctionToExpression,
-		getIntervalList,
-		getSampleFromHistogram,
-		getSampleFromInterval
-	} from '$lib/helper';
-	import type { ColorMapRow } from '$lib/types';
-	import {
-		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
-		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
-		type ClassificationMethodStore,
-		type NumberOfClassesStore
-	} from '$stores';
-	import {
-		FieldControl,
-		MAPSTORE_CONTEXT_KEY,
-		NumberInput,
-		PropertySelect,
-		type MapStore,
-		type VectorTileMetadata
-	} from '@undp-data/svelte-undp-components';
+		ClassificationMethodTypes
+	} from '$lib/constants/ClassificationMethod.js';
+	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { checkVectorLayerHighlySkewed } from '$lib/util/checkVectorLayerHighlySkewed.js';
+	import { convertFunctionToExpression } from '$lib/util/convertFunctionToExpression.js';
+	import { getIntervalList } from '$lib/util/getIntervalList.js';
+	import { getSampleFromHistogram } from '$lib/util/getSampleFromHistogram.js';
+	import { getSampleFromInterval } from '$lib/util/getSampleFromInterval.js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
+	import type { ColorMapRow } from './LegendColorMapRow.svelte';
+	import PropertySelect from './PropertySelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY_2);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -46,13 +30,18 @@
 	export let legendCssTemplate: string; // should include {value} for the replacement
 	export let styleType: 'layout' | 'paint' = 'paint';
 	export let dataLabel = 'Value';
-	export let classificationContextKey = CLASSIFICATION_METHOD_CONTEXT_KEY_2;
+	export let numberOfClasses: number;
+	export let numberOfClassesMinimum = 2;
+	export let numberOfClassesMaximum = 25;
+	export let defaultNumberOfClasses = 5;
+	export let classificationMethod: ClassificationMethodTypes =
+		ClassificationMethodTypes.NATURAL_BREAK;
+	export let numberOfRandomSamplingPoints = 1000;
 
-	const classificationMethodStore: ClassificationMethodStore = getContext(classificationContextKey);
-	$: $classificationMethodStore, handleClassificationMethodChanged();
+	$: classificationMethod, handleClassificationMethodChanged();
 
-	const maplibreLayerId = $map.getLayer(layerId).sourceLayer;
-	let statLayer = metadata.json.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
+	const maplibreLayerId = $map.getLayer(layerId)?.sourceLayer as string;
+	let statLayer = metadata.json?.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
 
 	$: isConstantValue = propertySelectValue?.length === 0;
 
@@ -88,14 +77,14 @@
 	};
 
 	const resetClassificationMethods = () => {
-		if (!$classificationMethodStore) {
+		if (!classificationMethod) {
 			const highlySkewed = checkVectorLayerHighlySkewed(
 				metadata,
 				maplibreLayerId,
 				propertySelectValue
 			);
 			if (highlySkewed) {
-				$classificationMethodStore = ClassificationMethodTypes.LOGARITHMIC;
+				classificationMethod = ClassificationMethodTypes.LOGARITHMIC;
 			}
 		}
 	};
@@ -120,21 +109,21 @@
 			}
 		} else if (values[0] === 'step') {
 			// interval
-			const attribute = statLayer.attributes?.find((a) => a.attribute === propertySelectValue);
+			const attribute = statLayer?.attributes?.find((a) => a.attribute === propertySelectValue);
 			for (let i = 2; i < values.length; i = i + 2) {
 				const attrValue = values[i + 1];
 
 				const row: ColorMapRow = {
 					index: rows.length,
 					value: values[i] as number,
-					start: rows.length === 0 ? attribute.min : rows[rows.length - 1].end,
+					start: rows.length === 0 ? attribute?.min : rows[rows.length - 1].end,
 					end: (attrValue as number) ?? undefined
 				};
 				rows.push(row);
 			}
-			$numberOfClassesStore = rows.length;
+			numberOfClasses = rows.length;
 		} else {
-			$numberOfClassesStore = $page.data.config.NumberOfClasses;
+			numberOfClasses = defaultNumberOfClasses;
 		}
 		return rows;
 	};
@@ -151,27 +140,27 @@
 
 		if (!randomSample[attribute.attribute]) {
 			if (attribute.values) {
-				randomSample[attribute.attribute] = attribute.values;
+				randomSample[attribute.attribute] = attribute.values as number[];
 			} else if (attribute.histogram) {
 				randomSample[attribute.attribute] = getSampleFromHistogram(
 					attribute.histogram,
-					NumberOfRandomSamplingPoints
+					numberOfRandomSamplingPoints
 				);
 			} else {
 				randomSample[attribute.attribute] = getSampleFromInterval(
-					attribute.min,
-					attribute.max,
-					NumberOfRandomSamplingPoints
+					attribute.min as number,
+					attribute.max as number,
+					numberOfRandomSamplingPoints
 				);
 			}
 		}
 		const sample = randomSample[attribute.attribute];
 		const intervalList = getIntervalList(
-			$classificationMethodStore,
-			attribute.min,
-			attribute.max,
+			classificationMethod,
+			attribute.min as number,
+			attribute.max as number,
 			sample,
-			$numberOfClassesStore - 1 // the last row is for default value
+			numberOfClasses - 1 // the last row is for default value
 		);
 
 		// create interval list (start / end)
@@ -287,7 +276,7 @@
 					<div slot="control">
 						<div class="select is-normal is-fullwidth">
 							<select
-								bind:value={$classificationMethodStore}
+								bind:value={classificationMethod}
 								on:change={handleClassificationMethodChanged}
 							>
 								{#each ClassificationMethods as classificationMethod}
@@ -307,9 +296,9 @@
 					<div slot="help">Increate or decrease the number of classes</div>
 					<div slot="control">
 						<NumberInput
-							bind:value={$numberOfClassesStore}
-							minValue={NumberOfClassesMinimum}
-							maxValue={NumberOfClassesMaximum}
+							bind:value={numberOfClasses}
+							minValue={numberOfClassesMinimum}
+							maxValue={numberOfClassesMaximum}
 							on:change={handleIncrementDecrementClasses}
 							size="normal"
 						/>

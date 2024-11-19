@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/svelte-undp-components",
-	"version": "1.5.7",
+	"version": "1.5.8",
 	"description": "It manages util functions and svelte components used in UNDP GeoHub",
 	"scripts": {
 		"dev": "vite dev",
@@ -94,8 +94,10 @@
 		"d3": "^7.9.0",
 		"dayjs": "^1.11.13",
 		"esm-env": "^1.0.0",
+		"hex-to-css-filter": "^5.4.0",
 		"lodash-es": "^4.17.21",
 		"maplibre-gl": "^4.7.1",
+		"simple-statistics": "^7.8.7",
 		"svelte-awesome-color-picker": "^3.1.4",
 		"svelte-copy": "^1.4.2",
 		"svelte-range-slider-pips": "^3.1.1",
