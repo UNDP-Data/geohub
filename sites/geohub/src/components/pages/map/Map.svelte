@@ -2,7 +2,6 @@
 	import { page } from '$app/stores';
 	import LayerVisibilitySwitcher from '$components/pages/map/plugins/LayerVisibilitySwitcher.svelte';
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
-	import StyleShareControl from '$components/pages/map/plugins/StyleShareControl.svelte';
 	import SplitControl from '$components/util/SplitControl.svelte';
 	import { AdminControlOptions, MapStyles, attribution } from '$lib/config/AppConfig';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
@@ -583,7 +582,6 @@
 
 {#if $map}
 	<MapQueryInfoControl bind:map={$map} layerList={layerListStore} position="top-right" />
-	<StyleShareControl bind:map={$map} layerList={layerListStore} position="top-right" />
 	<LayerVisibilitySwitcher bind:map={$map} position="bottom-right" />
 	<MaplibreStaticImageControl
 		bind:map={$map}

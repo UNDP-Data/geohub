@@ -2,9 +2,10 @@
 	import { replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import LayerOrderPanelButton from '$components/pages/map/layers/order/LayerOrderPanelButton.svelte';
-	import { TabNames } from '$lib/config/AppConfig';
+	import { Permission, TabNames } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getLayerStyle } from '$lib/helper';
+	import type { DashboardMapStyle } from '$lib/types';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
@@ -24,6 +25,8 @@
 	import { getContext, onMount } from 'svelte';
 	import LayerLegend from './LayerLegend.svelte';
 	import LayerTemplate from './LayerTemplate.svelte';
+	import StyleSaveDialog from './StyleSaveDialog.svelte';
+	import StyleShareDialog from './StyleShareDialog.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
@@ -35,13 +38,19 @@
 	export let activeTab: TabNames;
 
 	let config: UserConfig = $page.data.config;
+	let style: DashboardMapStyle = $page.data.style;
 
 	$: isDevMode = $page.url.searchParams.get('dev')?.toLowerCase() === 'true' ? true : false;
 
 	const tippyTooltip = initTooltipTippy();
-	let layerHeaderHeight = 39;
+	let layerHeaderHeight = 0;
+	let layerFooterHeight = 0;
 
-	$: totalHeight = contentHeight - layerHeaderHeight;
+	$: totalHeight = contentHeight - layerHeaderHeight - layerFooterHeight - 30;
+
+	$: isNewMapMode = style ? false : true;
+	let showSaveDialog = false;
+	let showShareDialog = false;
 
 	const handleExploreDatasets = () => {
 		activeTab = TabNames.DATA;
@@ -128,16 +137,36 @@
 		$map.showCollisionBoxes = devmode;
 	};
 
+	const handleOpenSaveDialog = () => {
+		showSaveDialog = true;
+	};
+
+	const handleMapSaved = async (e: { detail: { style: DashboardMapStyle } }) => {
+		style = e.detail.style;
+		isNewMapMode = style ? false : true;
+		showSaveDialog = false;
+	};
+
+	const handleOpenShareDialog = () => (showShareDialog = true);
+
+	const isReadOnly = () => {
+		return !(
+			$page.data.session?.user?.email === style?.created_user ||
+			$page.data.session?.user?.is_superuser ||
+			(style.permission && style.permission > Permission.READ)
+		);
+	};
+
 	onMount(() => {
 		enableDevMode();
 	});
 </script>
 
-{#if $layerListStore?.length > 0}
-	<div
-		class="is-flex is-align-items-center layer-header pt-2 px-4"
-		bind:clientHeight={layerHeaderHeight}
-	>
+<div
+	class="is-flex is-align-items-center layer-header pt-2 px-4"
+	bind:clientHeight={layerHeaderHeight}
+>
+	{#if $layerListStore?.length > 0}
 		<div class="layer-header-buttons buttons mb-0">
 			{#key $layerListStore}
 				<button
@@ -178,45 +207,76 @@
 				</button>
 			{/key}
 		</div>
-	</div>
-{/if}
-<div class="layer-list pb-4" style="height: {totalHeight}px;">
-	{#if $layerListStore?.length === 0}
+	{:else}
 		<div class="p-2">
 			<Notification type="info" showCloseButton={false}>
 				No layers have been selected. Please select a layer from the <strong>{TabNames.DATA}</strong
 				> tab.
 			</Notification>
-			<div class="is-flex is-justify-content-center">
-				<button
-					class="button is-primary mt-2 has-text-weight-bold is-uppercase"
-					on:click={handleExploreDatasets}
-				>
-					<span>Explore datasets</span>
-				</button>
-			</div>
+			<button
+				class="button is-primary mt-2 has-text-weight-bold is-uppercase is-fullwidth"
+				on:click={handleExploreDatasets}
+			>
+				<span>Explore datasets</span>
+			</button>
 		</div>
 	{/if}
+</div>
+<div class="layer-list">
+	<div class="layer-contents" style="height: {totalHeight}px;">
+		{#each $layerListStore as layer (layer.id)}
+			{@const existLayerInMap = $map.getStyle().layers.find((l) => l.id === layer.id)
+				? true
+				: false}
+			<LayerTemplate
+				{layer}
+				bind:isExpanded={layer.isExpanded}
+				on:toggled={handleLayerToggled}
+				showEditButton={true}
+			>
+				<div slot="content">
+					{#if existLayerInMap}
+						<LayerLegend bind:layer />
+					{:else}
+						<Notification type="warning" showCloseButton={false}>
+							You have no permission to access this dataset
+						</Notification>
+					{/if}
+				</div>
+			</LayerTemplate>
+		{/each}
+	</div>
 
-	{#each $layerListStore as layer (layer.id)}
-		{@const existLayerInMap = $map.getStyle().layers.find((l) => l.id === layer.id) ? true : false}
-		<LayerTemplate
-			{layer}
-			bind:isExpanded={layer.isExpanded}
-			on:toggled={handleLayerToggled}
-			showEditButton={true}
-		>
-			<div slot="content">
-				{#if existLayerInMap}
-					<LayerLegend bind:layer />
-				{:else}
-					<Notification type="warning" showCloseButton={false}>
-						You have no permission to access this dataset
-					</Notification>
-				{/if}
-			</div>
-		</LayerTemplate>
-	{/each}
+	<div class="layer-footer mt-auto px-4 pt-4 is-flex" bind:clientHeight={layerFooterHeight}>
+		{#key isNewMapMode}
+			<button
+				class="button {$layerListStore.length === 0
+					? ''
+					: 'is-link is-outlined'} is-uppercase has-text-weight-bold is-fullwidth"
+				disabled={$layerListStore.length === 0}
+				on:click={handleOpenSaveDialog}
+			>
+				<span> {isNewMapMode || isReadOnly() ? 'Save' : 'Update'} map </span>
+			</button>
+
+			<button
+				class="button {isNewMapMode
+					? ''
+					: 'is-link is-outlined'} is-uppercase has-text-weight-bold mx-2"
+				disabled={isNewMapMode}
+				on:click={handleOpenShareDialog}
+			>
+				<span class="icon is-small">
+					<span class="material-symbols-outlined"> share </span>
+				</span>
+			</button>
+		{/key}
+		<button class="button is-link is-outlined is-uppercase has-text-weight-bold">
+			<span class="icon is-small">
+				<span class="material-symbols-outlined"> print </span>
+			</span>
+		</button>
+	</div>
 </div>
 
 <ModalNotification
@@ -229,6 +289,17 @@
 	cancelText="Cancel"
 	continueText="Delete all"
 />
+
+{#if $map}
+	<StyleSaveDialog
+		bind:map={$map}
+		bind:isModalVisible={showSaveDialog}
+		layerList={layerListStore}
+		on:change={handleMapSaved}
+	/>
+
+	<StyleShareDialog bind:style bind:isModalVisible={showShareDialog} />
+{/if}
 
 <style lang="scss">
 	.layer-header {
@@ -252,6 +323,15 @@
 	}
 
 	.layer-list {
-		overflow-y: auto;
+		position: relative;
+
+		.layer-contents {
+			overflow-y: auto;
+		}
+
+		.layer-footer {
+			position: sticky;
+			bottom: 0;
+		}
 	}
 </style>
