@@ -258,7 +258,7 @@
 			<button
 				class="button {$layerListStore.length === 0
 					? ''
-					: 'is-link is-outlined'} is-uppercase has-text-weight-bold is-fullwidth"
+					: 'is-link'} is-uppercase has-text-weight-bold is-fullwidth"
 				disabled={$layerListStore.length === 0}
 				on:click={handleOpenSaveDialog}
 			>
