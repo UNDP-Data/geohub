@@ -1,5 +1,14 @@
 # geohub
 
+## 1.22.3
+
+### Patch Changes
+
+- 550c48b: fix: updated style version to 2.3.3
+- 2bb5017: fix: fixed save/update button color to blue.
+- 4682dae: fix: redesigned share control and split it into save and share button at the footer of layer tab.
+- 4fa65f6: fix: moved map export control to sidebar. If click export button in layer tab, export tab is added.
+
 ## 1.22.2
 
 ### Patch Changes

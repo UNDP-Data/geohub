@@ -83,7 +83,7 @@
 			maxPitch: 85
 		});
 
-		map.addControl(new AttributionControl({ compact: false }), 'bottom-right');
+		map.addControl(new AttributionControl({ compact: true }), 'bottom-right');
 
 		map.addControl(
 			new NavigationControl({

@@ -37,6 +37,33 @@ const hexToRgba = (hex: string) => {
 	return `rgba(${r}, ${g}, ${b}, ${a.toFixed(2)})`;
 };
 
+/**
+ * Replace space seraprated rgba to comma separated rgba
+ * @param input input string
+ * @returns string
+ */
+const convertToCommaSeparatedRgba = (input: string) => {
+	return input.replace(
+		/(rgb|rgba)\((\d+)\s+(\d+)\s+(\d+)(?:\s+(\d+(\.\d+)?))?\)/g,
+		(match, type, r, g, b, a) => {
+			if (a !== undefined) {
+				return `${type}(${r},${g},${b},${a})`;
+			} else {
+				return `${type}(${r},${g},${b})`;
+			}
+		}
+	);
+};
+
+/**
+ * Replace Proxima Nova to Open Sans because there is an issue of using proxima nova in static api.
+ * @param input input string
+ * @returns string
+ */
+const proximanovaToOpenSans = (input: string) => {
+	return input.replace(/Proxima Nova/g, 'Open Sans');
+};
+
 export const renderMap = async (
 	url: URL,
 	style: StyleSpecification,
@@ -103,9 +130,11 @@ export const renderMap = async (
 	// replace all hex color format with alpha value to rgba
 	const hexColorRegex = /#([a-fA-F0-9]{8})\b/g;
 	let layerText = JSON.stringify(style.layers);
+	layerText = convertToCommaSeparatedRgba(layerText);
 	layerText = layerText.replace(hexColorRegex, (match, hex) => {
 		return hexToRgba(`#${hex}`);
 	});
+	layerText = proximanovaToOpenSans(layerText);
 	style.layers = JSON.parse(layerText);
 
 	map.load(style);
