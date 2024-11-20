@@ -114,7 +114,7 @@
 	use:tippyTooltip={{ content: `${!isVisible ? `Show ${target}` : `Hide ${target}`}` }}
 	disabled={isLoading}
 >
-	{#if icon.startsWith('fas')}
+	{#if icon.startsWith('fa')}
 		<i class="{icon} fa-xl align-center {isVisible ? 'has-text-success' : ''}" />
 	{:else}
 		<span

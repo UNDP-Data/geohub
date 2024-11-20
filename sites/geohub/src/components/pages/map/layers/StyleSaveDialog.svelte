@@ -6,17 +6,15 @@
 	import { storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import type { LayerListStore } from '$stores';
-	import {
-		CopyToClipboard,
-		ModalTemplate,
-		Notification,
-		ShowDetails
-	} from '@undp-data/svelte-undp-components';
+	import { ModalTemplate, Notification } from '@undp-data/svelte-undp-components';
 	import type { Map, StyleSpecification } from 'maplibre-gl';
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	let savedStyle: DashboardMapStyle = $page.data.style;
 	let accessLevel: AccessLevel = savedStyle?.access_level ?? AccessLevel.PRIVATE;
-	let showDetails = true;
+
 	let styleId = savedStyle?.id;
 
 	export let map: Map;
@@ -25,7 +23,7 @@
 
 	let styleName: string;
 	let exportedStyleJSON: StyleSpecification;
-	let shareLoading = false;
+	let isLoading = false;
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
 	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
@@ -75,8 +73,8 @@
 		createStyleJSON2Generate();
 	};
 
-	export const share = async () => {
-		shareLoading = true;
+	export const save = async () => {
+		isLoading = true;
 		const savedLayerList = JSON.parse(JSON.stringify($layerList));
 
 		const data = {
@@ -100,8 +98,7 @@
 		});
 		savedStyle = await res.json();
 		await invalidateAll();
-		const styleURL = savedStyle.links.find((l) => l.rel === 'mapedit').href;
-		showDetails = false;
+		const styleURL = savedStyle.links.find((l) => l.rel === 'mapedit')?.href;
 		styleName = savedStyle.name;
 
 		toLocalStorage(layerListStorageKey, savedStyle.layers);
@@ -111,10 +108,14 @@
 
 		const apiUrl = `${styleURL}${$page.url.search}${$page.url.hash}`;
 		replaceState(apiUrl, '');
-		shareLoading = false;
-	};
+		invalidateAll().then(() => {
+			isLoading = false;
 
-	$: styleName, updateStyleName();
+			dispatch('change', {
+				style: savedStyle
+			});
+		});
+	};
 
 	const updateStyleName = () => {
 		if (!exportedStyleJSON) return;
@@ -138,26 +139,16 @@
 	};
 
 	const handleShare = async () => {
-		await share();
+		await save();
 	};
 </script>
 
 <ModalTemplate
-	title="{savedStyle && !isReadOnly() ? 'Update' : 'Share'} map"
+	title="{savedStyle && !isReadOnly() ? 'Update' : 'Save'} map"
 	bind:show={isModalVisible}
 >
 	<div slot="content">
 		{#if savedStyle}
-			{@const styleURL = savedStyle?.links.find((l) => l.rel === 'map').href}
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">URL:</label>
-			<div class="control">
-				<CopyToClipboard value={styleURL} isMultiline={false} width="100%" />
-			</div>
-			<p class="help is-link">
-				This map is shared through the above URL. You can share it with your colleagues.
-			</p>
-
 			{#if isReadOnly()}
 				<div class="mt-2">
 					<Notification type="warning" showCloseButton={false}>
@@ -173,79 +164,74 @@
 					</Notification>
 				</div>
 			{/if}
-			<div class="my-2">
-				<ShowDetails bind:show={showDetails} />
-			</div>
 		{/if}
 
-		{#if showDetails}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Map name:</label>
-				<div class="control">
-					<input
-						class="input text-stylename"
-						type="text"
-						placeholder="Style name"
-						bind:value={styleName}
-						disabled={shareLoading}
-					/>
-				</div>
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">Map title:</label>
+			<div class="control">
+				<input
+					class="input text-stylename"
+					type="text"
+					placeholder="Style name"
+					bind:value={styleName}
+					disabled={isLoading}
+					on:change={updateStyleName}
+				/>
 			</div>
+		</div>
 
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Saved map will be published to: </label>
-				<div class="control">
-					<AccessLevelSwitcher
-						bind:accessLevel
-						disableOrganisation={countPrivateLayers > 0}
-						disablePublic={countPrivateLayers + countOrganisationLayers > 0}
-					/>
-				</div>
-				{#if countPrivateLayers + countOrganisationLayers > 0}
-					<p class="help is-danger">
-						{#if countPrivateLayers > 0 && countOrganisationLayers > 0}
-							{@const counts = countPrivateLayers + countOrganisationLayers}
-							It contains <b>{countPrivateLayers} private layer{counts > 1 ? 's' : ''}</b> and
-							<b>{countOrganisationLayers} organization layer{counts > 1 ? 's' : ''}</b>,
-						{:else if countPrivateLayers === 0 && countOrganisationLayers > 0}
-							It contains <b
-								>{countOrganisationLayers} organization layer{countOrganisationLayers > 1
-									? 's'
-									: ''}</b
-							>,
-						{:else if countPrivateLayers > 0 && countOrganisationLayers === 0}
-							It contains <b
-								>{countPrivateLayers} private layer{countPrivateLayers > 1 ? 's' : ''}</b
-							>,
-						{/if}
-						you only can save a <b>private</b> map. This map will not be accessed by other users. To
-						make a publicly or organisationally shared map, please change dataset accessibility before
-						publishing a community map.
-					</p>
-				{/if}
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">Access level </label>
+			<div class="control">
+				<AccessLevelSwitcher
+					bind:accessLevel
+					disableOrganisation={countPrivateLayers > 0}
+					disablePublic={countPrivateLayers + countOrganisationLayers > 0}
+				/>
 			</div>
-
-			{#if exportedStyleJSON && exportedStyleJSON.layers.length === 0}
-				<article class="message is-warning">
-					<div class="message-header">
-						<p>Warning</p>
-					</div>
-					<div class="message-body">
-						<p>No layer to be saved</p>
-					</div>
-				</article>
+			{#if countPrivateLayers + countOrganisationLayers > 0}
+				<p class="help is-danger">
+					{#if countPrivateLayers > 0 && countOrganisationLayers > 0}
+						{@const counts = countPrivateLayers + countOrganisationLayers}
+						It contains <b>{countPrivateLayers} private layer{counts > 1 ? 's' : ''}</b> and
+						<b>{countOrganisationLayers} organization layer{counts > 1 ? 's' : ''}</b>,
+					{:else if countPrivateLayers === 0 && countOrganisationLayers > 0}
+						It contains <b
+							>{countOrganisationLayers} organization layer{countOrganisationLayers > 1
+								? 's'
+								: ''}</b
+						>,
+					{:else if countPrivateLayers > 0 && countOrganisationLayers === 0}
+						It contains <b>{countPrivateLayers} private layer{countPrivateLayers > 1 ? 's' : ''}</b
+						>,
+					{/if}
+					you only can save a <b>private</b> map. This map will not be accessed by other users. To make
+					a publicly or organisationally shared map, please change dataset accessibility before publishing
+					a community map.
+				</p>
 			{/if}
+		</div>
+
+		{#if exportedStyleJSON && exportedStyleJSON.layers.length === 0}
+			<article class="message is-warning">
+				<div class="message-header">
+					<p>Warning</p>
+				</div>
+				<div class="message-body">
+					<p>No layer to be saved</p>
+				</div>
+			</article>
 		{/if}
 	</div>
 	<div class="buttons" slot="buttons">
 		<button
-			class="button is-primary is-uppercase has-text-weight-bold {shareLoading ? 'is-loading' : ''}"
+			class="button is-primary is-uppercase has-text-weight-bold {isLoading ? 'is-loading' : ''}"
 			on:click={handleShare}
 			disabled={!(exportedStyleJSON && exportedStyleJSON.layers.length > 0)}
 		>
-			{savedStyle && !isReadOnly() ? 'Update' : 'Share'}
+			{savedStyle && !isReadOnly() ? 'Update' : 'Save'}
 		</button>
 	</div>
 </ModalTemplate>
