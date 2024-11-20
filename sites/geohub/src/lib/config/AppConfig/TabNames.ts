@@ -10,5 +10,6 @@ export enum TabNames {
 	LINKS = 'Links',
 	PREVIEW = 'Preview',
 	PERMISSIONS = 'Permissions',
-	TOOLS = 'Tools'
+	TOOLS = 'Tools',
+	EXPORT = 'Export'
 }

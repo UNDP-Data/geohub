@@ -22,11 +22,13 @@
 		Notification,
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
-	import { getContext, onMount } from 'svelte';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import LayerLegend from './LayerLegend.svelte';
 	import LayerTemplate from './LayerTemplate.svelte';
 	import StyleSaveDialog from './StyleSaveDialog.svelte';
 	import StyleShareDialog from './StyleShareDialog.svelte';
+
+	const dispatch = createEventDispatcher();
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
@@ -157,6 +159,10 @@
 		);
 	};
 
+	const handleExportClicked = () => {
+		dispatch('export');
+	};
+
 	onMount(() => {
 		enableDevMode();
 	});
@@ -271,6 +277,14 @@
 				</span>
 			</button>
 		{/key}
+		<button
+			class="export-button button is-link is-outlined is-uppercase has-text-weight-bold ml-2"
+			on:click={handleExportClicked}
+		>
+			<span class="icon is-small">
+				<span class="material-symbols-outlined"> print </span>
+			</span>
+		</button>
 	</div>
 </div>
 
