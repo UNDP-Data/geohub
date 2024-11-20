@@ -278,7 +278,7 @@
 			</button>
 		{/key}
 		<button
-			class="button is-link is-outlined is-uppercase has-text-weight-bold ml-2"
+			class="export-button button is-link is-outlined is-uppercase has-text-weight-bold ml-2"
 			on:click={handleExportClicked}
 		>
 			<span class="icon is-small">

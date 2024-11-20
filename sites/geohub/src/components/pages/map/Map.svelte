@@ -167,13 +167,23 @@
 				scrollTo: 'off'
 			},
 			{
+				title: 'Exporting map image',
+				intro: `
+            By clicking the export button in layers tab, you can export the current map image with your preferences such as paper size, orientation, file format, etc.
+            `,
+				element: '.tab-layers',
+				position: 'left',
+				step: 5,
+				scrollTo: 'off'
+			},
+			{
 				title: 'Map operations',
 				intro: `
             From this step, we are going to show you main operations on the map.
             `,
 				element: '.map',
 				position: 'floating',
-				step: 5,
+				step: 6,
 				scrollTo: 'off'
 			},
 			{
@@ -183,7 +193,7 @@
             `,
 				element: '.maplibregl-style-switcher-control',
 				position: 'top',
-				step: 6,
+				step: 7,
 				scrollTo: 'off'
 			},
 			{
@@ -193,7 +203,7 @@
             `,
 				element: '.toggle-button',
 				position: 'right',
-				step: 7,
+				step: 8,
 				scrollTo: 'off'
 			},
 			{
@@ -203,19 +213,10 @@
             `,
 				element: '.maplibregl-ctrl-query',
 				position: 'left',
-				step: 8,
-				scrollTo: 'off'
-			},
-			{
-				title: 'Exporting map image',
-				intro: `
-            You can export the current map image with your preferences such as paper size, orientation, file format, etc.
-            `,
-				element: '.legend-button',
-				position: 'left',
 				step: 9,
 				scrollTo: 'off'
 			},
+
 			{
 				title: 'Disable hillshade layer',
 				intro: `
