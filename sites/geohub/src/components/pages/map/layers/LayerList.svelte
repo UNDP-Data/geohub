@@ -225,7 +225,7 @@
 <div class="layer-list">
 	<div class="layer-contents" style="height: {totalHeight}px;">
 		{#each $layerListStore as layer (layer.id)}
-			{@const existLayerInMap = $map.getStyle().layers.find((l) => l.id === layer.id)
+			{@const existLayerInMap = $map?.getStyle()?.layers?.find((l) => l.id === layer.id)
 				? true
 				: false}
 			<LayerTemplate
@@ -271,11 +271,6 @@
 				</span>
 			</button>
 		{/key}
-		<button class="button is-link is-outlined is-uppercase has-text-weight-bold">
-			<span class="icon is-small">
-				<span class="material-symbols-outlined"> print </span>
-			</span>
-		</button>
 	</div>
 </div>
 

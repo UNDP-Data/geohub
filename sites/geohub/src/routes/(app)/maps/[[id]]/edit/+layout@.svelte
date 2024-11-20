@@ -198,7 +198,7 @@
 				If you want to discard all changes, click <b>Discard changes</b>.
 				<br />
 				If want to save your work to the database, close the dialog to cancel. Then use
-				<b>Share</b> feature to save your map before leaving.
+				<b>Save</b> feature to save your map before leaving.
 			</div>
 		</Notification>
 	</div>

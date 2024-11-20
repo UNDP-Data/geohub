@@ -228,23 +228,13 @@
 				scrollTo: 'off'
 			},
 			{
-				title: 'Save your work to share with your colleagues',
-				intro: `
-            Once you sign in to your account, this button will be enabled. You can save your current work to share it with your colleagues.
-            `,
-				element: '.maplibregl-ctrl-styleshare',
-				position: 'left',
-				step: 9,
-				scrollTo: 'off'
-			},
-			{
 				title: 'Exporting map image',
 				intro: `
             You can export the current map image with your preferences such as paper size, orientation, file format, etc.
             `,
 				element: '.legend-button',
 				position: 'left',
-				step: 10,
+				step: 9,
 				scrollTo: 'off'
 			},
 			{
@@ -254,7 +244,7 @@
             `,
 				element: '.maplibregl-ctrl-hillshade-visibility',
 				position: 'left',
-				step: 11,
+				step: 10,
 				scrollTo: 'off'
 			},
 			{
@@ -264,7 +254,7 @@
             `,
 				element: '.maplibregl-ctrl-geolocate',
 				position: 'left',
-				step: 12,
+				step: 11,
 				scrollTo: 'off'
 			},
 			{
@@ -273,7 +263,7 @@
 					'You have completed map editor tour. Now you can start exploring GeoHub to create a beautiful map. You can always come back to the tour by clicking this button',
 				element: '.tour-control-button',
 				position: 'left',
-				step: 13,
+				step: 12,
 				scrollTo: 'off'
 			}
 		]
