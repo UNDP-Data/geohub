@@ -262,7 +262,7 @@
 			<button
 				class="button {isNewMapMode
 					? ''
-					: 'is-link is-outlined'} is-uppercase has-text-weight-bold mx-2"
+					: 'is-link is-outlined'} is-uppercase has-text-weight-bold ml-2"
 				disabled={isNewMapMode}
 				on:click={handleOpenShareDialog}
 			>
