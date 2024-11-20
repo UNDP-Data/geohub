@@ -27,10 +27,6 @@
 	import '@maptiler/geocoding-control/style.css';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
-	import {
-		MaplibreStaticImageControl,
-		type ControlOptions
-	} from '@undp-data/svelte-geohub-static-image-controls';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
 	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import {
@@ -70,7 +66,6 @@
 	let styleSwitcher: MaplibreStyleSwitcherControl;
 
 	export let defaultStyle: string = MapStyles[0].title;
-	let styleUrl = MapStyles[0].uri;
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
 	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
@@ -98,22 +93,6 @@
 		zoom: 3,
 		hash: true,
 		attributionControl: false
-	};
-
-	let exportOptions: ControlOptions = {
-		width: 300,
-		height: 200,
-		bbox: [-180, -90, 180, 90],
-		latitude: 0,
-		longitude: 0,
-		zoom: 3,
-		bearing: 0,
-		pitch: 0,
-		ratio: 1,
-		defaultApi: 'center',
-		extension: 'png',
-		pageSize: 'A4',
-		orientation: 'landscape'
 	};
 
 	let tourOptions: IntroJsOptions = {
@@ -277,8 +256,6 @@
 		const style = $page.data.style;
 		if (style) {
 			// /map/{id} page
-
-			styleUrl = style.links.find((l) => l.rel === 'stylejson').href;
 
 			// if style query param in URL
 			if (`${initiaMapStyleId}` === `${style.id}`) {
@@ -573,15 +550,6 @@
 {#if $map}
 	<MapQueryInfoControl bind:map={$map} layerList={layerListStore} position="top-right" />
 	<LayerVisibilitySwitcher bind:map={$map} position="bottom-right" />
-	<MaplibreStaticImageControl
-		bind:map={$map}
-		show={false}
-		style={styleUrl}
-		apiBase={$page.data.staticApiUrl}
-		bind:options={exportOptions}
-		hiddenApiTypes={true}
-		position="top-right"
-	/>
 	<TourControl bind:map={$map} position="top-right" bind:options={tourOptions} />
 {/if}
 
