@@ -49,6 +49,7 @@
 	let layerFooterHeight = 0;
 
 	$: totalHeight = contentHeight - layerHeaderHeight - layerFooterHeight - 30;
+	$: saveDisabled = $layerListStore.length === 0 || !$page.data.session;
 
 	$: isNewMapMode = style ? false : true;
 	let showSaveDialog = false;
@@ -256,10 +257,10 @@
 	<div class="layer-footer mt-auto px-4 pt-4 is-flex" bind:clientHeight={layerFooterHeight}>
 		{#key isNewMapMode}
 			<button
-				class="button {$layerListStore.length === 0
+				class="button {saveDisabled
 					? ''
 					: 'is-link'} is-uppercase has-text-weight-bold is-fullwidth"
-				disabled={$layerListStore.length === 0}
+				disabled={saveDisabled}
 				on:click={handleOpenSaveDialog}
 			>
 				<span> {isNewMapMode || isReadOnly() ? 'Save' : 'Update'} map </span>
