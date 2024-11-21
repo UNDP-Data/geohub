@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.6
+
+### Patch Changes
+
+- 526206c: fix: disable save button if users do not sign in.
+
 ## 1.22.5
 
 ### Patch Changes
