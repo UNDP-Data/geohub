@@ -16,6 +16,10 @@
 	import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
+	import {
+		MaplibreStaticImageControl,
+		type ControlOptions
+	} from '@undp-data/svelte-geohub-static-image-controls';
 	import { MaplibreLegendControl } from '@undp-data/svelte-maplibre-storymap';
 	import {
 		Breadcrumbs,
@@ -86,6 +90,23 @@
 
 	let tourControlInstance: TourControl | undefined = undefined;
 	let tourOptions: IntroJsOptions | undefined = undefined;
+
+	let styleUrl = MapStyles[0].uri;
+	let exportOptions: ControlOptions = {
+		width: 300,
+		height: 200,
+		bbox: [-180, -90, 180, 90],
+		latitude: 0,
+		longitude: 0,
+		zoom: 3,
+		bearing: 0,
+		pitch: 0,
+		ratio: 1,
+		defaultApi: 'center',
+		extension: 'png',
+		pageSize: 'A4',
+		orientation: 'landscape'
+	};
 
 	const getTabs = () => {
 		const tabs = clickedFeatures.map((f) => {
@@ -186,14 +207,22 @@
 					scrollTo: 'off'
 				},
 				{
+					title: 'Export map image',
+					intro: 'You can export a map image in various formats and sizes by clicking this button',
+					element: scrollSnapParent.querySelector('.legend-button') as HTMLElement,
+					position: 'left',
+					step: 4,
+					scrollTo: 'off'
+				},
+				{
 					title: 'Enable aerial image',
 					intro:
 						'Toggle this button to enable or diable high resolution aerial photos caputered by Zanzibar Mapping Initialitve from OpenAerialMap',
 					element: scrollSnapParent.querySelector(
 						'.maplibregl-ctrl-openaerialmap-visibility'
 					) as HTMLElement,
-					position: 'bottom',
-					step: 4,
+					position: 'left',
+					step: 5,
 					scrollTo: 'off'
 				},
 				{
@@ -203,7 +232,7 @@
 						'.maplibregl-style-switcher-control'
 					) as HTMLElement,
 					position: 'top',
-					step: 5,
+					step: 6,
 					scrollTo: 'off'
 				}
 			]
@@ -339,6 +368,8 @@
 		addProtocol('pmtiles', protocol.tile);
 
 		addOpenAerialMap(data.style.style as StyleSpecification);
+
+		styleUrl = data.style.links?.find((l) => l.rel === 'stylejson')?.href as string;
 
 		map = new Map({
 			container: mapContainer,
@@ -552,6 +583,16 @@
 				position="bottom-right"
 				target={OAM_LAYERID}
 				icon="satellite"
+			/>
+
+			<MaplibreStaticImageControl
+				bind:map
+				show={false}
+				style={styleUrl}
+				apiBase={$page.data.staticApiUrl}
+				bind:options={exportOptions}
+				hiddenApiTypes={true}
+				position="bottom-right"
 			/>
 
 			{#if tourOptions}
