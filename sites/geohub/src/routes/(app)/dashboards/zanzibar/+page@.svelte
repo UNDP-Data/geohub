@@ -207,9 +207,9 @@
 					scrollTo: 'off'
 				},
 				{
-					title: 'Export map image',
-					intro: 'You can export a map image in various formats and sizes by clicking this button',
-					element: scrollSnapParent.querySelector('.legend-button') as HTMLElement,
+					title: 'Find my location',
+					intro: 'Turn GPS on your device to find your location on the map!',
+					element: scrollSnapParent.querySelector('.maplibregl-ctrl-geolocate') as HTMLElement,
 					position: 'left',
 					step: 4,
 					scrollTo: 'off'
@@ -223,6 +223,14 @@
 					) as HTMLElement,
 					position: 'left',
 					step: 5,
+					scrollTo: 'off'
+				},
+				{
+					title: 'Export map image',
+					intro: 'You can export a map image in various formats and sizes by clicking this button',
+					element: scrollSnapParent.querySelector('.legend-button') as HTMLElement,
+					position: 'left',
+					step: 6,
 					scrollTo: 'off'
 				},
 				{
