@@ -394,16 +394,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy pgtileserv to kubernetes
-        uses: actions-hub/kubectl@v1.31.2
+        uses: actions-hub/kubectl@v1.31.3
         with:
           args: apply -f backends/k8s/pgtileserv/yaml/pgtileserv-deployment.yaml
 
       - name: Delete Secrets for pgtileserv
-        uses: actions-hub/kubectl@v1.31.2
+        uses: actions-hub/kubectl@v1.31.3
         with:
           args: delete secret pgtileserv-secrets --ignore-not-found -n ${{ env.PGTILESERV_NAMESPACE }}
       - name: Create Secrets for pgtileserv
-        uses: actions-hub/kubectl@v1.31.2
+        uses: actions-hub/kubectl@v1.31.3
         with:
           args: create secret generic pgtileserv-secrets --from-literal=DATABASE_URL=${{ secrets.DATABASE_URL }}  -n ${{ env.PGTILESERV_NAMESPACE }}
 
@@ -421,15 +421,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Delete Secrets
-        uses: actions-hub/kubectl@v1.31.2
+        uses: actions-hub/kubectl@v1.31.3
         with:
           args: delete secret ingest-secrets --ignore-not-found -n ${{ env.DEPLOYMENT_NAMESPACE }}
       - name: Create Secrets
-        uses: actions-hub/kubectl@v1.31.2
+        uses: actions-hub/kubectl@v1.31.3
         with:
           args: create secret generic ingest-secrets --from-literal=AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }} --from-literal=SERVICE_BUS_CONNECTION_STRING=${{ secrets.SERVICE_BUS_CONNECTION_STRING }}  --from-literal=AZURE_WEBPUBSUB_CONNECTION_STRING=${{ secrets.AZURE_WEBPUBSUB_CONNECTION_STRING }} -n ${{ env.DEPLOYMENT_NAMESPACE }}
       - name: Deploy ingest to kubernetes
-        uses: actions-hub/kubectl@v1.31.2
+        uses: actions-hub/kubectl@v1.31.3
         env:
           SERVICE_BUS_CONNECTION_STRING: ${{ secrets.SERVICE_BUS_CONNECTION_STRING }}
         with:
@@ -450,7 +450,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy cogserver-dev to kubernetes
-        uses: actions-hub/kubectl@v1.31.2
+        uses: actions-hub/kubectl@v1.31.3
         with:
           args: apply -f backends/k8s/cogserver/yaml/cogserver-dev-deployment.yaml
 
@@ -469,7 +469,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy cogserver to kubernetes
-        uses: actions-hub/kubectl@v1.31.2
+        uses: actions-hub/kubectl@v1.31.3
         with:
           args: apply -f backends/k8s/cogserver/yaml/cogserver-deployment.yaml
 
@@ -488,15 +488,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Delete Secrets
-        uses: actions-hub/kubectl@v1.31.2
+        uses: actions-hub/kubectl@v1.31.3
         with:
           args: delete secret stac-secrets --ignore-not-found -n ${{ env.DEPLOYMENT_NAMESPACE }}
       - name: Create Secrets
-        uses: actions-hub/kubectl@v1.31.2
+        uses: actions-hub/kubectl@v1.31.3
         with:
           args: create secret generic stac-secrets --from-literal=AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }} --from-literal=AZURE_SERVICE_BUS_CONNECTION_STRING=${{ secrets.AZURE_SERVICE_BUS_CONNECTION_STRING }}  --from-literal=AZURE_SERVICE_BUS_QUEUE_NAME=${{ env.AZURE_SERVICE_BUS_QUEUE_NAME }} -n ${{ env.DEPLOYMENT_NAMESPACE }}
       - name: Deploy ingest to kubernetes
-        uses: actions-hub/kubectl@v1.31.2
+        uses: actions-hub/kubectl@v1.31.3
         env:
           AZURE_SERVICE_BUS_CONNECTION_STRING: ${{ secrets.AZURE_SERVICE_BUS_CONNECTION_STRING }}
         with:
