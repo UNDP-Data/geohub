@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.5
+
+### Patch Changes
+
+- 2e7ac7e: fix: add tour information for geolocation in Zanzibar dashboard.
+
 ## 1.22.4
 
 ### Patch Changes
