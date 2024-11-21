@@ -240,7 +240,7 @@
 						'.maplibregl-style-switcher-control'
 					) as HTMLElement,
 					position: 'top',
-					step: 6,
+					step: 7,
 					scrollTo: 'off'
 				}
 			]
