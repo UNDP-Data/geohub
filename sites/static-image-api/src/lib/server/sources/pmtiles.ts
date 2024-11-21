@@ -56,9 +56,7 @@ export const getPMTilesTile = async (sourceUrl: string) => {
 					fc.features.push(feature);
 				}
 
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				const tileIndex = geojsonVt(fc, {
+				const tileIndex = geojsonVt(fc as geojsonVt.Data, {
 					maxZoom: Number(z),
 					indexMaxZoom: Number(z)
 				});
@@ -68,9 +66,7 @@ export const getPMTilesTile = async (sourceUrl: string) => {
 				}
 			});
 			// create vector tiles from multiple layers
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			const buffer = vtpbf.fromGeojsonVt(data);
+			const buffer = vtpbf.fromGeojsonVt(data as unknown as Record<string, vtpbf.GeoJSONVTData>);
 			return buffer;
 		} else {
 			return null;
