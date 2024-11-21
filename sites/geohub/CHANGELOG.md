@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.4
+
+### Patch Changes
+
+- 08081c7: feat: add export button to Zanzibar dashboard.
+
 ## 1.22.3
 
 ### Patch Changes

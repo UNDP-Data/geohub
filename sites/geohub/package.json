@@ -1,6 +1,6 @@
 {
 	"name": "geohub",
-	"version": "1.22.3",
+	"version": "1.22.4",
 	"description": "GeoHub is a geospatial visualization data portal built by UNDP using sveltekit",
 	"scripts": {
 		"dev": "pnpm prebuild && vite dev",
@@ -44,7 +44,7 @@
 		"@azure/web-pubsub-client": "1.0.1",
 		"@carbon/charts-svelte": "^1.22.0",
 		"@maplibre/maplibre-gl-geocoder": "^1.7.0",
-		"@maptiler/geocoding-control": "^1.4.1",
+		"@maptiler/geocoding-control": "^2.0.0",
 		"@neodrag/svelte": "^2.0.6",
 		"@sveltejs/adapter-node": "^5.2.5",
 		"@sveltejs/kit": "^2.6.1",

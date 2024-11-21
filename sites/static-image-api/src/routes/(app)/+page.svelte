@@ -11,6 +11,7 @@
 		isValidUrl,
 		Sidebar
 	} from '@undp-data/svelte-undp-components';
+	import { Switch } from '@undp-data/svelte-undp-design';
 	import { addProtocol, Map, NavigationControl, ScaleControl } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { getContext, onMount } from 'svelte';
@@ -50,6 +51,9 @@
 
 	let map: Map;
 
+	let showTileBoundaries = false;
+	let showCollisionBoxes = false;
+
 	onMount(() => {
 		let protocol = new pmtiles.Protocol();
 		addProtocol('pmtiles', protocol.tile);
@@ -59,6 +63,8 @@
 			style: styleUrl
 		});
 
+		map.showTileBoundaries = showTileBoundaries;
+
 		map.addControl(new NavigationControl(), 'bottom-right');
 		map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
 
@@ -66,6 +72,16 @@
 			map.resize();
 		});
 	});
+
+	const handleShowTileBoundaryChange = () => {
+		if (!map) return;
+		map.showTileBoundaries = showTileBoundaries;
+	};
+
+	const handleShowCollisionBoxes = () => {
+		if (!map) return;
+		map.showCollisionBoxes = showCollisionBoxes;
+	};
 
 	const handleUrlChanged = (e: { detail: { url: string } }) => {
 		apiUrl = e.detail.url;
@@ -117,7 +133,7 @@
 			<div class="panel-block">
 				<FieldControl
 					title="Maplibre Style URL"
-					fontWeight="normal"
+					fontWeight="bold"
 					showHelp={true}
 					showHelpPopup={false}
 				>
@@ -172,18 +188,46 @@
 					<div slot="help">Select an example from dropdown, or paste your own style URL.</div>
 				</FieldControl>
 			</div>
+			<div class="panel-block">
+				<FieldControl title="Map Settings" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						<div class="pb-2">
+							<Switch
+								bind:toggled={showTileBoundaries}
+								toggledText="Tile boundaries is shown"
+								untoggledText="Tile boundaries is hidden"
+								showValue={true}
+								on:change={handleShowTileBoundaryChange}
+							/>
+						</div>
+						<div>
+							<Switch
+								bind:toggled={showCollisionBoxes}
+								toggledText="Collision Boxes is shown"
+								untoggledText="Collision Boxes is hidden"
+								showValue={true}
+								on:change={handleShowCollisionBoxes}
+							/>
+						</div>
+					</div>
+				</FieldControl>
+			</div>
 
 			<div class="panel-block">
 				{#if map}
-					<StaticImageControl
-						bind:map
-						show={true}
-						bind:style={styleUrl}
-						apiBase="{origin}/api"
-						showAdvanced={true}
-						bind:options
-						on:change={handleUrlChanged}
-					/>
+					<FieldControl title="Export Settings" fontWeight="bold" showHelp={false}>
+						<div slot="control">
+							<StaticImageControl
+								bind:map
+								show={true}
+								bind:style={styleUrl}
+								apiBase="{origin}/api"
+								showAdvanced={true}
+								bind:options
+								on:change={handleUrlChanged}
+							/>
+						</div>
+					</FieldControl>
 				{/if}
 			</div>
 			{#if apiUrl}
