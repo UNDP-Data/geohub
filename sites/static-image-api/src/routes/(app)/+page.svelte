@@ -133,7 +133,7 @@
 			<div class="panel-block">
 				<FieldControl
 					title="Maplibre Style URL"
-					fontWeight="normal"
+					fontWeight="bold"
 					showHelp={true}
 					showHelpPopup={false}
 				>
@@ -189,7 +189,7 @@
 				</FieldControl>
 			</div>
 			<div class="panel-block">
-				<FieldControl title="Settings" fontWeight="bold" showHelp={false}>
+				<FieldControl title="Map Settings" fontWeight="bold" showHelp={false}>
 					<div slot="control">
 						<div class="pb-2">
 							<Switch
@@ -215,15 +215,19 @@
 
 			<div class="panel-block">
 				{#if map}
-					<StaticImageControl
-						bind:map
-						show={true}
-						bind:style={styleUrl}
-						apiBase="{origin}/api"
-						showAdvanced={true}
-						bind:options
-						on:change={handleUrlChanged}
-					/>
+					<FieldControl title="Export Settings" fontWeight="bold" showHelp={false}>
+						<div slot="control">
+							<StaticImageControl
+								bind:map
+								show={true}
+								bind:style={styleUrl}
+								apiBase="{origin}/api"
+								showAdvanced={true}
+								bind:options
+								on:change={handleUrlChanged}
+							/>
+						</div>
+					</FieldControl>
 				{/if}
 			</div>
 			{#if apiUrl}
