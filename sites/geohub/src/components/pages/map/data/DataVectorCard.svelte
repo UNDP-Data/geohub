@@ -145,7 +145,7 @@
 				<MiniMap
 					bind:feature
 					bind:width
-					height={'150px'}
+					height={'200px'}
 					bind:isLoadMap={isExpanded}
 					bind:metadata
 					bind:layer
