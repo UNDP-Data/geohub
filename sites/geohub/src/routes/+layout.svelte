@@ -1,21 +1,27 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
+	import type { PageData } from './$types';
 
-	let title = $page.data.title;
-	let content = $page.data.content;
-	let site_name = $page.data.site_name;
-	let site_description = $page.data.site_description;
-	let socialImage = $page.data.socialImage;
-	let ogUrl = $page.data.ogUrl;
+	export let data: PageData;
+
+	let title = data.title;
+	let content = data.content;
+	let site_name = data.site_name;
+	let site_description = data.site_description;
+	let socialImage = data.socialImage;
+	let ogUrl = data.ogUrl;
 
 	afterNavigate(() => {
-		title = $page.data.title;
-		content = $page.data.content;
-		site_name = $page.data.site_name;
-		site_description = $page.data.site_description;
-		socialImage = $page.data.socialImage;
-		ogUrl = $page.data.ogUrl;
+		if (browser) {
+			title = $page.data.title;
+			content = $page.data.content;
+			site_name = $page.data.site_name;
+			site_description = $page.data.site_description;
+			socialImage = $page.data.socialImage;
+			ogUrl = $page.data.ogUrl;
+		}
 	});
 </script>
 
