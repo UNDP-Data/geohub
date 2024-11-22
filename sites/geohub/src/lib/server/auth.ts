@@ -49,7 +49,8 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 	secret: env.AUTH_SECRET ?? 'geohub-secret',
 	providers: providers,
 	pages: {
-		signIn: '/auth/signIn'
+		signIn: '/auth/signIn',
+		signOut: '/auth/signOut'
 	},
 	// https://authjs.dev/guides/basics/callbacks
 	callbacks: {
