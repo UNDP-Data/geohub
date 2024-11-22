@@ -102,8 +102,7 @@
 					mapStyle = $configStore.style;
 				}
 			}
-
-			if ($configStore.location.center && $configStore.location.center[0] !== null) {
+			if ($configStore.location?.center && $configStore.location.center[0] !== null) {
 				// if center is not undefined, use location from config
 				mapStyle.bearing = $configStore.location.bearing ?? 0;
 				mapStyle.pitch = $configStore.location.pitch ?? 0;

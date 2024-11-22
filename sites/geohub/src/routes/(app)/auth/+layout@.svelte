@@ -1,5 +1,7 @@
 <script lang="ts">
 	import Header from '$components/header/Header.svelte';
+	import MapHero from '$components/pages/home/MapHero.svelte';
+	import { MapStyleId } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
 	import { setContext } from 'svelte';
 
@@ -19,6 +21,14 @@
 	<Header showSignin={false} />
 </div>
 
-<div style="margin-top: {$headerHeightStore}px">
+<div class="map-hero" style="margin-top: {$headerHeightStore}px">
+	<MapHero styleId={MapStyleId} interactive={false} />
+
 	<slot />
 </div>
+
+<style lang="scss">
+	.map-hero {
+		position: relative;
+	}
+</style>

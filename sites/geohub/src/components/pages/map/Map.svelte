@@ -432,7 +432,6 @@
 			const gc = new GeocodingControl({
 				apiKey: apiKey,
 				marker: true,
-				showFullGeometry: false,
 				showResultsWhileTyping: false,
 				collapsed: false
 			});

@@ -54,7 +54,7 @@
 				tempLocation.bearing = tempLocation.bearing ?? style.bearing;
 				tempLocation.pitch = tempLocation.pitch ?? style.pitch;
 			} else {
-				if ($configStore.location.center && $configStore.location.center[0] !== null) {
+				if ($configStore.location?.center && $configStore.location.center[0] !== null) {
 					// if center is not undefined, use location from config
 					tempLocation.bearing = $configStore.location.bearing ?? 0;
 					tempLocation.pitch = $configStore.location.pitch ?? 0;
@@ -185,7 +185,7 @@
 			mapStyle.center = chapter.location.center;
 			mapStyle.zoom = chapter.location.zoom;
 		} else {
-			if ($configStore.location.center && $configStore.location.center[0] !== null) {
+			if ($configStore.location?.center && $configStore.location.center[0] !== null) {
 				// if center is not undefined, use location from config
 				mapStyle.bearing = $configStore.location.bearing;
 				mapStyle.pitch = $configStore.location.pitch;
