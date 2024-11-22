@@ -13,8 +13,7 @@ export default defineConfig({
 			'maplibre-gl',
 			'@maptiler/geocoding-control',
 			'@maplibre/maplibre-gl-geocoder',
-			'@watergis/maplibre-gl-export',
-			'@undp-data/date-picker-svelte'
+			'@watergis/maplibre-gl-export'
 		]
 	},
 	resolve: {
