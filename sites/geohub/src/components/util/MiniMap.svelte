@@ -28,7 +28,7 @@
 	let config: UserConfig = $page.data.config;
 	let mapContainer: HTMLDivElement;
 	let map: Map;
-	let previewImageUrl: Promise<string>;
+	let previewImageUrl: string | undefined = undefined;
 	let isLoading = false;
 
 	export let metadata: RasterTileMetadata | VectorTileMetadata | undefined = undefined;
@@ -44,19 +44,15 @@
 		}
 	};
 
-	onMount(() => {
-		previewImageUrl = preloadMap();
-	});
-
 	const preloadMap = async () => {
 		const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
 			{ key: string; value: string }
 		];
 		const isStac = tags?.find((tag) => tag.key === 'stac');
 		const stacType = tags?.find((tag) => tag.key === 'stacType');
-		let previewUrl: string;
+		let previewUrl = '';
 		if (isStac && stacType?.value === 'collection') {
-			previewUrl = await addStacPreview(feature.properties.url);
+			previewUrl = (await addStacPreview(feature.properties.url)) as string;
 		} else if (feature.properties.is_raster === true) {
 			rasterTile = new RasterTileData(feature);
 			metadata = await rasterTile.getMetadata();
@@ -68,111 +64,111 @@
 	};
 
 	$: if (mapContainer && isLoadMap === true) {
-		loadMiniMap();
+		handleMapChanged();
 	}
 
-	$: layerType, loadMiniMap();
+	$: layerType, handleMapChanged();
 
-	const loadMiniMap = async () => {
-		if (!mapContainer) return;
+	const handleMapChanged = async () => {
+		if (!map) return;
+
+		map.setStyle(MapStyles[0].uri);
+		addGeoHubLayer();
+	};
+
+	const addGeoHubLayer = async () => {
+		if (!map) return;
 		isLoading = true;
-		map = new Map({
-			container: mapContainer,
-			style: MapStyles[0].uri,
-			attributionControl: false,
-			maxPitch: 85
-		});
 
-		map.addControl(new AttributionControl({ compact: true }), 'bottom-right');
-
-		map.addControl(
-			new NavigationControl({
-				showCompass: true
-			}),
-			'bottom-right'
-		);
-
-		map.once('load', async () => {
-			try {
-				if (feature.properties.is_raster === true) {
-					const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType');
-					if (stacType?.value === 'collection') return;
-					const rasterInfo: RasterTileMetadata = metadata as RasterTileMetadata;
-					if (!rasterInfo.band_metadata) return;
-					let bandIndex = rasterInfo.band_metadata.findIndex((b) => {
-						return b[0] === band;
-					});
-					if (bandIndex === -1) {
-						bandIndex = undefined;
-					}
-					const data = await rasterTile.add(map, bandIndex);
-					metadata = data.metadata;
-
-					dispatch('layerAdded', data);
-				} else {
-					if (layer) {
-						let layerName = layer ? layer.layer : undefined;
-
-						if (!layerType) {
-							if (layer?.geometry.toLocaleLowerCase() === 'point') {
-								layerType = 'point';
-							} else if (layer?.geometry.toLocaleLowerCase() === 'polygon') {
-								layerType = 'polygon';
-							} else if (layer?.geometry.toLocaleLowerCase() === 'linestring') {
-								layerType = 'linestring';
-							}
-						}
-						const data = await vectorTile.add(map, layerType, layerName);
-						metadata = data.metadata;
-						dispatch('layerAdded', data);
-					}
+		try {
+			if (feature.properties.is_raster === true) {
+				const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType');
+				if (stacType?.value === 'collection') return;
+				const rasterInfo: RasterTileMetadata = metadata as RasterTileMetadata;
+				if (!rasterInfo.band_metadata) return;
+				let bandIndex = rasterInfo.band_metadata.findIndex((b) => {
+					return b[0] === band;
+				});
+				if (bandIndex === -1) {
+					bandIndex = undefined;
 				}
-				map.resize();
-			} finally {
-				isLoading = false;
+				const data = await rasterTile.add(map, bandIndex);
+				metadata = data.metadata;
+
+				dispatch('layerAdded', data);
+			} else {
+				if (layer) {
+					let layerName = layer ? layer.layer : undefined;
+
+					if (!layerType) {
+						if (layer?.geometry.toLocaleLowerCase() === 'point') {
+							layerType = 'point';
+						} else if (layer?.geometry.toLocaleLowerCase() === 'polygon') {
+							layerType = 'polygon';
+						} else if (layer?.geometry.toLocaleLowerCase() === 'linestring') {
+							layerType = 'linestring';
+						}
+					}
+					const data = await vectorTile.add(map, layerType, layerName);
+					metadata = data.metadata;
+					dispatch('layerAdded', data);
+				}
 			}
-		});
+			map.resize();
+		} finally {
+			isLoading = false;
+		}
 	};
 
 	onMount(() => {
-		previewImageUrl = preloadMap();
+		preloadMap().then((imageUrl) => {
+			previewImageUrl = imageUrl;
+			if (!mapContainer) return;
+			if (!previewImageUrl) {
+				map = new Map({
+					container: mapContainer,
+					style: MapStyles[0].uri,
+					attributionControl: false,
+					maxPitch: 85
+				});
+
+				map.addControl(new AttributionControl({ compact: true }), 'bottom-right');
+
+				map.addControl(
+					new NavigationControl({
+						showCompass: true
+					}),
+					'bottom-right'
+				);
+
+				map.once('load', addGeoHubLayer);
+			}
+		});
 	});
 </script>
 
 <div class="map-container">
-	{#await previewImageUrl}
-		<div
-			class="loader-container is-flex is-justify-content-center is-align-items-center"
-			style="width:{width}; height:{height};"
-		>
-			<Loader size="small" />
-		</div>
-	{:then imageUrl}
-		{#if imageUrl}
-			<!-- svelte-ignore a11y-missing-attribute -->
-			<img src={imageUrl} style="width:{width}" />
-		{:else}
-			{@const isStac = feature.properties.tags?.find((tag) => tag.key === 'stac')}
-			{@const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType')}
-			{#if !(isStac && stacType?.value === 'collection')}
-				{#if isLoading}
-					<div
-						class="loader-container is-flex is-justify-content-center is-align-items-center"
-						style="width:{width}; height:{height};"
-					>
-						<Loader size="small" />
-					</div>
-				{/if}
+	{#if previewImageUrl}
+		<img src={previewImageUrl} alt="preview" style="width:{width}" />
+	{:else}
+		{@const isStac = feature.properties.tags?.find((tag) => tag.key === 'stac')}
+		{@const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType')}
+		{#if !(isStac && stacType?.value === 'collection')}
+			{#if isLoading}
 				<div
-					class="map"
-					style="width:{width}; height:{isLoading ? '0' : height}; opacity: {isLoading
-						? '0'
-						: '1'};"
-					bind:this={mapContainer}
-				/>
+					class="loader-container is-flex is-justify-content-center is-align-items-center"
+					style="width:{width}; height:{height};"
+				>
+					<Loader size="small" />
+				</div>
 			{/if}
+			<div
+				class="map"
+				style="width:{width}; height:{isLoading ? '0' : height}; opacity: {isLoading ? '0' : '1'};"
+				bind:this={mapContainer}
+			/>
 		{/if}
-	{/await}
+	{/if}
 </div>
 
 <style lang="scss">
