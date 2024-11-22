@@ -256,36 +256,56 @@
 
 	<div class="layer-footer mt-auto px-4 pt-4 is-flex" bind:clientHeight={layerFooterHeight}>
 		{#key isNewMapMode}
-			<button
-				class="button {saveDisabled
-					? ''
-					: 'is-link'} is-uppercase has-text-weight-bold is-fullwidth"
-				disabled={saveDisabled}
-				on:click={handleOpenSaveDialog}
+			<div
+				style="width: 100%;"
+				use:tippyTooltip={{
+					content: saveDisabled
+						? 'To save the map, you need to sign in and add at least a layer to the map'
+						: 'Save this map to GeoHub'
+				}}
 			>
-				<span> {isNewMapMode || isReadOnly() ? 'Save' : 'Update'} map </span>
-			</button>
+				<button
+					class="button {saveDisabled
+						? ''
+						: 'is-link'} is-uppercase has-text-weight-bold is-fullwidth"
+					disabled={saveDisabled}
+					on:click={handleOpenSaveDialog}
+				>
+					<span> {isNewMapMode || isReadOnly() ? 'Save' : 'Update'} map </span>
+				</button>
+			</div>
 
+			<div
+				class="ml-2"
+				use:tippyTooltip={{
+					content: isNewMapMode
+						? 'You need to save the map first to enable sharing.'
+						: 'Share this map with others!'
+				}}
+			>
+				<button
+					class="button {isNewMapMode
+						? ''
+						: 'is-link is-outlined'} is-uppercase has-text-weight-bold"
+					disabled={isNewMapMode}
+					on:click={handleOpenShareDialog}
+				>
+					<span class="icon is-small">
+						<span class="material-symbols-outlined"> share </span>
+					</span>
+				</button>
+			</div>
+		{/key}
+		<div class="ml-2" use:tippyTooltip={{ content: 'Export your map as image.' }}>
 			<button
-				class="button {isNewMapMode
-					? ''
-					: 'is-link is-outlined'} is-uppercase has-text-weight-bold ml-2"
-				disabled={isNewMapMode}
-				on:click={handleOpenShareDialog}
+				class="export-button button is-link is-outlined is-uppercase has-text-weight-bold"
+				on:click={handleExportClicked}
 			>
 				<span class="icon is-small">
-					<span class="material-symbols-outlined"> share </span>
+					<span class="material-symbols-outlined"> print </span>
 				</span>
 			</button>
-		{/key}
-		<button
-			class="export-button button is-link is-outlined is-uppercase has-text-weight-bold ml-2"
-			on:click={handleExportClicked}
-		>
-			<span class="icon is-small">
-				<span class="material-symbols-outlined"> print </span>
-			</span>
-		</button>
+		</div>
 	</div>
 </div>
 

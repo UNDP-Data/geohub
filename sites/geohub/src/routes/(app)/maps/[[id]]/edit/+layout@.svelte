@@ -28,7 +28,6 @@
 		createMapStore,
 		MAPSTORE_CONTEXT_KEY,
 		ModalTemplate,
-		Notification,
 		Sidebar,
 		type SidebarPosition
 	} from '@undp-data/svelte-undp-components';
@@ -37,6 +36,9 @@
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount, setContext } from 'svelte';
+	import type { PageData } from './$types';
+
+	export let data: PageData;
 
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
@@ -103,6 +105,11 @@
 		toUrl = to.url;
 
 		if ($page.url.pathname === toUrl.pathname) {
+			return;
+		}
+
+		if (!data.session && toUrl.pathname === '/auth/signIn') {
+			// if users do not sign in and move to signIn page, don't show unsaved change dialog
 			return;
 		}
 
@@ -189,18 +196,12 @@
 	</div>
 </Sidebar>
 
-<ModalTemplate title="You have unsaved changes" bind:show={dialogOpen}>
+<ModalTemplate title="Unsaved changes" bind:show={dialogOpen}>
 	<div slot="content">
-		<Notification type="warning" showCloseButton={false}>
-			<div>
-				Are you sure leaving map?
-				<br />
-				If you want to discard all changes, click <b>Discard changes</b>.
-				<br />
-				If want to save your work to the database, close the dialog to cancel. Then use
-				<b>Save</b> feature to save your map before leaving.
-			</div>
-		</Notification>
+		<span>
+			You have unsaved changes on your map. Would you like to discard the changes or stay on the map
+			to save them?
+		</span>
 	</div>
 	<div class="buttons" slot="buttons">
 		<div class="footer-button">
@@ -213,8 +214,11 @@
 			</button>
 		</div>
 		<div class="footer-button">
-			<button class="button is-link is-uppercase has-text-weight-bold" on:click={handleCancel}>
-				Close and continue
+			<button
+				class="cancel-button button is-light is-uppercase has-text-weight-bold"
+				on:click={handleCancel}
+			>
+				stay on map
 			</button>
 		</div>
 	</div>
@@ -225,4 +229,11 @@
 <style global lang="scss">
 	@import 'bulma-divider/dist/css/bulma-divider.min.css';
 	@import 'flag-icons/css/flag-icons.min.css';
+
+	.cancel-button {
+		box-shadow: none !important;
+		&.is-light {
+			background-color: #edeff0 !important;
+		}
+	}
 </style>
