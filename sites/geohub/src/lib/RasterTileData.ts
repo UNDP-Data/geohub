@@ -132,7 +132,6 @@ export class RasterTileData {
 
 		if (!savedLayerStyle?.style) {
 			const data = new FormData();
-			console.log(this.feature);
 			data.append('feature', JSON.stringify(this.feature));
 			const params: { [key: string]: string } = {};
 			if (colormap_name) {
