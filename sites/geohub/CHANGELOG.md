@@ -1,5 +1,13 @@
 # geohub
 
+## 1.22.7
+
+### Patch Changes
+
+- 5c75d5a: fix: improved UI of unsaved dialog and show tooltip for layer tab footer buttons.
+- 1d519ab: fix: rename view button to edit button in map page.
+- 16b4269: refactor: merged (auth) folder to (app) folder, and created proper sign out page at /auth/signOut
+
 ## 1.22.6
 
 ### Patch Changes
