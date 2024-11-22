@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { version } from '$app/environment';
 	import { page } from '$app/stores';
-	import { signOut } from '@auth/sveltekit/client';
 	import { handleEnterKey, ModalTemplate } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { marked } from 'marked';
@@ -135,16 +134,7 @@
 				</a>
 
 				<hr class="dropdown-divider" />
-				<!-- svelte-ignore a11y-missing-attribute -->
-				<a
-					role="button"
-					tabindex="0"
-					on:click={() => signOut()}
-					on:keydown={handleEnterKey}
-					class="dropdown-item menu-button"
-				>
-					Sign out
-				</a>
+				<a class="dropdown-item menu-button" href="/auth/signOut"> Sign out </a>
 			{/if}
 		</div>
 	</div>
