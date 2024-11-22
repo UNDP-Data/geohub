@@ -340,8 +340,8 @@ importers:
   packages/svelte-undp-components:
     dependencies:
       '@undp-data/date-picker-svelte':
-        specifier: 2.12.1
-        version: 2.12.1(svelte@4.2.19)
+        specifier: 2.14.1
+        version: 2.14.1(svelte@4.2.19)
       '@undp-data/svelte-undp-design':
         specifier: workspace:*
         version: link:../svelte-undp-design
@@ -2878,10 +2878,10 @@ packages:
     resolution: {integrity: sha512-h8vYOulWec9LhpwfAdZf2bjr8xIp0KNKnpgqSz0qqYYKAW/QZKw3ktRndbiAtUz4acH4QLQavwZBYCc0wulA/Q==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@undp-data/date-picker-svelte@2.12.1':
-    resolution: {integrity: sha512-p8Oo7O5glP0Y9B+TWrVdKNhtnH8S3hTWyB2evYjUNHApw6QVNBI9yssb94pctZZuxueS5c5Np5QpK586NO2b1A==}
+  '@undp-data/date-picker-svelte@2.14.1':
+    resolution: {integrity: sha512-M+ji8ajLXGme0VI/IE2lENVsdFzylXO7WxcimlJ/qOZzXrLnMYl9LMbtf7/RNMU5v01UpzjWpKx8v1iag00OfA==}
     peerDependencies:
-      svelte: ^3.24.0 || ^4.0.0
+      svelte: ^3.24.0 || ^4.0.0 || ^5.0.0
 
   '@undp-data/style@2.3.3':
     resolution: {integrity: sha512-2qY/5aoK4JYIM21BZn8ucvk5HOtVPleLantvqbtVBuK8e2uszsvQTCciLv3rsRpBt8VMaj2sGhqfKE2QjmfLuA==}
@@ -8133,7 +8133,7 @@ snapshots:
       '@typescript-eslint/types': 8.15.0
       eslint-visitor-keys: 4.2.0
 
-  '@undp-data/date-picker-svelte@2.12.1(svelte@4.2.19)':
+  '@undp-data/date-picker-svelte@2.14.1(svelte@4.2.19)':
     dependencies:
       svelte: 4.2.19
 
