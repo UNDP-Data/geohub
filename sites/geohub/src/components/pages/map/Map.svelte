@@ -433,6 +433,7 @@
 				apiKey: apiKey,
 				marker: true,
 				showResultsWhileTyping: false,
+				showFullGeometry: false,
 				collapsed: false
 			});
 			$map.addControl(gc, 'top-left');
