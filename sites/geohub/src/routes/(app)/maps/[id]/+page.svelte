@@ -315,7 +315,7 @@
 						href={mapEditLink}
 						use:tippyTooltip={{ content: 'View this map in GeoHub map editor' }}
 					>
-						View
+						Edit
 					</a>
 				{/if}
 
