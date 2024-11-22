@@ -1,5 +1,12 @@
 # geohub
 
+## 1.22.8
+
+### Patch Changes
+
+- eed6a34: fix: improved MiniMap initialization when layer type is changed.
+- b14b997: fix: downgrade maptiler geocoder to 1.4.1
+
 ## 1.22.7
 
 ### Patch Changes
