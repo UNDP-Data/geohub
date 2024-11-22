@@ -1,8 +1,14 @@
-import type { PageLoad } from './$types';
+import { redirect } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
 
-export const load: PageLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ url, fetch, locals }) => {
 	const title = 'Sign In | GeoHub';
 	const content = 'Sign In';
+
+	const session = await locals.auth();
+	if (session) {
+		redirect(307, '/auth/signout');
+	}
 
 	let providers = [
 		{
