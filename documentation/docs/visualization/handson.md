@@ -10,7 +10,7 @@ In this exercise, we are going to create a map with a dataset from GeoHub. Let's
 
 ## Open a blank map page
 
-To create your own map to visualize, open a new blank map editor in GeoHub.
+To create your own map to visualize, open a new blank map editor in GeoHub from [here](https://geohub.data.undp.org/maps).
 
 <hidden>
 
@@ -26,9 +26,13 @@ See the steps at [Open a map editor](./map_view.md#open-a-map-editor-for-new-map
 
 ## Add a dataset to map
 
-Then, search a dataset named `Electricity access estimate 2020` under _SDG 7_ at **Data** tab. <hidden>See how to do it at [Searching datasets on Map page](../data/search_datasets_on_map.md).</hidden>
+---
 
-![Searching Electricity access dataset at Data tab](../assets/visualization/exercise_2.png)
+### Add a raster dataset
+
+Then, search a dataset named `GHSL residential population estimates in 2030` under **Data** tab. <hidden>See how to do it at [Searching datasets on Map page](../data/search_datasets_on_map.md).</hidden>
+
+![Searching GHSL population dataset at Data tab](../assets/visualization/exercise_2.png)
 
 <!-- .element style="height: 400px" -->
 
@@ -36,7 +40,7 @@ Then, search a dataset named `Electricity access estimate 2020` under _SDG 7_ at
 
 Once you found the dataset, click **ADD LAYER** button to add it to map. It will be shown under **LAYERS** tab.
 
-There is a geolocation search tool at the top-left of the map. Search your interested place and zoom it. Here, I search `Narok` for my map.
+There is a geolocation search tool at the top-left of the map. Search your interested place and zoom it. Here, I search `Zanzibar, Tanzania` for my map.
 
 --
 
@@ -44,11 +48,9 @@ There is a geolocation search tool at the top-left of the map. Search your inter
 
 <!-- .element style="height: 500px" -->
 
----
+--
 
-## Change layer style
-
-This is a raster dataset, <hidden>please follow the steps of [Color](./visualize_raster.md#color) section,</hidden> change a colormap to suitable one. For my map, I change a colormap to one of sequential colormaps.
+This is a raster dataset, <hidden>please follow the steps of [Color](./visualize_raster.md#color) section,</hidden> change a colormap to suitable one, and keep visualization type as simple.
 
 ![Change colormap at STYLE tab in layer editing panel](../assets/visualization/exercise_4.png)
 
@@ -56,35 +58,51 @@ This is a raster dataset, <hidden>please follow the steps of [Color](./visualize
 
 --
 
-As default, sequential colormap is that the more higher value is, the more dark color is. But we want to focus on where there is less electricity around this city.
-
-<hidden>
-
-So, I ticked **Reverse colors** checkbox on colormap picker. Now, the more dark color area, the more houses and buildings has less electricity.
-
-Now you can see the outskirts of Narok town has some area where has less electrified.
-
-</hidden>
-
-We can also make two categories (0.61 to 0.81 and 0.81 to 1.01) invisible. The result should be like the below screenshot.
+As default, GeoHub tries to optimise visualization for highly skewed dataset by rescaling minimum and maximum values. This dataset seems visualizing well at Zanzibar area. However, you may need to change raster rescale values if the visualization is not what you desire.
 
 --
 
-![Make higher electrified area invisible in categories color property](../assets/visualization/exercise_5.png)
+![After resetting rescale values to default min/max](../assets/visualization/exercise_5.png)
 
-<!-- .element style="height: 500px" -->
+<!-- .element style="height: 400px" -->
 
-You can close editing panel now.
+You can close editing panel for this layer now.
+
+---
+
+### Add a vector dataset
+
+In the next, we are going to add a polygon layer from Microsoft/Google Open building. Go to **DATA** tab in side bar, search **Google Microsoft Building Footprints as of September 2023** dataset.
+
+![Open building data in data tab](../assets/visualization/exercise_6.png)
+
+<!-- .element style="height: 400px" -->
+
+--
+
+Click **Add layer** to add this dataset to the map. Here, I select **Polygon** as a layer type for making 2D map. After adding it, map scale was changed to global again because it is global dataset. Zooming to Zanzibar again.
+
+![After adding open building data over population dataset](../assets/visualization/exercise_7.png)
+
+<!-- .element style="height: 400px" -->
+
+--
+
+Let's change a little bit visualization for building data. Open building data has a field called `confidence` how AI was confident to generate this building data. Change color to categorised, and select `Confidence` field.
+
+![After visualizing vector dataset](../assets/visualization/exercise_8.png)
+
+<!-- .element style="height: 400px" -->
 
 ---
 
 ## Save a map
 
-Now, we can save a public map. Follow the steps of [saving a map](../sharing/save_map.md), save your map to GeoHub. Rename title to more precise name, and change access level to Public. Then click **SHARE** button.
+Now, we can save a public map. Follow the steps of [saving a map](../sharing/save_map.md), save your map to GeoHub. Rename title to more precise name, and change access level to Public. Then click **SAVE** button.
 
 --
 
-![Save a public map after renaming title](../assets/visualization/exercise_6.png)
+![Save a public map after renaming title](../assets/visualization/exercise_9.png)
 
 <!-- .element style="height: 500px" -->
 
@@ -96,7 +114,7 @@ Once your map is saved, a unique map URL is shown on the share dialog as shown i
 
 --
 
-![Map URL is shown after saving a map](../assets/visualization/exercise_7.png)
+![Map URL is shown after saving a map](../assets/visualization/exercise_10.png)
 
 <!-- .element style="height: 500px" -->
 
@@ -106,4 +124,4 @@ Copy the URL and open it as new tab. Also, share it with one of your colleagues 
 
 ## Extra challenge
 
-This map now has a electricity esitimate layer for a particular area of interest. For extra challenge, you can search any other datasets in addition to the data layer we have created. Try to overlay other layers to make a beautiful map. Once you have made changes, make sure saving your new map.
+This map now has open buildings vector data over GHSL 2030 population dataset for a particular area of interest. For extra challenge, you can search any other datasets in addition to the data layer we have created. There is a cool dataset called [Zanzibar Tourism Attractions](https://geohub.data.undp.org/api/datasets/4ca2ead25b5903e8e1c7897f8f3bae38). You can try to add this point data to your map. Check [Point visualization](./visualize_vector_point.md) page about how to visualize a point dataset.
