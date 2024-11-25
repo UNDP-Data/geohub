@@ -9,10 +9,14 @@
 	import { getLayerSourceUrl, loadArgumentsInDynamicLayers } from '$lib/helper';
 	import type { Tag } from '$lib/types';
 	import {
+		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
+		COLORMAP_NAME_CONTEXT_KEY,
 		DEFAULTCOLOR_CONTEXT_KEY,
+		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
 		type ClassificationMethodStore,
+		type ColorMapNameStore,
 		type DefaultColorStore,
 		type NumberOfClassesStore
 	} from '$stores';
@@ -45,6 +49,13 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const defaultColorStore: DefaultColorStore = getContext(DEFAULTCOLOR_CONTEXT_KEY);
+
+	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY);
+	const numberOfClassesColorStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY);
+	const classificationMethodColorStore: ClassificationMethodStore = getContext(
+		CLASSIFICATION_METHOD_CONTEXT_KEY
+	);
+
 	const numberOfClassesValueStore: NumberOfClassesStore = getContext(
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2
 	);
@@ -194,6 +205,14 @@
 					{metadata}
 					propertyName="icon-color"
 					onlyNumberFields={false}
+					bind:numberOfClasses={$numberOfClassesColorStore}
+					numberOfClassesMinimum={NumberOfClassesMinimum}
+					numberOfClassesMaximum={NumberOfClassesMaximum}
+					defaultNumberOfClasses={$page.data.config.NumberOfClasses}
+					bind:classificationMethod={$classificationMethodColorStore}
+					numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
+					bind:colorMapName={$colorMapNameStore}
+					bind:defaultColor={$defaultColorStore}
 				/>
 			</div>
 			<div slot="buttons">
@@ -251,6 +270,14 @@
 					{metadata}
 					propertyName="line-color"
 					onlyNumberFields={false}
+					bind:numberOfClasses={$numberOfClassesColorStore}
+					numberOfClassesMinimum={NumberOfClassesMinimum}
+					numberOfClassesMaximum={NumberOfClassesMaximum}
+					defaultNumberOfClasses={$page.data.config.NumberOfClasses}
+					bind:classificationMethod={$classificationMethodColorStore}
+					numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
+					bind:colorMapName={$colorMapNameStore}
+					bind:defaultColor={$defaultColorStore}
 				/>
 			</div>
 			<div slot="buttons">
@@ -304,7 +331,19 @@
 
 		<Accordion title="Circle color" bind:isExpanded={expanded['circle-color']}>
 			<div class="pb-2" slot="content">
-				<VectorColorClassification {layerId} {metadata} propertyName="circle-color" />
+				<VectorColorClassification
+					{layerId}
+					{metadata}
+					propertyName="circle-color"
+					bind:numberOfClasses={$numberOfClassesColorStore}
+					numberOfClassesMinimum={NumberOfClassesMinimum}
+					numberOfClassesMaximum={NumberOfClassesMaximum}
+					defaultNumberOfClasses={$page.data.config.NumberOfClasses}
+					bind:classificationMethod={$classificationMethodColorStore}
+					numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
+					bind:colorMapName={$colorMapNameStore}
+					bind:defaultColor={$defaultColorStore}
+				/>
 			</div>
 			<div slot="buttons">
 				<Help>Change circle color by using single color or selected property</Help>
@@ -333,7 +372,19 @@
 	{:else if style.type === 'fill'}
 		<Accordion title="Fill color" bind:isExpanded={expanded['fill-color']}>
 			<div class="pb-2" slot="content">
-				<VectorColorClassification {layerId} {metadata} propertyName="fill-color" />
+				<VectorColorClassification
+					{layerId}
+					{metadata}
+					propertyName="fill-color"
+					bind:numberOfClasses={$numberOfClassesColorStore}
+					numberOfClassesMinimum={NumberOfClassesMinimum}
+					numberOfClassesMaximum={NumberOfClassesMaximum}
+					defaultNumberOfClasses={$page.data.config.NumberOfClasses}
+					bind:classificationMethod={$classificationMethodColorStore}
+					numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
+					bind:colorMapName={$colorMapNameStore}
+					bind:defaultColor={$defaultColorStore}
+				/>
 			</div>
 			<div slot="buttons">
 				<Help>Change polygon fill color by using single color or selected property.</Help>
@@ -351,7 +402,19 @@
 	{:else if style.type === 'fill-extrusion'}
 		<Accordion title="3D polygon color" bind:isExpanded={expanded['fill-extrusion-color']}>
 			<div class="pb-2" slot="content">
-				<VectorColorClassification {layerId} {metadata} propertyName="fill-extrusion-color" />
+				<VectorColorClassification
+					{layerId}
+					{metadata}
+					propertyName="fill-extrusion-color"
+					bind:numberOfClasses={$numberOfClassesColorStore}
+					numberOfClassesMinimum={NumberOfClassesMinimum}
+					numberOfClassesMaximum={NumberOfClassesMaximum}
+					defaultNumberOfClasses={$page.data.config.NumberOfClasses}
+					bind:classificationMethod={$classificationMethodColorStore}
+					numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
+					bind:colorMapName={$colorMapNameStore}
+					bind:defaultColor={$defaultColorStore}
+				/>
 			</div>
 			<div slot="buttons">
 				<Help>Change 3D polygon fill color by using single color or selected property.</Help>

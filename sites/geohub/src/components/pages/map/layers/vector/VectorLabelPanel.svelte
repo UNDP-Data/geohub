@@ -2,13 +2,22 @@
 	import { page } from '$app/stores';
 	import TextField from '$components/maplibre/symbol/TextField.svelte';
 	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
+	import {
+		NumberOfClassesMaximum,
+		NumberOfClassesMinimum,
+		NumberOfRandomSamplingPoints
+	} from '$lib/config/AppConfig';
 	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY_LABEL,
 		COLORMAP_NAME_CONTEXT_KEY_LABEL,
 		DEFAULTCOLOR_CONTEXT_KEY_LABEL,
-		NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL
+		NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL,
+		type ClassificationMethodStore,
+		type ColorMapNameStore,
+		type DefaultColorStore,
+		type NumberOfClassesStore
 	} from '$stores';
 	import {
 		Accordion,
@@ -29,6 +38,14 @@
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const defaultColorStore: DefaultColorStore = getContext(DEFAULTCOLOR_CONTEXT_KEY_LABEL);
+	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY_LABEL);
+	const numberOfClassesStore: NumberOfClassesStore = getContext(
+		NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL
+	);
+	const classificationMethodStore: ClassificationMethodStore = getContext(
+		CLASSIFICATION_METHOD_CONTEXT_KEY_LABEL
+	);
 
 	export let layer: Layer;
 	export let metadata: VectorTileMetadata;
@@ -141,12 +158,16 @@
 					<VectorColorClassification
 						bind:layerId={targetLayer.id}
 						bind:metadata
-						classesContextKey={NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL}
-						colorContextKey={DEFAULTCOLOR_CONTEXT_KEY_LABEL}
-						colormapContextKey={COLORMAP_NAME_CONTEXT_KEY_LABEL}
-						classificationContextKey={CLASSIFICATION_METHOD_CONTEXT_KEY_LABEL}
 						propertyName="text-color"
 						onlyNumberFields={false}
+						bind:numberOfClasses={$numberOfClassesStore}
+						numberOfClassesMinimum={NumberOfClassesMinimum}
+						numberOfClassesMaximum={NumberOfClassesMaximum}
+						defaultNumberOfClasses={$page.data.config.NumberOfClasses}
+						bind:classificationMethod={$classificationMethodStore}
+						numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
+						bind:colorMapName={$colorMapNameStore}
+						bind:defaultColor={$defaultColorStore}
 					/>
 				</div>
 				<div slot="buttons">
