@@ -49,6 +49,9 @@
 		const style = $map
 			.getStyle()
 			.layers.filter((mapLayer: LayerSpecification) => mapLayer.id === layerId)[0];
+		if (!style.layout) {
+			style.layout = {};
+		}
 		return style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle';
 	};
 
