@@ -9,6 +9,7 @@ This section explains about the concept of geospatial data and how GeoHub manage
 ---
 
 ![Types of geospatial data](../assets/data/types_gis_data.png)
+Image source: https://volaya.github.io/gis-book/en/Data.html
 
 ---
 
