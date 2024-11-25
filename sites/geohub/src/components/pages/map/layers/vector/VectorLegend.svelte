@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import VectorParamsPanel from '$components/maplibre/vector/VectorParamsPanel.svelte';
 	import {
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
@@ -46,7 +47,6 @@
 	} from '@undp-data/svelte-undp-components';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
-	import VectorParamsPanel from './VectorParamsPanel.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const defaultColorStore: DefaultColorStore = getContext(DEFAULTCOLOR_CONTEXT_KEY);

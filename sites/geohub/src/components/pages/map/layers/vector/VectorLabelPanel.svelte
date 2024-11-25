@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import TextField from '$components/maplibre/symbol/TextField.svelte';
+	import TextField from '$components/pages/map/layers/vector/TextField.svelte';
 	import {
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
