@@ -56,11 +56,11 @@ This is a raster dataset, <hidden>please follow the steps of [Color](./visualize
 
 --
 
-As default, sequential colormap is that the more higher value is, the more dark color is. But we want to focus on where there is less electricity around this city. 
+As default, sequential colormap is that the more higher value is, the more dark color is. But we want to focus on where there is less electricity around this city.
 
 <hidden>
 
-So, I ticked **Reverse colors** checkbox on colormap picker. Now, the more dark color area, the more houses and buildings has less electricity. 
+So, I ticked **Reverse colors** checkbox on colormap picker. Now, the more dark color area, the more houses and buildings has less electricity.
 
 Now you can see the outskirts of Narok town has some area where has less electrified.
 
@@ -80,7 +80,7 @@ You can close editing panel now.
 
 ## Save a map
 
-Now, we can save a public map. Follow the steps of [saving a map](./save_map.md), save your map to GeoHub. Rename title to more precise name, and change access level to Public. Then click **SHARE** button.
+Now, we can save a public map. Follow the steps of [saving a map](../sharing/save_map.md), save your map to GeoHub. Rename title to more precise name, and change access level to Public. Then click **SHARE** button.
 
 --
 

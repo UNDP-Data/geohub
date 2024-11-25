@@ -16,7 +16,7 @@ One of the great features of the GeoHub is the ability to save maps by applying 
 
 To save a map requires at least a layer needs to be added into the map.
 
-1.Selct a layer of choice at **Data** tab or **Datasets page** <hidden>by following the steps of the [search datasets](../data/search_datasets.md) section</hidden>, then clicking on the add layer button or the icon ![Add_remove_layer_icon.png](../assets/data/Add_remove_layer_icon.png){:style="width: 24px;"} icon.
+1.Selct a layer of choice at **Data** tab or **Datasets page** <hidden>by following the steps of the [search datasets](../data/search_datasets_on_map.md) section</hidden>, then clicking on the add layer button or the icon ![Add_remove_layer_icon.png](../assets/data/Add_remove_layer_icon.png){:style="width: 24px;"} icon.
 
 2.Go to the **Layers** tab where you can change the layer appearance by using the steps you have learned in the previous section.
 
@@ -26,7 +26,7 @@ To save a map requires at least a layer needs to be added into the map.
 
 !!! note
 
-    As we have mentioned at the earlier sections, there are two types of datasets either **raster** or **vector**. The way of visualizing is slightly different. Please follow the steps of vector visualization [here](./visualize_vector.md) and raster visualization [here](./visualize_raster.md)
+    As we have mentioned at the earlier sections, there are two types of datasets either **raster** or **vector**. The way of visualizing is slightly different. Please follow the steps of vector visualization [here](../visualization/visualize_vector.md) and raster visualization [here](../visualization/visualize_raster.md)
 
 For example, the following figure is an example map which I made.
 
@@ -59,7 +59,7 @@ Now, it is ready to save your map.
 
 ### Steps to save a map
 
-1.Click on the ![Map_Share.png](../assets/data/Map_Share.png){:style="width: 24px;"} icon to **SHARE** or **UPDATE** the map.
+1.Click `SAVE MAP` or `UPDATE MAP` button under `LAYERS` tab. The button name is depending on whether you are going to save the first time or not.
 
 2.A pop up box (shown in the below figure) opens with selections for renaming the map to your liking.
 
@@ -87,11 +87,11 @@ Now, it is ready to save your map.
 
 </hidden>
 
-4.Then click on the "Share" button to complete the process or cancel to restart. If you opened an existing map, the button name will become **UPDATE**.
+4.Then click on the `SAVE` button to complete the process or cancel to restart. If you opened an existing map, the button name will become **UPDATE**.
 
 --
 
-5.The dialog will show an URL to share with your colleagues after you have clicked **SHARE** button as shown in the below figure. You can simply click **Copy** button to copy the URL to your clipboard to share it with your colleagues.
+5. By clicking `SHARE` button under `LAYERS` tab, The dialog will show an URL to share with your colleagues as shown in the below figure once you have saved the map to the database. You can simply click **Copy** button to copy the URL to your clipboard to share it with your colleagues.
 
 ![Shared URL is shown in the dialog after saving a map](../assets/sharing/save_map_example_3.png){:style="width: 400px;"}
 
@@ -101,4 +101,4 @@ Now, it is ready to save your map.
 
 ## Next step
 
-In the next section, you are going to learn more about sharing a map. If you still open the dialog of **Update map** in GeoHub, click ![save_map_example_4.png](../assets/sharing/save_map_example_4.png){:style="width: 24px;"}. This button will open your saved map as new tab. Then continue the next section.
+In the next section, you are going to learn more about sharing a map. If you still open the dialog of **Share map** in GeoHub, click ![save_map_example_4.png](../assets/sharing/save_map_example_4.png){:style="width: 24px;"}. This button will open your saved map as new tab. Then continue the next section.
