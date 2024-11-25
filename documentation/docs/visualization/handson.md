@@ -4,7 +4,7 @@ title: Hands-on exercise
 
 # Hands-on exercise
 
-In this exercise, we are going to create a map with a dataset from GeoHub. Let's begin.
+Visualizing raster and vector datasets to save and share with other users.
 
 ---
 
@@ -24,7 +24,7 @@ See the steps at [Open a map editor](./map_view.md#open-a-map-editor-for-new-map
 
 ---
 
-## Add a dataset to map
+## Add datasets to map
 
 ---
 
@@ -88,7 +88,11 @@ Click **Add layer** to add this dataset to the map. Here, I select **Polygon** a
 
 --
 
-Let's change a little bit visualization for building data. Open building data has a field called `confidence` how AI was confident to generate this building data. Change color to categorised, and select `Confidence` field.
+Let's change a little bit visualization for building data. Open building data has a field called `confidence` how AI was confident to generate this building data.
+
+--
+
+Change color to categorised, and select `Confidence` field.
 
 ![After visualizing vector dataset](../assets/visualization/exercise_8.png)
 
@@ -108,13 +112,13 @@ Now, we can save a public map. Follow the steps of [saving a map](../sharing/sav
 
 ---
 
-## Share a URL with your colleague
+## Share a map with other colleagues
 
 Once your map is saved, a unique map URL is shown on the share dialog as shown in the below screenshot.
 
 --
 
-![Map URL is shown after saving a map](../assets/visualization/exercise_10.png)
+![Map URL is shown in share dialog](../assets/visualization/exercise_10.png)
 
 <!-- .element style="height: 500px" -->
 
@@ -122,6 +126,24 @@ Copy the URL and open it as new tab. Also, share it with one of your colleagues 
 
 ---
 
+## Export an image of your map
+
+Alternative to share a URL of map, you can also export a map image from your visualized map by clicking **Print** button under **LAYERS** tab.
+
+--
+
+![Map exporting control on sidebar](../assets/visualization/exercise_11.png)
+
+<!-- .element style="height: 400px" -->
+
+You can change paper size and orientation, and other parameters to export a map image. <hidden>You can know more about exporting at [Exporting map](../sharing/export_map.md) section.</hidden>
+
+---
+
 ## Extra challenge
 
-This map now has open buildings vector data over GHSL 2030 population dataset for a particular area of interest. For extra challenge, you can search any other datasets in addition to the data layer we have created. There is a cool dataset called [Zanzibar Tourism Attractions](https://geohub.data.undp.org/api/datasets/4ca2ead25b5903e8e1c7897f8f3bae38). You can try to add this point data to your map. Check [Point visualization](./visualize_vector_point.md) page about how to visualize a point dataset.
+This map now has open buildings vector data over GHSL 2030 population dataset for a particular area of interest. For extra challenge, you can search any other datasets in addition to the data layer we have created.
+
+--
+
+There is a cool dataset called [Zanzibar Tourism Attractions](https://geohub.data.undp.org/data/4ca2ead25b5903e8e1c7897f8f3bae38). You can try to add this point data to your map. Check [Point visualization](./visualize_vector_point.md) page about how to visualize a point dataset.
