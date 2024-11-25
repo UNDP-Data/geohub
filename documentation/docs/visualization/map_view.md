@@ -111,25 +111,27 @@ To pan the map, use your mouse to drag the portion of the map you would like to 
 
 In the below, each component on map view is explained per number corresponded to the above figure.
 
-1. Map Query: The following icon ![Map_Information.png](../assets/visualization/Map_Information.png)allows to access more information of a particular point of interest.It turns green once enabled ![Map_Information.png](../assets/visualization/Map_Information1.png).
+1. Map saving: You can save your map to the database. To use this funcitonality, you must sign in to GeoHub first.
 
-2. Map sharing tool: You can save and share a map by using this tool. How to share a map will be explained at later section of this tutorial.
+2. Map sharing tool: You can share a map by using this tool. How to share a map will be explained at later section of this tutorial.
 
 3. Map exporting tool: By clicking print icon button, you can export current map view as an image either **PNG**, **JPEG** or **WEBP**.
 
-4. HELP tool: When you show a map page for the first time, it will be shown automatically. Once you have done all tour guides, it will be never shown again unless you click this help button.
+4. Map Query: The following icon ![Map_Information.png](../assets/visualization/Map_Information.png)allows to access more information of a particular point of interest.It turns green once enabled ![Map_Information.png](../assets/visualization/Map_Information1.png).
 
-5. Geolocation search: Type any place name such as country, city or any landmark name. You can zoom into your searched location. This is using geocoding service from [Maptiler](https://cloud.maptiler.com).
+5. HELP tool: When you show a map page for the first time, it will be shown automatically. Once you have done all tour guides, it will be never shown again unless you click this help button.
 
-6. Change base map: By clicking on the ![Map_Base_map.png](../assets/visualization/Map_Base_map.png)icon you can interchange between the Bing Aerial view or the Carto view.
+6. Geolocation search: Type any place name such as country, city or any landmark name. You can zoom into your searched location. This is using geocoding service from [Maptiler](https://cloud.maptiler.com).
 
-7. Hillshade: The user can use the “Hillshade” ![Map_Hillshade_1.png](../assets/visualization/Map_Hillshade_1.png) icon to create a realistic view of terrain. Once enabled, the icon turns green ![Map_Hillshade_2.png](../assets/visualization/Map_Hillshade_2.png).
+7. Change base map: By clicking on the ![Map_Base_map.png](../assets/visualization/Map_Base_map.png)icon you can interchange between the Bing Aerial view or the Carto view.
 
-8. Enable Terrain: In order to view a three-dimensional surface from a two-dimensional display, the user can enable the terrain view using the ![Map_Terrain.png](../assets/visualization/Map_Terrain.png) icon.
+8. Hillshade: The user can use the “Hillshade” ![Map_Hillshade_1.png](../assets/visualization/Map_Hillshade_1.png) icon to create a realistic view of terrain. Once enabled, the icon turns green ![Map_Hillshade_2.png](../assets/visualization/Map_Hillshade_2.png).
 
-9. Geolocation tool: It will be zooming to your current location of a device using GeoHub.
+9. Enable Terrain: In order to view a three-dimensional surface from a two-dimensional display, the user can enable the terrain view using the ![Map_Terrain.png](../assets/visualization/Map_Terrain.png) icon.
 
-10. Zoom in/out: To zoom in or out to a place of interest you may use the ![Map_Zoom_in_out.png](../assets/visualization/Map_Zoom_in_out.png) icons as displayed on the upper right of the map. To reset the bearing to the North, you can use the ![Map_reset_bearing.png](../assets/visualization/Map_reset_bearing.png) icon on the upper right corner.
+10. Geolocation tool: It will be zooming to your current location of a device using GeoHub.
+
+11. Zoom in/out: To zoom in or out to a place of interest you may use the ![Map_Zoom_in_out.png](../assets/visualization/Map_Zoom_in_out.png) icons as displayed on the upper right of the map. To reset the bearing to the North, you can use the ![Map_reset_bearing.png](../assets/visualization/Map_reset_bearing.png) icon on the upper right corner.
 
 </hidden>
 
