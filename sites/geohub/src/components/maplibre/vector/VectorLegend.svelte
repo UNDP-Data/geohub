@@ -4,7 +4,8 @@
 	import {
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
-		NumberOfRandomSamplingPoints
+		NumberOfRandomSamplingPoints,
+		UniqueValueThreshold
 	} from '$lib/config/AppConfig';
 	import { getLayerSourceUrl, loadArgumentsInDynamicLayers } from '$lib/helper';
 	import type { Tag } from '$lib/types';
@@ -211,6 +212,7 @@
 					defaultNumberOfClasses={$page.data.config.NumberOfClasses}
 					bind:classificationMethod={$classificationMethodColorStore}
 					numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
+					uniqueValueThreshold={UniqueValueThreshold}
 					bind:colorMapName={$colorMapNameStore}
 					bind:defaultColor={$defaultColorStore}
 				/>
@@ -276,6 +278,7 @@
 					defaultNumberOfClasses={$page.data.config.NumberOfClasses}
 					bind:classificationMethod={$classificationMethodColorStore}
 					numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
+					uniqueValueThreshold={UniqueValueThreshold}
 					bind:colorMapName={$colorMapNameStore}
 					bind:defaultColor={$defaultColorStore}
 				/>
@@ -341,6 +344,7 @@
 					defaultNumberOfClasses={$page.data.config.NumberOfClasses}
 					bind:classificationMethod={$classificationMethodColorStore}
 					numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
+					uniqueValueThreshold={UniqueValueThreshold}
 					bind:colorMapName={$colorMapNameStore}
 					bind:defaultColor={$defaultColorStore}
 				/>
@@ -382,6 +386,7 @@
 					defaultNumberOfClasses={$page.data.config.NumberOfClasses}
 					bind:classificationMethod={$classificationMethodColorStore}
 					numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
+					uniqueValueThreshold={UniqueValueThreshold}
 					bind:colorMapName={$colorMapNameStore}
 					bind:defaultColor={$defaultColorStore}
 				/>
@@ -412,6 +417,7 @@
 					defaultNumberOfClasses={$page.data.config.NumberOfClasses}
 					bind:classificationMethod={$classificationMethodColorStore}
 					numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
+					uniqueValueThreshold={UniqueValueThreshold}
 					bind:colorMapName={$colorMapNameStore}
 					bind:defaultColor={$defaultColorStore}
 				/>

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { UniqueValueThreshold } from '$lib/config/AppConfig';
 	import { getVectorDefaultColor, updateIntervalValues } from '$lib/helper';
 	import {
 		checkVectorLayerHighlySkewed,
@@ -44,6 +43,7 @@
 	export let classificationMethod: ClassificationMethodTypes =
 		ClassificationMethodTypes.NATURAL_BREAK;
 	export let numberOfRandomSamplingPoints = 1000;
+	export let uniqueValueThreshold = 25;
 	export let colorMapName = '';
 	export let defaultColor = '';
 
@@ -194,8 +194,8 @@
 			(attribute.type !== 'number' &&
 				values &&
 				values.length > 0 &&
-				values.length <= UniqueValueThreshold) ||
-			(attribute.type === 'number' && values && values.length <= UniqueValueThreshold) ||
+				values.length <= uniqueValueThreshold) ||
+			(attribute.type === 'number' && values && values.length <= uniqueValueThreshold) ||
 			attribute.type !== 'number';
 
 		colorMapRows = [];

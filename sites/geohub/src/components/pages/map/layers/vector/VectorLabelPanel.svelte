@@ -5,7 +5,8 @@
 	import {
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
-		NumberOfRandomSamplingPoints
+		NumberOfRandomSamplingPoints,
+		UniqueValueThreshold
 	} from '$lib/config/AppConfig';
 	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
 	import type { Layer } from '$lib/types';
@@ -166,6 +167,7 @@
 						defaultNumberOfClasses={$page.data.config.NumberOfClasses}
 						bind:classificationMethod={$classificationMethodStore}
 						numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
+						uniqueValueThreshold={UniqueValueThreshold}
 						bind:colorMapName={$colorMapNameStore}
 						bind:defaultColor={$defaultColorStore}
 					/>
