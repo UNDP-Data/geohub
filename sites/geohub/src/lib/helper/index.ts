@@ -19,7 +19,6 @@ export * from './getLineWidth';
 export * from './getMapImageFromStyle';
 export * from './getPropertyValueFromExpression';
 export * from './getValueFromRasterTileUrl';
-export * from './getVectorDefaultColor';
 export * from './loadImageToDataUrl';
 export * from './updateParamsInURL';
 export * from './sleep';

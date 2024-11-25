@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getVectorDefaultColor, updateIntervalValues } from '$lib/helper';
+	import { updateIntervalValues } from '$lib/helper';
 	import {
 		checkVectorLayerHighlySkewed,
 		ClassificationMethods,
@@ -47,7 +47,43 @@
 	export let colorMapName = '';
 	export let defaultColor = '';
 
-	defaultColor = getVectorDefaultColor($map, layerId, propertyName);
+	const getVectorDefaultColor = (
+		layerId: string,
+		property:
+			| 'icon-color'
+			| 'fill-color'
+			| 'fill-outline-color'
+			| 'line-color'
+			| 'fill-extrusion-color'
+			| 'circle-color'
+			| 'text-color',
+		defaultColor?: string
+	): string => {
+		if (!$map.getLayer(layerId)) return '#000000';
+		let color = $map.getPaintProperty(layerId, property);
+
+		if (
+			!color ||
+			(color &&
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				'type' in color &&
+				(color.type === 'interval' || (color && color.type === 'categorical')))
+		) {
+			if (property === 'fill-outline-color') {
+				color = chroma(defaultColor as string)
+					.darken(2.5)
+					.hex();
+			} else {
+				color = chroma.random().hex();
+			}
+		} else if (Array.isArray(color)) {
+			color = chroma.random().hex();
+		}
+		return color as string;
+	};
+
+	defaultColor = getVectorDefaultColor(layerId, propertyName);
 
 	const maplibreLayerId = $map.getLayer(layerId)?.sourceLayer;
 	let statLayer = metadata.json?.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
