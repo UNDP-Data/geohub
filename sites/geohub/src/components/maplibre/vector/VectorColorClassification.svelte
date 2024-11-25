@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { updateIntervalValues } from '$lib/helper';
 	import {
 		checkVectorLayerHighlySkewed,
 		ClassificationMethods,
@@ -15,6 +14,7 @@
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,
 		PropertySelect,
+		updateIntervalValues,
 		type ColorMapRow,
 		type MapStore,
 		type VectorTileMetadata

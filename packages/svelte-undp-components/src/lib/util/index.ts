@@ -12,3 +12,4 @@ export * from './getSampleFromInterval.js';
 export * from './isInt.js';
 export * from './isValidUrl.js';
 export * from './remapInputValue.js';
+export * from './updateIntervalValues.js';

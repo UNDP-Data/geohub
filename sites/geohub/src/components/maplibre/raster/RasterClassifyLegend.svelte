@@ -7,7 +7,6 @@
 		getLayerStyle,
 		getValueFromRasterTileUrl,
 		isUniqueValueRaster,
-		updateIntervalValues,
 		updateParamsInURL
 	} from '$lib/helper';
 	import type { BandMetadata, RasterLayerStats, RasterTileMetadata } from '$lib/types';
@@ -29,6 +28,7 @@
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,
 		remapInputValue,
+		updateIntervalValues,
 		type ColorMapRow,
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
