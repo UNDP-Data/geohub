@@ -67,7 +67,6 @@
 			(color &&
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
-				'type' in color &&
 				(color.type === 'interval' || (color && color.type === 'categorical')))
 		) {
 			if (property === 'fill-outline-color') {
