@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import TextField from '$components/maplibre/symbol/TextField.svelte';
-	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
 	import {
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
@@ -32,6 +31,7 @@
 		TextHaloWidth,
 		TextMaxWidth,
 		TextSize,
+		VectorColorClassification,
 		type MapStore,
 		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';

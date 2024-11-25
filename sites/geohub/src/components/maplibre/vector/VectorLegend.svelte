@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
 	import {
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
@@ -40,6 +39,7 @@
 		IconSize,
 		LinePattern,
 		MAPSTORE_CONTEXT_KEY,
+		VectorColorClassification,
 		VectorValueClassification,
 		type MapStore,
 		type VectorTileMetadata

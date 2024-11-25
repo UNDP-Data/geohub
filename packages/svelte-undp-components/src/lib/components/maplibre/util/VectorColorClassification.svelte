@@ -1,27 +1,26 @@
 <script lang="ts">
+	import ColorMapPicker from '$lib/components/ui/ColorMapPicker.svelte';
+	import FieldControl from '$lib/components/ui/FieldControl.svelte';
+	import NumberInput from '$lib/components/ui/NumberInput.svelte';
 	import {
-		checkVectorLayerHighlySkewed,
 		ClassificationMethods,
-		ClassificationMethodTypes,
-		ColorMapPicker,
-		convertFunctionToExpression,
-		FieldControl,
-		getIntervalList,
-		getSampleFromHistogram,
-		getSampleFromInterval,
-		LegendColorMapRow,
-		MaplibreColorPicker,
-		MAPSTORE_CONTEXT_KEY,
-		NumberInput,
-		PropertySelect,
-		updateIntervalValues,
-		type ColorMapRow,
-		type MapStore,
-		type VectorTileMetadata
-	} from '@undp-data/svelte-undp-components';
+		ClassificationMethodTypes
+	} from '$lib/constants/ClassificationMethod.js';
+	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { checkVectorLayerHighlySkewed } from '$lib/util/checkVectorLayerHighlySkewed.js';
+	import { convertFunctionToExpression } from '$lib/util/convertFunctionToExpression.js';
+	import { getIntervalList } from '$lib/util/getIntervalList.js';
+	import { getSampleFromHistogram } from '$lib/util/getSampleFromHistogram.js';
+	import { getSampleFromInterval } from '$lib/util/getSampleFromInterval.js';
+	import { updateIntervalValues } from '$lib/util/updateIntervalValues.js';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
+	import type { ColorMapRow } from './LegendColorMapRow.svelte';
+	import LegendColorMapRow from './LegendColorMapRow.svelte';
+	import MaplibreColorPicker from './MaplibreColorPicker.svelte';
+	import PropertySelect from './PropertySelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
