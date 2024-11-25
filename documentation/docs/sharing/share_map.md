@@ -44,13 +44,18 @@ Furthermore, there is an **VIEW** button under **INFO** tab. If it is clicked, m
 
 The following operations can be done according to your permission of a map.
 
-- **VIEW** button: Map editor page is opened if clicked. You can see the map with full functionality and change map visualization settings.
-- **EDIT** button: It is available for **Editor** and **Owner**. You can change layer title and access level from a dialog shown in the below figure.
-- **STAR** button: It is available for signed users. You can add the map to your favourite.
+- **EDIT** button: Map editor page is opened if clicked. You can see the map with full functionality and change map visualization settings.
+- **EDIT METADATA** button: It is available for **Editor** and **Owner**. You can change layer title and access level from a dialog shown in the below figure.
 
 ![Edit dialog for an example map](../assets/sharing/share_map_3.png){:style="width: 400px;"}
 
 <!-- .element style="height: 200px" -->
+
+--
+
+- **CREATE STORYMAP** button: You can start creating a storymap from this map.
+- **DUPLICATE** button: You can duplicate this map as your map. Only available when you sign in.
+- **STAR** button: It is available for signed users. You can add the map to your favourite.
 
 --
 
