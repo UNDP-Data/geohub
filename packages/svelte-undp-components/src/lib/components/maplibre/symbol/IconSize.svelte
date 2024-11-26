@@ -19,6 +19,7 @@
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
+	export let defaultIcon = 'circle';
 	export let defaultIconSize = 1;
 	export let defaultColor: string;
 	export let numberOfClasses: number;
@@ -49,10 +50,11 @@
 		const style = $map
 			.getStyle()
 			.layers.filter((mapLayer: LayerSpecification) => mapLayer.id === layerId)[0];
+		if (!style) return defaultIcon;
 		if (!style.layout) {
 			style.layout = {};
 		}
-		return style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle';
+		return style.layout && style.layout[propertyName] ? style.layout[propertyName] : defaultIcon;
 	};
 
 	$: defaultColor, setCssIconFilter();
