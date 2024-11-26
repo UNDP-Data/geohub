@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { getLayerStyle, getValueFromRasterTileUrl, updateParamsInURL } from '$lib/helper';
+	import { getLayerStyle, getValueFromRasterTileUrl } from '$lib/helper';
 	import type { Link, RasterAlgorithm } from '$lib/types';
 	import {
 		FieldControl,
 		getLayerSourceUrl,
 		MAPSTORE_CONTEXT_KEY,
 		PropertyEditor,
+		updateParamsInURL,
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
@@ -85,7 +86,7 @@
 			params['algorithm_params'] = dumpedParams;
 		}
 		const layerStyle = getLayerStyle($map, layerId);
-		updateParamsInURL(layerStyle, url, params, map);
+		updateParamsInURL(layerStyle, url, params, $map);
 	};
 
 	const handleParameterValueChanged = () => {

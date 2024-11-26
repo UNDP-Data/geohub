@@ -27,11 +27,11 @@
 </script>
 
 <script lang="ts">
-	import { updateLayerURL } from '$lib/helper';
 	import {
 		getLayerSourceUrl,
 		MAPSTORE_CONTEXT_KEY,
 		PropertyEditor,
+		updateParamsInURL,
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
@@ -110,7 +110,7 @@
 		const params = {
 			params: JSON.stringify(selectedArgs)
 		};
-		await updateLayerURL(layerStyle, new URL(datasetUrl), params, map);
+		updateParamsInURL(layerStyle, new URL(datasetUrl), params, $map);
 	};
 </script>
 
