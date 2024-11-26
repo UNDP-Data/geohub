@@ -32,7 +32,7 @@
 	import { updateParamsInURL } from '$lib/util/updateParamsInUrl.js';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import type { FillLayerSpecification } from 'maplibre-gl';
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import PropertyEditor from '../ui/PropertyEditor.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -42,6 +42,7 @@
 	export let datasetUrl: string;
 
 	/*STATE*/
+	let isInitialized = false;
 	let args: { [key: string]: SimulationArgument };
 	let selectedArgs: { [key: string]: SimulationArgument } = {};
 	$: isParameterChanged = Object.keys(selectedArgs).length > 0;
@@ -73,9 +74,10 @@
 	};
 
 	const init = async () => {
-		const layerUrl = getLayerSourceUrl($map, layerId) as string;
-		args = await loadArgumentsInDynamicLayers(layerUrl);
+		isInitialized = false;
+		args = await loadArgumentsInDynamicLayers(decodeURI(datasetUrl));
 		selectedArgs = getArgumentsInURL() || selectedArgs;
+		isInitialized = true;
 	};
 
 	const handleArgumentChanged = async (e: { detail: { id: string; value: number } }) => {
@@ -107,17 +109,21 @@
 		const params = {
 			params: JSON.stringify(selectedArgs)
 		};
-		updateParamsInURL(layerStyle, new URL(datasetUrl), params, $map);
+		updateParamsInURL(layerStyle, new URL(decodeURI(datasetUrl)), params, $map);
 	};
+
+	onMount(() => {
+		init();
+	});
 </script>
 
-{#await init()}
+{#if !isInitialized}
 	<div>
 		<div class="is-flex is-justify-content-center">
 			<Loader size="small" />
 		</div>
 	</div>
-{:then}
+{:else}
 	{#each Object.entries(args) as [argId, arg]}
 		{@const value = selectedArgs[argId]?.value ?? 0}
 
@@ -139,7 +145,4 @@
 	{#if isParameterChanged}
 		<button on:click={reset} class="button is-light is-small is-uppercase mt-2">Reset all</button>
 	{/if}
-{:catch error}
-	Failed to load parameters for {layerId}
-	<p class="has-text-danger">{error.message}</p>
-{/await}
+{/if}
