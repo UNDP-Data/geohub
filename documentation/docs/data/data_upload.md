@@ -36,9 +36,18 @@ The key elements on data upload page are as follows. Each number is corresponded
 4. Once everything is ready, you can click **UPLOAD** button to proceed.
 5. Click **Clear All** button if you want to reset all selected files.
 
+
+<hidden>
+
+Single layer vs Multi layer dataset
+![Single layer vs Multilayer comparison](../assets/data/single_layer_multilayer_comparison.png)
+
+</hidden>
+
 --
 
 Please stay in this page until all uploads will be completed, you will be automatically redirected to **datasets** page once all uploads are done.
+
 
 <hidden>
 
