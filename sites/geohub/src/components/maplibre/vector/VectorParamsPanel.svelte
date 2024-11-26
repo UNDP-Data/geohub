@@ -31,13 +31,13 @@
 
 <script lang="ts">
 	import { getLayerSourceUrl, getLayerStyle, updateLayerURL } from '$lib/helper';
-	import type { VectorLayerSpecification } from '$lib/types';
 	import {
 		MAPSTORE_CONTEXT_KEY,
 		PropertyEditor,
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
+	import type { FillLayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -107,7 +107,7 @@
 	};
 
 	const applyParams = async () => {
-		const layerStyle = getLayerStyle($map, layerId) as VectorLayerSpecification;
+		const layerStyle = getLayerStyle($map, layerId) as FillLayerSpecification;
 		const params = {
 			params: JSON.stringify(selectedArgs)
 		};
