@@ -1,8 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import VectorParamsPanel, {
-		loadArgumentsInDynamicLayers
-	} from '$components/maplibre/vector/VectorParamsPanel.svelte';
 	import {
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
@@ -41,8 +38,10 @@
 		IconOverlap,
 		IconSize,
 		LinePattern,
+		loadArgumentsInDynamicLayers,
 		MAPSTORE_CONTEXT_KEY,
 		VectorColorClassification,
+		VectorSimulation,
 		VectorValueClassification,
 		type MapStore,
 		type VectorTileMetadata
@@ -144,7 +143,7 @@
 		{@const datasetUrl = getDatasetUrl()}
 		<Accordion title="Simulation" bind:isExpanded={expanded['simulation']}>
 			<div class="pb-2" slot="content">
-				<VectorParamsPanel {layerId} {datasetUrl} />
+				<VectorSimulation {layerId} {datasetUrl} />
 			</div>
 			<div slot="buttons">
 				<Help>Simulate the dataset dynamically by changing available parameters</Help>

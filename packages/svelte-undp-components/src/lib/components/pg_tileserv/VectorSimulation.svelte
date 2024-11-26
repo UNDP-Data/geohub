@@ -27,16 +27,13 @@
 </script>
 
 <script lang="ts">
-	import {
-		getLayerSourceUrl,
-		MAPSTORE_CONTEXT_KEY,
-		PropertyEditor,
-		updateParamsInURL,
-		type MapStore
-	} from '@undp-data/svelte-undp-components';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { getLayerSourceUrl } from '$lib/util/getLayerSourceUrl.js';
+	import { updateParamsInURL } from '$lib/util/updateParamsInUrl.js';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import type { FillLayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
+	import PropertyEditor from '../ui/PropertyEditor.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
