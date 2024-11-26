@@ -129,13 +129,20 @@
 				break;
 		}
 	});
+
+	const getDatasetUrl = () => {
+		const layerUrl = getLayerSourceUrl($map, layerId);
+		const url = new URL(layerUrl);
+		return `${url.origin}${url.pathname}`;
+	};
 </script>
 
 <div class="legend-container">
 	{#if expanded && isSimulationLayer}
+		{@const datasetUrl = getDatasetUrl()}
 		<Accordion title="Simulation" bind:isExpanded={expanded['simulation']}>
 			<div class="pb-2" slot="content">
-				<VectorParamsPanel {layerId} />
+				<VectorParamsPanel {layerId} {datasetUrl} />
 			</div>
 			<div slot="buttons">
 				<Help>Simulate the dataset dynamically by changing available parameters</Help>

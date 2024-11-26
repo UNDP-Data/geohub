@@ -20,9 +20,6 @@
 </script>
 
 <script lang="ts">
-	import type { Layer } from '$lib/types';
-	import { Loader } from '@undp-data/svelte-undp-design';
-
 	import {
 		getLayerSourceUrl,
 		getLayerStyle,
@@ -30,27 +27,25 @@
 		loadMap,
 		updateLayerURL
 	} from '$lib/helper';
-	import { LAYERLISTSTORE_CONTEXT_KEY, type LayerListStore } from '$stores';
+	import type { VectorLayerSpecification } from '$lib/types';
 	import {
 		MAPSTORE_CONTEXT_KEY,
 		PropertyEditor,
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	/*EXPORTS*/
 	export let layerId: string;
+	export let datasetUrl: string;
 
 	/*STATE*/
 	let args: { [key: string]: SimulationArgument };
 	let selectedArgs: { [key: string]: SimulationArgument } = {};
 	$: isParameterChanged = Object.keys(selectedArgs).length > 0;
-
-	const layer = $layerListStore.find((l) => l.id == layerId) as Layer;
-	const url = layer?.dataset?.properties?.url;
 
 	let expanded: { [key: string]: boolean } = { icon: true };
 	// to allow only an accordion to be expanded
@@ -74,7 +69,8 @@
 	const getArgumentsInURL = () => {
 		const layerUrl = getLayerSourceUrl($map, layerId) as string;
 		const llayerURL = new URL(layerUrl);
-		return JSON.parse(llayerURL.searchParams.get('params'));
+		const params = llayerURL.searchParams.get('params');
+		return params ? JSON.parse(params) : undefined;
 	};
 
 	const init = async () => {
@@ -96,6 +92,7 @@
 			updatedArg.value = value;
 			selectedArgs[id] = updatedArg;
 		}
+		isParameterChanged = Object.keys(selectedArgs).length > 0;
 		await applyParams();
 	};
 
@@ -108,11 +105,11 @@
 	};
 
 	const applyParams = async () => {
-		const layerStyle = getLayerStyle($map, layer.id);
+		const layerStyle = getLayerStyle($map, layerId) as VectorLayerSpecification;
 		const params = {
 			params: JSON.stringify(selectedArgs)
 		};
-		await updateLayerURL(layerStyle, new URL(url), params, map);
+		await updateLayerURL(layerStyle, new URL(datasetUrl), params, map);
 	};
 </script>
 
