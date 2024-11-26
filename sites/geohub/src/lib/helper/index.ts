@@ -27,7 +27,6 @@ export * from './loadMap';
 export * from './createAttributionFromTags';
 export * from './removeSasTokenFromDatasetUrl';
 export * from './isRasterExtension';
-export * from './loadArgumentsInDynamicLayers';
 export * from './localstorage';
 export * from './isStyleChanged';
 export * from './isRgbRaster';

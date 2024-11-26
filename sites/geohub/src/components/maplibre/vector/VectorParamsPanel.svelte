@@ -17,16 +17,20 @@
 		type: 'numeric';
 		widget_type?: 'slider';
 	}
+
+	export const loadArgumentsInDynamicLayers = async (url: string) => {
+		const metaUrl = url.replace('/{z}/{x}/{y}.pbf', '.json');
+		const res = await fetch(metaUrl);
+		if (!res.ok) {
+			throw new Error(res.statusText);
+		}
+		const json = await res.json();
+		return JSON.parse(json.arguments[0].default) as { [key: string]: SimulationArgument };
+	};
 </script>
 
 <script lang="ts">
-	import {
-		getLayerSourceUrl,
-		getLayerStyle,
-		loadArgumentsInDynamicLayers,
-		loadMap,
-		updateLayerURL
-	} from '$lib/helper';
+	import { getLayerSourceUrl, getLayerStyle, updateLayerURL } from '$lib/helper';
 	import type { VectorLayerSpecification } from '$lib/types';
 	import {
 		MAPSTORE_CONTEXT_KEY,
@@ -74,11 +78,9 @@
 	};
 
 	const init = async () => {
-		const isLoaded = await loadMap($map);
 		const layerUrl = getLayerSourceUrl($map, layerId) as string;
 		args = await loadArgumentsInDynamicLayers(layerUrl);
 		selectedArgs = getArgumentsInURL() || selectedArgs;
-		return isLoaded;
 	};
 
 	const handleArgumentChanged = async (e: { detail: { id: string; value: number } }) => {

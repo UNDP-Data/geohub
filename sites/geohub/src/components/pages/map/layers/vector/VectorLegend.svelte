@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import VectorParamsPanel from '$components/maplibre/vector/VectorParamsPanel.svelte';
+	import VectorParamsPanel, {
+		loadArgumentsInDynamicLayers
+	} from '$components/maplibre/vector/VectorParamsPanel.svelte';
 	import {
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
 		NumberOfRandomSamplingPoints,
 		UniqueValueThreshold
 	} from '$lib/config/AppConfig';
-	import { getLayerSourceUrl, loadArgumentsInDynamicLayers } from '$lib/helper';
+	import { getLayerSourceUrl } from '$lib/helper';
 	import type { Tag } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
