@@ -3,7 +3,6 @@
 	import {
 		generateColorMap,
 		getActiveBandIndex,
-		getLayerSourceUrl,
 		getLayerStyle,
 		getValueFromRasterTileUrl,
 		isUniqueValueRaster,
@@ -24,6 +23,7 @@
 		ClassificationMethods,
 		ColorMapPicker,
 		FieldControl,
+		getLayerSourceUrl,
 		LegendColorMapRow,
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,

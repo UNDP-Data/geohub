@@ -1,13 +1,9 @@
 <script lang="ts">
-	import {
-		getLayerSourceUrl,
-		getLayerStyle,
-		getValueFromRasterTileUrl,
-		updateParamsInURL
-	} from '$lib/helper';
+	import { getLayerStyle, getValueFromRasterTileUrl, updateParamsInURL } from '$lib/helper';
 	import type { Link, RasterAlgorithm } from '$lib/types';
 	import {
 		FieldControl,
+		getLayerSourceUrl,
 		MAPSTORE_CONTEXT_KEY,
 		PropertyEditor,
 		type MapStore

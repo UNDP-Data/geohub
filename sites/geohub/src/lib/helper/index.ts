@@ -14,7 +14,6 @@ export * from './getDomainFromEmail';
 export * from './getFirstSymbolLayerId';
 export * from './getLayerProperties';
 export * from './getLayerStyle';
-export * from './getLayerSourceUrl';
 export * from './getLineWidth';
 export * from './getMapImageFromStyle';
 export * from './getPropertyValueFromExpression';

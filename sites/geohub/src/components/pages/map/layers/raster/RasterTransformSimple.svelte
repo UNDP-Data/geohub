@@ -14,7 +14,6 @@
 	import { RasterComparisonOperators } from '$lib/config/AppConfig';
 	import {
 		getActiveBandIndex,
-		getLayerSourceUrl,
 		getLayerStyle,
 		getValueFromRasterTileUrl,
 		updateParamsInURL
@@ -22,6 +21,7 @@
 	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
 	import { RASTERRESCALE_CONTEXT_KEY, type RasterRescaleStore } from '$stores';
 	import {
+		getLayerSourceUrl,
 		initTooltipTippy,
 		isInt,
 		MAPSTORE_CONTEXT_KEY,

@@ -2,7 +2,6 @@
 	import RasterClassifyLegend from '$components/maplibre/raster/RasterClassifyLegend.svelte';
 	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
 	import {
-		getLayerSourceUrl,
 		getLayerStyle,
 		getValueFromRasterTileUrl,
 		isRgbRaster,
@@ -20,6 +19,7 @@
 		Accordion,
 		ColorMapPicker,
 		FieldControl,
+		getLayerSourceUrl,
 		Help,
 		HillshadeAccentColor,
 		HillshadeExaggeration,

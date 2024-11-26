@@ -9,7 +9,6 @@
 		NumberOfRandomSamplingPoints,
 		UniqueValueThreshold
 	} from '$lib/config/AppConfig';
-	import { getLayerSourceUrl } from '$lib/helper';
 	import type { Tag } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
@@ -32,6 +31,7 @@
 		FillExtrusionHeight,
 		FillExtrusionVerticalGradient,
 		FillOutlineColor,
+		getLayerSourceUrl,
 		HeatmapColor,
 		HeatmapIntensity,
 		HeatmapRadius,

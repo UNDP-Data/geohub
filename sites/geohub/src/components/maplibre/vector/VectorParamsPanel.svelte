@@ -21,17 +21,15 @@
 	export const loadArgumentsInDynamicLayers = async (url: string) => {
 		const metaUrl = url.replace('/{z}/{x}/{y}.pbf', '.json');
 		const res = await fetch(metaUrl);
-		if (!res.ok) {
-			throw new Error(res.statusText);
-		}
 		const json = await res.json();
 		return JSON.parse(json.arguments[0].default) as { [key: string]: SimulationArgument };
 	};
 </script>
 
 <script lang="ts">
-	import { getLayerSourceUrl, getLayerStyle, updateLayerURL } from '$lib/helper';
+	import { updateLayerURL } from '$lib/helper';
 	import {
+		getLayerSourceUrl,
 		MAPSTORE_CONTEXT_KEY,
 		PropertyEditor,
 		type MapStore
@@ -107,7 +105,8 @@
 	};
 
 	const applyParams = async () => {
-		const layerStyle = getLayerStyle($map, layerId) as FillLayerSpecification;
+		const style = $map.getStyle();
+		const layerStyle = style?.layers?.find((l) => l.id === layerId) as FillLayerSpecification;
 		const params = {
 			params: JSON.stringify(selectedArgs)
 		};

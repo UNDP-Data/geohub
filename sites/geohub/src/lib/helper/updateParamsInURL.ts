@@ -2,7 +2,7 @@ import type { HillshadeLayerSpecification, RasterLayerSpecification } from 'mapl
 
 import { get } from 'svelte/store';
 import { loadMap } from './loadMap';
-import type { MapStore } from '$stores';
+import type { MapStore } from '@undp-data/svelte-undp-components';
 import type { VectorLayerSpecification } from '$lib/types';
 
 export const updateParamsInURL = (

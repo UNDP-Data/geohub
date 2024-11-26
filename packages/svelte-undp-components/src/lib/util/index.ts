@@ -5,6 +5,7 @@ export * from './convertFunctionToExpression.js';
 export * from './handleEnterKey.js';
 export * from './initTippy.js';
 export * from './getIntervalList.js';
+export * from './getLayerSourceUrl.js';
 export * from './getPropertyValueFromExpression.js';
 export * from './getRandomColormap.js';
 export * from './getSampleFromHistogram.js';
