@@ -1,5 +1,15 @@
 # @undp-data/svelte-undp-components
 
+## 1.5.10
+
+### Patch Changes
+
+- 3d12870: refactor: migrated VectorParamsPanel from GeoHub to svelte-undp-components
+- 8e19b92: fix: fixed bug of default style editor for vector dataset.
+- 3d12870: fix: fixed IconSize and getIntervalList (jenks) bug
+- 3d12870: refactor: migrated VectorColorClassification from GeoHub to svelte-undp-components
+- 55d7ef2: fix: sometimes there might be same values in array. remove duplicated values from intervalList.
+
 ## 1.5.9
 
 ### Patch Changes
