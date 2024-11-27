@@ -1,5 +1,14 @@
 # geohub
 
+## 1.22.11
+
+### Patch Changes
+
+- b7c61bd: fix: fixed bug of creating too many webgl object in data tab.
+- 9aae54b: refactor: migrated RasterLegend to the same folder of RasterLayer.
+- 9aae54b: refactor: merged RasterHistogram to LayerInfo.
+- 9aae54b: refactor: deleted unused components related to RasterTransformAdvanced.
+
 ## 1.22.10
 
 ### Patch Changes
