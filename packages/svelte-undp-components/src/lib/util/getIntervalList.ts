@@ -36,17 +36,6 @@ export const getIntervalList = (
 			intervalList = jenks(randomSample, numberOfClasses)?.map((element) => {
 				return isInteger ? Math.round(element) : Number(element.toFixed(2));
 			});
-			if (
-				intervalList.length > 2 &&
-				intervalList[intervalList.length - 1] === intervalList[intervalList.length - 2]
-			) {
-				// set layerMax to the last value of array if the last two values are same
-				if (intervalList[intervalList.length - 1] === layerMax) {
-					intervalList[intervalList.length - 1] = layerMax + 1;
-				} else {
-					intervalList[intervalList.length - 1] = layerMax;
-				}
-			}
 			if (intervalList) {
 				if (intervalList[0] > layerMin) {
 					intervalList[0] = layerMin;
@@ -81,5 +70,7 @@ export const getIntervalList = (
 				return isInteger ? Math.round(element) : Number(element.toFixed(2));
 			});
 	}
+	// sometimes there might be same values in array. remove duplicated values from intervalList
+	intervalList = [...new Set(intervalList)];
 	return intervalList;
 };
