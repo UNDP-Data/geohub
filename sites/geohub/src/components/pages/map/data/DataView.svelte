@@ -67,7 +67,7 @@
 			const res = await fetch(url);
 			const json: DatasetFeatureCollection = await res.json();
 			if (json.features.length > 0) {
-				json.features = [...DataItemFeatureCollection.features, ...json.features];
+				json.features = [...(DataItemFeatureCollection?.features ?? []), ...json.features];
 			}
 			DataItemFeatureCollection = json;
 		} finally {
