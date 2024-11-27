@@ -22,6 +22,7 @@
 		const metaUrl = url.replace('/{z}/{x}/{y}.pbf', '.json');
 		const res = await fetch(metaUrl);
 		const json = await res.json();
+		if (!('arguments' in json && Array.isArray(json.arguments))) return {};
 		return JSON.parse(json.arguments[0].default) as { [key: string]: SimulationArgument };
 	};
 </script>

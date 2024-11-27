@@ -167,37 +167,16 @@
 		try {
 			isLoading = true;
 
-			const style = $map.getStyle();
+			$map.setStyle(MapStyles[0].uri);
 
-			if (!is_raster) {
-				sourceId = feature.properties.id;
-			}
-
-			if (sourceId && $map.getSource(sourceId)) {
-				const layers = style.layers.filter(
-					(l: VectorLayerSpecification | RasterLayerSpecification) => l.source === sourceId
-				) as VectorLayerSpecification[] | RasterLayerSpecification[];
-				if (layers.length > 0) {
-					for (const layer of layers) {
-						$map.removeLayer(layer.id);
-					}
-				}
-				$map.removeSource(sourceId);
-
-				layerSpec = undefined;
-				sourceId = undefined;
-			}
-
-			if (!is_raster) {
-				const data = await vectorTileData.add($map, layerType, selectedVectorLayer.layer);
-				layerSpec = data.layer;
-				sourceId = data.sourceId;
-				vectorMetadata = data.metadata as VectorTileMetadata;
-				$colorMapNameStore = data.colormap_name ?? getRandomColormap();
-				$classificationMethod = data.classification_method;
-				$classificationMethod2 = data.classification_method_2;
-				defaultLayerStyle = data.defaultStyle;
-			}
+			const data = await vectorTileData.add($map, layerType, selectedVectorLayer.layer);
+			layerSpec = data.layer;
+			sourceId = data.sourceId;
+			vectorMetadata = data.metadata as VectorTileMetadata;
+			$colorMapNameStore = data.colormap_name ?? getRandomColormap();
+			$classificationMethod = data.classification_method;
+			$classificationMethod2 = data.classification_method_2;
+			defaultLayerStyle = data.defaultStyle;
 		} finally {
 			isLoading = false;
 		}
@@ -210,44 +189,27 @@
 		try {
 			isLoading = true;
 
-			const style = $map.getStyle();
+			$map.setStyle(MapStyles[0].uri);
 
-			if (sourceId && $map.getSource(sourceId)) {
-				const layers = style.layers.filter(
-					(l: VectorLayerSpecification | RasterLayerSpecification) => l.source === sourceId
-				) as VectorLayerSpecification[] | RasterLayerSpecification[];
-				if (layers.length > 0) {
-					for (const layer of layers) {
-						$map.removeLayer(layer.id);
-					}
-				}
-				$map.removeSource(sourceId);
-
-				layerSpec = undefined;
-				sourceId = undefined;
+			let bandIndex = getSelectedBandIndex();
+			if (bandIndex) {
+				bandIndex = bandIndex - 1;
 			}
+			const data = await rasterTileData.add($map, bandIndex);
+			layerSpec = data.layer;
+			$colorMapNameStore = data.colormap_name ?? getRandomColormap();
+			$classificationMethod = data.classification_method ?? config.ClassificationMethod;
+			sourceId = data.sourceId;
+			defaultLayerStyle = data.defaultStyle;
+			rasterMetadata = data.metadata;
 
-			if (is_raster) {
-				let bandIndex = getSelectedBandIndex();
-				if (bandIndex) {
-					bandIndex = bandIndex - 1;
-				}
-				const data = await rasterTileData.add($map, bandIndex);
-				layerSpec = data.layer;
-				$colorMapNameStore = data.colormap_name ?? getRandomColormap();
-				$classificationMethod = data.classification_method ?? config.ClassificationMethod;
-				sourceId = data.sourceId;
-				defaultLayerStyle = data.defaultStyle;
-				rasterMetadata = data.metadata;
-
-				// set rescale to context
-				const sourceUrl = data.source.url ?? data.source.tiles[0];
-				const srcUrlObj = new URL(sourceUrl);
-				const rescaleString = srcUrlObj.searchParams.get('rescale');
-				if (rescaleString) {
-					const rescale = JSON.parse(`[${rescaleString}]`) as number[];
-					$rescaleStore = rescale;
-				}
+			// set rescale to context
+			const sourceUrl = data.source.url ?? data.source.tiles[0];
+			const srcUrlObj = new URL(sourceUrl);
+			const rescaleString = srcUrlObj.searchParams.get('rescale');
+			if (rescaleString) {
+				const rescale = JSON.parse(`[${rescaleString}]`) as number[];
+				$rescaleStore = rescale;
 			}
 		} finally {
 			isLoading = false;
@@ -402,7 +364,8 @@
 	</div>
 {/if}
 
-<div bind:this={mapContainer} class="map" style="height: {mapHeight}px;">
+<div class="editor-container">
+	<div bind:this={mapContainer} class="map" style="height: {mapHeight}px;"></div>
 	<div class="editor">
 		<div class="legend-header has-background-light is-flex is-align-items-center px-2">
 			<span class="is-size-6">Default style editor</span>
@@ -477,6 +440,10 @@
 									bind:tags={feature.properties.tags}
 								/>
 							{/if}
+						{:else if isLoading}
+							<div class="is-flex is-justify-content-center">
+								<Loader size="small" />
+							</div>
 						{:else}
 							<VectorLegend
 								bind:layerId={layerSpec.id}
@@ -542,9 +509,13 @@
 
 	$width: 400px;
 
-	.map {
+	.editor-container {
 		position: relative;
-		width: 100%;
+
+		.map {
+			position: relative;
+			width: 100%;
+		}
 
 		.editor {
 			background-color: white;
