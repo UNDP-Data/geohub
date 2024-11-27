@@ -125,13 +125,28 @@
 		{/if}
 	</div>
 	<div class="container pb-2" slot="content" bind:clientWidth>
-		{#if isShowInfo}
-			<DataCardInfo bind:feature bind:metadata on:starDeleted={handleStarDeleted}>
+		{#if isExpanded === true}
+			{#if isShowInfo}
+				<DataCardInfo bind:feature bind:metadata on:starDeleted={handleStarDeleted}>
+					<div class="map">
+						<MiniMap
+							bind:feature
+							bind:width
+							height={'200px'}
+							bind:isLoadMap={isExpanded}
+							bind:metadata
+							bind:layer
+							bind:layerType
+							on:layerAdded={handleLayerAdded}
+						/>
+					</div>
+				</DataCardInfo>
+			{:else}
 				<div class="map">
 					<MiniMap
 						bind:feature
 						bind:width
-						height={'150px'}
+						height={'200px'}
 						bind:isLoadMap={isExpanded}
 						bind:metadata
 						bind:layer
@@ -139,25 +154,12 @@
 						on:layerAdded={handleLayerAdded}
 					/>
 				</div>
-			</DataCardInfo>
-		{:else}
-			<div class="map">
-				<MiniMap
-					bind:feature
-					bind:width
-					height={'200px'}
-					bind:isLoadMap={isExpanded}
-					bind:metadata
-					bind:layer
-					bind:layerType
-					on:layerAdded={handleLayerAdded}
-				/>
-			</div>
-		{/if}
+			{/if}
 
-		<LayerTypeSwitch bind:layer bind:layerType size="small" />
-		{#if layerCreationInfo}
-			<AddLayerButton bind:isLoading={layerLoading} title="Add layer" on:clicked={addLayer} />
+			<LayerTypeSwitch bind:layer bind:layerType size="small" />
+			{#if layerCreationInfo}
+				<AddLayerButton bind:isLoading={layerLoading} title="Add layer" on:clicked={addLayer} />
+			{/if}
 		{/if}
 	</div>
 </Accordion>
