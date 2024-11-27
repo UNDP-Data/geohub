@@ -312,67 +312,73 @@
 				{/await}
 			</div>
 			<div slot="content" class="card-container px-1" bind:clientWidth>
-				{#if !is_raster && tilestatsLayers?.length > 1}
-					<DataCardInfo bind:feature bind:metadata on:starDeleted={handleStarDeleted} />
+				{#if isExpanded === true}
+					{#if !is_raster && tilestatsLayers?.length > 1}
+						<DataCardInfo bind:feature bind:metadata on:starDeleted={handleStarDeleted} />
 
-					{#each tilestatsLayers as layer}
-						<DataVectorCard
-							bind:layer
-							bind:feature
-							bind:isExpanded={expanded[`${feature.properties.id}-${layer.layer}`]}
-							bind:metadata
-							isShowInfo={false}
-						/>
-					{/each}
-				{:else}
-					<DataCardInfo bind:feature bind:metadata on:starDeleted={handleStarDeleted}>
-						{#if isRgbTile || selectedBand}
-							{#key selectedBand}
-								<div class="map">
-									<MiniMap
-										bind:feature
-										bind:width
-										height={'150px'}
-										bind:isLoadMap={isExpanded}
-										bind:metadata
-										band={isRgbTile ? undefined : selectedBand}
-										on:layerAdded={handleLayerAdded}
-									/>
+						{#each tilestatsLayers as layer}
+							<DataVectorCard
+								bind:layer
+								bind:feature
+								bind:isExpanded={expanded[`${feature.properties.id}-${layer.layer}`]}
+								bind:metadata
+								isShowInfo={false}
+							/>
+						{/each}
+					{:else}
+						<DataCardInfo bind:feature bind:metadata on:starDeleted={handleStarDeleted}>
+							{#if isRgbTile || selectedBand}
+								{#key selectedBand}
+									<div class="map">
+										<MiniMap
+											bind:feature
+											bind:width
+											height={'150px'}
+											bind:isLoadMap={isExpanded}
+											bind:metadata
+											band={isRgbTile ? undefined : selectedBand}
+											on:layerAdded={handleLayerAdded}
+										/>
+									</div>
+								{/key}
+							{/if}
+						</DataCardInfo>
+
+						{#if is_raster && !isCatalog && metadata && !isRgbTile && bands.length > 1}
+							<div class="field">
+								<!-- svelte-ignore a11y-label-has-associated-control -->
+								<label class="label">Please select a raster band</label>
+								<div class="control">
+									<RasterBandSelectbox bind:metadata bind:selectedBand />
 								</div>
-							{/key}
-						{/if}
-					</DataCardInfo>
-
-					{#if is_raster && !isCatalog && metadata && !isRgbTile && bands.length > 1}
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label">Please select a raster band</label>
-							<div class="control">
-								<RasterBandSelectbox bind:metadata bind:selectedBand />
 							</div>
-						</div>
-					{/if}
+						{/if}
 
-					{#if stacType}
-						<StacExplorerButton
-							bind:feature
-							isIconButton={false}
-							on:clicked={addStacLayer}
-							bind:showDialog={showSTACDialog}
-						/>
-					{:else if layerCreationInfo}
-						<AddLayerButton bind:isLoading={layerLoading} title="Add layer" on:clicked={addLayer} />
-					{/if}
-
-					{#if is_raster && !stacType && !isRgbTile}
-						<div class="mt-2">
-							<RasterAlgorithmExplorerButton
+						{#if stacType}
+							<StacExplorerButton
 								bind:feature
 								isIconButton={false}
-								on:added={addAlgoLayer}
-								bind:showDialog={showAlgoDialog}
+								on:clicked={addStacLayer}
+								bind:showDialog={showSTACDialog}
 							/>
-						</div>
+						{:else if layerCreationInfo}
+							<AddLayerButton
+								bind:isLoading={layerLoading}
+								title="Add layer"
+								on:clicked={addLayer}
+							/>
+						{/if}
+
+						{#if is_raster && !stacType && !isRgbTile}
+							<div class="mt-2">
+								<RasterAlgorithmExplorerButton
+									bind:feature
+									isIconButton={false}
+									on:added={addAlgoLayer}
+									bind:showDialog={showAlgoDialog}
+								/>
+							</div>
+						{/if}
 					{/if}
 				{/if}
 			</div>
