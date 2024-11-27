@@ -1,20 +1,33 @@
-import type { HillshadeLayerSpecification, RasterLayerSpecification } from 'maplibre-gl';
-
-import { get } from 'svelte/store';
-import { loadMap } from './loadMap';
-import type { MapStore } from '$stores';
-import type { VectorLayerSpecification } from '$lib/types';
+import type {
+	CircleLayerSpecification,
+	FillExtrusionLayerSpecification,
+	FillLayerSpecification,
+	HeatmapLayerSpecification,
+	HillshadeLayerSpecification,
+	LineLayerSpecification,
+	Map,
+	RasterLayerSpecification,
+	SymbolLayerSpecification
+} from 'maplibre-gl';
 
 export const updateParamsInURL = (
-	layerStyle: RasterLayerSpecification | VectorLayerSpecification | HillshadeLayerSpecification,
+	layerStyle:
+		| RasterLayerSpecification
+		| FillLayerSpecification
+		| LineLayerSpecification
+		| SymbolLayerSpecification
+		| HeatmapLayerSpecification
+		| CircleLayerSpecification
+		| FillExtrusionLayerSpecification
+		| HillshadeLayerSpecification,
 	layerURL: URL,
 	params: Record<string, string>,
-	mapStore: MapStore
+	map: Map
 ) => {
 	Object.keys(params).forEach((key) => {
 		layerURL.searchParams.set(key, params[key]);
 	});
-	const map = get(mapStore);
+
 	if ('getStyle' in map) {
 		const style = map.getStyle();
 
@@ -28,7 +41,11 @@ export const updateParamsInURL = (
 			Object.keys(style.sources).forEach((key) => {
 				const src = style.sources[key];
 				Object.keys(src).forEach((prop) => {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
 					if (!src[prop]) {
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
 						delete src[prop];
 					}
 				});
@@ -36,16 +53,4 @@ export const updateParamsInURL = (
 			map.setStyle(style);
 		}
 	}
-};
-
-export const updateLayerURL = async (
-	layerStyle: RasterLayerSpecification | VectorLayerSpecification,
-	layerURL: URL,
-	params: Record<string, string>,
-	mapStore: MapStore
-) => {
-	const map = get(mapStore);
-	updateParamsInURL(layerStyle, layerURL, params, mapStore);
-	await loadMap(map);
-	mapStore.set(map);
 };

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
 	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
+	import VectorLegend from '$components/pages/map/layers/vector/VectorLegend.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer } from '$lib/types';

@@ -3,12 +3,9 @@
 	import {
 		generateColorMap,
 		getActiveBandIndex,
-		getLayerSourceUrl,
 		getLayerStyle,
 		getValueFromRasterTileUrl,
-		isUniqueValueRaster,
-		updateIntervalValues,
-		updateParamsInURL
+		isUniqueValueRaster
 	} from '$lib/helper';
 	import type { BandMetadata, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import {
@@ -25,10 +22,13 @@
 		ClassificationMethods,
 		ColorMapPicker,
 		FieldControl,
+		getLayerSourceUrl,
 		LegendColorMapRow,
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,
 		remapInputValue,
+		updateIntervalValues,
+		updateParamsInURL,
 		type ColorMapRow,
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
@@ -286,7 +286,7 @@
 		layerURL.searchParams.delete('rescale');
 		const updatedParams = Object.assign({ colormap: encodeColorMapRows });
 		const layerStyle = getLayerStyle($map, layerId);
-		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
+		updateParamsInURL(layerStyle, layerURL, updatedParams, $map);
 	};
 
 	onMount(() => {

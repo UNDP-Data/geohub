@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isInt } from '$lib/index.js';
+	import { isInt } from '$lib/util/isInt.js';
 	import BigNumber from 'bignumber.js';
 	import { createEventDispatcher } from 'svelte';
 

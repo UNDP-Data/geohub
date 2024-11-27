@@ -70,5 +70,7 @@ export const getIntervalList = (
 				return isInteger ? Math.round(element) : Number(element.toFixed(2));
 			});
 	}
+	// sometimes there might be same values in array. remove duplicated values from intervalList
+	intervalList = [...new Set(intervalList)];
 	return intervalList;
 };
