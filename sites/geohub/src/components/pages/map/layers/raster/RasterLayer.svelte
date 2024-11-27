@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
+	import LayerInfo from '$components/pages/map/layers/LayerInfo.svelte';
+	import RasterLegend from '$components/pages/map/layers/raster/RasterLegend.svelte';
 	import RasterTransformSimple from '$components/pages/map/layers/raster/RasterTransformSimple.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
@@ -25,7 +26,6 @@
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { getContext, onMount, setContext } from 'svelte';
-	import LayerInfo from '../LayerInfo.svelte';
 
 	export let layer: Layer;
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import RasterAlgorithms from '$components/maplibre/raster/RasterAlgorithms.svelte';
 	import RasterClassifyLegend from '$components/maplibre/raster/RasterClassifyLegend.svelte';
 	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
 	import {
@@ -38,7 +39,6 @@
 	import { debounce } from 'lodash-es';
 	import { type LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
-	import RasterAlgorithms from './RasterAlgorithms.svelte';
 
 	enum LegendType {
 		LINEAR = 'Linear',
