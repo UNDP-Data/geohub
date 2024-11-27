@@ -30,3 +30,6 @@ export const MapStyles: StyleDefinition[] = [
 		image: `/assets/style-switcher/blank.webp`
 	}
 ];
+
+export const MapStyleIds = ['style', 'aerialstyle', 'dark', 'positron', 'blank'] as const;
+export type MapStyleType = (typeof MapStyleIds)[number];
