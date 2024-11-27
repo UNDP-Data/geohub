@@ -1,5 +1,14 @@
 # geohub
 
+## 1.22.10
+
+### Patch Changes
+
+- 3d12870: refactor: migrated VectorParamsPanel from GeoHub to svelte-undp-components
+- 8e19b92: fix: fixed bug of default style editor for vector dataset.
+- 3d12870: fix: fixed IconSize and getIntervalList (jenks) bug
+- 3d12870: refactor: migrated VectorColorClassification from GeoHub to svelte-undp-components
+
 ## 1.22.9
 
 ### Patch Changes
