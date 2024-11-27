@@ -2,12 +2,10 @@
 	import RasterClassifyLegend from '$components/maplibre/raster/RasterClassifyLegend.svelte';
 	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
 	import {
-		getLayerSourceUrl,
 		getLayerStyle,
 		getValueFromRasterTileUrl,
 		isRgbRaster,
-		isUniqueValueRaster,
-		updateParamsInURL
+		isUniqueValueRaster
 	} from '$lib/helper';
 	import type { Link, RasterAlgorithm, RasterTileMetadata, Tag } from '$lib/types';
 	import {
@@ -20,6 +18,7 @@
 		Accordion,
 		ColorMapPicker,
 		FieldControl,
+		getLayerSourceUrl,
 		Help,
 		HillshadeAccentColor,
 		HillshadeExaggeration,
@@ -33,6 +32,7 @@
 		RasterHueRotate,
 		RasterResampling,
 		RasterSaturation,
+		updateParamsInURL,
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
@@ -107,7 +107,7 @@
 		}
 
 		const layerStyle = getLayerStyle($map, layerId);
-		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
+		updateParamsInURL(layerStyle, layerURL, updatedParams, $map);
 	};
 
 	const handleRescaleChanged = debounce(() => {
@@ -123,7 +123,7 @@
 
 		let updatedParams = { colormap_name: $colorMapNameStore, rescale: $rescaleStore.join(',') };
 
-		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
+		updateParamsInURL(layerStyle, layerURL, updatedParams, $map);
 	}, 200);
 
 	const decideLegendType = () => {

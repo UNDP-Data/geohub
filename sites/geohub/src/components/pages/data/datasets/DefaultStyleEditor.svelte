@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
-	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
+	import VectorLegend from '$components/pages/map/layers/vector/VectorLegend.svelte';
 	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
@@ -107,15 +107,19 @@
 	$numberOfClassesStore2 = $page.data.config.NumberOfClasses;
 	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY_2, numberOfClassesStore2);
 
+	// colormap for geometry
 	const colorMapNameStore = createColorMapNameStore();
+	$colorMapNameStore = getRandomColormap();
 	setContext(COLORMAP_NAME_CONTEXT_KEY, colorMapNameStore);
 
-	// for color
+	// for color classification
 	const classificationMethod = createClassificationMethodStore();
+	$classificationMethod = $page.data.config.ClassificationMethod;
 	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY, classificationMethod);
 
 	// value (icon size/line width) classification
 	const classificationMethod2 = createClassificationMethodStore();
+	$classificationMethod2 = $page.data.config.ClassificationMethod;
 	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY_2, classificationMethod2);
 
 	const defaultColorStore = createDefaultColorStore();

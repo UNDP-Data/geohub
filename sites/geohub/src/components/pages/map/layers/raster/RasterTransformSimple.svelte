@@ -12,21 +12,17 @@
 	import Wizard from '$components/util/Wizard.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { RasterComparisonOperators } from '$lib/config/AppConfig';
-	import {
-		getActiveBandIndex,
-		getLayerSourceUrl,
-		getLayerStyle,
-		getValueFromRasterTileUrl,
-		updateParamsInURL
-	} from '$lib/helper';
+	import { getActiveBandIndex, getLayerStyle, getValueFromRasterTileUrl } from '$lib/helper';
 	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
 	import { RASTERRESCALE_CONTEXT_KEY, type RasterRescaleStore } from '$stores';
 	import {
+		getLayerSourceUrl,
 		initTooltipTippy,
 		isInt,
 		MAPSTORE_CONTEXT_KEY,
 		Notification,
 		Slider,
+		updateParamsInURL,
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
 	import { getContext, onMount } from 'svelte';
@@ -111,7 +107,7 @@
 		urlObj.searchParams.delete('nodata');
 
 		await setLayerStats({});
-		updateParamsInURL(getLayerStyle($map, layer.id), urlObj, {}, map);
+		updateParamsInURL(getLayerStyle($map, layer.id), urlObj, {}, $map);
 
 		if (['<', '<='].includes(expression.operator)) {
 			rescaleStore.set([$rescaleStore[0], layerMax]);
@@ -141,7 +137,7 @@
 		const lURL = new URL(url);
 
 		await setLayerStats(newParams);
-		updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams, map);
+		updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams, $map);
 
 		if (['<', '<='].includes(expression.operator)) {
 			rescaleStore.set([$rescaleStore[0], expression.value[0]]);

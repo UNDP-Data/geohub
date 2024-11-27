@@ -1,44 +1,26 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import ColorMapPicker from '$lib/components/ui/ColorMapPicker.svelte';
+	import FieldControl from '$lib/components/ui/FieldControl.svelte';
+	import NumberInput from '$lib/components/ui/NumberInput.svelte';
 	import {
-		NumberOfClassesMaximum,
-		NumberOfClassesMinimum,
-		NumberOfRandomSamplingPoints,
-		UniqueValueThreshold
-	} from '$lib/config/AppConfig';
-	import { getVectorDefaultColor, updateIntervalValues } from '$lib/helper';
-	import {
-		CLASSIFICATION_METHOD_CONTEXT_KEY,
-		COLORMAP_NAME_CONTEXT_KEY,
-		DEFAULTCOLOR_CONTEXT_KEY,
-		NUMBER_OF_CLASSES_CONTEXT_KEY,
-		type ClassificationMethodStore,
-		type ColorMapNameStore,
-		type DefaultColorStore,
-		type NumberOfClassesStore
-	} from '$stores';
-	import {
-		checkVectorLayerHighlySkewed,
 		ClassificationMethods,
-		ClassificationMethodTypes,
-		ColorMapPicker,
-		convertFunctionToExpression,
-		FieldControl,
-		getIntervalList,
-		getSampleFromHistogram,
-		getSampleFromInterval,
-		LegendColorMapRow,
-		MaplibreColorPicker,
-		MAPSTORE_CONTEXT_KEY,
-		NumberInput,
-		PropertySelect,
-		type ColorMapRow,
-		type MapStore,
-		type VectorTileMetadata
-	} from '@undp-data/svelte-undp-components';
+		ClassificationMethodTypes
+	} from '$lib/constants/ClassificationMethod.js';
+	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { checkVectorLayerHighlySkewed } from '$lib/util/checkVectorLayerHighlySkewed.js';
+	import { convertFunctionToExpression } from '$lib/util/convertFunctionToExpression.js';
+	import { getIntervalList } from '$lib/util/getIntervalList.js';
+	import { getSampleFromHistogram } from '$lib/util/getSampleFromHistogram.js';
+	import { getSampleFromInterval } from '$lib/util/getSampleFromInterval.js';
+	import { updateIntervalValues } from '$lib/util/updateIntervalValues.js';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
+	import type { ColorMapRow } from './LegendColorMapRow.svelte';
+	import LegendColorMapRow from './LegendColorMapRow.svelte';
+	import MaplibreColorPicker from './MaplibreColorPicker.svelte';
+	import PropertySelect from './PropertySelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -53,20 +35,56 @@
 		| 'text-color';
 	export let transparentColor = [255, 255, 255, 0];
 	export let onlyNumberFields = false;
-	export let classesContextKey = NUMBER_OF_CLASSES_CONTEXT_KEY;
-	export let colorContextKey = DEFAULTCOLOR_CONTEXT_KEY;
-	export let colormapContextKey = COLORMAP_NAME_CONTEXT_KEY;
-	export let classificationContextKey = CLASSIFICATION_METHOD_CONTEXT_KEY;
+	export let numberOfClasses: number;
+	export let numberOfClassesMinimum = 2;
+	export let numberOfClassesMaximum = 25;
+	export let defaultNumberOfClasses = 5;
+	export let classificationMethod: ClassificationMethodTypes =
+		ClassificationMethodTypes.NATURAL_BREAK;
+	export let numberOfRandomSamplingPoints = 1000;
+	export let uniqueValueThreshold = 25;
+	export let colorMapName = '';
+	export let defaultColor = '';
 
-	const classificationMethodStore: ClassificationMethodStore = getContext(classificationContextKey);
+	const getVectorDefaultColor = (
+		layerId: string,
+		property:
+			| 'icon-color'
+			| 'fill-color'
+			| 'fill-outline-color'
+			| 'line-color'
+			| 'fill-extrusion-color'
+			| 'circle-color'
+			| 'text-color',
+		defaultColor?: string
+	): string => {
+		if (!$map.getLayer(layerId)) return '#000000';
+		let color = $map.getPaintProperty(layerId, property);
 
-	const colorMapNameStore: ColorMapNameStore = getContext(colormapContextKey);
-	const numberOfClassesStore: NumberOfClassesStore = getContext(classesContextKey);
-	const defaultColorStore: DefaultColorStore = getContext(colorContextKey);
-	$defaultColorStore = getVectorDefaultColor($map, layerId, propertyName);
+		if (
+			!color ||
+			(color &&
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				(color.type === 'interval' || (color && color.type === 'categorical')))
+		) {
+			if (property === 'fill-outline-color') {
+				color = chroma(defaultColor as string)
+					.darken(2.5)
+					.hex();
+			} else {
+				color = chroma.random().hex();
+			}
+		} else if (Array.isArray(color)) {
+			color = chroma.random().hex();
+		}
+		return color as string;
+	};
 
-	const maplibreLayerId = $map.getLayer(layerId).sourceLayer;
-	let statLayer = metadata.json.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
+	defaultColor = getVectorDefaultColor(layerId, propertyName);
+
+	const maplibreLayerId = $map.getLayer(layerId)?.sourceLayer;
+	let statLayer = metadata.json?.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
 
 	let containerWidth: number;
 
@@ -75,7 +93,7 @@
 	const getColor = (): string | string[] => {
 		let color = $map.getPaintProperty(layerId, propertyName);
 		if (!color) {
-			color = $defaultColorStore;
+			color = defaultColor;
 		}
 
 		if (Array.isArray(color) && color[0] === 'case') {
@@ -87,14 +105,14 @@
 	};
 
 	const resetClassificationMethods = () => {
-		if (!$classificationMethodStore) {
+		if (!classificationMethod && maplibreLayerId) {
 			const highlySkewed = checkVectorLayerHighlySkewed(
 				metadata,
 				maplibreLayerId,
 				propertySelectValue
 			);
 			if (highlySkewed) {
-				$classificationMethodStore = ClassificationMethodTypes.LOGARITHMIC;
+				classificationMethod = ClassificationMethodTypes.LOGARITHMIC;
 			}
 		}
 	};
@@ -122,7 +140,7 @@
 			}
 		} else if (value[0] === 'step') {
 			// interval
-			const attribute = statLayer.attributes?.find((a) => a.attribute === propertySelectValue);
+			const attribute = statLayer?.attributes?.find((a) => a.attribute === propertySelectValue);
 			for (let i = 2; i < values.length; i = i + 2) {
 				const color = chroma(values[i]).rgba();
 				const attrValue = values[i + 1];
@@ -135,9 +153,9 @@
 				};
 				rows.push(row);
 			}
-			$numberOfClassesStore = rows.length;
+			numberOfClasses = rows.length;
 		} else {
-			$numberOfClassesStore = $page.data.config.NumberOfClasses;
+			numberOfClasses = defaultNumberOfClasses;
 		}
 
 		return rows;
@@ -147,6 +165,7 @@
 	let randomSample: { [key: string]: number[] } = {};
 
 	$: isConstantColor = propertySelectValue?.length === 0;
+	$: classificationMethod, handleClassificationMethodChanged();
 
 	onMount(() => {
 		resetClassificationMethods();
@@ -157,7 +176,7 @@
 	const handleSetColor = (e: CustomEvent) => {
 		value = e.detail.color;
 		map.setPaintProperty(layerId, propertyName, value);
-		$defaultColorStore = e.detail.color;
+		defaultColor = e.detail.color;
 	};
 
 	const handlePropertyChange = debounce(() => {
@@ -209,19 +228,19 @@
 			(attribute.type !== 'number' &&
 				values &&
 				values.length > 0 &&
-				values.length <= UniqueValueThreshold) ||
-			(attribute.type === 'number' && values && values.length <= UniqueValueThreshold) ||
+				values.length <= uniqueValueThreshold) ||
+			(attribute.type === 'number' && values && values.length <= uniqueValueThreshold) ||
 			attribute.type !== 'number';
 
 		colorMapRows = [];
 		if (isUniqueValue) {
-			const isReverse = $colorMapNameStore.indexOf('_r') !== -1;
+			const isReverse = colorMapName.indexOf('_r') !== -1;
 
 			// trim and remove empty value from the list
 			let cleanedValues = values.filter((v) => (v as string).trim() !== '');
 			let classes = cleanedValues.length + 1; // create colors including default value
 			let scaleColorList = chroma
-				.scale($colorMapNameStore.replace('_r', ''))
+				.scale(colorMapName.replace('_r', ''))
 				.mode('lrgb')
 				.colors(classes);
 			if (isReverse) {
@@ -246,26 +265,26 @@
 				} else if (attribute.histogram) {
 					randomSample[attribute.attribute] = getSampleFromHistogram(
 						attribute.histogram,
-						NumberOfRandomSamplingPoints
+						numberOfRandomSamplingPoints
 					);
 				} else {
 					randomSample[attribute.attribute] = getSampleFromInterval(
 						attribute.min,
 						attribute.max,
-						NumberOfRandomSamplingPoints
+						numberOfRandomSamplingPoints
 					);
 				}
 			}
 			const sample = randomSample[attribute.attribute];
 			const intervalList = getIntervalList(
-				$classificationMethodStore,
+				classificationMethod,
 				attribute.min,
 				attribute.max,
 				sample,
-				$numberOfClassesStore
+				numberOfClasses
 			);
-			const isReverse = $colorMapNameStore.indexOf('_r') !== -1;
-			const scales = chroma.scale($colorMapNameStore.replace('_r', ''));
+			const isReverse = colorMapName.indexOf('_r') !== -1;
+			const scales = chroma.scale(colorMapName.replace('_r', ''));
 			let scaleColorList = scales.colors(intervalList.length, 'rgb');
 			if (isReverse) {
 				scaleColorList = scaleColorList.reverse();
@@ -286,7 +305,7 @@
 
 	const updateMapFromRows = () => {
 		if (propertySelectValue.length === 0) {
-			let color = Array.isArray(value) ? $defaultColorStore : value;
+			let color = Array.isArray(value) ? defaultColor : value;
 			if (!color) {
 				color = chroma.random().hex();
 			}
@@ -320,10 +339,6 @@
 			map.setPaintProperty(layerId, propertyName, caseExpr);
 		}
 	};
-
-	onMount(() => {
-		classificationMethodStore.subscribe(handleClassificationMethodChanged);
-	});
 </script>
 
 <div class="py-2" bind:clientWidth={containerWidth}>
@@ -345,10 +360,7 @@
 		{:else if propertySelectValue?.length > 0}
 			<div class="is-flex pb-1">
 				<div style="width: {containerWidth}px;">
-					<ColorMapPicker
-						bind:colorMapName={$colorMapNameStore}
-						on:change={handleColormapNameChanged}
-					/>
+					<ColorMapPicker bind:colorMapName on:change={handleColormapNameChanged} />
 				</div>
 			</div>
 
@@ -364,7 +376,7 @@
 							<div slot="control">
 								<div class="select is-normal is-fullwidth">
 									<select
-										bind:value={$classificationMethodStore}
+										bind:value={classificationMethod}
 										on:change={handleClassificationMethodChanged}
 									>
 										{#each ClassificationMethods as classificationMethod}
@@ -384,9 +396,9 @@
 							<div slot="help">Increate or decrease the number of classes</div>
 							<div slot="control">
 								<NumberInput
-									bind:value={$numberOfClassesStore}
-									minValue={NumberOfClassesMinimum}
-									maxValue={NumberOfClassesMaximum}
+									bind:value={numberOfClasses}
+									minValue={numberOfClassesMinimum}
+									maxValue={numberOfClassesMaximum}
 									on:change={handleIncrementDecrementClasses}
 									size="normal"
 								/>
@@ -420,7 +432,7 @@
 					{#each colorMapRows as colorMapRow}
 						<LegendColorMapRow
 							bind:colorMapRow
-							bind:colorMapName={$colorMapNameStore}
+							bind:colorMapName
 							bind:hasUniqueValues={isUniqueValue}
 							on:changeIntervalValues={handleChangeIntervalValues}
 							on:changeColorMap={handleRowColorChanged}

@@ -16,9 +16,10 @@ A component designed to apply where expression to a raster layer through titiler
 	import Step from '$components/util/Step.svelte';
 	import Wizard from '$components/util/Wizard.svelte';
 	import { RasterArithmeticOperators, RasterComparisonOperators } from '$lib/config/AppConfig';
-	import { fetchUrl, getActiveBandIndex, getLayerSourceUrl } from '$lib/helper';
+	import { fetchUrl, getActiveBandIndex } from '$lib/helper';
 	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import {
+		getLayerSourceUrl,
 		handleEnterKey,
 		MAPSTORE_CONTEXT_KEY,
 		Slider,
@@ -128,28 +129,6 @@ A component designed to apply where expression to a raster layer through titiler
 	});
 
 	let sliderBindValue: Array<number> = [(layerMax - layerMin) * 0.5];
-
-	// const clearExpression = () => {
-	//   console.log(`clearing expression`)
-	//   updateParamsInURL(getLayerStyle($map, layer.id), originalRasterFilterUrl[layer.id], {})
-	// }
-
-	// const applyExpression = async (e: MouseEvent) => {
-	//   let newParams = {}
-	//   console.log(JSON.stringify(expression))
-
-	//   newParams['expression'] = ``
-
-	//   const exprStatUrl = new URL(
-	//     `${lURL.protocol}//${lURL.host}/cog/statistics?url=${url}}&expression=${encodeURIComponent(
-	//       newParams['expression'],
-	//     )}`,
-	//   )
-
-	//   const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
-
-	//   //updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams)
-	// }
 
 	const clear = () => {
 		selectedOperator = undefined;
