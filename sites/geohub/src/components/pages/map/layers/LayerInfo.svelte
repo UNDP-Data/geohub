@@ -2,12 +2,17 @@
 	import Star from '$components/util/Star.svelte';
 	import { createAttributionFromTags, isRgbRaster } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
-	import { Accordion, FieldControl, initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import {
+		Accordion,
+		FieldControl,
+		Histogram,
+		initTooltipTippy
+	} from '@undp-data/svelte-undp-components';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
 	import { filesize } from 'filesize';
 	import { marked } from 'marked';
+	import { onMount } from 'svelte';
 	import Time from 'svelte-time';
-	import RasterHistogram from './raster/RasterHistogram.svelte';
 
 	export let layer: Layer;
 
@@ -15,6 +20,10 @@
 
 	let isFullDescription = false;
 	let properties = layer.dataset?.properties;
+
+	let counts: number[];
+	let bins: number[];
+	let unit: string;
 
 	const tags: [{ key: string; value: string }] = properties?.tags as unknown as [
 		{ key: string; value: string }
@@ -56,6 +65,21 @@
 			expanded[expandedDatasets[0]] = true;
 		}
 	}
+
+	onMount(() => {
+		if (properties?.is_raster === true) {
+			const isRgbTile = rasterInfo.colorinterp ? isRgbRaster(rasterInfo.colorinterp) : false;
+			if (!isRgbTile) {
+				const band = rasterInfo.active_band_no;
+				if (rasterInfo.stats && band) {
+					counts = rasterInfo.stats[band]['histogram'][0];
+					bins = rasterInfo.stats[band]['histogram'][1];
+				}
+
+				unit = (tags.find((tag) => tag.key === 'unit')?.value as string) ?? 'Intervals';
+			}
+		}
+	});
 </script>
 
 <Accordion title="Metadata" bind:isExpanded={expanded['metadata']}>
@@ -104,7 +128,7 @@
 			</div>
 		{/if}
 
-		<div class="is-size-6 pb-2 has-text-justified {isFullDescription ? '' : 'short-description'}">
+		<div class="is-size-6 has-text-justified {isFullDescription ? '' : 'short-description'}">
 			{#if properties?.description}
 				<!-- eslint-disable svelte/no-at-html-tags -->
 				{@html marked(properties.description)}
@@ -112,12 +136,14 @@
 		</div>
 
 		{#if !isFullDescription}
-			<CtaLink
-				label="READ MORE"
-				on:clicked={() => {
-					isFullDescription = true;
-				}}
-			/>
+			<div class="mt-4 mb-2">
+				<CtaLink
+					label="READ MORE"
+					on:clicked={() => {
+						isFullDescription = true;
+					}}
+				/>
+			</div>
 		{:else}
 			<FieldControl title="license" showHelp={false}>
 				<div class="is-size-6" slot="control">
@@ -164,10 +190,10 @@
 
 {#if properties?.is_raster}
 	{@const isRgbTile = rasterInfo.colorinterp ? isRgbRaster(rasterInfo.colorinterp) : false}
-	{#if !isRgbTile}
+	{#if !isRgbTile && counts && counts.length > 0}
 		<Accordion title="Dataset statistics" bind:isExpanded={expanded['statistics']}>
 			<div class="pb-4" slot="content">
-				<RasterHistogram bind:metadata={layer.info} bind:tags={layer.dataset.properties.tags} />
+				<Histogram bind:counts bind:bins bind:xLabel={unit} bind:unit yLabel="Pixels" />
 			</div>
 		</Accordion>
 	{/if}

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
+	import RasterLegend from '$components/pages/map/layers/raster/RasterLegend.svelte';
 	import VectorLegend from '$components/pages/map/layers/vector/VectorLegend.svelte';
 	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
