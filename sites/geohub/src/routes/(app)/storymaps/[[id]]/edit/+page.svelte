@@ -129,7 +129,7 @@
 			const defaultMapStyle =
 				MapStyles.find((s) => s.title === data.config.DefaultMapStyle) ?? MapStyles[0];
 			let mapConfig: StorymapBaseMapConfig = {
-				base_style_id: defaultMapStyle.title,
+				base_style_id: defaultMapStyle.id,
 				style: defaultMapStyle.uri
 			};
 
@@ -198,15 +198,19 @@
 
 		let styleUrl = '';
 
-		if (base_style_id) {
+		if (style_id) {
+			const mapUrl = new URL(`/api/style/${style_id}.json`, $page.url.origin);
+			if (base_style_id) {
+				mapUrl.searchParams.set('basemap', base_style_id);
+			}
+			styleUrl = mapUrl.href;
+		} else {
 			const baseMap =
 				MapStyles.find(
 					(m) =>
-						m.title.toLowerCase() === ($configStore as StoryMapConfig).base_style_id?.toLowerCase()
+						m.id.toLowerCase() === ($configStore as StoryMapConfig).base_style_id?.toLowerCase()
 				) ?? MapStyles[0];
 			styleUrl = new URL(baseMap.uri, $page.url.origin).href;
-		} else {
-			styleUrl = new URL(`/api/style/${style_id}.json`, $page.url.origin).href;
 		}
 
 		const lastChapter: StoryMapChapter | undefined =
@@ -215,10 +219,12 @@
 				: undefined;
 
 		const location = {
-			center: lastChapter?.location.center ?? [0, 0],
-			zoom: lastChapter?.location.zoom ?? 0,
-			bearing: lastChapter?.location.bearing ?? 0,
-			pitch: lastChapter?.location.pitch ?? 0
+			center: lastChapter?.location.center ??
+				($configStore as StoryMapConfig).location?.center ?? [0, 0],
+			zoom: lastChapter?.location.zoom ?? ($configStore as StoryMapConfig).location?.zoom ?? 0,
+			bearing:
+				lastChapter?.location.bearing ?? ($configStore as StoryMapConfig).location?.bearing ?? 0,
+			pitch: lastChapter?.location.pitch ?? ($configStore as StoryMapConfig).location?.pitch ?? 0
 		};
 
 		if (!lastChapter) {

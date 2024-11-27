@@ -208,21 +208,22 @@ class StorymapManager {
 
 	private generateStyleUrl = (story: StoryMapConfig) => {
 		if (story.style_id) {
-			story.style = `/api/style/${story.style_id}.json`;
+			story.style = `/api/style/${story.style_id}.json${story.base_style_id ? `?basemap=${story.base_style_id}` : ''}`;
 		} else {
 			story.style = `/api/mapstyle/${story.base_style_id ?? 'style'}.json`;
 		}
 		story.chapters.forEach((ch) => {
 			const chapter = ch as unknown as StoryMapChapter;
 			if (chapter.style_id) {
-				chapter.style = `/api/style/${chapter.style_id}.json`;
+				chapter.style = `/api/style/${chapter.style_id}.json${chapter.base_style_id ? `?basemap=${chapter.base_style_id}` : ''}`;
 			} else if (chapter.base_style_id) {
 				chapter.style = `/api/mapstyle/${chapter.base_style_id}.json`;
 			} else {
 				// if no style specified for chapter, use parent style either style_id or base_style_id
 				if (story.style_id) {
-					chapter.style = `/api/style/${story.style_id}.json`;
+					chapter.style = `/api/style/${story.style_id}.json${story.base_style_id ? `?basemap=${story.base_style_id}` : ''}`;
 					chapter.style_id = story.style_id;
+					chapter.base_style_id = story.base_style_id;
 				} else {
 					chapter.style = `/api/mapstyle/${story.base_style_id}.json`;
 					chapter.base_style_id = story.base_style_id;
