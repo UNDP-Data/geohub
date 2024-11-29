@@ -1,5 +1,11 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.4.5
+
+### Patch Changes
+
+- f762433: fix: set maxPitch as 85 for storymap.
+
 ## 0.4.4
 
 ### Patch Changes
