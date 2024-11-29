@@ -1,5 +1,14 @@
 # geohub
 
+## 1.22.12
+
+### Patch Changes
+
+- e03e786: fix: add new queryparam of `basemap` for `/api/style/{id}` and `/api/style/{id}.json` endpoint to allow users to switch basemap on saved style.
+- e03e786: feat: add an option to switch basemap from default geohub map style. use base style ID instead of title now.
+- 331f39b: fix: use new requireEditorUpdated key to update editor when open button is clicked.
+- d7821e1: fix: refresh chapter editor when the editor is opened
+
 ## 1.22.11
 
 ### Patch Changes
