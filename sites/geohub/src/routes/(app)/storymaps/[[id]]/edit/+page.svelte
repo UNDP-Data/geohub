@@ -307,7 +307,7 @@
 			showSlideSetting = true;
 			isHeaderSlideActive = false;
 			isFooterSlideActive = false;
-			$activeStorymapChapterStore = chapter;
+			activeStorymapChapterStore.set(chapter);
 			requirePreviewUpdated = !requirePreviewUpdated;
 		}
 	};
@@ -673,13 +673,15 @@
 							on:close={handleSlideEditClosed}
 						/>
 					{:else if $activeStorymapChapterStore}
-						<StorymapChapterEdit
-							bind:chapter={$activeStorymapChapterStore}
-							bind:width={slideSettingWidth}
-							bind:height={editorContentHeight}
-							on:change={handleSlideChanged}
-							on:close={handleSlideEditClosed}
-						/>
+						{#key requirePreviewUpdated}
+							<StorymapChapterEdit
+								bind:chapter={$activeStorymapChapterStore}
+								bind:width={slideSettingWidth}
+								bind:height={editorContentHeight}
+								on:change={handleSlideChanged}
+								on:close={handleSlideEditClosed}
+							/>
+						{/key}
 					{/if}
 				{/if}
 			</div>
