@@ -64,7 +64,9 @@
 	let mapConfig: StorymapBaseMapConfig = {
 		base_style_id: $activeChapterStore?.base_style_id,
 		style_id: $activeChapterStore?.style_id,
-		style: $activeChapterStore?.style
+		style: $activeChapterStore?.style,
+		hillshade: $activeChapterStore?.hillshade,
+		terrain: $activeChapterStore?.terrain
 	};
 
 	let mapLocationSelector: MapLocationSelector;
