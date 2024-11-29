@@ -12,6 +12,7 @@
 		Tabs,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
+	import type { StyleSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import ImageUploader from './ImageUploader.svelte';
 	import MapLocationSelector from './MapLocationSelector.svelte';
@@ -86,7 +87,7 @@
 	const handleMapStyleChanged = () => {
 		($configStore as StoryMapConfig).base_style_id = mapConfig.base_style_id;
 		($configStore as StoryMapConfig).style_id = mapConfig.style_id;
-		$configStore.style = mapConfig.style;
+		$configStore.style = mapConfig.style as string | StyleSpecification;
 		handleChange();
 	};
 </script>
