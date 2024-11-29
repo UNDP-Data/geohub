@@ -3,6 +3,7 @@ import { getStyleById, isSuperuser } from '$lib/server/helpers';
 import type { DashboardMapStyle } from '$lib/types';
 import type { LayerSpecification, SourceSpecification } from 'maplibre-gl';
 import { error } from '@sveltejs/kit';
+import { MapStyleIds, type MapStyleType } from '$lib/config/AppConfig';
 
 /**
  * Get style.json which is stored in PostgreSQL database
@@ -22,7 +23,20 @@ export const GET: RequestHandler = async ({ params, url, locals }) => {
 		is_superuser = await isSuperuser(user_email);
 	}
 
-	const style = (await getStyleById(styleId, url, user_email, is_superuser)) as DashboardMapStyle;
+	const basemap = (url.searchParams.get('basemap') as MapStyleType) ?? '';
+	if (basemap.length > 0 && !MapStyleIds.includes(basemap)) {
+		error(400, {
+			message: `Invalid basemap parameter. It must be one of ${MapStyleIds.join(', ')}.`
+		});
+	}
+
+	const style = (await getStyleById(
+		styleId,
+		url,
+		user_email,
+		is_superuser,
+		basemap
+	)) as DashboardMapStyle;
 
 	if (!style) {
 		error(404, { message: `style not found` });

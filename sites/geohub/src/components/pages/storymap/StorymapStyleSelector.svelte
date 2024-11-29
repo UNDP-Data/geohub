@@ -8,7 +8,7 @@
 
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { MapStyles } from '$lib/config/AppConfig';
+	import { MapStyles, type ExtendedStyleDefinition } from '$lib/config/AppConfig';
 	import { getMapImageFromStyle } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import {
@@ -42,11 +42,21 @@
 
 	$: mapStyleId = mapConfig?.style_id ?? '';
 
-	const handleBaseStyleChanged = (e: { title: string; uri: string }) => {
-		mapConfig.base_style_id = e.title.toLowerCase();
+	const handleBaseStyleChanged = (e: ExtendedStyleDefinition) => {
+		mapConfig.base_style_id = e.id;
 		mapConfig.style = new URL(e.uri, $page.url).href;
 		mapConfig.style_id = undefined;
 		dispatch('change', mapConfig);
+	};
+
+	const handleGeoHubMapBaseStyleChanged = (e: ExtendedStyleDefinition) => {
+		if (mapConfig.style_id && mapConfig.style && typeof mapConfig.style === 'string') {
+			mapConfig.base_style_id = e.id;
+			const styleUrl = new URL(mapConfig.style as string);
+			styleUrl.searchParams.set('basemap', mapConfig.base_style_id);
+			mapConfig.style = styleUrl.href;
+			dispatch('change', mapConfig);
+		}
 	};
 
 	const handleSearchClicked = () => {
@@ -103,37 +113,42 @@
 	showHelp={false}
 >
 	<div slot="control">
-		<div class="basemap-style-selector" hidden={activeTab !== 'base_style_id'}>
-			{#each MapStyles as style}
-				<label
-					class="m-1"
-					use:tippyTooltip={{
-						content: `Use ${style.title === 'Carto' ? 'Standard' : style.title} style as default.`
-					}}
-				>
-					<input
-						on:click={() => {
-							handleBaseStyleChanged(style);
+		<div
+			class="basemap-style-selector fixed-grid has-4-cols"
+			hidden={activeTab !== 'base_style_id'}
+		>
+			<div class="grid">
+				{#each MapStyles as style}
+					<label
+						class="cell"
+						use:tippyTooltip={{
+							content: `Use ${style.title === 'Carto' ? 'Standard' : style.title} style as default.`
 						}}
-						type="radio"
-						name="DefaultMapStyle"
-						value={style.title}
-						checked={mapConfig.base_style_id?.toLowerCase() === style.title.toLowerCase()}
-					/>
-					<img
-						class="sidebar-image"
-						src={style.image}
-						alt="{style.title} style"
-						width="64"
-						height="64"
-						loading="lazy"
-					/>
-				</label>
-			{/each}
+					>
+						<input
+							on:click={() => {
+								handleBaseStyleChanged(style);
+							}}
+							type="radio"
+							name="DefaultMapStyle"
+							value={style.title}
+							checked={mapConfig.base_style_id?.toLowerCase() === style.id.toLowerCase()}
+						/>
+						<img
+							class="sidebar-image"
+							src={style.image}
+							alt="{style.title} style"
+							width="64"
+							height="64"
+							loading="lazy"
+						/>
+					</label>
+				{/each}
+			</div>
 		</div>
 
 		<div hidden={activeTab !== 'style_id'}>
-			<div class="columns mt-2 px-2">
+			<div class="columns my-2 px-2">
 				<div class="column p-0">
 					<button
 						class="geohubmap-button button has-text-weight-bold has-background-white-ter is-uppercase is-fullwidth py-3"
@@ -163,6 +178,42 @@
 					</div>
 				{/if}
 			</div>
+			{#if mapStyleId}
+				<FieldControl title="Change basemap for this style from default" showHelp={false}>
+					<div slot="control">
+						<div class="basemap-style-selector fixed-grid has-4-cols">
+							<div class="grid">
+								{#each MapStyles as style}
+									<label
+										class="cell"
+										use:tippyTooltip={{
+											content: `Use ${style.title === 'Carto' ? 'Standard' : style.title} style as default.`
+										}}
+									>
+										<input
+											on:click={() => {
+												handleGeoHubMapBaseStyleChanged(style);
+											}}
+											type="radio"
+											name="DefaultMapStyle"
+											value={style.title}
+											checked={mapConfig.base_style_id?.toLowerCase() === style.id.toLowerCase()}
+										/>
+										<img
+											class="sidebar-image"
+											src={style.image}
+											alt="{style.title} style"
+											width="64"
+											height="64"
+											loading="lazy"
+										/>
+									</label>
+								{/each}
+							</div>
+						</div>
+					</div>
+				</FieldControl>
+			{/if}
 
 			<input
 				class="input"

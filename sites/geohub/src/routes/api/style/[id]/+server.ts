@@ -2,7 +2,7 @@ import type { RequestHandler } from './$types';
 import { getStyleById, isSuperuser } from '$lib/server/helpers';
 import type { DashboardMapStyle } from '$lib/types';
 import { getDomainFromEmail } from '$lib/helper';
-import { AccessLevel, Permission } from '$lib/config/AppConfig';
+import { AccessLevel, MapStyleIds, Permission, type MapStyleType } from '$lib/config/AppConfig';
 import { error } from '@sveltejs/kit';
 import { styleInGeohub } from '$lib/server/schema';
 import { db } from '$lib/server/db';
@@ -26,11 +26,19 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 		is_superuser = await isSuperuser(user_email);
 	}
 
+	const basemap = (url.searchParams.get('basemap') as MapStyleType) ?? '';
+	if (basemap.length > 0 && !MapStyleIds.includes(basemap)) {
+		error(400, {
+			message: `Invalid basemap parameter. It must be one of ${MapStyleIds.join(', ')}.`
+		});
+	}
+
 	const style: DashboardMapStyle = (await getStyleById(
 		styleId,
 		url,
 		user_email,
-		is_superuser
+		is_superuser,
+		basemap
 	)) as DashboardMapStyle;
 
 	if (!style) {

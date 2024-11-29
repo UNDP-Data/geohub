@@ -20,7 +20,7 @@ import {
 	getDomainFromEmail,
 	getFirstSymbolLayerId
 } from '$lib/helper';
-import { AccessLevel, Permission } from '$lib/config/AppConfig';
+import { AccessLevel, Permission, type MapStyleType } from '$lib/config/AppConfig';
 import { getSTAC, resolveSpriteUrl } from '.';
 import voyagerStyle from '@undp-data/style/dist/style.json';
 import darkStyle from '@undp-data/style/dist/dark.json';
@@ -32,7 +32,22 @@ import { db } from '$lib/server/db';
 import { sql } from 'drizzle-orm';
 import { isEqual } from 'lodash-es';
 
-export const getStyleById = async (id: number, url: URL, email?: string, is_superuser = false) => {
+/**
+ * get saved style information by ID
+ * @param id style ID
+ * @param url URL object of endpoint
+ * @param email signed user email address
+ * @param is_superuser whether signed user is super user or not
+ * @param basemap Optional. Switch basemap to user desired style
+ * @returns DashboardMapStyle object
+ */
+export const getStyleById = async (
+	id: number,
+	url: URL,
+	email?: string,
+	is_superuser = false,
+	basemap: MapStyleType | '' = ''
+) => {
 	const data = await db.execute(
 		sql.raw(`
 			SELECT 
@@ -143,24 +158,38 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 		let baseStyle: StyleSpecification = JSON.parse(
 			JSON.stringify(voyagerStyle)
 		) as unknown as StyleSpecification;
-		if (style.style.sources['bing']) {
-			// aerial
-			baseStyle = JSON.parse(JSON.stringify(aerialStyle)) as unknown as StyleSpecification;
+		if (basemap) {
+			if (basemap === 'aerialstyle') {
+				baseStyle = JSON.parse(JSON.stringify(aerialStyle));
+			} else if (basemap === 'dark') {
+				baseStyle = JSON.parse(JSON.stringify(darkStyle));
+			} else if (basemap === 'positron') {
+				baseStyle = JSON.parse(JSON.stringify(positronStyle));
+			} else if (basemap === 'blank') {
+				baseStyle = JSON.parse(JSON.stringify(blankStyle));
+			} else {
+				baseStyle = JSON.parse(JSON.stringify(voyagerStyle));
+			}
 		} else {
-			// check color of background layer to identify base style
-			const backgroudLayer: BackgroundLayerSpecification = style.style.layers.find(
-				(l) => l.type === 'background'
-			) as BackgroundLayerSpecification;
-			if (backgroudLayer) {
-				if (backgroudLayer.id === 'background-blank') {
-					// blank style: https://github.com/UNDP-Data/style/blob/main/assets/dark/background.yml
-					baseStyle = JSON.parse(JSON.stringify(blankStyle)) as unknown as StyleSpecification;
-				} else if (backgroudLayer.paint['background-color'] === '#0e0e0e') {
-					// dark style: https://github.com/UNDP-Data/style/blob/main/assets/dark/background.yml
-					baseStyle = JSON.parse(JSON.stringify(darkStyle)) as unknown as StyleSpecification;
-				} else if (backgroudLayer.paint['background-color'] === '#fafaf8') {
-					// positron style: https://github.com/UNDP-Data/style/blob/main/assets/positron/background.yml
-					baseStyle = JSON.parse(JSON.stringify(positronStyle)) as unknown as StyleSpecification;
+			if (style.style.sources['bing']) {
+				// aerial
+				baseStyle = JSON.parse(JSON.stringify(aerialStyle)) as unknown as StyleSpecification;
+			} else {
+				// check color of background layer to identify base style
+				const backgroudLayer: BackgroundLayerSpecification = style.style.layers.find(
+					(l) => l.type === 'background'
+				) as BackgroundLayerSpecification;
+				if (backgroudLayer) {
+					if (backgroudLayer.id === 'background-blank') {
+						// blank style: https://github.com/UNDP-Data/style/blob/main/assets/dark/background.yml
+						baseStyle = JSON.parse(JSON.stringify(blankStyle)) as unknown as StyleSpecification;
+					} else if (backgroudLayer.paint['background-color'] === '#0e0e0e') {
+						// dark style: https://github.com/UNDP-Data/style/blob/main/assets/dark/background.yml
+						baseStyle = JSON.parse(JSON.stringify(darkStyle)) as unknown as StyleSpecification;
+					} else if (backgroudLayer.paint['background-color'] === '#fafaf8') {
+						// positron style: https://github.com/UNDP-Data/style/blob/main/assets/positron/background.yml
+						baseStyle = JSON.parse(JSON.stringify(positronStyle)) as unknown as StyleSpecification;
+					}
 				}
 			}
 		}
@@ -191,6 +220,12 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 					let idx = baseStyle.layers.length - 1;
 					if (firstSymbolLayerId) {
 						idx = baseStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
+					}
+					if (idx === 0) {
+						const backgroundIndex = baseStyle.layers.findIndex((l) => l.type === 'background');
+						if (backgroundIndex !== -1) {
+							idx = backgroundIndex + 1;
+						}
 					}
 					baseStyle.layers.splice(idx, 0, layer);
 				} else {
