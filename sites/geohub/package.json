@@ -103,7 +103,7 @@
 		"lodash-es": "^4.17.21",
 		"maplibre-gl": "^4.7.1",
 		"marked": "^15.0.0",
-		"mathjs": "^13.1.1",
+		"mathjs": "^14.0.0",
 		"millify": "^6.1.0",
 		"pako": "^2.1.0",
 		"papaparse": "^5.4.1",
