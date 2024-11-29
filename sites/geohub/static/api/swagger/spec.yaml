@@ -1530,6 +1530,18 @@ paths:
           in: query
           name: basemap
           description: Optional. Switch basemap to user desired style
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: hillshade
+          description: 'Optional. If true, enable hillshade layer in style'
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: terrain
+          description: 'Optional. If true, enable terrain in style'
   '/style/{id}.json':
     parameters:
       - schema:
@@ -1568,6 +1580,17 @@ paths:
           in: query
           name: basemap
           description: Optional. Switch basemap to user desired style
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: hillshade
+          description: 'Optional. If true, enable hillshade layer in style'
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          description: 'Optional. If true, enable terrain in style'
   '/style/{id}/permission':
     parameters:
       - schema:

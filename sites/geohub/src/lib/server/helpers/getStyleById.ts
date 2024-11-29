@@ -46,7 +46,9 @@ export const getStyleById = async (
 	url: URL,
 	email?: string,
 	is_superuser = false,
-	basemap: MapStyleType | '' = ''
+	basemap: MapStyleType | '' = '',
+	hillshade = false,
+	terrain = false
 ) => {
 	const data = await db.execute(
 		sql.raw(`
@@ -247,7 +249,7 @@ export const getStyleById = async (
 		}
 	});
 
-	if (style.layers) {
+	if (style.style && style.layers) {
 		const currentTime = new Date();
 		const delLayerIds: string[] = [];
 		const inaccesibleLayerIds: string[] = [];
@@ -388,6 +390,7 @@ export const getStyleById = async (
 		});
 		// delete layers only from style.json if user does not have permission to access
 		inaccesibleLayerIds.forEach((id) => {
+			if (!style.style) return;
 			const mapLayer = style.style.layers.find((l) => l.id === id) as
 				| RasterLayerSpecification
 				| VectorLayerSpecification
@@ -400,6 +403,25 @@ export const getStyleById = async (
 				}
 			}
 		});
+	}
+
+	if (style.style) {
+		if (hillshade === true) {
+			const hillshadeLayerIndex = style.style.layers.findIndex(
+				(l) => l.type === 'hillshade' && l.source === 'terrarium'
+			);
+			if (hillshadeLayerIndex !== -1) {
+				if (style.style.layers[hillshadeLayerIndex].layout) {
+					style.style.layers[hillshadeLayerIndex].layout['visibility'] = 'visible';
+				}
+			}
+		}
+		if (terrain === true) {
+			style.style.terrain = {
+				source: 'terrarium',
+				exaggeration: 1
+			};
+		}
 	}
 
 	return style;
