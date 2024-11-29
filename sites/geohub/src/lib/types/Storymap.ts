@@ -9,6 +9,8 @@ import type { Link } from './Link';
 export interface StoryMapChapter extends BaseStoryMapChapter {
 	style_id?: number;
 	base_style_id?: string;
+	hillshade?: boolean;
+	terrain?: boolean;
 	createdat?: string;
 	created_user?: string;
 	updatedat?: string;
@@ -20,6 +22,8 @@ export interface StoryMapConfig extends BaseStoryMapConfig {
 	style_id?: number;
 	base_style_id?: string;
 	template_id?: StoryMapTemplate;
+	hillshade?: boolean;
+	terrain?: boolean;
 	access_level?: AccessLevel;
 	createdat?: string;
 	created_user?: string;

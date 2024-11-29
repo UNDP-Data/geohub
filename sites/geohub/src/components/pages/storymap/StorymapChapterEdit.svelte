@@ -134,6 +134,8 @@
 		$activeChapterStore.base_style_id = mapConfig.base_style_id;
 		$activeChapterStore.style_id = mapConfig.style_id;
 		$activeChapterStore.style = mapConfig.style;
+		$activeChapterStore.hillshade = mapConfig.hillshade;
+		$activeChapterStore.terrain = mapConfig.terrain;
 		if ($activeChapterStore.onChapterEnter) {
 			$activeChapterStore.onChapterEnter = undefined;
 		}
