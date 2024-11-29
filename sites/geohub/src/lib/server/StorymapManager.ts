@@ -92,6 +92,8 @@ class StorymapManager {
 			a.base_style_id, 
 			a.access_level, 
 			a.show_progress as "showProgress",
+			a.hillshade,
+			a.terrain,
 			a.createdat, 
 			a.created_user, 
 			a.updatedat, 
@@ -142,6 +144,8 @@ class StorymapManager {
 					c.on_chapter_exit as "onChapterExit", 
 					c.legend_position as "legendPosition",
 					c.show_legend as "showLegend",
+					c.hillshade,
+					c.terrain,
 					c.createdat, 
 					c.created_user, 
 					c.updatedat, 
@@ -193,6 +197,8 @@ class StorymapManager {
 				a.base_style_id, 
 				a.access_level, 
 				a.show_progress,
+				a.hillshade,
+				a.terrain,
 				a.createdat, 
 				a.created_user, 
 				a.updatedat, 
@@ -208,22 +214,66 @@ class StorymapManager {
 
 	private generateStyleUrl = (story: StoryMapConfig) => {
 		if (story.style_id) {
-			story.style = `/api/style/${story.style_id}.json${story.base_style_id ? `?basemap=${story.base_style_id}` : ''}`;
+			const params: { [key: string]: string } = {};
+			if (story.base_style_id) {
+				params.basemap = story.base_style_id;
+			}
+			if (story.hillshade) {
+				params.hillshade = 'true';
+			}
+			if (story.terrain) {
+				params.terrain = 'true';
+			}
+			const query = Object.keys(params)
+				.map((p) => `${p}=${params[p]}`)
+				.join('&');
+
+			story.style = `/api/style/${story.style_id}.json${query.length > 0 ? `?${query}` : ''}`;
 		} else {
 			story.style = `/api/mapstyle/${story.base_style_id ?? 'style'}.json`;
 		}
 		story.chapters.forEach((ch) => {
 			const chapter = ch as unknown as StoryMapChapter;
 			if (chapter.style_id) {
-				chapter.style = `/api/style/${chapter.style_id}.json${chapter.base_style_id ? `?basemap=${chapter.base_style_id}` : ''}`;
+				const params: { [key: string]: string } = {};
+				if (chapter.base_style_id) {
+					params.basemap = chapter.base_style_id;
+				}
+				if (chapter.hillshade) {
+					params.hillshade = 'true';
+				}
+				if (chapter.terrain) {
+					params.terrain = 'true';
+				}
+				const query = Object.keys(params)
+					.map((p) => `${p}=${params[p]}`)
+					.join('&');
+
+				chapter.style = `/api/style/${chapter.style_id}.json${query.length > 0 ? `?${query}` : ''}`;
 			} else if (chapter.base_style_id) {
 				chapter.style = `/api/mapstyle/${chapter.base_style_id}.json`;
 			} else {
 				// if no style specified for chapter, use parent style either style_id or base_style_id
 				if (story.style_id) {
-					chapter.style = `/api/style/${story.style_id}.json${story.base_style_id ? `?basemap=${story.base_style_id}` : ''}`;
+					const params: { [key: string]: string } = {};
+					if (story.base_style_id) {
+						params.basemap = story.base_style_id;
+					}
+					if (story.hillshade) {
+						params.hillshade = 'true';
+					}
+					if (story.terrain) {
+						params.terrain = 'true';
+					}
+					const query = Object.keys(params)
+						.map((p) => `${p}=${params[p]}`)
+						.join('&');
+
+					chapter.style = `/api/style/${story.style_id}.json${query.length > 0 ? `?${query}` : ''}`;
 					chapter.style_id = story.style_id;
 					chapter.base_style_id = story.base_style_id;
+					chapter.hillshade = story.hillshade;
+					chapter.terrain = story.terrain;
 				} else {
 					chapter.style = `/api/mapstyle/${story.base_style_id}.json`;
 					chapter.base_style_id = story.base_style_id;
@@ -501,6 +551,8 @@ class StorymapManager {
 					onChapterExit: chapter.onChapterExit,
 					legendPosition: chapter.legendPosition ?? 'bottom-left',
 					showLegend: chapter.showLegend ?? false,
+					hillshade: chapter.hillshade ?? false,
+					terrain: chapter.terrain ?? false,
 					createdat: chapter.createdat,
 					createdUser: chapter.created_user,
 					updatedat: chapter.updatedat,
@@ -530,6 +582,8 @@ class StorymapManager {
 					baseStyleId: this.storymap.base_style_id,
 					accessLevel: this.storymap.access_level,
 					showProgress: this.storymap.showProgress,
+					hillshade: this.storymap.hillshade ?? false,
+					terrain: this.storymap.terrain ?? false,
 					createdat: this.storymap.createdat,
 					createdUser: this.storymap.created_user
 				})
@@ -552,6 +606,8 @@ class StorymapManager {
 						baseStyleId: this.storymap.base_style_id,
 						accessLevel: this.storymap.access_level,
 						showProgress: this.storymap.showProgress,
+						hillshade: this.storymap.hillshade ?? false,
+						terrain: this.storymap.terrain ?? false,
 						updatedat: this.storymap.updatedat,
 						updatedUser: this.storymap.updated_user
 					}

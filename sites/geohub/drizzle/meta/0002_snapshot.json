@@ -1,0 +1,1573 @@
+{
+  "id": "fba5596c-34e6-43cb-9392-f401fd27af06",
+  "prevId": "5b839b25-c618-4e4a-b4b9-8a574dc50430",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "geohub.country": {
+      "name": "country",
+      "schema": "geohub",
+      "columns": {
+        "iso_3": {
+          "name": "iso_3",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "iso_code": {
+          "name": "iso_code",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "iso_2": {
+          "name": "iso_2",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "region1_code": {
+          "name": "region1_code",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "region1_name": {
+          "name": "region1_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "region2_code": {
+          "name": "region2_code",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "region2_name": {
+          "name": "region2_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "region3_code": {
+          "name": "region3_code",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "region3_name": {
+          "name": "region3_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.dataset_defaultstyle": {
+      "name": "dataset_defaultstyle",
+      "schema": "geohub",
+      "columns": {
+        "dataset_id": {
+          "name": "dataset_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "layer_id": {
+          "name": "layer_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "layer_type": {
+          "name": "layer_type",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source": {
+          "name": "source",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "style": {
+          "name": "style",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "colormap_name": {
+          "name": "colormap_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "classification_method": {
+          "name": "classification_method",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_user": {
+          "name": "created_user",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdat": {
+          "name": "createdat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedat": {
+          "name": "updatedat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_user": {
+          "name": "updated_user",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "classification_method_2": {
+          "name": "classification_method_2",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "FK_dataset_TO_dataset_id, layer_type": {
+          "name": "FK_dataset_TO_dataset_id, layer_type",
+          "tableFrom": "dataset_defaultstyle",
+          "tableTo": "dataset",
+          "schemaTo": "geohub",
+          "columnsFrom": [
+            "dataset_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "dataset_defaultstyle_pkey": {
+          "name": "dataset_defaultstyle_pkey",
+          "columns": [
+            "dataset_id",
+            "layer_id",
+            "layer_type"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.dataset_favourite": {
+      "name": "dataset_favourite",
+      "schema": "geohub",
+      "columns": {
+        "dataset_id": {
+          "name": "dataset_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_email": {
+          "name": "user_email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "savedat": {
+          "name": "savedat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "FK_dataset_TO_dataset_favourite": {
+          "name": "FK_dataset_TO_dataset_favourite",
+          "tableFrom": "dataset_favourite",
+          "tableTo": "dataset",
+          "schemaTo": "geohub",
+          "columnsFrom": [
+            "dataset_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "dataset_favourite_pkey": {
+          "name": "dataset_favourite_pkey",
+          "columns": [
+            "dataset_id",
+            "user_email"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.dataset": {
+      "name": "dataset",
+      "schema": "geohub",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_raster": {
+          "name": "is_raster",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "license": {
+          "name": "license",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bounds": {
+          "name": "bounds",
+          "type": "geometry(Polygon,4326)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdat": {
+          "name": "createdat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updatedat": {
+          "name": "updatedat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_user": {
+          "name": "created_user",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_user": {
+          "name": "updated_user",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "access_level": {
+          "name": "access_level",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 3
+        }
+      },
+      "indexes": {
+        "dataset_bounds_geom_idx": {
+          "name": "dataset_bounds_geom_idx",
+          "columns": [
+            {
+              "expression": "bounds",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gist",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.dataset_permission": {
+      "name": "dataset_permission",
+      "schema": "geohub",
+      "columns": {
+        "dataset_id": {
+          "name": "dataset_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_email": {
+          "name": "user_email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "permission": {
+          "name": "permission",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "createdat": {
+          "name": "createdat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedat": {
+          "name": "updatedat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "FK_dataset_TO_dataset_permission": {
+          "name": "FK_dataset_TO_dataset_permission",
+          "tableFrom": "dataset_permission",
+          "tableTo": "dataset",
+          "schemaTo": "geohub",
+          "columnsFrom": [
+            "dataset_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "dataset_permission_pkey": {
+          "name": "dataset_permission_pkey",
+          "columns": [
+            "dataset_id",
+            "user_email"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.dataset_tag": {
+      "name": "dataset_tag",
+      "schema": "geohub",
+      "columns": {
+        "dataset_id": {
+          "name": "dataset_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tag_id": {
+          "name": "tag_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "fk_dataset_to_dataset_tag": {
+          "name": "fk_dataset_to_dataset_tag",
+          "tableFrom": "dataset_tag",
+          "tableTo": "dataset",
+          "schemaTo": "geohub",
+          "columnsFrom": [
+            "dataset_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "fk_tag_to_dataset_tag": {
+          "name": "fk_tag_to_dataset_tag",
+          "tableFrom": "dataset_tag",
+          "tableTo": "tag",
+          "schemaTo": "geohub",
+          "columnsFrom": [
+            "tag_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "dataset_tag_pkey": {
+          "name": "dataset_tag_pkey",
+          "columns": [
+            "dataset_id",
+            "tag_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.license": {
+      "name": "license",
+      "schema": "geohub",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.product": {
+      "name": "product",
+      "schema": "geohub",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expression": {
+          "name": "expression",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.stac_collection_product": {
+      "name": "stac_collection_product",
+      "schema": "geohub",
+      "columns": {
+        "stac_id": {
+          "name": "stac_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "collection_id": {
+          "name": "collection_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "product_id": {
+          "name": "product_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "assets": {
+          "name": "assets",
+          "type": "varchar[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "stac_collection_product_product_id_fkey": {
+          "name": "stac_collection_product_product_id_fkey",
+          "tableFrom": "stac_collection_product",
+          "tableTo": "product",
+          "schemaTo": "geohub",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "stac_collection_product_pkey": {
+          "name": "stac_collection_product_pkey",
+          "columns": [
+            "stac_id",
+            "collection_id",
+            "product_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.stac": {
+      "name": "stac",
+      "schema": "geohub",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "providers": {
+          "name": "providers",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdat": {
+          "name": "createdat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_user": {
+          "name": "created_user",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updatedat": {
+          "name": "updatedat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_user": {
+          "name": "updated_user",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.storymap_chapter": {
+      "name": "storymap_chapter",
+      "schema": "geohub",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image": {
+          "name": "image",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "alignment": {
+          "name": "alignment",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "map_interactive": {
+          "name": "map_interactive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "map_navigation_position": {
+          "name": "map_navigation_position",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "map_animation": {
+          "name": "map_animation",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rotate_animation": {
+          "name": "rotate_animation",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "spinglobe": {
+          "name": "spinglobe",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "hidden": {
+          "name": "hidden",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "center": {
+          "name": "center",
+          "type": "geometry(Point,4326)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "zoom": {
+          "name": "zoom",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bearing": {
+          "name": "bearing",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "pitch": {
+          "name": "pitch",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "style_id": {
+          "name": "style_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "base_style_id": {
+          "name": "base_style_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hillshade": {
+          "name": "hillshade",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "terrain": {
+          "name": "terrain",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "on_chapter_enter": {
+          "name": "on_chapter_enter",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "on_chapter_exit": {
+          "name": "on_chapter_exit",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdat": {
+          "name": "createdat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_user": {
+          "name": "created_user",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updatedat": {
+          "name": "updatedat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_user": {
+          "name": "updated_user",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "card_hidden": {
+          "name": "card_hidden",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "legend_position": {
+          "name": "legend_position",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'bottom-left'"
+        },
+        "show_legend": {
+          "name": "show_legend",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.storymap_chapters": {
+      "name": "storymap_chapters",
+      "schema": "geohub",
+      "columns": {
+        "storymap_id": {
+          "name": "storymap_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "chapter_id": {
+          "name": "chapter_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sequence": {
+          "name": "sequence",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "fk_storymap_to_storymap_chapters": {
+          "name": "fk_storymap_to_storymap_chapters",
+          "tableFrom": "storymap_chapters",
+          "tableTo": "storymap",
+          "schemaTo": "geohub",
+          "columnsFrom": [
+            "storymap_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "fk_storymap_to_storymap_chapter": {
+          "name": "fk_storymap_to_storymap_chapter",
+          "tableFrom": "storymap_chapters",
+          "tableTo": "storymap_chapter",
+          "schemaTo": "geohub",
+          "columnsFrom": [
+            "chapter_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "storymap_chapters_pkey": {
+          "name": "storymap_chapters_pkey",
+          "columns": [
+            "storymap_id",
+            "chapter_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.storymap_favourite": {
+      "name": "storymap_favourite",
+      "schema": "geohub",
+      "columns": {
+        "storymap_id": {
+          "name": "storymap_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_email": {
+          "name": "user_email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "savedat": {
+          "name": "savedat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "FK_storymap_TO_storymap_favourite": {
+          "name": "FK_storymap_TO_storymap_favourite",
+          "tableFrom": "storymap_favourite",
+          "tableTo": "storymap",
+          "schemaTo": "geohub",
+          "columnsFrom": [
+            "storymap_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "storymap_favourite_pkey": {
+          "name": "storymap_favourite_pkey",
+          "columns": [
+            "storymap_id",
+            "user_email"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.storymap": {
+      "name": "storymap",
+      "schema": "geohub",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "logo": {
+          "name": "logo",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "subtitle": {
+          "name": "subtitle",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "byline": {
+          "name": "byline",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "footer": {
+          "name": "footer",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "template_id": {
+          "name": "template_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "center": {
+          "name": "center",
+          "type": "geometry(Point,4326)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "zoom": {
+          "name": "zoom",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bearing": {
+          "name": "bearing",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "pitch": {
+          "name": "pitch",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "style_id": {
+          "name": "style_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "base_style_id": {
+          "name": "base_style_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hillshade": {
+          "name": "hillshade",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "terrain": {
+          "name": "terrain",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "access_level": {
+          "name": "access_level",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "createdat": {
+          "name": "createdat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_user": {
+          "name": "created_user",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updatedat": {
+          "name": "updatedat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_user": {
+          "name": "updated_user",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "show_progress": {
+          "name": "show_progress",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.storymap_permission": {
+      "name": "storymap_permission",
+      "schema": "geohub",
+      "columns": {
+        "storymap_id": {
+          "name": "storymap_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_email": {
+          "name": "user_email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "permission": {
+          "name": "permission",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "createdat": {
+          "name": "createdat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedat": {
+          "name": "updatedat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "FK_storymap_TO_storymap_permission": {
+          "name": "FK_storymap_TO_storymap_permission",
+          "tableFrom": "storymap_permission",
+          "tableTo": "storymap",
+          "schemaTo": "geohub",
+          "columnsFrom": [
+            "storymap_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "storymap_permission_pkey": {
+          "name": "storymap_permission_pkey",
+          "columns": [
+            "storymap_id",
+            "user_email"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.style_favourite": {
+      "name": "style_favourite",
+      "schema": "geohub",
+      "columns": {
+        "style_id": {
+          "name": "style_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_email": {
+          "name": "user_email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "savedat": {
+          "name": "savedat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "FK_style_TO_style_favourite": {
+          "name": "FK_style_TO_style_favourite",
+          "tableFrom": "style_favourite",
+          "tableTo": "style",
+          "schemaTo": "geohub",
+          "columnsFrom": [
+            "style_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "style_favourite_pkey": {
+          "name": "style_favourite_pkey",
+          "columns": [
+            "style_id",
+            "user_email"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.style": {
+      "name": "style",
+      "schema": "geohub",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "style": {
+          "name": "style",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdat": {
+          "name": "createdat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedat": {
+          "name": "updatedat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "layers": {
+          "name": "layers",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "access_level": {
+          "name": "access_level",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "created_user": {
+          "name": "created_user",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_user": {
+          "name": "updated_user",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.style_permission": {
+      "name": "style_permission",
+      "schema": "geohub",
+      "columns": {
+        "style_id": {
+          "name": "style_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_email": {
+          "name": "user_email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "permission": {
+          "name": "permission",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "createdat": {
+          "name": "createdat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedat": {
+          "name": "updatedat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "FK_style_TO_style_permission": {
+          "name": "FK_style_TO_style_permission",
+          "tableFrom": "style_permission",
+          "tableTo": "style",
+          "schemaTo": "geohub",
+          "columnsFrom": [
+            "style_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "style_permission_pkey": {
+          "name": "style_permission_pkey",
+          "columns": [
+            "style_id",
+            "user_email"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.superuser": {
+      "name": "superuser",
+      "schema": "geohub",
+      "columns": {
+        "user_email": {
+          "name": "user_email",
+          "type": "varchar(100)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "createdat": {
+          "name": "createdat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.tag": {
+      "name": "tag",
+      "schema": "geohub",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key": {
+          "name": "key",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "tag_idx_key_value": {
+          "name": "tag_idx_key_value",
+          "columns": [
+            {
+              "expression": "key",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "value",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "tag_idx_value": {
+          "name": "tag_idx_value",
+          "columns": [
+            {
+              "expression": "value",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.user_settings": {
+      "name": "user_settings",
+      "schema": "geohub",
+      "columns": {
+        "user_email": {
+          "name": "user_email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "settings": {
+          "name": "settings",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "constraint_name": {
+          "name": "constraint_name",
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "geohub.users": {
+      "name": "users",
+      "schema": "geohub",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_email": {
+          "name": "user_email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "signupat": {
+          "name": "signupat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "lastaccessedat": {
+          "name": "lastaccessedat",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {
+    "geohub": "geohub"
+  },
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

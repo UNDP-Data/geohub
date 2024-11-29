@@ -40,7 +40,9 @@
 	let mapConfig: StorymapBaseMapConfig = {
 		base_style_id: ($configStore as StoryMapConfig).base_style_id,
 		style_id: ($configStore as StoryMapConfig).style_id,
-		style: ($configStore as StoryMapConfig).style
+		style: ($configStore as StoryMapConfig).style,
+		hillshade: ($configStore as StoryMapConfig).hillshade,
+		terrain: ($configStore as StoryMapConfig).terrain
 	};
 
 	let mapLocationSelector: MapLocationSelector;
@@ -80,7 +82,9 @@
 		mapConfig = {
 			base_style_id: ($configStore as StoryMapConfig).base_style_id,
 			style_id: ($configStore as StoryMapConfig).style_id,
-			style: ($configStore as StoryMapConfig).style
+			style: ($configStore as StoryMapConfig).style,
+			hillshade: ($configStore as StoryMapConfig).hillshade,
+			terrain: ($configStore as StoryMapConfig).terrain
 		};
 	});
 
@@ -88,6 +92,8 @@
 		($configStore as StoryMapConfig).base_style_id = mapConfig.base_style_id;
 		($configStore as StoryMapConfig).style_id = mapConfig.style_id;
 		$configStore.style = mapConfig.style as string | StyleSpecification;
+		($configStore as StoryMapConfig).hillshade = mapConfig.hillshade;
+		($configStore as StoryMapConfig).terrain = mapConfig.terrain;
 		handleChange();
 	};
 </script>

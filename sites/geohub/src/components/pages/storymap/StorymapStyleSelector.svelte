@@ -3,6 +3,8 @@
 		base_style_id?: string;
 		style?: string | StyleSpecification;
 		style_id?: number;
+		hillshade?: boolean;
+		terrain?: boolean;
 	}
 </script>
 
@@ -18,7 +20,7 @@
 		SegmentButtons,
 		type SegmentButton
 	} from '@undp-data/svelte-undp-components';
-	import { Loader } from '@undp-data/svelte-undp-design';
+	import { Loader, Switch } from '@undp-data/svelte-undp-design';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import GeoHubMapSelector from './GeoHubMapSelector.svelte';
@@ -46,6 +48,8 @@
 		mapConfig.base_style_id = e.id;
 		mapConfig.style = new URL(e.uri, $page.url).href;
 		mapConfig.style_id = undefined;
+		mapConfig.hillshade = false;
+		mapConfig.terrain = false;
 		dispatch('change', mapConfig);
 	};
 
@@ -54,6 +58,19 @@
 			mapConfig.base_style_id = e.id;
 			const styleUrl = new URL(mapConfig.style as string);
 			styleUrl.searchParams.set('basemap', mapConfig.base_style_id);
+
+			if (mapConfig.hillshade === true) {
+				styleUrl.searchParams.set('hillshade', 'true');
+			} else {
+				styleUrl.searchParams.delete('hillshade');
+			}
+
+			// if (mapConfig.terrain === true) {
+			// 	styleUrl.searchParams.set('terrain', 'true');
+			// } else {
+			styleUrl.searchParams.delete('terrain');
+			// }
+
 			mapConfig.style = styleUrl.href;
 			dispatch('change', mapConfig);
 		}
@@ -72,9 +89,33 @@
 		mapConfig.base_style_id = undefined;
 		mapConfig.style = mapLink.href;
 		mapConfig.style_id = Number(mapStyleId);
+		mapConfig.hillshade = false;
+		mapConfig.terrain = false;
 		dispatch('change', mapConfig);
 		getGeoHubMapImageUrl();
 		showMapDialog = false;
+	};
+
+	const handleHillshadeAndTerrainChanged = () => {
+		if (mapConfig.base_style_id) {
+			const styleUrl = new URL(mapConfig.style as string);
+			styleUrl.searchParams.set('basemap', mapConfig.base_style_id);
+
+			if (mapConfig.hillshade === true) {
+				styleUrl.searchParams.set('hillshade', 'true');
+			} else {
+				styleUrl.searchParams.delete('hillshade');
+			}
+
+			// if (mapConfig.terrain === true) {
+			// 	styleUrl.searchParams.set('terrain', 'true');
+			// } else {
+			styleUrl.searchParams.delete('terrain');
+			// }
+
+			mapConfig.style = styleUrl.href;
+			dispatch('change', mapConfig);
+		}
 	};
 
 	onMount(() => {
@@ -213,6 +254,28 @@
 						</div>
 					</div>
 				</FieldControl>
+
+				<FieldControl title="Hillshade" showHelp={true} showHelpPopup={false}>
+					<div slot="control">
+						<Switch
+							bind:toggled={mapConfig.hillshade}
+							on:change={handleHillshadeAndTerrainChanged}
+						/>
+					</div>
+					<div slot="help">
+						<span>Enable hillshade layer in this basemap if the option is enabled.</span>
+					</div>
+				</FieldControl>
+
+				<!-- comment terrain switch since it has problem of trasition -->
+				<!-- <FieldControl title="Terrain" showHelp={true} showHelpPopup={false}>
+					<div slot="control">
+						<Switch bind:toggled={mapConfig.terrain} on:change={handleHillshadeAndTerrainChanged} />
+					</div>
+					<div slot="help">
+						<span>Enable terrain (3D) mode in this basemap if the option is enabled.</span>
+					</div>
+				</FieldControl> -->
 			{/if}
 
 			<input

@@ -33,12 +33,20 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 		});
 	}
 
+	const hillshade = url.searchParams.get('hillshade') ?? 'false';
+	const isHillshade = hillshade.toLowerCase() === 'true';
+
+	const terrain = url.searchParams.get('terrain') ?? 'false';
+	const isTerrain = terrain.toLowerCase() === 'true';
+
 	const style: DashboardMapStyle = (await getStyleById(
 		styleId,
 		url,
 		user_email,
 		is_superuser,
-		basemap
+		basemap,
+		isHillshade,
+		isTerrain
 	)) as DashboardMapStyle;
 
 	if (!style) {

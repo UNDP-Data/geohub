@@ -105,6 +105,7 @@
 			zoom,
 			bearing,
 			pitch,
+			maxPitch: 85,
 			hash: false,
 			interactive: true,
 			dragPan: false,
