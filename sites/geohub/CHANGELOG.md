@@ -1,5 +1,13 @@
 # geohub
 
+## 1.22.13
+
+### Patch Changes
+
+- f762433: fix: add hillshade and terrain columns for storymap and storymap_chapter table, and add hillshade property in storymap editor (terrain is not yet in GUI).
+- f762433: fix: add hillshade and terrain option to /api/style/{id} amd /api/style/{id}.json endpoints.
+- c33e9b2: fix: set default hillshade value in storymap from database
+
 ## 1.22.12
 
 ### Patch Changes
