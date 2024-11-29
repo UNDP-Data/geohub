@@ -109,6 +109,7 @@
 	let requireUpdated = false;
 	let requirePreviewUpdated = false;
 	let requireHeaderUpdated = false;
+	let requireEditorUpdated = false;
 	let isProcessing = false;
 
 	onMount(() => {
@@ -309,6 +310,7 @@
 			isFooterSlideActive = false;
 			activeStorymapChapterStore.set(chapter);
 			requirePreviewUpdated = !requirePreviewUpdated;
+			requireEditorUpdated = !requireEditorUpdated;
 		}
 	};
 
@@ -673,7 +675,7 @@
 							on:close={handleSlideEditClosed}
 						/>
 					{:else if $activeStorymapChapterStore}
-						{#key requirePreviewUpdated}
+						{#key requireEditorUpdated}
 							<StorymapChapterEdit
 								bind:chapter={$activeStorymapChapterStore}
 								bind:width={slideSettingWidth}
