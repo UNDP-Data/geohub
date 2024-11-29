@@ -48,6 +48,7 @@
 		$mapStore = new Map({
 			container: mapContainer,
 			style: newStyle,
+			maxPitch: 85,
 			interactive: false,
 			attributionControl: false
 		});

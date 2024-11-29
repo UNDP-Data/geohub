@@ -88,6 +88,8 @@
 		($configStore as StoryMapConfig).base_style_id = mapConfig.base_style_id;
 		($configStore as StoryMapConfig).style_id = mapConfig.style_id;
 		$configStore.style = mapConfig.style as string | StyleSpecification;
+		($configStore as StoryMapConfig).hillshade = mapConfig.hillshade;
+		($configStore as StoryMapConfig).terrain = mapConfig.terrain;
 		handleChange();
 	};
 </script>

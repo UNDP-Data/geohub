@@ -146,6 +146,8 @@
 				base_style_id: mapConfig.base_style_id,
 				style_id: mapConfig.style_id,
 				template_id: 'light',
+				hillshade: mapConfig.hillshade,
+				terrain: mapConfig.terrain,
 				access_level: AccessLevel.PRIVATE,
 				showProgress: true,
 				chapters: []
