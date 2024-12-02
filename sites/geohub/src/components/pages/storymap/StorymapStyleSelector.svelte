@@ -268,14 +268,14 @@
 				</FieldControl>
 
 				<!-- comment terrain switch since it has problem of trasition -->
-				<!-- <FieldControl title="Terrain" showHelp={true} showHelpPopup={false}>
+				<FieldControl title="Terrain" showHelp={true} showHelpPopup={false}>
 					<div slot="control">
 						<Switch bind:toggled={mapConfig.terrain} on:change={handleHillshadeAndTerrainChanged} />
 					</div>
 					<div slot="help">
 						<span>Enable terrain (3D) mode in this basemap if the option is enabled.</span>
 					</div>
-				</FieldControl> -->
+				</FieldControl>
 			{/if}
 
 			<input
