@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.14
+
+### Patch Changes
+
+- 5d90ee1: fix: disabled terrain mode for storymap since it still has error of maplibre like `VYou are using the same source for a hillshade layer and for 3D terrain. Please consider using two separate sources to improve rendering quality`.
+
 ## 1.22.13
 
 ### Patch Changes
