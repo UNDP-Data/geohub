@@ -37,7 +37,7 @@
 			isOpened = !isOpened;
 		}}
 	>
-		{#if selectedItem}
+		{#if selectedItem !== undefined}
 			{selectedItem.label}
 		{:else}
 			{placeholder}

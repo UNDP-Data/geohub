@@ -6,4 +6,5 @@ export interface HeaderLink {
 	callback?: (id: string) => void;
 	preloadCode?: 'eager' | 'hover' | 'off' | 'tap' | 'viewport';
 	preloadData?: 'hover' | 'off' | 'tap';
+	children?: HeaderLink[];
 }

@@ -1,189 +1,257 @@
-div.stats-card {
-	background-color: #f7f7f7;
+.stats-card {
+	background-color: var(--undpds-color-gray-200);
 	box-sizing: border-box;
 	overflow-wrap: break-word;
-	-webkit-transition: all 0.3s;
-	-moz-transition: all 0.3s;
-	-ms-transition: all 0.3s;
-	-o-transition: all 0.3s;
+	padding: var(--undpds-spacing-08);
 	transition: all 0.3s;
 }
 @media (max-width: 47.9375em) {
-	div.stats-card {
+	.stats-card {
 		max-width: 21.938rem;
-		padding: 2.5rem;
 	}
 }
-div.stats-card h3 {
+.stats-card h3 {
 	font-weight: 600;
-	margin-bottom: 2.5rem;
+	margin-bottom: var(--undpds-spacing-08);
 }
 @media (min-width: 48em) {
-	div.stats-card h3 {
-		margin-bottom: 5rem;
+	.stats-card h3 {
+		margin-bottom: var(--undpds-spacing-11);
 	}
 }
-div.stats-card h2 {
-	color: #f7f7f7;
-	font-family: SohneBreit, ProximaNova, sans-serif;
-	font-size: 5rem;
+.stats-card h2 {
+	color: var(--undpds-color-gray-200);
+	font-family: var(--undpds-font-family-sohnebreit);
+	font-size: var(--undpds-spacing-11);
+	font-weight: 700;
 	letter-spacing: 0.05rem;
 	line-height: 1.1;
-	margin-bottom: 1.5rem;
+	margin-bottom: var(--undpds-spacing-06);
 	text-shadow:
-		-1px -1px 0 #000,
-		1px -1px 0 #000,
-		-1px 1px 0 #000,
-		1px 1px 0 #000;
-	-webkit-transition: all 0.3s;
-	-moz-transition: all 0.3s;
-	-ms-transition: all 0.3s;
-	-o-transition: all 0.3s;
+		-1px -1px 0 var(--undpds-color-black),
+		1px -1px 0 var(--undpds-color-black),
+		-1px 1px 0 var(--undpds-color-black),
+		1px 1px 0 var(--undpds-color-black);
 	transition: all 0.3s;
 }
-@supports (-webkit-text-stroke: 2px #000) {
-	div.stats-card h2 {
-		-webkit-text-stroke: 2px #000;
+@supports (-webkit-text-stroke: 2px var(--undpds-color-black)) {
+	.stats-card h2 {
 		text-shadow: none;
+		-webkit-text-stroke: 2px var(--undpds-color-black);
 	}
 }
 @media (min-width: 48em) {
-	div.stats-card h2 {
+	.stats-card h2 {
 		font-size: 6.875rem;
 		line-height: 1.09;
-		margin-bottom: 2rem;
+		margin-bottom: var(--undpds-spacing-07);
 	}
 }
-div.stats-card h4 {
+.stats-card h4 {
 	letter-spacing: 0;
 	line-height: 1.15;
-	margin-bottom: 0.5rem;
+	margin-bottom: var(--undpds-spacing-03);
 }
 @media (min-width: 48em) {
-	div.stats-card h4 {
-		margin-bottom: 1rem;
+	.stats-card h4 {
+		margin-bottom: var(--undpds-spacing-05);
 	}
 }
-div.stats-card p {
+.stats-card p {
 	margin: 0;
 }
 @media (min-width: 48em) {
-	div.stats-card p {
-		font-size: 1.563rem;
+	.stats-card p {
+		font-size: var(--undpds-font-size-25);
 	}
 }
-div.stats-card.x-large {
-	padding: 2.5rem;
+.stats-card.x-large {
+	padding: var(--undpds-spacing-08);
 }
 @media (min-width: 48em) {
-	div.stats-card.x-large {
+	.stats-card.x-large {
 		max-width: 42.75rem;
-		padding: 6rem;
+		padding: var(--undpds-spacing-12);
 	}
 }
-div.stats-card.x-large h2 {
-	font-size: 5.625rem;
+.stats-card.x-large h2 {
+	font-size: var(--undpds-spacing-90);
 }
 @media (min-width: 48em) {
-	div.stats-card.x-large h2 {
+	.stats-card.x-large h2 {
 		font-size: 7.5rem;
 	}
 }
-div.stats-card.x-large h3 {
-	font-size: 2.5rem;
+.stats-card.x-large h3 {
+	font-size: var(--undpds-spacing-08);
 	font-weight: 700;
 }
 @media (min-width: 48em) {
-	div.stats-card.x-large h3 {
+	.stats-card.x-large h3 {
 		font-size: 3.438rem;
 	}
 }
-div.stats-card.x-large h4 {
+.stats-card.x-large h4 {
 	font-weight: 600;
 }
 @media (max-width: 47.9375em) {
-	div.stats-card.x-large h4 {
+	.stats-card.x-large h4 {
 		font-size: 1.875rem;
 	}
 }
 @media (min-width: 48em) {
-	div.stats-card.large {
+	.stats-card.large {
 		max-width: 28rem;
-		padding: 6rem 4rem;
+		padding: var(--undpds-spacing-12) var(--undpds-spacing-10);
 	}
 }
-div.stats-card.medium {
-	padding: 3rem;
+.stats-card.medium {
+	padding: var(--undpds-spacing-09);
 }
 @media (min-width: 48em) {
-	div.stats-card.medium {
-		max-width: 20.625rem;
+	.stats-card.medium {
+		max-width: var(--undpds-spacing-330);
 	}
-	div.stats-card.medium h4 {
+	.stats-card.medium h4 {
 		font-weight: 600;
 	}
 }
-div.stats-card.medium p {
-	font-size: 1.25rem;
+.stats-card.medium p {
+	font-size: var(--undpds-font-size-20);
 }
-div.stats-card.small {
+.stats-card.small {
 	max-width: 10.625rem;
-	padding: 1.5rem;
+	padding: var(--undpds-spacing-06);
 }
 @media (min-width: 48em) {
-	div.stats-card.small {
+	.stats-card.small {
 		max-width: 13.25rem;
-		padding: 2rem;
+		padding: var(--undpds-spacing-07);
 	}
 }
-div.stats-card.small h2 {
-	font-size: 3.125rem;
-	height: 4rem;
+.stats-card.small h2 {
+	font-size: var(--undpds-spacing-50);
+	height: var(--undpds-spacing-10);
 	white-space: nowrap;
 }
 @media (min-width: 48em) {
-	div.stats-card.small h2 {
-		font-size: 3rem;
-		/* font-size: 4.375rem; */
+	.stats-card.small h2 {
+		font-size: var(--undpds-spacing-70);
 	}
 }
-div.stats-card.small h4 {
-	font-size: 1.25rem;
+.stats-card.small h4 {
+	font-size: var(--undpds-font-size-20);
 }
 @media (min-width: 48em) {
-	div.stats-card.small h4 {
-		font-size: 1.563rem;
+	.stats-card.small h4 {
+		font-size: var(--undpds-font-size-25);
 	}
 }
-div.stats-card.small p {
-	font-size: 0.875rem;
+.stats-card.small p {
+	font-size: var(--undpds-font-size-14);
 	word-break: normal;
 }
 @media (min-width: 48em) {
-	div.stats-card.small p {
-		font-size: 1rem;
+	.stats-card.small p {
+		font-size: var(--undpds-font-size-16);
 	}
 }
-div.stats-card:hover {
-	background-color: #ffeb00;
+.stats-card:hover {
+	background-color: var(--undpds-color-yellow);
 }
-div.stats-card:hover h2 {
-	color: #000;
+.stats-card:hover h2 {
+	color: var(--undpds-color-black);
 }
-div.stats-card:hover.yellow {
-	background-color: #ffeb00;
+.stats-card:hover.accent-yellow,
+.stats-card:hover.yellow {
+	background-color: var(--undpds-color-yellow);
 }
-div.stats-card:hover.red {
-	background-color: #ee402d;
+.stats-card:hover.accent-red,
+.stats-card:hover.red {
+	background-color: var(--undpds-color-red);
 }
-div.stats-card:hover.green {
-	background-color: #6de354;
+.stats-card:hover.accent-green,
+.stats-card:hover.green {
+	background-color: var(--undpds-color-green);
 }
-div.stats-card:hover.blue {
-	background-color: #60d4f2;
+.stats-card:hover.accent-blue,
+.stats-card:hover.blue {
+	background-color: var(--undpds-color-azure);
+}
+.accent-yellow div.stats-card:hover,
+.accent-yellow div.stats-card:hover.accent-yellow,
+.accent-yellow div.stats-card:hover.yellow {
+	background-color: var(--undpds-color-yellow);
+}
+.accent-yellow div.stats-card:hover.accent-red,
+.accent-yellow div.stats-card:hover.red {
+	background-color: var(--undpds-color-red);
+}
+.accent-yellow div.stats-card:hover.accent-green,
+.accent-yellow div.stats-card:hover.green {
+	background-color: var(--undpds-color-green);
+}
+.accent-yellow div.stats-card:hover.accent-blue,
+.accent-yellow div.stats-card:hover.blue {
+	background-color: var(--undpds-color-azure);
+}
+.accent-red div.stats-card:hover {
+	background-color: var(--undpds-color-red);
+}
+.accent-red div.stats-card:hover.accent-yellow,
+.accent-red div.stats-card:hover.yellow {
+	background-color: var(--undpds-color-yellow);
+}
+.accent-red div.stats-card:hover.accent-red,
+.accent-red div.stats-card:hover.red {
+	background-color: var(--undpds-color-red);
+}
+.accent-red div.stats-card:hover.accent-green,
+.accent-red div.stats-card:hover.green {
+	background-color: var(--undpds-color-green);
+}
+.accent-red div.stats-card:hover.accent-blue,
+.accent-red div.stats-card:hover.blue {
+	background-color: var(--undpds-color-azure);
+}
+.accent-green div.stats-card:hover {
+	background-color: var(--undpds-color-green);
+}
+.accent-green div.stats-card:hover.accent-yellow,
+.accent-green div.stats-card:hover.yellow {
+	background-color: var(--undpds-color-yellow);
+}
+.accent-green div.stats-card:hover.accent-red,
+.accent-green div.stats-card:hover.red {
+	background-color: var(--undpds-color-red);
+}
+.accent-green div.stats-card:hover.accent-green,
+.accent-green div.stats-card:hover.green {
+	background-color: var(--undpds-color-green);
+}
+.accent-blue div.stats-card:hover,
+.accent-green div.stats-card:hover.accent-blue,
+.accent-green div.stats-card:hover.blue {
+	background-color: var(--undpds-color-azure);
+}
+.accent-blue div.stats-card:hover.accent-yellow,
+.accent-blue div.stats-card:hover.yellow {
+	background-color: var(--undpds-color-yellow);
+}
+.accent-blue div.stats-card:hover.accent-red,
+.accent-blue div.stats-card:hover.red {
+	background-color: var(--undpds-color-red);
+}
+.accent-blue div.stats-card:hover.accent-green,
+.accent-blue div.stats-card:hover.green {
+	background-color: var(--undpds-color-green);
+}
+.accent-blue div.stats-card:hover.accent-blue,
+.accent-blue div.stats-card:hover.blue {
+	background-color: var(--undpds-color-azure);
 }
 :lang(my) div.stats-card h2 {
-	font-family: NotoSans, sans-serif;
+	font-family: var(--undpds-font-family-notosans);
 }
 :lang(be) div.stats-card h2,
 :lang(bg) div.stats-card h2,
@@ -194,5 +262,9 @@ div.stats-card:hover.blue {
 :lang(ru) div.stats-card h2,
 :lang(sr) div.stats-card h2,
 :lang(uk) div.stats-card h2 {
-	font-family: ProximaNova, sans-serif;
+	font-family: var(--undpds-font-family-proximanova);
+}
+:lang(ro) .stats-card h3,
+:lang(ro) .stats-card h4 {
+	font-weight: 700 !important;
 }

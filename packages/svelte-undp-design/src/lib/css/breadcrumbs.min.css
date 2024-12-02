@@ -12,7 +12,7 @@
 	position: relative;
 }
 .breadcrumb-undp ul li:after {
-	color: #d12800;
+	color: var(--undpds-color-dark-red);
 	content: '/';
 	font-weight: 700;
 	position: absolute;
@@ -34,7 +34,7 @@
 }
 .breadcrumb-undp ul li a {
 	background: none;
-	color: #d12800;
+	color: var(--undpds-color-dark-red);
 	font-size: 0.75rem;
 	font-weight: 600;
 	letter-spacing: 0.03em;
@@ -42,19 +42,19 @@
 	transition: opacity 0.2s ease;
 }
 .breadcrumb-undp ul li a:hover {
-	color: #ee402d;
+	color: var(--undpds-color-red);
 }
 .breadcrumb-undp.white li a,
 .breadcrumb-undp.white li:after {
-	color: #fff;
+	color: var(--undpds-color-white);
 }
 .breadcrumb-undp.white li a:hover {
-	color: #fff;
+	color: var(--undpds-color-white);
 	opacity: 0.7;
 }
 .breadcrumb-undp.white li:last-of-type,
 .breadcrumb-undp.white:last-of-type {
-	color: #fff;
+	color: var(--undpds-color-white);
 }
 [dir='rtl'] .breadcrumb-undp ul {
 	padding: 0;
@@ -78,12 +78,12 @@
 	left: -14px;
 	right: unset;
 	top: 63%;
-	-webkit-transform: translateY(-63%) rotate(140deg);
-	-moz-transform: translateY(-63%) rotate(140deg);
-	-ms-transform: translateY(-63%) rotate(140deg);
-	-o-transform: translateY(-63%) rotate(140deg);
-	transition: translate(0, -63%) rotate(140deg);
+	transform: translateY(-63%) rotate(140deg);
 }
-:lang(my) .breadcrumb-undp li:last-of-type {
+:lang(my) .breadcrumb-undp ul li:last-of-type {
 	font-size: 0.75rem;
+}
+:lang(ro) .breadcrumb-undp ul li a,
+:lang(ro) .breadcrumb-undp ul li:last-of-type {
+	font-weight: 700;
 }

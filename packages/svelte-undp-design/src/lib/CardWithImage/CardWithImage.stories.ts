@@ -68,6 +68,58 @@ export const Primary: Story = {
 	}
 };
 
+export const Yellow: Story = {
+	args: {
+		linkName: 'READ MORE',
+		url: '#',
+		title: 'Title of the post goes here and it’s two lines',
+		tag: 'CONTENT TAG',
+		image: '/media/card-thumbnail.jpg',
+		accent: 'yellow',
+		width: 250,
+		height: 150
+	}
+};
+
+export const Green: Story = {
+	args: {
+		linkName: 'READ MORE',
+		url: '#',
+		title: 'Title of the post goes here and it’s two lines',
+		tag: 'CONTENT TAG',
+		image: '/media/card-thumbnail.jpg',
+		accent: 'green',
+		width: 250,
+		height: 150
+	}
+};
+
+export const Red: Story = {
+	args: {
+		linkName: 'READ MORE',
+		url: '#',
+		title: 'Title of the post goes here and it’s two lines',
+		tag: 'CONTENT TAG',
+		image: '/media/card-thumbnail.jpg',
+		accent: 'red',
+		width: 250,
+		height: 150
+	}
+};
+
+export const Blue: Story = {
+	args: {
+		linkName: 'READ MORE',
+		url: '#',
+		title: 'Title of the post goes here and it’s two lines',
+		tag: 'CONTENT TAG',
+		image: '/media/card-thumbnail.jpg',
+		accent: 'blue',
+		width: 250,
+		height: 150
+	}
+};
+
 export const TitleWithIcon: Story = {
 	args: {
 		linkName: 'READ MORE',

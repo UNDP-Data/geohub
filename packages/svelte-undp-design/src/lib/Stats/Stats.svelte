@@ -3,9 +3,10 @@
 
 	export let card: StatsCard;
 	export let size: 'small' | 'medium' | 'large' | 'x-large' = 'medium';
+	export let accent: 'global' | 'yellow' | 'red' | 'green' | 'blue' = 'global';
 </script>
 
-<div class="stats-card {size}">
+<div class="stats-card {size} {accent === 'global' ? '' : `accent-${accent}`}">
 	<div>
 		<div><h2>{card.stat}</h2></div>
 	</div>

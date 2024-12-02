@@ -32,7 +32,8 @@
 			class={currentPage === 1 ? 'disabled' : ''}
 			aria-disabled={currentPage === 1 ? 'true' : 'false'}
 		>
-			<div
+			<!-- svelte-ignore a11y-missing-attribute -->
+			<a
 				role="button"
 				tabindex="0"
 				aria-current="true"
@@ -42,7 +43,7 @@
 				on:keydown={handleKeyDown}
 			>
 				Previous
-			</div>
+			</a>
 		</li>
 		<li>
 			Page
@@ -55,7 +56,8 @@
 			class={currentPage === totalPages ? 'disabled' : ''}
 			aria-disabled={currentPage === totalPages ? 'true' : 'false'}
 		>
-			<div
+			<!-- svelte-ignore a11y-missing-attribute -->
+			<a
 				role="button"
 				tabindex="0"
 				aria-label="Next"
@@ -64,7 +66,7 @@
 				on:keydown={handleKeyDown}
 			>
 				Next
-			</div>
+			</a>
 		</li>
 	</ul>
 </nav>

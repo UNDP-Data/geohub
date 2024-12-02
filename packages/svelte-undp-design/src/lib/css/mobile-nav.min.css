@@ -23,7 +23,7 @@
 	left: 0;
 	margin: 0;
 	overflow-y: auto;
-	padding: 0 1.5rem;
+	padding: 0 var(--undpds-spacing-06);
 	position: absolute;
 	top: 100%;
 	width: 100%;
@@ -39,7 +39,7 @@
 	pointer-events: none;
 }
 .mobile-nav .mobile-links ul {
-	border-bottom: 1px solid #a9b1b7;
+	border-bottom: 1px solid var(--undpds-color-gray-500);
 	margin-bottom: 2.25rem;
 	padding: 0;
 }
@@ -51,14 +51,14 @@
 	text-transform: uppercase;
 }
 .mobile-nav .mobile-nav-options a {
-	color: #006eb5;
+	color: var(--undpds-color-blue-600);
 	margin-bottom: 1.58125rem;
 }
 .mobile-nav .mobile-nav-options a img {
 	margin-right: 0.625rem;
 }
 .mobile-nav .mobile-nav-options a.button {
-	color: #fff;
+	color: var(--undpds-color-white);
 	display: flex;
 	margin-inline: 0;
 }
@@ -85,11 +85,11 @@
 	padding-left: 0;
 }
 .mobile-nav .mobile-sub-menu .sub-sub-menus li span {
-	font-size: 1rem;
+	font-size: var(--undpds-font-size-16);
 }
 .mobile-nav .mobile-sub-menu .sub-sub-menus li ul {
 	margin: 0;
-	padding: 1.5rem 1.6875rem;
+	padding: var(--undpds-spacing-06) 1.6875rem;
 }
 .mobile-nav .mobile-sub-menu .sub-sub-menus li ul li {
 	margin-bottom: 0.46875rem;
@@ -123,7 +123,7 @@
 	text-transform: uppercase;
 }
 .mobile-nav .mob-sub-lang .sub-sub-lang {
-	margin: 2.5rem 0 0;
+	margin: var(--undpds-spacing-08) 0 0;
 	padding: 0;
 }
 .mobile-nav .mob-sub-lang .sub-sub-lang li {
@@ -131,11 +131,11 @@
 	padding-left: 0;
 }
 .mobile-nav .mob-sub-lang .sub-sub-lang li span {
-	font-size: 1rem;
+	font-size: var(--undpds-font-size-16);
 }
 .mobile-nav .mob-sub-lang .sub-sub-lang li ul {
 	margin: 0;
-	padding: 1rem 1.6875rem;
+	padding: var(--undpds-spacing-05) 1.6875rem;
 }
 .mobile-nav .mob-sub-lang .sub-sub-lang li a {
 	font-size: 0.875rem;
@@ -180,14 +180,14 @@
 	transform: translateY(0) rotate(-45deg);
 }
 .menu-hamburger .hamburger-line {
-	background-color: #006eb5;
+	background-color: var(--undpds-color-blue-600);
 	display: block;
 	height: 0.125rem;
 	left: 0;
 	margin: auto;
 	position: absolute;
 	right: 0;
-	top: 0.75rem;
+	top: var(--undpds-spacing-04);
 	transition: 0.2s ease-out;
 	width: 100%;
 }
@@ -207,11 +207,7 @@
 [dir='rtl'] .mobile-nav .back-nav img {
 	margin-left: 0.46875rem;
 	margin-right: 0;
-	-webkit-transform: rotateY(180deg);
-	-moz-transform: rotateY(180deg);
-	-ms-transform: rotateY(180deg);
-	-o-transform: rotateY(180deg);
-	transition: rotateY(180deg);
+	transform: rotateY(180deg);
 }
 [dir='rtl'] .mobile-nav .mobile-links ul li,
 [dir='rtl'] .mobile-nav .mobile-sub-menu ul li {
