@@ -196,7 +196,7 @@
 	const getStyleInfo = (style: StyleSpecification | string) => {
 		if (typeof style !== 'string') return;
 		/* eslint-disable-next-line */
-		const pattern = /(^https?:\/\/[^\/]+)\/api\/style\/([^\/]+)\.json$/;
+		const pattern = /(^https?:\/\/[^\/]+)\/api\/style\/([^\/]+)\.json/;
 		const match = style.match(pattern);
 
 		if (match) {
