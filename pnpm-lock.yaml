@@ -163,9 +163,6 @@ importers:
       '@undp-data/svelte-undp-design':
         specifier: workspace:^
         version: link:../svelte-undp-design
-      '@watergis/maplibre-gl-sky':
-        specifier: ^0.0.8
-        version: 0.0.8
       intersection-observer:
         specifier: ^0.12.2
         version: 0.12.2
