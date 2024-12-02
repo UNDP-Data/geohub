@@ -1,5 +1,12 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.4.6
+
+### Patch Changes
+
+- 785c3fc: fix: removed maplibre-gl-sky from storymap component package.
+- 4085f6d: fix: bug of not showing storymap legend if query param is added for hillshade, basemap, etc.
+
 ## 0.4.5
 
 ### Patch Changes
