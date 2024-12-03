@@ -84,19 +84,26 @@ export const HeaderItems = (linkNames: LineName[]) => {
 					href: '/storymaps'
 				},
 				{
-					id: 'header-link-tool-4',
-					title: 'Electricity dashboard',
-					href: '/dashboards/electricity'
-				},
-				{
-					id: 'header-link-tool-5',
-					title: 'CEEI dashboard',
-					href: '/dashboards/ceei'
-				},
-				{
-					id: 'header-link-tool-6',
-					title: 'Zanbibar dashboard',
-					href: '/dashboards/zanzibar'
+					id: 'header-link-tool-3',
+					title: 'Dashboards',
+					href: '/dashboards',
+					children: [
+						{
+							id: 'header-link-tool-4',
+							title: 'Electricity dashboard',
+							href: '/dashboards/electricity'
+						},
+						{
+							id: 'header-link-tool-5',
+							title: 'CEEI dashboard',
+							href: '/dashboards/ceei'
+						},
+						{
+							id: 'header-link-tool-6',
+							title: 'Zanbibar dashboard',
+							href: '/dashboards/zanzibar'
+						}
+					]
 				}
 			]
 		}
