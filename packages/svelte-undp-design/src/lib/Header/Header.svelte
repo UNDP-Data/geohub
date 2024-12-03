@@ -245,44 +245,35 @@
 												<ul class="sub-sub-menus">
 													{#each link.children as child}
 														<li>
-															<span>{child.title}</span>
-															<ul>
-																<li>
-																	{#if child.callback}
-																		{@const callback = child.callback}
-																		<div
-																			role="button"
-																			tabindex="0"
-																			on:click={() => {
-																				showMobileMenu = false;
-																				hideMobileSubMenu();
-																				callback(child.id);
-																			}}
-																			on:keydown={onKeyPressed}
-																			id={child.id}
-																		>
-																			{child.title}
-																			{#if child.tooltip}
-																				- {child.tooltip}
-																			{/if}
-																		</div>
-																	{:else}
-																		<a
-																			role="button"
-																			id={child.id}
-																			href={child.href}
-																			tabindex="0"
-																			data-sveltekit-preload-code={child.preloadCode ?? 'off'}
-																			data-sveltekit-preload-data={child.preloadData ?? 'off'}
-																		>
-																			{child.title}
-																			{#if child.tooltip}
-																				- {child.tooltip}
-																			{/if}
-																		</a>
-																	{/if}
-																</li>
-															</ul>
+															<span>
+																{#if child.callback}
+																	{@const callback = child.callback}
+																	<div
+																		class="cta__link cta--space"
+																		role="button"
+																		tabindex="0"
+																		on:click={() => {
+																			showMobileMenu = false;
+																			hideMobileSubMenu();
+																			callback(child.id);
+																		}}
+																		on:keydown={onKeyPressed}
+																		id={child.id}
+																	>
+																		{child.title}
+																		{#if child.tooltip}
+																			- {child.tooltip}
+																		{/if}
+																	</div>
+																{:else}
+																	<a class="cta__link cta--space" id={child.id} href={child.href}>
+																		{child.title}
+																		{#if child.tooltip}
+																			- {child.tooltip}
+																		{/if}
+																	</a>
+																{/if}
+															</span>
 														</li>
 													{/each}
 												</ul>

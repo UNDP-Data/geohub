@@ -1,5 +1,5 @@
 export interface HeaderLink {
-	href: string;
+	href?: string;
 	id: string;
 	title: string;
 	tooltip?: string;
