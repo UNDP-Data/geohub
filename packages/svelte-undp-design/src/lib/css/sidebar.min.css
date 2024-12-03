@@ -5,7 +5,7 @@
 	cursor: pointer;
 	display: block;
 	display: flex;
-	font-size: 1rem;
+	font-size: var(--undpds-font-size-16);
 	font-weight: 700;
 	letter-spacing: 0.03em;
 	line-height: 1;
@@ -25,41 +25,34 @@
 	position: absolute;
 	right: 1.188rem;
 	top: 50%;
-	-webkit-transform: translateY(-50%);
-	-moz-transform: translateY(-50%);
-	-ms-transform: translateY(-50%);
-	-o-transform: translateY(-50%);
-	-webkit-transition: all 0.3s ease;
-	-moz-transition: all 0.3s ease;
-	-ms-transition: all 0.3s ease;
-	-o-transition: all 0.3s ease;
+	transform: translateY(-50%);
 	transition: all 0.3s ease;
-	transition: translateY(-50%);
 	width: 20px;
 }
 .sidebar-accordion ul ul.accordion__panel li a {
 	background-image: none;
 }
 .sidebar-accordion {
-	background-color: #fff;
+	background-color: var(--undpds-color-white);
 }
 .sidebar-accordion ul > li :lang(my) button,
 :lang(my) .sidebar-accordion ul > li button {
-	font-size: 0.875rem;
+	font-size: var(--undpds-font-size-14);
 }
 .sidebar-accordion {
 	padding: 0;
 	position: relative;
 }
 .sidebar-accordion.show-medium h6 {
-	border-bottom: 2px solid #000;
+	border-bottom: 2px solid var(--undpds-color-black);
+}
+.sidebar-accordion.show-medium h6:active,
+.sidebar-accordion.show-medium h6:focus,
+.sidebar-accordion.show-medium h6:hover {
+	background-color: var(--undpds-color-gray-400);
 }
 .sidebar-accordion.show-medium h6:after {
-	-webkit-transform: translateY(-50%) rotate(-180deg);
-	-moz-transform: translateY(-50%) rotate(-180deg);
-	-ms-transform: translateY(-50%) rotate(-180deg);
-	-o-transform: translateY(-50%) rotate(-180deg);
-	transition: translateY(-50%) rotateZ(-180deg);
+	transform: translateY(-50%) rotate(-180deg);
 }
 .sidebar-accordion.show-medium ul {
 	display: block;
@@ -71,18 +64,20 @@
 	margin-bottom: 0;
 	padding-left: 0;
 }
-@media (min-width: 64em) {
-	.sidebar-accordion li a:hover,
-	.sidebar-accordion ul a:hover {
-		background-color: #edeff0;
-	}
+.sidebar-accordion li a:active,
+.sidebar-accordion li a:focus,
+.sidebar-accordion li a:hover,
+.sidebar-accordion ul a:active,
+.sidebar-accordion ul a:focus,
+.sidebar-accordion ul a:hover {
+	background-color: var(--undpds-color-gray-400);
 }
 .sidebar-accordion h6 {
-	background-color: #edeff0;
+	background-color: var(--undpds-color-gray-300);
 	cursor: pointer;
 	display: block;
 	margin-bottom: 0;
-	padding: 1rem;
+	padding: var(--undpds-spacing-05);
 	position: relative;
 }
 @media (min-width: 64em) {
@@ -113,30 +108,26 @@
 	}
 }
 .sidebar-accordion ul > .active > a {
-	background-color: #006eb5;
-	color: #fff;
+	background-color: var(--undpds-color-blue-600);
+	color: var(--undpds-color-white);
 }
 @media (min-width: 64em) {
 	.sidebar-accordion ul > .active > a {
-		background-color: #006eb5;
-		color: #fff;
+		background-color: var(--undpds-color-blue-600);
+		color: var(--undpds-color-white);
 	}
 }
 .sidebar-accordion ul > .active > button:after {
 	top: 1.125rem;
-	-webkit-transform: rotate(-180deg);
-	-moz-transform: rotate(-180deg);
-	-ms-transform: rotate(-180deg);
-	-o-transform: rotate(-180deg);
-	transition: rotateZ(-180deg);
+	transform: rotate(-180deg);
 }
 @media (min-width: 64em) {
 	.sidebar-accordion ul > .active > button:after {
-		top: 1.5rem;
+		top: var(--undpds-spacing-06);
 	}
 }
 .sidebar-accordion ul > li {
-	background-color: #edeff0;
+	background-color: var(--undpds-color-gray-300);
 	position: relative;
 }
 @media (min-width: 64em) {
@@ -159,7 +150,7 @@
 	}
 }
 .sidebar-accordion ul > li button:after {
-	top: 1.5rem;
+	top: var(--undpds-spacing-06);
 }
 @media (min-width: 64em) {
 	.sidebar-accordion ul > li button:after {
@@ -174,24 +165,25 @@
 .sidebar-accordion ul ul.accordion__panel li a {
 	border: none;
 	display: block;
-	font-size: 0.875rem;
+	font-size: var(--undpds-font-size-14);
 	font-weight: 400;
-	padding: 1rem 1.5rem 1rem 2rem;
+	padding: var(--undpds-spacing-05) var(--undpds-spacing-06) var(--undpds-spacing-05)
+		var(--undpds-spacing-07);
 }
 @media (min-width: 64em) {
 	.sidebar-accordion ul ul.accordion__panel li a {
-		font-size: 1rem;
-		padding-left: 3rem;
+		font-size: var(--undpds-font-size-16);
+		padding-left: var(--undpds-spacing-09);
 	}
 }
 .sidebar-accordion ul ul.accordion__panel li:first-of-type a {
 	background-color: transparent;
-	color: #000;
+	color: var(--undpds-color-black);
 }
-@media (min-width: 64em) {
-	.sidebar-accordion ul ul.accordion__panel li:first-of-type a:hover {
-		background-color: #edeff0;
-	}
+.sidebar-accordion ul ul.accordion__panel li:first-of-type a:active,
+.sidebar-accordion ul ul.accordion__panel li:first-of-type a:focus,
+.sidebar-accordion ul ul.accordion__panel li:first-of-type a:hover {
+	background-color: var(--undpds-color-gray-400);
 }
 .sidebar-accordion ul ul.accordion__panel li:last-of-type a {
 	margin-bottom: 0;
@@ -199,10 +191,10 @@
 @media (min-width: 64em) {
 	.sidebar-accordion.narrow ul.accordion__panel li a {
 		font-size: 0.875rem;
-		padding-left: 2rem;
+		padding-left: var(--undpds-spacing-07);
 	}
 	.sidebar-accordion.narrow ul.accordion__panel li:last-of-type a {
-		margin-bottom: 2.5rem;
+		margin-bottom: var(--undpds-spacing-08);
 	}
 	.sidebar-accordion.narrow ul > li button:after {
 		top: 1.625rem;
@@ -222,12 +214,12 @@
 }
 [dir='rtl'] .sidebar-accordion button {
 	float: left;
-	margin-left: 1.5rem;
+	margin-left: var(--undpds-spacing-06);
 	margin-right: 0;
 }
 @media (min-width: 64em) {
 	[dir='rtl'] .sidebar-accordion.narrow ul.accordion__panel li a {
-		padding-left: 1.5rem;
-		padding-right: 2rem;
+		padding-left: var(--undpds-spacing-06);
+		padding-right: var(--undpds-spacing-07);
 	}
 }

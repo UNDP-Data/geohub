@@ -1,5 +1,17 @@
 # @undp-data/svelte-undp-design
 
+## 2.4.1
+
+### Patch Changes
+
+- 9305ef8: fix: support nested menu for header
+
+## 2.4.0
+
+### Minor Changes
+
+- 8054783: feat: update UNDP design system CSSs to the latest version. Header component now can have simple version and dropdown menu.
+
 ## 2.3.4
 
 ### Patch Changes

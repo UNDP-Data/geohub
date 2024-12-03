@@ -1,0 +1,309 @@
+.menu ul > li ul.submenu {
+	-webkit-backdrop-filter: blur(18px);
+	backdrop-filter: blur(18px);
+	background: hsla(0, 0%, 97%, 0.9);
+}
+.dropdown-menu-wrapper {
+	margin-block-start: 7.1875rem;
+}
+.menu ul {
+	display: flex;
+}
+.menu ul > li {
+	display: block;
+	position: relative;
+	text-align: center;
+}
+.menu ul > li ul.submenu {
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+	display: none;
+	flex-direction: column;
+	inset-block-start: calc(100% - 2rem);
+	inset-inline-start: -1rem;
+	padding-inline: 0;
+	position: absolute;
+	width: 18rem;
+	z-index: 10;
+}
+.menu ul > li ul.submenu li {
+	display: block;
+	letter-spacing: normal;
+	margin: 0;
+	padding: 0;
+	position: relative;
+	text-align: left;
+	transition: 0.2s ease;
+	white-space: wrap;
+	width: 100%;
+	word-break: keep-all;
+}
+.menu ul > li ul.submenu li.edge:focus-within > ul.sub-menu,
+.menu ul > li ul.submenu li.edge:focus > ul.sub-menu,
+.menu ul > li ul.submenu li.edge:hover > ul.sub-menu,
+.menu ul > li ul.submenu li.open.edge > ul.submenu {
+	left: unset;
+	right: 100%;
+}
+.menu ul > li ul.submenu li a {
+	align-items: center;
+	border-bottom: 1px solid #d4d6d8;
+	column-gap: 1rem;
+	display: flex;
+	font-size: 1rem;
+	font-weight: 400;
+	justify-content: space-between;
+	letter-spacing: unset;
+	line-height: 1.25;
+	padding: 1.25rem;
+	text-align: left;
+	text-transform: none;
+	transition: 0.2s ease;
+	width: auto;
+}
+.menu ul > li ul.submenu li.has-submenu > a:after {
+	background: url('data:image/svg+xml,%3Csvg%20width%3D%2213%22%20height%3D%2220%22%20viewBox%3D%220%200%2013%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M1%201L11%209.99781L1%2019%22%20stroke%3D%22%23EE402D%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E')
+		no-repeat 100%;
+	color: var(--undpds-color-dark-red);
+	content: '';
+	display: flex;
+	height: 18px;
+	margin-inline-start: auto;
+	min-width: 20px;
+	transition: 0.2s ease;
+}
+.menu ul > li ul.submenu li > a:not(.external, .download) {
+	padding-inline-end: 1.25rem;
+}
+.menu ul > li ul.submenu li.has-submenu > a.active:after {
+	margin-inline-start: 0.5rem;
+}
+.menu ul > li ul.submenu li > a.external .external-link-animated {
+	min-width: 0.75rem;
+}
+.menu ul > li ul.submenu li > a.external .download-animated {
+	min-width: 1.25rem;
+}
+.menu ul > li.open > ul.submenu,
+.menu ul > li:focus-within > ul.submenu,
+.menu ul > li:focus > ul.submenu,
+.menu ul > li:hover > ul.submenu {
+	display: flex;
+	position: absolute;
+}
+.menu ul > li ul.submenu li.open,
+.menu ul > li ul.submenu li:focus,
+.menu ul > li ul.submenu li:focus-within,
+.menu ul > li ul.submenu li:hover {
+	background: var(--undpds-color-blue-600);
+	color: var(--undpds-color-white);
+	transition: 0.2s ease;
+}
+.menu ul > li ul.submenu li.open:not(.has-submenu),
+.menu ul > li ul.submenu li:focus-within:not(.has-submenu),
+.menu ul > li ul.submenu li:focus:not(.has-submenu),
+.menu ul > li ul.submenu li:hover:not(.has-submenu) {
+	background: var(--undpds-color-gray-400);
+	color: var(--undpds-color-black);
+}
+.menu ul > li ul.submenu li.open > ul.submenu,
+.menu ul > li ul.submenu li:focus-within > ul.submenu,
+.menu ul > li ul.submenu li:focus > ul.submenu,
+.menu ul > li ul.submenu li:hover > ul.submenu {
+	display: flex;
+	flex-direction: column;
+	inset-block-start: 0;
+	inset-inline-start: 100%;
+	position: absolute;
+}
+.menu ul > li ul.submenu li.open.edge:focus-within > ul.sub-menu,
+.menu ul > li ul.submenu li.open.edge:focus > ul.sub-menu,
+.menu ul > li ul.submenu li.open.edge:hover > ul.sub-menu,
+.menu ul > li ul.submenu li.open.edge > ul.submenu,
+.menu ul > li ul.submenu li:focus-within.edge:focus-within > ul.sub-menu,
+.menu ul > li ul.submenu li:focus-within.edge:focus > ul.sub-menu,
+.menu ul > li ul.submenu li:focus-within.edge:hover > ul.sub-menu,
+.menu ul > li ul.submenu li:focus-within.edge > ul.submenu,
+.menu ul > li ul.submenu li:focus.edge:focus-within > ul.sub-menu,
+.menu ul > li ul.submenu li:focus.edge:focus > ul.sub-menu,
+.menu ul > li ul.submenu li:focus.edge:hover > ul.sub-menu,
+.menu ul > li ul.submenu li:focus.edge > ul.submenu,
+.menu ul > li ul.submenu li:hover.edge:focus-within > ul.sub-menu,
+.menu ul > li ul.submenu li:hover.edge:focus > ul.sub-menu,
+.menu ul > li ul.submenu li:hover.edge:hover > ul.sub-menu,
+.menu ul > li ul.submenu li:hover.edge > ul.submenu {
+	inset-inline-end: 100%;
+	inset-inline-start: unset;
+}
+.menu ul > li ul.submenu li.open > a,
+.menu ul > li ul.submenu li.open > a.active,
+.menu ul > li ul.submenu li.open > a:focus,
+.menu ul > li ul.submenu li.open > a:focus-within,
+.menu ul > li ul.submenu li.open > a:hover,
+.menu ul > li ul.submenu li:focus-within > a,
+.menu ul > li ul.submenu li:focus-within > a.active,
+.menu ul > li ul.submenu li:focus-within > a:focus,
+.menu ul > li ul.submenu li:focus-within > a:focus-within,
+.menu ul > li ul.submenu li:focus-within > a:hover,
+.menu ul > li ul.submenu li:focus > a,
+.menu ul > li ul.submenu li:focus > a.active,
+.menu ul > li ul.submenu li:focus > a:focus,
+.menu ul > li ul.submenu li:focus > a:focus-within,
+.menu ul > li ul.submenu li:focus > a:hover,
+.menu ul > li ul.submenu li:hover > a,
+.menu ul > li ul.submenu li:hover > a.active,
+.menu ul > li ul.submenu li:hover > a:focus,
+.menu ul > li ul.submenu li:hover > a:focus-within,
+.menu ul > li ul.submenu li:hover > a:hover {
+	color: var(--undpds-color-black);
+}
+.menu ul > li ul.submenu li.open.has-submenu > a,
+.menu ul > li ul.submenu li:focus-within.has-submenu > a,
+.menu ul > li ul.submenu li:focus.has-submenu > a,
+.menu ul > li ul.submenu li:hover.has-submenu > a {
+	color: var(--undpds-color-white);
+}
+.menu ul > li ul.submenu li.open > a:not(.external, .download),
+.menu ul > li ul.submenu li:focus-within > a:not(.external, .download),
+.menu ul > li ul.submenu li:focus > a:not(.external, .download),
+.menu ul > li ul.submenu li:hover > a:not(.external, .download) {
+	padding-inline-end: 0.75rem;
+}
+.menu ul > li ul.submenu li.open.has-submenu > a.active:after,
+.menu ul > li ul.submenu li.open.has-submenu > a:after,
+.menu ul > li ul.submenu li:focus-within.has-submenu > a.active:after,
+.menu ul > li ul.submenu li:focus-within.has-submenu > a:after,
+.menu ul > li ul.submenu li:focus.has-submenu > a.active:after,
+.menu ul > li ul.submenu li:focus.has-submenu > a:after,
+.menu ul > li ul.submenu li:hover.has-submenu > a.active:after,
+.menu ul > li ul.submenu li:hover.has-submenu > a:after {
+	background: url('data:image/svg+xml,%3Csvg%20width%3D%2213%22%20height%3D%2220%22%20viewBox%3D%220%200%2013%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M1%201L11%209.99781L1%2019%22%20stroke%3D%22%23EDEFF0%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E')
+		no-repeat 100%;
+	margin-inline-start: 0.5rem;
+}
+.menu ul > li ul.submenu li.open > a.external .external-link-animated,
+.menu ul > li ul.submenu li:focus-within > a.external .external-link-animated,
+.menu ul > li ul.submenu li:focus > a.external .external-link-animated,
+.menu ul > li ul.submenu li:hover > a.external .external-link-animated {
+	box-shadow:
+		-2px 2px 0 0 var(--undpds-color-dark-red),
+		-4px 0 0 -2px var(--undpds-color-dark-red),
+		-3px 3px 0 -1px var(--undpds-color-dark-red);
+}
+.menu ul > li ul.submenu li.open > a.external .external-link-animated:before,
+.menu ul > li ul.submenu li:focus-within > a.external .external-link-animated:before,
+.menu ul > li ul.submenu li:focus > a.external .external-link-animated:before,
+.menu ul > li ul.submenu li:hover > a.external .external-link-animated:before {
+	background-color: var(--undpds-color-dark-red);
+	transition: transform 0.2s;
+}
+.menu ul > li ul.submenu li.open > a.external .external-link-animated:after,
+.menu ul > li ul.submenu li:focus-within > a.external .external-link-animated:after,
+.menu ul > li ul.submenu li:focus > a.external .external-link-animated:after,
+.menu ul > li ul.submenu li:hover > a.external .external-link-animated:after {
+	border-block-start: 2px solid var(--undpds-color-dark-red);
+	border-inline-end: 2px solid var(--undpds-color-dark-red);
+	transition: transform 0.2s;
+}
+.menu ul > li ul.submenu li.open > a.download .download-animated:before,
+.menu ul > li ul.submenu li:focus-within > a.download .download-animated:before,
+.menu ul > li ul.submenu li:focus > a.download .download-animated:before,
+.menu ul > li ul.submenu li:hover > a.download .download-animated:before {
+	background-color: var(--undpds-color-dark-red);
+	transition: transform 0.2s;
+}
+.menu ul > li ul.submenu li.open > a.download .download-animated i,
+.menu ul > li ul.submenu li:focus-within > a.download .download-animated i,
+.menu ul > li ul.submenu li:focus > a.download .download-animated i,
+.menu ul > li ul.submenu li:hover > a.download .download-animated i {
+	border: 2px solid var(--undpds-color-dark-red);
+	border-block-start: 0;
+	transition: transform 0.2s;
+}
+.menu ul > li ul.submenu li.open > a.download .download-animated:after,
+.menu ul > li ul.submenu li:focus-within > a.download .download-animated:after,
+.menu ul > li ul.submenu li:focus > a.download .download-animated:after,
+.menu ul > li ul.submenu li:hover > a.download .download-animated:after {
+	border-block-end: 2px solid var(--undpds-color-dark-red);
+	border-inline-start: 2px solid var(--undpds-color-dark-red);
+	transition: transform 0.2s;
+}
+[dir='rtl'] .menu ul > li ul.submenu li.has-submenu > a:after {
+	background: url(../../images/chevron-left.svg) no-repeat 0;
+}
+[dir='rtl'] .menu ul > li ul.submenu li a {
+	text-align: right;
+}
+[dir='rtl'] .menu ul > li ul.submenu li.open > ul.submenu,
+[dir='rtl'] .menu ul > li ul.submenu li:focus-within > ul.submenu,
+[dir='rtl'] .menu ul > li ul.submenu li:focus > ul.submenu,
+[dir='rtl'] .menu ul > li ul.submenu li:hover > ul.submenu {
+	display: block;
+	position: absolute;
+}
+[dir='rtl'] .menu ul > li ul.submenu li.open.has-submenu > a.active:after,
+[dir='rtl'] .menu ul > li ul.submenu li.open.has-submenu > a:after,
+[dir='rtl'] .menu ul > li ul.submenu li:focus-within.has-submenu > a.active:after,
+[dir='rtl'] .menu ul > li ul.submenu li:focus-within.has-submenu > a:after,
+[dir='rtl'] .menu ul > li ul.submenu li:focus.has-submenu > a.active:after,
+[dir='rtl'] .menu ul > li ul.submenu li:focus.has-submenu > a:after,
+[dir='rtl'] .menu ul > li ul.submenu li:hover.has-submenu > a.active:after,
+[dir='rtl'] .menu ul > li ul.submenu li:hover.has-submenu > a:after {
+	background: url(../../images/chevron-left-white.svg) no-repeat 0;
+}
+.menu li > a.external .external-link-animated:after {
+	transform: rotate(0deg) translate(0);
+}
+.menu li > a.external .external-link-animated:before {
+	transform: rotate(-45deg) translate(0);
+}
+.menu li:hover > a.external .external-link-animated {
+	box-shadow:
+		-2px 2px 0 0 var(--undpds-color-white),
+		-4px 0 0 -2px var(--undpds-color-white),
+		-3px 3px 0 -1px var(--undpds-color-white);
+}
+.menu li:hover > a.external .external-link-animated:after {
+	border-block-start-color: var(--undpds-color-white);
+	border-inline-end-color: var(--undpds-color-white);
+	transform: rotate(0deg) translate(5px, -5px);
+}
+.menu li:hover > a.external .external-link-animated:before {
+	background: var(--undpds-color-white);
+	transform: rotate(-45deg) translate(7px);
+}
+.menu li:hover > a.download .download-animated i {
+	border-color: var(--undpds-color-white);
+}
+.menu li:hover > a.download .download-animated:after {
+	border-block-end-color: var(--undpds-color-white);
+	border-inline-start-color: var(--undpds-color-white);
+	transform: rotate(-45deg) translate(7px, -7px);
+}
+.menu li:hover > a.download .download-animated:before {
+	background: var(--undpds-color-white);
+	transform: translateY(-10px);
+}
+[dir='rtl'] .menu li > a.external .external-link-animated {
+	transform: rotate(270deg);
+}
+[dir='rtl'] .menu li > a.external .external-link-animated:before {
+	transform: rotate(-45deg) translate(1px, 1px);
+}
+[dir='rtl'] .menu li > a.external .external-link-animated:after {
+	transform: rotate(90deg) translate(-1px, -4px);
+}
+[dir='rtl'] .menu li:hover > a.external .external-link-animated {
+	transform: rotate(270deg);
+}
+[dir='rtl'] .menu li:hover > a.external .external-link-animated:before {
+	transform: rotate(-45deg) translate(7px);
+}
+[dir='rtl'] .menu li:hover > a.external .external-link-animated:after {
+	transform: rotate(90deg) translate(-6px, -8px);
+}
+[dir='rtl'] .menu li > a.download .download-animated:after {
+	transform: rotate(45deg) translate(0);
+}
+[dir='rtl'] .menu li:hover > a.download .download-animated:after {
+	transform: rotate(45deg) translate(-7px, -7px);
+}

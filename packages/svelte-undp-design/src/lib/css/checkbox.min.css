@@ -1,28 +1,17 @@
 input[type='checkbox'] {
-	-webkit-appearance: none;
 	appearance: none;
-	border: 2px solid #d12800;
+	border: 2px solid var(--undpds-color-dark-red);
 	cursor: pointer;
 	height: 16px;
 	margin: 0;
 	width: 16px;
 }
 input[type='checkbox']:hover {
-	border-color: #ffb4ae;
+	border-color: var(--undpds-color-light-pink);
 }
 input[type='checkbox']:focus-visible {
-	box-shadow: 0 0 4px #0468b1;
+	box-shadow: 0 0 4px var(--undpds-color-blue-800);
 	outline: 0;
-}
-.form-check {
-	align-items: center;
-	display: flex;
-	position: relative;
-}
-.form-check label {
-	cursor: pointer;
-	font-size: 1rem;
-	padding: 0 7px;
 }
 input[type='checkbox'] {
 	border-radius: 0;

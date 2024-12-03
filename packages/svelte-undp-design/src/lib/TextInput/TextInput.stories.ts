@@ -45,6 +45,74 @@ export const Primary: Story = {
 		label: 'Label',
 		name: 'name',
 		value: '',
-		disabled: false
+		disabled: false,
+		formType: 'text'
+	}
+};
+
+export const Calendar: Story = {
+	args: {
+		placeholder: 'Placeholder',
+		label: 'Label',
+		name: 'name',
+		value: '',
+		disabled: false,
+		formType: 'date'
+	}
+};
+
+export const Number: Story = {
+	args: {
+		placeholder: 'Enter search term',
+		label: 'Label',
+		name: 'name',
+		value: '',
+		disabled: false,
+		formType: 'number'
+	}
+};
+
+export const Password: Story = {
+	args: {
+		placeholder: 'Password',
+		label: 'Label',
+		name: 'name',
+		value: '',
+		disabled: false,
+		formType: 'password'
+	}
+};
+
+export const Telephone: Story = {
+	args: {
+		placeholder: '+234 000 000 0000',
+		label: 'Label',
+		name: 'name',
+		value: '',
+		disabled: false,
+		formType: 'tel'
+	}
+};
+
+export const Disabled: Story = {
+	args: {
+		placeholder: 'Placeholder',
+		label: 'Label',
+		name: 'name',
+		value: '',
+		disabled: true,
+		formType: 'text'
+	}
+};
+
+export const Error: Story = {
+	args: {
+		placeholder: 'Placeholder',
+		label: 'Label',
+		name: 'name',
+		value: '',
+		disabled: false,
+		formType: 'text',
+		errorMessage: '*Error: this field is required'
 	}
 };

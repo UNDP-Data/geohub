@@ -7,6 +7,8 @@
 	export let isArrow = false;
 	export let isPrimary = true;
 	export let isDisabled = false;
+	export let isDownload = false;
+	export let isExternalLink = false;
 
 	const handleClicked = () => {
 		if (!isDisabled) {
@@ -25,7 +27,11 @@
 <a
 	class="button button-{isPrimary ? 'primary' : 'secondary'} {isArrow
 		? 'button-arrow'
-		: 'button-without-arrow'}"
+		: isDownload
+			? 'button-download'
+			: isExternalLink
+				? 'button-external-link'
+				: 'button-without-arrow'}"
 	class:disabled={isDisabled}
 	role="button"
 	alt={title}
@@ -34,6 +40,11 @@
 	on:click={handleClicked}
 >
 	{title}
+	{#if isDownload}
+		<span class="download-animated"><i></i></span>
+	{:else if isExternalLink}
+		<span class="external-link-animated"><i></i></span>
+	{/if}
 </a>
 
 <style lang="scss">

@@ -1,25 +1,24 @@
 input[type='radio'] {
-	-webkit-appearance: none;
 	appearance: none;
-	border: 2px solid #d12800;
+	border: 2px solid var(--undpds-color-dark-red);
 	cursor: pointer;
 	height: 16px;
 	margin: 0;
 	width: 16px;
 }
 input[type='radio']:hover {
-	border-color: #ffb4ae;
+	border-color: var(--undpds-color-light-pink);
 }
 input[type='radio']:focus-visible {
-	box-shadow: 0 0 4px #0468b1;
+	box-shadow: 0 0 4px var(--undpds-color-blue-800);
 	outline: 0;
 }
 input[type='radio'] {
 	background-color: transparent;
 	border-radius: 100%;
-	box-shadow: inset 0 0 0 #fff;
+	box-shadow: inset 0 0 0 var(--undpds-color-white);
 }
 input[type='radio']:checked {
-	background-color: #d12800;
-	box-shadow: inset 0 0 0 3px #fff;
+	background-color: var(--undpds-color-dark-red);
+	box-shadow: inset 0 0 0 3px var(--undpds-color-white);
 }

@@ -21,6 +21,18 @@
 			e.target.click();
 		}
 	};
+
+	let isMobileSubMenuShown = false;
+	let submenuLink: HeaderLink | undefined = undefined;
+
+	const showMobileSubMenu = (link: HeaderLink) => {
+		submenuLink = link;
+		isMobileSubMenuShown = true;
+	};
+	const hideMobileSubMenu = () => {
+		submenuLink = undefined;
+		isMobileSubMenuShown = false;
+	};
 </script>
 
 <header
@@ -53,31 +65,127 @@
 					<div class="cell small-1 large-auto align-content-middle top-center">
 						<nav class="menu">
 							<ul class="">
-								{#each links as link}
-									<li data-menu-id={link.id}>
-										{#if link.callback}
-											{@const callback = link.callback}
-											<!-- svelte-ignore a11y-missing-attribute -->
-											<a
-												role="button"
-												on:click={() => callback(link.id)}
-												tabindex="0"
-												on:keydown={onKeyPressed}
-											>
-												{link.title}
-											</a>
-										{:else}
-											<a
-												role="button"
-												href={link.href}
-												tabindex="0"
-												data-sveltekit-preload-code={link.preloadCode ?? 'viewport'}
-												data-sveltekit-preload-data={link.preloadData ?? 'hover'}
-											>
-												{link.title}
-											</a>
-										{/if}
-									</li>
+								{#each links as link, index}
+									{@const isLast = links.length > 1 && links.length - 1 === index}
+									{#if link.children && link.children.length > 0}
+										<li class="has-submenu">
+											{#if link.href && link.href.length > 0}
+												<a tabindex="0" aria-expanded="true" href={link.href}>
+													{link.title}
+												</a>
+											{:else}
+												<!-- svelte-ignore a11y-click-events-have-key-events -->
+												<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+												<!-- svelte-ignore a11y-no-static-element-interactions -->
+												<!-- svelte-ignore a11y-missing-attribute -->
+												<a
+													tabindex="0"
+													aria-expanded="true"
+													on:click={(e) => {
+														e.preventDefault();
+													}}
+												>
+													{link.title}
+												</a>
+											{/if}
+											<ul class="submenu" data-submenu="true">
+												{#each link.children as child}
+													{#if child.children && child.children.length > 0}
+														<li class="has-submenu {isLast ? 'edge' : ''}">
+															{#if child.callback}
+																{@const callback = child.callback}
+																<!-- svelte-ignore a11y-missing-attribute -->
+																<a
+																	role="button"
+																	on:click={() => callback(child.id)}
+																	tabindex="0"
+																	on:keydown={onKeyPressed}
+																>
+																	{child.title}
+																</a>
+															{:else}
+																<a href={child.href} class="" tabindex="0">
+																	{child.title}
+																</a>
+															{/if}
+															<ul class="submenu" data-submenu="true">
+																{#each child.children as grandchild}
+																	<li class="">
+																		{#if grandchild.callback}
+																			{@const callback = grandchild.callback}
+																			<!-- svelte-ignore a11y-missing-attribute -->
+																			<a
+																				role="button"
+																				on:click={() => callback(grandchild.id)}
+																				tabindex="0"
+																				on:keydown={onKeyPressed}
+																			>
+																				{grandchild.title}
+																			</a>
+																		{:else}
+																			<a href={grandchild.href} class="" tabindex="0">
+																				{grandchild.title}
+																			</a>
+																		{/if}
+																	</li>
+																{/each}
+															</ul>
+														</li>
+													{:else}
+														<li class="">
+															{#if child.callback}
+																{@const callback = child.callback}
+																<!-- svelte-ignore a11y-missing-attribute -->
+																<a
+																	role="button"
+																	on:click={() => callback(child.id)}
+																	tabindex="0"
+																	on:keydown={onKeyPressed}
+																>
+																	{child.title}
+																</a>
+															{:else}
+																<a
+																	role="button"
+																	href={child.href}
+																	tabindex="0"
+																	data-sveltekit-preload-code={child.preloadCode ?? 'viewport'}
+																	data-sveltekit-preload-data={child.preloadData ?? 'hover'}
+																>
+																	{child.title}
+																</a>
+															{/if}
+														</li>
+													{/if}
+												{/each}
+											</ul>
+										</li>
+									{:else}
+										<li data-menu-id={link.id}>
+											{#if link.callback}
+												{@const callback = link.callback}
+												<!-- svelte-ignore a11y-missing-attribute -->
+												<a
+													role="button"
+													on:click={() => callback(link.id)}
+													tabindex="0"
+													on:keydown={onKeyPressed}
+												>
+													{link.title}
+												</a>
+											{:else}
+												<a
+													role="button"
+													href={link.href}
+													tabindex="0"
+													data-sveltekit-preload-code={link.preloadCode ?? 'viewport'}
+													data-sveltekit-preload-data={link.preloadData ?? 'hover'}
+												>
+													{link.title}
+												</a>
+											{/if}
+										</li>
+									{/if}
 								{/each}
 							</ul>
 						</nav>
@@ -99,11 +207,27 @@
 				{#if links.length > 0}
 					<div class="mobile-nav {showMobileMenu ? 'show' : ''}">
 						<div class="grid-x">
-							<div class="cell mobile-links">
+							<div class="cell mobile-links {isMobileSubMenuShown ? 'hide' : ''}">
 								<ul>
 									{#each links as link}
 										<li>
-											{#if link.callback}
+											{#if link.children && link.children.length > 0}
+												<div
+													role="button"
+													tabindex="0"
+													class="cta__link cta--space"
+													on:click={() => {
+														showMobileSubMenu(link);
+													}}
+													on:keydown={onKeyPressed}
+													id={link.id}
+												>
+													{link.title}
+													{#if link.tooltip}
+														- {link.tooltip}
+													{/if}
+												</div>
+											{:else if link.callback}
 												{@const callback = link.callback}
 												<div
 													role="button"
@@ -141,6 +265,117 @@
 									{/each}
 								</ul>
 							</div>
+
+							<div class="cell mobile-sub-menu {isMobileSubMenuShown ? 'show' : ''}">
+								<button class="back-nav" on:click={hideMobileSubMenu}>
+									<svg
+										width="33"
+										height="17"
+										viewBox="0 0 33 17"
+										fill="none"
+										xmlns="http://www.w3.org/2000/svg"
+									>
+										<path
+											d="M9.29569 1.0354L2.00009 8.17012M2.00009 8.17012L9.29569 15.3083M2.00009 8.17012L32.6416 8.17012"
+											stroke="#D12800"
+											stroke-width="2"
+										/>
+									</svg>
+									Back
+								</button>
+								<div class="mobile-mega-wrapper">
+									{#each links as link}
+										{#if link.children && link.children.length > 0}
+											<div
+												class="mobile-mega-content {link.id === submenuLink?.id
+													? 'show-content'
+													: ''}"
+												data-mobile-id={link.id}
+											>
+												<h6 class="sub-heading">{link.title}</h6>
+												<ul class="sub-sub-menus">
+													{#each link.children as child}
+														{#if child.children && child.children.length > 0}
+															<li>
+																<span>{child.title}</span>
+																<ul>
+																	{#each child.children as grandchild}
+																		<li>
+																			{#if grandchild.callback}
+																				{@const callback = grandchild.callback}
+																				<a
+																					class="cta__link cta--space"
+																					role="button"
+																					tabindex="0"
+																					on:click={() => {
+																						showMobileMenu = false;
+																						hideMobileSubMenu();
+																						callback(grandchild.id);
+																					}}
+																					on:keydown={onKeyPressed}
+																					id={grandchild.id}
+																				>
+																					{grandchild.title}
+																					{#if grandchild.tooltip}
+																						- {grandchild.tooltip}
+																					{/if}
+																				</a>
+																			{:else}
+																				<a
+																					class="cta__link cta--space"
+																					id={grandchild.id}
+																					href={grandchild.href}
+																				>
+																					{grandchild.title}
+																					{#if grandchild.tooltip}
+																						- {grandchild.tooltip}
+																					{/if}
+																				</a>
+																			{/if}
+																		</li>
+																	{/each}
+																</ul>
+															</li>
+														{:else}
+															<li>
+																<span>
+																	{#if child.callback}
+																		{@const callback = child.callback}
+																		<div
+																			class="cta__link cta--space"
+																			role="button"
+																			tabindex="0"
+																			on:click={() => {
+																				showMobileMenu = false;
+																				hideMobileSubMenu();
+																				callback(child.id);
+																			}}
+																			on:keydown={onKeyPressed}
+																			id={child.id}
+																		>
+																			{child.title}
+																			{#if child.tooltip}
+																				- {child.tooltip}
+																			{/if}
+																		</div>
+																	{:else}
+																		<a class="cta__link cta--space" id={child.id} href={child.href}>
+																			{child.title}
+																			{#if child.tooltip}
+																				- {child.tooltip}
+																			{/if}
+																		</a>
+																	{/if}
+																</span>
+															</li>
+														{/if}
+													{/each}
+												</ul>
+											</div>
+										{/if}
+									{/each}
+								</div>
+							</div>
 						</div>
 					</div>
 				{/if}
@@ -161,6 +396,7 @@
 	@use '../css/country-site-header.min.css';
 	@use '../css/menu.min.css';
 	@use '../css/mega-menu.min.css';
+	@use '../css/menu-multi-level.min.css';
 	@use '../css/mobile-nav.min.css';
 	@use '../css/cta-link.min.css';
 

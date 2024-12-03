@@ -1,12 +1,12 @@
 .country-header .header .icon-globe,
 .country-header .header .icon-search {
-	background-color: #006eb5;
+	background-color: var(--undpds-color-blue-600);
 	border: 0;
 	cursor: pointer;
 	display: inline-flex;
 	font-size: 0;
 	height: 26px;
-	margin-inline-end: 0.5rem;
+	margin-inline-end: var(--undpds-spacing-03);
 	min-width: 25px;
 	padding: 0;
 	width: 25px;
@@ -21,12 +21,13 @@
 }
 .country-header .header .icon-globe:hover,
 .country-header .header .icon-search:hover {
-	background-color: #4f95dd;
+	background-color: var(--undpds-color-blue-400);
 }
 .country-header .header .top-left .logo {
 	background-image: none;
 }
 .country-header .header {
+	background-color: var(--undpds-color-gray-100);
 	height: 7.1875rem;
 	left: 0;
 	top: 0;
@@ -35,26 +36,23 @@
 }
 .country-header .header .top-left .logo img {
 	min-width: 60px;
-	-webkit-transition: all 0.4s cubic-bezier(0.64, 0.05, 0.35, 1.05);
-	-moz-transition: all 0.4s cubic-bezier(0.64, 0.05, 0.35, 1.05);
-	-ms-transition: all 0.4s cubic-bezier(0.64, 0.05, 0.35, 1.05);
-	-o-transition: all 0.4s cubic-bezier(0.64, 0.05, 0.35, 1.05);
 	transition: all 0.4s cubic-bezier(0.64, 0.05, 0.35, 1.05);
 }
 @media (min-width: 64em) {
 	.country-header .header .top-left .logo img {
-		height: 122px;
+		height: calc(var(--undpds-header-height-xlarge) + 7px);
 	}
 	.country-header .header .top-left .logo img.scrolled {
-		height: 115px;
+		height: var(--undpds-header-height-xlarge);
 	}
 }
 @media (max-width: 63.9375em) {
 	.country-header .header .top-left .logo img {
-		height: 82px;
+		height: calc(var(--undpds-header-height-medium) + 7px);
+		min-width: 40px;
 	}
 	.country-header .header .top-left .logo img.scrolled {
-		height: 75px;
+		height: var(--undpds-header-height-medium);
 	}
 }
 .country-header {
@@ -79,12 +77,6 @@
 }
 .country-header .header .grid-container.fluid > .grid-margin-x {
 	justify-content: space-between;
-	margin-inline: -1.5rem;
-}
-@media (max-width: 47.9375em) {
-	.country-header .header .grid-container.fluid > .grid-margin-x {
-		margin-inline: -0.75rem;
-	}
 }
 .country-header .header .site-title {
 	flex-shrink: 0;
@@ -93,8 +85,6 @@
 	margin-block-start: -0.25rem;
 	margin-inline-end: 1.5rem;
 	padding: 0.438rem 0;
-	color: #000;
-	text-decoration: none;
 }
 @media (max-width: 63.9375em) {
 	.country-header .header .site-title {
@@ -110,13 +100,13 @@
 }
 .country-header .header .site-title span:first-of-type:not(:last-of-type) {
 	border-bottom: 1px solid #a9b1b7;
-	color: #55606e;
 	display: inline-block;
 	font-size: 0.75rem;
 	margin: 0;
 	padding-block-end: 1px;
-	color: #000;
-	text-decoration: none;
+}
+.country-header .header .site-title span:first-of-type:not(:last-of-type) a {
+	color: #55606e;
 }
 .country-header .header .site-title span {
 	display: flex;
@@ -188,8 +178,6 @@
 	flex-shrink: 1;
 	margin: 0;
 	min-height: 7.1875rem;
-	font-weight: 5;
-	font-size: 14px;
 }
 @media (max-width: 63.9375em) {
 	.country-header .header .menu {
@@ -281,18 +269,18 @@
 }
 .country-header .header .icon-search {
 	margin-inline-start: 1rem;
-	-webkit-mask: url(../images/search.svg) no-repeat left center;
-	mask: url(../images/search.svg) no-repeat left center;
+	-webkit-mask: url(../../images/search.svg) no-repeat left center;
+	mask: url(../../images/search.svg) no-repeat left center;
 }
 @media (max-width: 47.9375em) {
 	.country-header .header .icon-search {
-		background: transparent url(../images/search.svg) no-repeat 0;
+		background: transparent url(../../images/search.svg) no-repeat 0;
 	}
 }
 .country-header .header .icon-globe {
 	margin-inline-start: 1.75rem;
-	-webkit-mask: url(../images/globe.svg) no-repeat left center;
-	mask: url(../images/globe.svg) no-repeat left center;
+	-webkit-mask: url(../../images/globe.svg) no-repeat left center;
+	mask: url(../../images/globe.svg) no-repeat left center;
 }
 @media (max-width: 63.9375em) {
 	.country-header .header .icon-globe {
@@ -311,10 +299,6 @@
 .country-header .header .menu,
 .country-header .header .site-title,
 .country-header .header .top-right {
-	-webkit-transition: opacity 0.3s ease;
-	-moz-transition: opacity 0.3s ease;
-	-ms-transition: opacity 0.3s ease;
-	-o-transition: opacity 0.3s ease;
 	transition: opacity 0.3s ease;
 }
 .country-header.country-load-animation .header .top-left .logo {
@@ -322,10 +306,6 @@
 	position: fixed;
 	top: 0;
 	transform: translateX(-50%);
-	-webkit-transition: all 0.7s ease;
-	-moz-transition: all 0.7s ease;
-	-ms-transition: all 0.7s ease;
-	-o-transition: all 0.7s ease;
 	transition: all 0.7s ease;
 }
 .country-header.country-load-animation .menu,

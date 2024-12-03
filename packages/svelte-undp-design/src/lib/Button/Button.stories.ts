@@ -18,6 +18,18 @@ const meta = {
 			description: 'If enabled, arrow will be shown in button',
 			defaultValue: false
 		},
+		isDownload: {
+			type: 'boolean',
+			description:
+				'If enabled, download icon will be shown in button. If isArrow is true, this is ignored',
+			defaultValue: false
+		},
+		isExternalLink: {
+			type: 'boolean',
+			description:
+				'If enabled, external link icon will be shown in button. If isArrow is true, this is ignored',
+			defaultValue: false
+		},
 		isPrimary: {
 			type: 'boolean',
 			description: 'If enabled, primary color will be used',
@@ -50,7 +62,7 @@ export const Secondary: Story = {
 	}
 };
 
-export const Arrow: Story = {
+export const ArrowPrimary: Story = {
 	args: {
 		title: 'title',
 		isArrow: true,
@@ -58,11 +70,65 @@ export const Arrow: Story = {
 	}
 };
 
-export const NoArrow: Story = {
+export const ArrowSecondary: Story = {
+	args: {
+		title: 'title',
+		isArrow: true,
+		isPrimary: false
+	}
+};
+
+export const NoArrowPrimary: Story = {
 	args: {
 		title: 'title',
 		isArrow: false,
 		isPrimary: true
+	}
+};
+
+export const NoArrowSecondary: Story = {
+	args: {
+		title: 'title',
+		isArrow: false,
+		isPrimary: false
+	}
+};
+
+export const DownloadPrimary: Story = {
+	args: {
+		title: 'title',
+		isArrow: false,
+		isPrimary: true,
+		isDownload: true
+	}
+};
+
+export const DownloadSecondary: Story = {
+	args: {
+		title: 'title',
+		isArrow: false,
+		isPrimary: false,
+		isDownload: true
+	}
+};
+
+export const ExternalLinkPrimary: Story = {
+	args: {
+		title: 'title',
+		isArrow: false,
+		isPrimary: true,
+		isDownload: false,
+		isExternalLink: true
+	}
+};
+
+export const ExternalLinkSecondary: Story = {
+	args: {
+		title: 'title',
+		isArrow: false,
+		isPrimary: false,
+		isDownload: false,
+		isExternalLink: true
 	}
 };
 
@@ -71,6 +137,35 @@ export const Disabled: Story = {
 		title: 'title',
 		isArrow: false,
 		isPrimary: true,
+		isDisabled: true
+	}
+};
+
+export const DisabledArrow: Story = {
+	args: {
+		title: 'title',
+		isArrow: true,
+		isPrimary: true,
+		isDisabled: true
+	}
+};
+
+export const DisabledDownload: Story = {
+	args: {
+		title: 'title',
+		isArrow: false,
+		isPrimary: true,
+		isDownload: true,
+		isDisabled: true
+	}
+};
+
+export const DisabledExternalLink: Story = {
+	args: {
+		title: 'title',
+		isArrow: false,
+		isPrimary: true,
+		isExternalLink: true,
 		isDisabled: true
 	}
 };
