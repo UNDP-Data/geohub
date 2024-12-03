@@ -10,6 +10,7 @@
 	export let isSimple = false;
 	export let isInverted = false;
 
+	const currentYear = new Date().getFullYear();
 	let panelExpanded: { [key: string]: boolean } = {};
 	let innerWidth: number;
 	$: isMobile = innerWidth < 768 ? true : false;
@@ -76,7 +77,7 @@
 				<div class="grid-x footer-bottom">
 					<div class="cell medium-5">
 						<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-						<p tabindex="0">© United Nations Development Programme</p>
+						<p tabindex="0">© {currentYear} United Nations Development Programme</p>
 					</div>
 					<div class="cell medium-6">
 						<ul class="footer-lists {isInverted ? 'inverted' : ''}">
@@ -227,7 +228,7 @@
 				</div>
 				<div class="footer-copyright">
 					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-					<p tabindex="0">© United Nations Development Programme</p>
+					<p tabindex="0">© {currentYear} United Nations Development Programme</p>
 				</div>
 			{/if}
 		</div>

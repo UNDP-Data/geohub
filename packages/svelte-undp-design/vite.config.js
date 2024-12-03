@@ -11,5 +11,12 @@ export default defineConfig({
 			provider: 'istanbul',
 			reporter: ['text', 'json', 'html']
 		}
+	},
+	css: {
+		preprocessorOptions: {
+			scss: {
+				api: 'modern-compiler'
+			}
+		}
 	}
 });
