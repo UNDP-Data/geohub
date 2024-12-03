@@ -107,7 +107,7 @@
 		"millify": "^6.1.0",
 		"pako": "^2.1.0",
 		"papaparse": "^5.4.1",
-		"pmtiles": "^3.2.0",
+		"pmtiles": "^4.0.0",
 		"prettier": "^3.3.3",
 		"prettier-plugin-svelte": "^3.2.7",
 		"sass": "^1.79.4",

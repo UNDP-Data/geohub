@@ -52,8 +52,8 @@ importers:
         specifier: ^15.11.0
         version: 15.13.0
       pmtiles:
-        specifier: ^3.2.1
-        version: 3.2.1
+        specifier: ^4.0.0
+        version: 4.0.1
       prettier:
         specifier: ^3.3.3
         version: 3.4.1
@@ -213,8 +213,8 @@ importers:
         specifier: ^15.10.0
         version: 15.13.0
       pmtiles:
-        specifier: ^3.2.0
-        version: 3.2.1
+        specifier: ^4.0.0
+        version: 4.0.1
       prettier:
         specifier: ^3.3.3
         version: 3.4.1
@@ -301,8 +301,8 @@ importers:
         specifier: ^15.10.0
         version: 15.13.0
       pmtiles:
-        specifier: ^3.2.0
-        version: 3.2.1
+        specifier: ^4.0.0
+        version: 4.0.1
       prettier:
         specifier: ^3.3.3
         version: 3.4.1
@@ -464,8 +464,8 @@ importers:
         specifier: ^25.0.1
         version: 25.0.1
       pmtiles:
-        specifier: ^3.2.1
-        version: 3.2.1
+        specifier: ^4.0.0
+        version: 4.0.1
       prettier:
         specifier: ^3.4.1
         version: 3.4.1
@@ -896,8 +896,8 @@ importers:
         specifier: ^5.4.1
         version: 5.4.1
       pmtiles:
-        specifier: ^3.2.0
-        version: 3.2.1
+        specifier: ^4.0.0
+        version: 4.0.1
       prettier:
         specifier: ^3.3.3
         version: 3.4.1
@@ -2675,9 +2675,6 @@ packages:
 
   '@types/json-stable-stringify@1.1.0':
     resolution: {integrity: sha512-ESTsHWB72QQq+pjUFIbEz9uSCZppD31YrVkbt2rnUciTYEvcwN6uZIhX5JZeBHqRlFJ41x/7MewCs7E2Qux6Cg==}
-
-  '@types/leaflet@1.9.14':
-    resolution: {integrity: sha512-sx2q6MDJaajwhKeVgPSvqXd8rhNJSTA3tMidQGduZn9S6WBYxDkCpSpV5xXEmSg7Cgdk/5vJGhVF1kMYLzauBg==}
 
   '@types/lodash-es@4.17.12':
     resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
@@ -4950,8 +4947,8 @@ packages:
     resolution: {integrity: sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==}
     engines: {node: '>=6'}
 
-  pmtiles@3.2.1:
-    resolution: {integrity: sha512-3R4fBwwoli5mw7a6t1IGwOtfmcSAODq6Okz0zkXhS1zi9sz1ssjjIfslwPvcWw5TNhdjNBUg9fgfPLeqZlH6ng==}
+  pmtiles@4.0.1:
+    resolution: {integrity: sha512-YS4uj/v179kA6tDd2E8d7ikOIEHy8ahtXN+u4joZYGkG2EwTkC2DUwgNmYLipyl60Vzf3FnIccIuDZB6bmdKmg==}
 
   pngjs@7.0.0:
     resolution: {integrity: sha512-LKWqWJRhstyYo9pGvgor/ivk2w94eSjE3RGVuzLGlr3NmD8bf7RcYGze1mNdEHRP6TRP6rMuDHk5t44hnTRyow==}
@@ -7792,10 +7789,6 @@ snapshots:
 
   '@types/json-stable-stringify@1.1.0': {}
 
-  '@types/leaflet@1.9.14':
-    dependencies:
-      '@types/geojson': 7946.0.14
-
   '@types/lodash-es@4.17.12':
     dependencies:
       '@types/lodash': 4.17.13
@@ -10351,9 +10344,8 @@ snapshots:
 
   pify@4.0.1: {}
 
-  pmtiles@3.2.1:
+  pmtiles@4.0.1:
     dependencies:
-      '@types/leaflet': 1.9.14
       fflate: 0.8.2
 
   pngjs@7.0.0: {}
