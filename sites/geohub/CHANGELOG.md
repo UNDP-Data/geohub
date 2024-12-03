@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.15
+
+### Patch Changes
+
+- 9305ef8: fix: redesigned header menu for geohub by adding nested menu
+
 ## 1.22.14
 
 ### Patch Changes

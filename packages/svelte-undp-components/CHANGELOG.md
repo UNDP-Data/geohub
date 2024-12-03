@@ -1,5 +1,12 @@
 # @undp-data/svelte-undp-components
 
+## 1.5.12
+
+### Patch Changes
+
+- Updated dependencies [9305ef8]
+  - @undp-data/svelte-undp-design@2.4.1
+
 ## 1.5.11
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 2.4.1
+
+### Patch Changes
+
+- 9305ef8: fix: support nested menu for header
+
 ## 2.4.0
 
 ### Minor Changes
