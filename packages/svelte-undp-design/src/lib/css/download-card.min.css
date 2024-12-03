@@ -1,27 +1,27 @@
 div.download-card .download,
 div.download-card .format {
-	font-size: 0.875rem;
+	font-size: var(--undpds-font-size-14);
 	line-height: 1.4;
 }
 @media (min-width: 48em) {
 	div.download-card .download,
 	div.download-card .format {
-		font-size: 1rem;
+		font-size: var(--undpds-font-size-16);
 	}
 }
 div.download-card .title {
-	font-size: 1rem;
+	font-size: var(--undpds-font-size-16);
 }
 @media (min-width: 48em) {
 	div.download-card .title {
-		font-size: 1.25rem;
+		font-size: var(--undpds-font-size-20);
 	}
 }
 :lang(my) div.download-card .download,
 :lang(my) div.download-card .format,
 div.download-card :lang(my) .download,
 div.download-card :lang(my) .format {
-	font-size: 0.75rem;
+	font-size: var(--undpds-font-size-12);
 	line-height: 1.7;
 }
 @media (min-width: 48em) {
@@ -29,17 +29,17 @@ div.download-card :lang(my) .format {
 	:lang(my) div.download-card .format,
 	div.download-card :lang(my) .download,
 	div.download-card :lang(my) .format {
-		font-size: 0.875rem;
+		font-size: var(--undpds-font-size-14);
 	}
 }
 :lang(my) div.download-card .title,
 div.download-card :lang(my) .title {
-	font-size: 0.875rem;
+	font-size: var(--undpds-font-size-14);
 }
 @media (min-width: 48em) {
 	:lang(my) div.download-card .title,
 	div.download-card :lang(my) .title {
-		font-size: 1rem;
+		font-size: var(--undpds-font-size-16);
 	}
 }
 div.download-card {
@@ -53,67 +53,59 @@ div.download-card {
 div.download-card > a {
 	background: none;
 }
+div.download-card:hover div.publication-thumbnail__image.accent-yellow,
 div.download-card:hover div.publication-thumbnail__image.yellow:after,
 div.download-card:hover div.publication-thumbnail__image:after {
 	background: linear-gradient(27.66deg, #ffeb00, transparent 70.49%);
 	opacity: 0.75;
 }
+div.download-card:hover div.publication-thumbnail__image.accent-red,
 div.download-card:hover div.publication-thumbnail__image.red:after {
 	background: linear-gradient(27.66deg, #ee402d, transparent 70.49%);
 	opacity: 0.75;
 }
+div.download-card:hover div.publication-thumbnail__image.accent-green,
 div.download-card:hover div.publication-thumbnail__image.green:after {
 	background: linear-gradient(27.66deg, #6de354, transparent 70.49%);
 	opacity: 0.75;
 }
+div.download-card:hover div.publication-thumbnail__image.accent-blue,
 div.download-card:hover div.publication-thumbnail__image.blue:after {
 	background: linear-gradient(27.66deg, #60d4f2, transparent 70.49%);
 	opacity: 0.75;
 }
+div.download-card:hover div.card-thumbnail__image.accent-yellow:before,
 div.download-card:hover div.card-thumbnail__image.yellow:before,
 div.download-card:hover div.card-thumbnail__image:before {
 	background: linear-gradient(67.76deg, #ffeb00, transparent 61.11%);
 	opacity: 0.75;
 }
+div.download-card:hover div.card-thumbnail__image.accent-red:before,
 div.download-card:hover div.card-thumbnail__image.red:before {
 	background: linear-gradient(67.76deg, #ee402d, transparent 61.11%);
 	opacity: 0.75;
 }
+div.download-card:hover div.card-thumbnail__image.accent-green:before,
 div.download-card:hover div.card-thumbnail__image.green:before {
 	background: linear-gradient(67.76deg, #6de354, transparent 61.11%);
 	opacity: 0.75;
 }
+div.download-card:hover div.card-thumbnail__image.accent-blue:before,
 div.download-card:hover div.card-thumbnail__image.blue:before {
 	background: linear-gradient(67.76deg, #60d4f2, transparent 61.11%);
 	opacity: 0.75;
 }
 div.download-card:hover .download-animated:after {
-	-webkit-transform: rotate(-45deg) translate(7px, -7px);
-	-moz-transform: rotate(-45deg) translate(7px, -7px);
-	-ms-transform: rotate(-45deg) translate(7px, -7px);
-	-o-transform: rotate(-45deg) translate(7px, -7px);
-	transition: rotate(-45deg) translate(7px, -7px);
+	transform: rotate(-45deg) translate(7px, -7px);
 }
 div.download-card:hover .download-animated:before {
-	-webkit-transform: translateY(-10px);
-	-moz-transform: translateY(-10px);
-	-ms-transform: translateY(-10px);
-	-o-transform: translateY(-10px);
-	transition: translate(0, -10px);
+	transform: translateY(-10px);
 }
 div.download-card:hover .external-link-animated:after {
-	-webkit-transform: translate(5px, -5px);
-	-moz-transform: translate(5px, -5px);
-	-ms-transform: translate(5px, -5px);
-	-o-transform: translate(5px, -5px);
-	transition: translate(5px, -5px);
+	transform: translate(5px, -5px);
 }
 div.download-card:hover .external-link-animated:before {
-	-webkit-transform: rotate(-45deg) translate(7px);
-	-moz-transform: rotate(-45deg) translate(7px);
-	-ms-transform: rotate(-45deg) translate(7px);
-	-o-transform: rotate(-45deg) translate(7px);
-	transition: rotate(-45deg) translate(7px, 0);
+	transform: rotate(-45deg) translate(7px);
 }
 div.download-card .description {
 	background: #fafafa;
@@ -146,29 +138,37 @@ div.download-card .download .external-link-animated {
 	margin-left: 0;
 	margin-right: 0.75rem;
 }
+[dir='rtl'] div.download-card:hover div.publication-thumbnail__image.accent-yellow:after,
 [dir='rtl'] div.download-card:hover div.publication-thumbnail__image.yellow:after,
 [dir='rtl'] div.download-card:hover div.publication-thumbnail__image:after {
 	background: linear-gradient(318deg, #ffeb00, transparent 70.49%);
 }
+[dir='rtl'] div.download-card:hover div.publication-thumbnail__image.accent-red:after,
 [dir='rtl'] div.download-card:hover div.publication-thumbnail__image.red:after {
 	background: linear-gradient(318deg, #ee402d, transparent 70.49%);
 }
+[dir='rtl'] div.download-card:hover div.publication-thumbnail__image.accent-green:after,
 [dir='rtl'] div.download-card:hover div.publication-thumbnail__image.green:after {
 	background: linear-gradient(318deg, #6de354, transparent 70.49%);
 }
+[dir='rtl'] div.download-card:hover div.publication-thumbnail__image.accent-blue:after,
 [dir='rtl'] div.download-card:hover div.publication-thumbnail__image.blue:after {
 	background: linear-gradient(318deg, #60d4f2, transparent 70.49%);
 }
+[dir='rtl'] div.download-card:hover div.card-thumbnail__image.accent-yellow:before,
 [dir='rtl'] div.download-card:hover div.card-thumbnail__image.yellow:before,
 [dir='rtl'] div.download-card:hover div.card-thumbnail__image:before {
 	background: linear-gradient(297deg, #ffeb00, transparent 61.11%);
 }
+[dir='rtl'] div.download-card:hover div.card-thumbnail__image.accent-red:before,
 [dir='rtl'] div.download-card:hover div.card-thumbnail__image.red:before {
 	background: linear-gradient(297deg, #ee402d, transparent 61.11%);
 }
+[dir='rtl'] div.download-card:hover div.card-thumbnail__image.accent-green:before,
 [dir='rtl'] div.download-card:hover div.card-thumbnail__image.green:before {
 	background: linear-gradient(297deg, #6de354, transparent 61.11%);
 }
+[dir='rtl'] div.download-card:hover div.card-thumbnail__image.accent-blue:before,
 [dir='rtl'] div.download-card:hover div.card-thumbnail__image.blue:before {
 	background: linear-gradient(297deg, #60d4f2, transparent 61.11%);
 }
@@ -176,4 +176,297 @@ div.download-card .download .external-link-animated {
 [dir='rtl'] div.download-card div.download-card__download:after {
 	margin-left: 0;
 	margin-right: 0.75rem;
+}
+.accent-yellow div.download-card:hover div.publication-thumbnail__image.accent-yellow,
+.accent-yellow div.download-card:hover div.publication-thumbnail__image.yellow:after,
+.accent-yellow div.download-card:hover div.publication-thumbnail__image:after {
+	background: linear-gradient(27.66deg, #ffeb00, transparent 70.49%);
+}
+.accent-yellow div.download-card:hover div.publication-thumbnail__image.accent-red,
+.accent-yellow div.download-card:hover div.publication-thumbnail__image.red:after {
+	background: linear-gradient(27.66deg, #ee402d, transparent 70.49%);
+}
+.accent-yellow div.download-card:hover div.publication-thumbnail__image.accent-green,
+.accent-yellow div.download-card:hover div.publication-thumbnail__image.green:after {
+	background: linear-gradient(27.66deg, #6de354, transparent 70.49%);
+}
+.accent-yellow div.download-card:hover div.publication-thumbnail__image.accent-blue,
+.accent-yellow div.download-card:hover div.publication-thumbnail__image.blue:after {
+	background: linear-gradient(27.66deg, #60d4f2, transparent 70.49%);
+}
+.accent-yellow div.download-card:hover div.card-thumbnail__image.accent-yellow:before,
+.accent-yellow div.download-card:hover div.card-thumbnail__image.yellow:before,
+.accent-yellow div.download-card:hover div.card-thumbnail__image:before {
+	background: linear-gradient(67.76deg, #ffeb00, transparent 61.11%);
+}
+.accent-yellow div.download-card:hover div.card-thumbnail__image.accent-red:before,
+.accent-yellow div.download-card:hover div.card-thumbnail__image.red:before {
+	background: linear-gradient(67.76deg, #ee402d, transparent 61.11%);
+}
+.accent-yellow div.download-card:hover div.card-thumbnail__image.accent-green:before,
+.accent-yellow div.download-card:hover div.card-thumbnail__image.green:before {
+	background: linear-gradient(67.76deg, #6de354, transparent 61.11%);
+}
+.accent-yellow div.download-card:hover div.card-thumbnail__image.accent-blue:before,
+.accent-yellow div.download-card:hover div.card-thumbnail__image.blue:before {
+	background: linear-gradient(67.76deg, #60d4f2, transparent 61.11%);
+}
+[dir='rtl']
+	.accent-yellow
+	div.download-card:hover
+	div.publication-thumbnail__image.accent-yellow:after,
+[dir='rtl'] .accent-yellow div.download-card:hover div.publication-thumbnail__image.yellow:after,
+[dir='rtl'] .accent-yellow div.download-card:hover div.publication-thumbnail__image:after {
+	background: linear-gradient(318deg, #ffeb00, transparent 70.49%);
+}
+[dir='rtl']
+	.accent-yellow
+	div.download-card:hover
+	div.publication-thumbnail__image.accent-red:after,
+[dir='rtl'] .accent-yellow div.download-card:hover div.publication-thumbnail__image.red:after {
+	background: linear-gradient(318deg, #ee402d, transparent 70.49%);
+}
+[dir='rtl']
+	.accent-yellow
+	div.download-card:hover
+	div.publication-thumbnail__image.accent-green:after,
+[dir='rtl'] .accent-yellow div.download-card:hover div.publication-thumbnail__image.green:after {
+	background: linear-gradient(318deg, #6de354, transparent 70.49%);
+}
+[dir='rtl']
+	.accent-yellow
+	div.download-card:hover
+	div.publication-thumbnail__image.accent-blue:after,
+[dir='rtl'] .accent-yellow div.download-card:hover div.publication-thumbnail__image.blue:after {
+	background: linear-gradient(318deg, #60d4f2, transparent 70.49%);
+}
+[dir='rtl'] .accent-yellow div.download-card:hover div.card-thumbnail__image.accent-yellow:before,
+[dir='rtl'] .accent-yellow div.download-card:hover div.card-thumbnail__image.yellow:before,
+[dir='rtl'] .accent-yellow div.download-card:hover div.card-thumbnail__image:before {
+	background: linear-gradient(297deg, #ffeb00, transparent 61.11%);
+}
+[dir='rtl'] .accent-yellow div.download-card:hover div.card-thumbnail__image.accent-yellow:before,
+[dir='rtl'] .accent-yellow div.download-card:hover div.card-thumbnail__image.yellow:before {
+	background: linear-gradient(297deg, #ee402d, transparent 61.11%);
+	background: linear-gradient(297deg, #6de354, transparent 61.11%);
+	background: linear-gradient(297deg, #60d4f2, transparent 61.11%);
+}
+.accent-red div.download-card:hover div.publication-thumbnail__image:after {
+	background: linear-gradient(27.66deg, #ee402d, transparent 70.49%);
+}
+.accent-red div.download-card:hover div.publication-thumbnail__image.accent-yellow,
+.accent-red div.download-card:hover div.publication-thumbnail__image.yellow:after {
+	background: linear-gradient(27.66deg, #ffeb00, transparent 70.49%);
+}
+.accent-red div.download-card:hover div.publication-thumbnail__image.accent-red,
+.accent-red div.download-card:hover div.publication-thumbnail__image.red:after {
+	background: linear-gradient(27.66deg, #ee402d, transparent 70.49%);
+}
+.accent-red div.download-card:hover div.publication-thumbnail__image.accent-green,
+.accent-red div.download-card:hover div.publication-thumbnail__image.green:after {
+	background: linear-gradient(27.66deg, #6de354, transparent 70.49%);
+}
+.accent-red div.download-card:hover div.publication-thumbnail__image.accent-blue,
+.accent-red div.download-card:hover div.publication-thumbnail__image.blue:after {
+	background: linear-gradient(27.66deg, #60d4f2, transparent 70.49%);
+}
+.accent-red div.download-card:hover div.card-thumbnail__image:before {
+	background: linear-gradient(67.76deg, #ee402d, transparent 61.11%);
+}
+.accent-red div.download-card:hover div.card-thumbnail__image.accent-yellow:before,
+.accent-red div.download-card:hover div.card-thumbnail__image.yellow:before {
+	background: linear-gradient(67.76deg, #ffeb00, transparent 61.11%);
+}
+.accent-red div.download-card:hover div.card-thumbnail__image.accent-red:before,
+.accent-red div.download-card:hover div.card-thumbnail__image.red:before {
+	background: linear-gradient(67.76deg, #ee402d, transparent 61.11%);
+}
+.accent-red div.download-card:hover div.card-thumbnail__image.accent-green:before,
+.accent-red div.download-card:hover div.card-thumbnail__image.green:before {
+	background: linear-gradient(67.76deg, #6de354, transparent 61.11%);
+}
+.accent-red div.download-card:hover div.card-thumbnail__image.accent-blue:before,
+.accent-red div.download-card:hover div.card-thumbnail__image.blue:before {
+	background: linear-gradient(67.76deg, #60d4f2, transparent 61.11%);
+}
+[dir='rtl'] .accent-red div.download-card:hover div.publication-thumbnail__image:after {
+	background: linear-gradient(318deg, #ee402d, transparent 70.49%);
+}
+[dir='rtl']
+	.accent-red
+	div.download-card:hover
+	div.publication-thumbnail__image.accent-yellow:after,
+[dir='rtl'] .accent-red div.download-card:hover div.publication-thumbnail__image.yellow:after {
+	background: linear-gradient(318deg, #ffeb00, transparent 70.49%);
+}
+[dir='rtl'] .accent-red div.download-card:hover div.publication-thumbnail__image.accent-red:after,
+[dir='rtl'] .accent-red div.download-card:hover div.publication-thumbnail__image.red:after {
+	background: linear-gradient(318deg, #ee402d, transparent 70.49%);
+}
+[dir='rtl'] .accent-red div.download-card:hover div.publication-thumbnail__image.accent-green:after,
+[dir='rtl'] .accent-red div.download-card:hover div.publication-thumbnail__image.green:after {
+	background: linear-gradient(318deg, #6de354, transparent 70.49%);
+}
+[dir='rtl'] .accent-red div.download-card:hover div.publication-thumbnail__image.accent-blue:after,
+[dir='rtl'] .accent-red div.download-card:hover div.publication-thumbnail__image.blue:after {
+	background: linear-gradient(318deg, #60d4f2, transparent 70.49%);
+}
+[dir='rtl'] .accent-red div.download-card:hover div.card-thumbnail__image:before {
+	background: linear-gradient(297deg, #ee402d, transparent 61.11%);
+}
+[dir='rtl'] .accent-red div.download-card:hover div.card-thumbnail__image.accent-red:before,
+[dir='rtl'] .accent-red div.download-card:hover div.card-thumbnail__image.red:before {
+	background: linear-gradient(297deg, #ffeb00, transparent 61.11%);
+	background: linear-gradient(297deg, #ee402d, transparent 61.11%);
+	background: linear-gradient(297deg, #6de354, transparent 61.11%);
+	background: linear-gradient(297deg, #60d4f2, transparent 61.11%);
+}
+.accent-green div.download-card:hover div.publication-thumbnail__image:after {
+	background: linear-gradient(27.66deg, #6de354, transparent 70.49%);
+}
+.accent-green div.download-card:hover div.publication-thumbnail__image.accent-yellow,
+.accent-green div.download-card:hover div.publication-thumbnail__image.yellow:after {
+	background: linear-gradient(27.66deg, #ffeb00, transparent 70.49%);
+}
+.accent-green div.download-card:hover div.publication-thumbnail__image.accent-red,
+.accent-green div.download-card:hover div.publication-thumbnail__image.red:after {
+	background: linear-gradient(27.66deg, #ee402d, transparent 70.49%);
+}
+.accent-green div.download-card:hover div.publication-thumbnail__image.accent-green,
+.accent-green div.download-card:hover div.publication-thumbnail__image.green:after {
+	background: linear-gradient(27.66deg, #6de354, transparent 70.49%);
+}
+.accent-green div.download-card:hover div.publication-thumbnail__image.accent-blue,
+.accent-green div.download-card:hover div.publication-thumbnail__image.blue:after {
+	background: linear-gradient(27.66deg, #60d4f2, transparent 70.49%);
+}
+.accent-green div.download-card:hover div.card-thumbnail__image:before {
+	background: linear-gradient(67.76deg, #6de354, transparent 61.11%);
+}
+.accent-green div.download-card:hover div.card-thumbnail__image.accent-yellow:before,
+.accent-green div.download-card:hover div.card-thumbnail__image.yellow:before {
+	background: linear-gradient(67.76deg, #ffeb00, transparent 61.11%);
+}
+.accent-green div.download-card:hover div.card-thumbnail__image.accent-red:before,
+.accent-green div.download-card:hover div.card-thumbnail__image.red:before {
+	background: linear-gradient(67.76deg, #ee402d, transparent 61.11%);
+}
+.accent-green div.download-card:hover div.card-thumbnail__image.accent-green:before,
+.accent-green div.download-card:hover div.card-thumbnail__image.green:before {
+	background: linear-gradient(67.76deg, #6de354, transparent 61.11%);
+}
+.accent-green div.download-card:hover div.card-thumbnail__image.accent-blue:before,
+.accent-green div.download-card:hover div.card-thumbnail__image.blue:before {
+	background: linear-gradient(67.76deg, #60d4f2, transparent 61.11%);
+}
+[dir='rtl'] .accent-green div.download-card:hover div.publication-thumbnail__image:after {
+	background: linear-gradient(318deg, #6de354, transparent 70.49%);
+}
+[dir='rtl']
+	.accent-green
+	div.download-card:hover
+	div.publication-thumbnail__image.accent-yellow:after,
+[dir='rtl'] .accent-green div.download-card:hover div.publication-thumbnail__image.yellow:after {
+	background: linear-gradient(318deg, #ffeb00, transparent 70.49%);
+}
+[dir='rtl'] .accent-green div.download-card:hover div.publication-thumbnail__image.accent-red:after,
+[dir='rtl'] .accent-green div.download-card:hover div.publication-thumbnail__image.red:after {
+	background: linear-gradient(318deg, #ee402d, transparent 70.49%);
+}
+[dir='rtl']
+	.accent-green
+	div.download-card:hover
+	div.publication-thumbnail__image.accent-green:after,
+[dir='rtl'] .accent-green div.download-card:hover div.publication-thumbnail__image.green:after {
+	background: linear-gradient(318deg, #6de354, transparent 70.49%);
+}
+[dir='rtl']
+	.accent-green
+	div.download-card:hover
+	div.publication-thumbnail__image.accent-blue:after,
+[dir='rtl'] .accent-green div.download-card:hover div.publication-thumbnail__image.blue:after {
+	background: linear-gradient(318deg, #60d4f2, transparent 70.49%);
+}
+[dir='rtl'] .accent-green div.download-card:hover div.card-thumbnail__image:before {
+	background: linear-gradient(297deg, #6de354, transparent 61.11%);
+}
+[dir='rtl'] .accent-green div.download-card:hover div.card-thumbnail__image.accent-green:before,
+[dir='rtl'] .accent-green div.download-card:hover div.card-thumbnail__image.green:before {
+	background: linear-gradient(297deg, #ffeb00, transparent 61.11%);
+	background: linear-gradient(297deg, #ee402d, transparent 61.11%);
+	background: linear-gradient(297deg, #6de354, transparent 61.11%);
+	background: linear-gradient(297deg, #60d4f2, transparent 61.11%);
+}
+.accent-blue div.download-card:hover div.publication-thumbnail__image:after {
+	background: linear-gradient(27.66deg, #60d4f2, transparent 70.49%);
+}
+.accent-blue div.download-card:hover div.publication-thumbnail__image.accent-yellow,
+.accent-blue div.download-card:hover div.publication-thumbnail__image.yellow:after {
+	background: linear-gradient(27.66deg, #ffeb00, transparent 70.49%);
+}
+.accent-blue div.download-card:hover div.publication-thumbnail__image.accent-red,
+.accent-blue div.download-card:hover div.publication-thumbnail__image.red:after {
+	background: linear-gradient(27.66deg, #ee402d, transparent 70.49%);
+}
+.accent-blue div.download-card:hover div.publication-thumbnail__image.accent-green,
+.accent-blue div.download-card:hover div.publication-thumbnail__image.green:after {
+	background: linear-gradient(27.66deg, #6de354, transparent 70.49%);
+}
+.accent-blue div.download-card:hover div.publication-thumbnail__image.accent-blue,
+.accent-blue div.download-card:hover div.publication-thumbnail__image.blue:after {
+	background: linear-gradient(27.66deg, #60d4f2, transparent 70.49%);
+}
+.accent-blue div.download-card:hover div.card-thumbnail__image:before {
+	background: linear-gradient(67.76deg, #60d4f2, transparent 61.11%);
+}
+.accent-blue div.download-card:hover div.card-thumbnail__image.accent-yellow:before,
+.accent-blue div.download-card:hover div.card-thumbnail__image.yellow:before {
+	background: linear-gradient(67.76deg, #ffeb00, transparent 61.11%);
+}
+.accent-blue div.download-card:hover div.card-thumbnail__image.accent-red:before,
+.accent-blue div.download-card:hover div.card-thumbnail__image.red:before {
+	background: linear-gradient(67.76deg, #ee402d, transparent 61.11%);
+}
+.accent-blue div.download-card:hover div.card-thumbnail__image.accent-green:before,
+.accent-blue div.download-card:hover div.card-thumbnail__image.green:before {
+	background: linear-gradient(67.76deg, #6de354, transparent 61.11%);
+}
+.accent-blue div.download-card:hover div.card-thumbnail__image.accent-blue:before,
+.accent-blue div.download-card:hover div.card-thumbnail__image.blue:before {
+	background: linear-gradient(67.76deg, #60d4f2, transparent 61.11%);
+}
+[dir='rtl'] .accent-blue div.download-card:hover div.publication-thumbnail__image:after {
+	background: linear-gradient(318deg, #60d4f2, transparent 70.49%);
+}
+[dir='rtl']
+	.accent-blue
+	div.download-card:hover
+	div.publication-thumbnail__image.accent-yellow:after,
+[dir='rtl'] .accent-blue div.download-card:hover div.publication-thumbnail__image.yellow:after {
+	background: linear-gradient(318deg, #ffeb00, transparent 70.49%);
+}
+[dir='rtl'] .accent-blue div.download-card:hover div.publication-thumbnail__image.accent-red:after,
+[dir='rtl'] .accent-blue div.download-card:hover div.publication-thumbnail__image.red:after {
+	background: linear-gradient(318deg, #ee402d, transparent 70.49%);
+}
+[dir='rtl']
+	.accent-blue
+	div.download-card:hover
+	div.publication-thumbnail__image.accent-green:after,
+[dir='rtl'] .accent-blue div.download-card:hover div.publication-thumbnail__image.green:after {
+	background: linear-gradient(318deg, #6de354, transparent 70.49%);
+}
+[dir='rtl'] .accent-blue div.download-card:hover div.publication-thumbnail__image.accent-blue:after,
+[dir='rtl'] .accent-blue div.download-card:hover div.publication-thumbnail__image.blue:after {
+	background: linear-gradient(318deg, #60d4f2, transparent 70.49%);
+}
+[dir='rtl'] .accent-blue div.download-card:hover div.card-thumbnail__image:before {
+	background: linear-gradient(297deg, #60d4f2, transparent 61.11%);
+}
+[dir='rtl'] .accent-blue div.download-card:hover div.card-thumbnail__image.accent-blue:before,
+[dir='rtl'] .accent-blue div.download-card:hover div.card-thumbnail__image.blue:before {
+	background: linear-gradient(297deg, #ffeb00, transparent 61.11%);
+	background: linear-gradient(297deg, #ee402d, transparent 61.11%);
+	background: linear-gradient(297deg, #6de354, transparent 61.11%);
+	background: linear-gradient(297deg, #60d4f2, transparent 61.11%);
 }

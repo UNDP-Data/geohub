@@ -92,6 +92,28 @@ const links: HeaderLink[] = [
 	{
 		id: 'headerLink6',
 		title: 'Link 6',
+		href: '#',
+		children: [
+			{
+				id: 'subLink1',
+				title: 'Sublink 1',
+				href: '#'
+			},
+			{
+				id: 'subLink2',
+				title: 'Sublink 2',
+				href: '#'
+			},
+			{
+				id: 'subLink3',
+				title: 'Sublink 3',
+				href: '#'
+			}
+		]
+	},
+	{
+		id: 'headerLink7',
+		title: 'Link 7',
 		href: '#'
 	}
 ];

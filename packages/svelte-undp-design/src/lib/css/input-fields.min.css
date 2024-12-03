@@ -1,11 +1,11 @@
 label,
 label.error {
-	font-size: 1rem;
+	font-size: var(--undpds-font-size-16);
 }
 @media (min-width: 48em) {
 	label,
 	label.error {
-		font-size: 1.25rem;
+		font-size: var(--undpds-font-size-20);
 	}
 }
 input[type='date'],
@@ -16,39 +16,39 @@ input[type='search'],
 input[type='tel'],
 input[type='text'],
 textarea {
-	background-color: #fff;
+	background-color: var(--undpds-color-white);
 }
 :lang(my) label {
-	font-size: 0.875rem;
+	font-size: var(--undpds-font-size-14);
 }
 @media (min-width: 48em) {
 	:lang(my) label {
-		font-size: 1rem;
+		font-size: var(--undpds-font-size-16);
 	}
 }
 label {
 	display: block;
 }
 label.error {
-	color: #000;
+	color: var(--undpds-color-black);
 	margin-top: 0;
 }
 label.disabled {
-	color: #d4d6d8;
+	color: var(--undpds-color-gray-400);
 }
 .help {
-	color: #a9b1b7;
+	color: var(--undpds-color-gray-500);
 	display: block;
-	font-size: 0.875rem;
+	font-size: var(--undpds-font-size-14);
 }
 .error,
 .help {
 	margin-bottom: 0;
-	margin-top: 0.5rem;
+	margin-top: var(--undpds-spacing-03);
 }
 .error {
-	color: #ee402d;
-	font-size: 1rem;
+	color: var(--undpds-color-red);
+	font-size: var(--undpds-font-size-16);
 }
 input[type='date'],
 input[type='email'],
@@ -61,14 +61,14 @@ textarea {
 	-moz-appearance: none;
 	-webkit-appearance: none;
 	appearance: none;
-	border: 2px solid #000;
+	border: 2px solid var(--undpds-color-black);
 	border-radius: 0;
 	box-sizing: border-box;
 	display: block;
-	font-family: ProximaNova, sans-serif;
-	font-size: 1rem;
+	font-family: var(--undpds-font-family-proximanova);
+	font-size: var(--undpds-font-size-16);
 	height: 46px;
-	margin-top: 0.5rem;
+	margin-top: var(--undpds-spacing-03);
 	padding: 0.625rem;
 	width: 100%;
 }
@@ -80,7 +80,7 @@ input[type='search']::placeholder,
 input[type='tel']::placeholder,
 input[type='text']::placeholder,
 textarea::placeholder {
-	color: #a9b1b7;
+	color: var(--undpds-color-gray-500);
 }
 input[type='date']:focus,
 input[type='email']:focus,
@@ -90,7 +90,7 @@ input[type='search']:focus,
 input[type='tel']:focus,
 input[type='text']:focus,
 textarea:focus {
-	box-shadow: 0 0 4px #0468b1;
+	box-shadow: 0 0 4px var(--undpds-color-blue-800);
 	outline: 0;
 }
 input[type='date'] input[type='date'],
@@ -109,7 +109,7 @@ input[type='text'] input[type='date'],
 input[type='text'] input[type='search'],
 textarea input[type='date'],
 textarea input[type='search'] {
-	padding-left: 2.5rem;
+	padding-left: var(--undpds-spacing-08);
 	position: relative;
 }
 input[type='date'].disabled,
@@ -120,9 +120,9 @@ input[type='search'].disabled,
 input[type='tel'].disabled,
 input[type='text'].disabled,
 textarea.disabled {
-	background-color: #fff;
-	border: 2px solid #d4d6d8;
-	color: #d4d6d8;
+	background-color: var(--undpds-color-white);
+	border: 2px solid var(--undpds-color-gray-400);
+	color: var(--undpds-color-gray-400);
 }
 input[type='date'].disabled::placeholder,
 input[type='email'].disabled::placeholder,
@@ -132,7 +132,7 @@ input[type='search'].disabled::placeholder,
 input[type='tel'].disabled::placeholder,
 input[type='text'].disabled::placeholder,
 textarea.disabled::placeholder {
-	color: #d4d6d8;
+	color: var(--undpds-color-gray-400);
 }
 input[type='date'].error,
 input[type='email'].error,
@@ -142,27 +142,37 @@ input[type='search'].error,
 input[type='tel'].error,
 input[type='text'].error,
 textarea.error {
-	border: 2px solid #ee402d;
+	border: 2px solid var(--undpds-color-red);
 }
 input[type='date'] {
-	background: url(../../images/calender-black.svg) no-repeat left 14px bottom 12px;
-	background-color: #fff;
-	color: #a9b1b7;
-	padding-left: 2.5rem;
+	appearance: none;
+	background: url('data:image/svg+xml,%3Csvg%20width%3D%2217%22%20height%3D%2217%22%20viewBox%3D%220%200%2017%2017%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M12.3069%201.98753V2.48753H12.8069H16.0555C16.1449%202.48753%2016.2266%202.52177%2016.2837%202.57655C16.3401%202.63066%2016.3677%202.69951%2016.3677%202.7667V15.2334C16.3677%2015.3006%2016.3401%2015.3694%2016.2837%2015.4235C16.2266%2015.4783%2016.1449%2015.5125%2016.0555%2015.5125H1.43656C1.34723%2015.5125%201.26552%2015.4783%201.20841%2015.4235C1.15202%2015.3694%201.12439%2015.3006%201.12439%2015.2334V2.7667C1.12439%202.69951%201.15202%202.63066%201.20841%202.57655C1.26552%202.52177%201.34723%202.48753%201.43656%202.48753H4.68522H5.18522V1.98753V0.929199H5.80955V1.98753V2.48753H6.30955H11.1825H11.6825V1.98753V0.929199H12.3069V1.98753ZM15.7434%208.22087V7.72087H15.2434H2.24872H1.74872V8.22087V14.4542V14.9542H2.24872H15.2434H15.7434V14.4542V8.22087ZM11.6825%203.54587V3.04587H11.1825H6.30955H5.80955V3.54587V4.6042H5.18522V3.54587V3.04587H4.68522H2.24872H1.74872V3.54587V6.66253V7.16253H2.24872H15.2434H15.7434V6.66253V3.54587V3.04587H15.2434H12.8069H12.3069V3.54587V4.6042H11.6825V3.54587ZM4.99739%2010.2792V10.8375H4.37305V10.2792H4.99739ZM8.43388%2010.2792H9.05822V10.8375H8.43388V10.2792ZM13.119%2010.2792V10.8375H12.4947V10.2792H13.119Z%22%20fill%3D%22%23006EB5%22%20stroke%3D%22black%22%2F%3E%3C%2Fsvg%3E')
+		no-repeat left 14px bottom 12px;
+	background-color: var(--undpds-color-white);
+	color: var(--undpds-color-gray-500);
+	padding-left: var(--undpds-spacing-08);
+	position: relative;
 }
 input[type='date'].disabled {
-	background-image: url(../../images/date-disabled.svg);
+	background-image: url('data:image/svg+xml,%3Csvg%20width%3D%2217%22%20height%3D%2217%22%20viewBox%3D%220%200%2017%2017%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M12.3068%201.98753V2.48753H12.8068H16.0555C16.1448%202.48753%2016.2265%202.52177%2016.2836%202.57655C16.34%202.63066%2016.3676%202.69951%2016.3676%202.7667V15.2334C16.3676%2015.3006%2016.34%2015.3694%2016.2836%2015.4235C16.2265%2015.4783%2016.1448%2015.5125%2016.0555%2015.5125H1.43649C1.34717%2015.5125%201.26546%2015.4783%201.20835%2015.4235C1.15196%2015.3694%201.12433%2015.3006%201.12433%2015.2334V2.7667C1.12433%202.69951%201.15196%202.63066%201.20835%202.57655C1.26546%202.52177%201.34717%202.48753%201.43649%202.48753H4.68516H5.18516V1.98753V0.929199H5.80949V1.98753V2.48753H6.30949H11.1825H11.6825V1.98753V0.929199H12.3068V1.98753ZM15.7433%208.22087V7.72087H15.2433H2.24866H1.74866V8.22087V14.4542V14.9542H2.24866H15.2433H15.7433V14.4542V8.22087ZM11.6825%203.54587V3.04587H11.1825H6.30949H5.80949V3.54587V4.6042H5.18516V3.54587V3.04587H4.68516H2.24866H1.74866V3.54587V6.66253V7.16253H2.24866H15.2433H15.7433V6.66253V3.54587V3.04587H15.2433H12.8068H12.3068V3.54587V4.6042H11.6825V3.54587ZM4.99732%2010.2792V10.8375H4.37299V10.2792H4.99732ZM8.43382%2010.2792H9.05816V10.8375H8.43382V10.2792ZM13.119%2010.2792V10.8375H12.4947V10.2792H13.119Z%22%20fill%3D%22%23006EB5%22%20stroke%3D%22%23D4D6D8%22%2F%3E%3C%2Fsvg%3E');
+}
+input[type='date'].empty {
+	color: var(--undpds-color-gray-500);
+}
+input[type='date'].filled {
+	color: var(--undpds-color-black);
 }
 input[type='search'] {
-	background: url(../../images/search-black.svg) no-repeat left 14px bottom 12px;
+	background: url('data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20clip-path%3D%22url(%23clip0)%22%3E%3Cpath%20d%3D%22M8.12163%2014.8698C11.8221%2014.8698%2014.822%2011.9918%2014.822%208.44168C14.822%204.89152%2011.8221%202.01355%208.12163%202.01355C4.42112%202.01355%201.42126%204.89152%201.42126%208.44168C1.42126%2011.9918%204.42112%2014.8698%208.12163%2014.8698Z%22%20stroke%3D%22black%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M18.7967%2017.8835L12.868%2013.2343%22%20stroke%3D%22black%22%20stroke-width%3D%222%22%2F%3E%3C%2Fg%3E%3Cdefs%3E%3CclipPath%20id%3D%22clip0%22%3E%3Crect%20width%3D%2219.492%22%20height%3D%2218.7%22%20fill%3D%22white%22%20transform%3D%22translate(0%200.650024)%22%2F%3E%3C%2FclipPath%3E%3C%2Fdefs%3E%3C%2Fsvg%3E')
+		no-repeat left 14px bottom 12px;
 	color: #a9b1b7;
 	padding-left: 2.5rem;
 }
 input[type='search'].disabled {
-	background-image: url(../../images/search-gray.svg);
+	background-image: url('data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20clip-path%3D%22url(%23clip0)%22%3E%3Cpath%20d%3D%22M8.12163%2014.8698C11.8221%2014.8698%2014.822%2011.9918%2014.822%208.44168C14.822%204.89152%2011.8221%202.01355%208.12163%202.01355C4.42112%202.01355%201.42126%204.89152%201.42126%208.44168C1.42126%2011.9918%204.42112%2014.8698%208.12163%2014.8698Z%22%20stroke%3D%22%23D4D6D8%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M18.7967%2017.8835L12.868%2013.2343%22%20stroke%3D%22%23D4D6D8%22%20stroke-width%3D%222%22%2F%3E%3C%2Fg%3E%3Cdefs%3E%3CclipPath%20id%3D%22clip0%22%3E%3Crect%20width%3D%2219.492%22%20height%3D%2218.7%22%20fill%3D%22white%22%20transform%3D%22translate(0%200.650024)%22%2F%3E%3C%2FclipPath%3E%3C%2Fdefs%3E%3C%2Fsvg%3E');
 }
 .help.disabled {
-	color: #d4d6d8;
+	color: var(--undpds-color-gray-400);
 }
 textarea {
 	height: auto;
@@ -171,9 +181,14 @@ textarea {
 }
 input[type='date']::-webkit-calendar-picker-indicator {
 	appearance: none;
-	left: 3px;
-	opacity: 0;
+	background: transparent;
+	color: transparent;
+	cursor: pointer;
+	height: 1rem;
+	margin-inline-start: -1.7rem;
+	opacity: 1;
 	position: absolute;
+	width: 1rem;
 }
 @media (hover: none) and (pointer: coarse) {
 	[dir='rtl'] input[type='date'] input[type='date'],
@@ -184,27 +199,38 @@ input[type='date']::-webkit-calendar-picker-indicator {
 	[dir='rtl'] input[type='tel'] input[type='date'],
 	[dir='rtl'] input[type='text'] input[type='date'],
 	[dir='rtl'] textarea input[type='date'] {
-		padding-right: 1.5rem;
+		padding-right: var(--undpds-spacing-06);
 	}
 }
 [dir='rtl'] input[type='date'],
 [dir='rtl'] input[type='search'] {
-	background: url(../../images/calender-black.svg) no-repeat right 14px bottom 12px;
-	background-color: #fff;
+	background: url('data:image/svg+xml,%3Csvg%20width%3D%2217%22%20height%3D%2217%22%20viewBox%3D%220%200%2017%2017%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M12.3069%201.98753V2.48753H12.8069H16.0555C16.1449%202.48753%2016.2266%202.52177%2016.2837%202.57655C16.3401%202.63066%2016.3677%202.69951%2016.3677%202.7667V15.2334C16.3677%2015.3006%2016.3401%2015.3694%2016.2837%2015.4235C16.2266%2015.4783%2016.1449%2015.5125%2016.0555%2015.5125H1.43656C1.34723%2015.5125%201.26552%2015.4783%201.20841%2015.4235C1.15202%2015.3694%201.12439%2015.3006%201.12439%2015.2334V2.7667C1.12439%202.69951%201.15202%202.63066%201.20841%202.57655C1.26552%202.52177%201.34723%202.48753%201.43656%202.48753H4.68522H5.18522V1.98753V0.929199H5.80955V1.98753V2.48753H6.30955H11.1825H11.6825V1.98753V0.929199H12.3069V1.98753ZM15.7434%208.22087V7.72087H15.2434H2.24872H1.74872V8.22087V14.4542V14.9542H2.24872H15.2434H15.7434V14.4542V8.22087ZM11.6825%203.54587V3.04587H11.1825H6.30955H5.80955V3.54587V4.6042H5.18522V3.54587V3.04587H4.68522H2.24872H1.74872V3.54587V6.66253V7.16253H2.24872H15.2434H15.7434V6.66253V3.54587V3.04587H15.2434H12.8069H12.3069V3.54587V4.6042H11.6825V3.54587ZM4.99739%2010.2792V10.8375H4.37305V10.2792H4.99739ZM8.43388%2010.2792H9.05822V10.8375H8.43388V10.2792ZM13.119%2010.2792V10.8375H12.4947V10.2792H13.119Z%22%20fill%3D%22%23006EB5%22%20stroke%3D%22black%22%2F%3E%3C%2Fsvg%3E')
+		no-repeat right 14px bottom 12px;
+	background-color: var(--undpds-color-white);
 	padding-left: 0.635rem;
-	padding-right: 2.5rem;
+	padding-right: var(--undpds-spacing-08);
 	text-align: right;
 }
 [dir='rtl'] input[type='search'] {
-	background: url(../../images/search-black.svg) no-repeat right 14px bottom 12px;
+	background: url('data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20clip-path%3D%22url(%23clip0)%22%3E%3Cpath%20d%3D%22M8.12163%2014.8698C11.8221%2014.8698%2014.822%2011.9918%2014.822%208.44168C14.822%204.89152%2011.8221%202.01355%208.12163%202.01355C4.42112%202.01355%201.42126%204.89152%201.42126%208.44168C1.42126%2011.9918%204.42112%2014.8698%208.12163%2014.8698Z%22%20stroke%3D%22black%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M18.7967%2017.8835L12.868%2013.2343%22%20stroke%3D%22black%22%20stroke-width%3D%222%22%2F%3E%3C%2Fg%3E%3Cdefs%3E%3CclipPath%20id%3D%22clip0%22%3E%3Crect%20width%3D%2219.492%22%20height%3D%2218.7%22%20fill%3D%22white%22%20transform%3D%22translate(0%200.650024)%22%2F%3E%3C%2FclipPath%3E%3C%2Fdefs%3E%3C%2Fsvg%3E')
+		no-repeat right 14px bottom 12px;
 }
 [dir='rtl'] input[type='date'].disabled {
-	background-image: url(../../images/date-disabled.svg);
+	background-image: url('data:image/svg+xml,%3Csvg%20width%3D%2217%22%20height%3D%2217%22%20viewBox%3D%220%200%2017%2017%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M12.3068%201.98753V2.48753H12.8068H16.0555C16.1448%202.48753%2016.2265%202.52177%2016.2836%202.57655C16.34%202.63066%2016.3676%202.69951%2016.3676%202.7667V15.2334C16.3676%2015.3006%2016.34%2015.3694%2016.2836%2015.4235C16.2265%2015.4783%2016.1448%2015.5125%2016.0555%2015.5125H1.43649C1.34717%2015.5125%201.26546%2015.4783%201.20835%2015.4235C1.15196%2015.3694%201.12433%2015.3006%201.12433%2015.2334V2.7667C1.12433%202.69951%201.15196%202.63066%201.20835%202.57655C1.26546%202.52177%201.34717%202.48753%201.43649%202.48753H4.68516H5.18516V1.98753V0.929199H5.80949V1.98753V2.48753H6.30949H11.1825H11.6825V1.98753V0.929199H12.3068V1.98753ZM15.7433%208.22087V7.72087H15.2433H2.24866H1.74866V8.22087V14.4542V14.9542H2.24866H15.2433H15.7433V14.4542V8.22087ZM11.6825%203.54587V3.04587H11.1825H6.30949H5.80949V3.54587V4.6042H5.18516V3.54587V3.04587H4.68516H2.24866H1.74866V3.54587V6.66253V7.16253H2.24866H15.2433H15.7433V6.66253V3.54587V3.04587H15.2433H12.8068H12.3068V3.54587V4.6042H11.6825V3.54587ZM4.99732%2010.2792V10.8375H4.37299V10.2792H4.99732ZM8.43382%2010.2792H9.05816V10.8375H8.43382V10.2792ZM13.119%2010.2792V10.8375H12.4947V10.2792H13.119Z%22%20fill%3D%22%23006EB5%22%20stroke%3D%22%23D4D6D8%22%2F%3E%3C%2Fsvg%3E');
 }
 [dir='rtl'] input[type='date']::-webkit-calendar-picker-indicator {
-	left: inherit;
+	background: transparent;
+	bottom: 1;
+	color: transparent;
+	height: 1rem;
+	left: 1;
+	margin-right: 0.75rem;
+	opacity: 1;
 	position: absolute;
-	right: 27px;
+	right: 0;
+	text-align: initial;
+	top: 1;
+	width: 1rem;
 }
 [dir='rtl'] input::-webkit-date-and-time-value {
 	margin-right: 0;
@@ -221,5 +247,5 @@ input[type='date']::-webkit-calendar-picker-indicator {
 :lang(my) input[type='tel'],
 :lang(my) input[type='text'],
 :lang(my) textarea {
-	font-family: NotoSans, sans-serif;
+	font-family: var(--undpds-font-family-notosans);
 }

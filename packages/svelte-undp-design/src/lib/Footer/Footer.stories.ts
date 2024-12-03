@@ -90,3 +90,28 @@ export const Primary: Story = {
 		footerItems: footerItems
 	}
 };
+
+export const Inverted: Story = {
+	args: {
+		logoUrl: 'assets/undp-logo-blue.svg',
+		footerItems: footerItems,
+		isInverted: true
+	}
+};
+
+export const Simple: Story = {
+	args: {
+		logoUrl: 'assets/undp-logo-white.svg',
+		footerItems: footerItems,
+		isSimple: true
+	}
+};
+
+export const SimpleInverted: Story = {
+	args: {
+		logoUrl: 'assets/undp-logo-blue.svg',
+		footerItems: footerItems,
+		isSimple: true,
+		isInverted: true
+	}
+};
