@@ -202,7 +202,7 @@
 						<span class="hamburger-line line-bottom" />
 						Nav toggle
 					</button>
-					<div class="custom-button"><slot name="custom-button" /></div>
+					<div class="custom-button"><slot name="customButton" /></div>
 				</div>
 				{#if links.length > 0}
 					<div class="mobile-nav {showMobileMenu ? 'show' : ''}">
