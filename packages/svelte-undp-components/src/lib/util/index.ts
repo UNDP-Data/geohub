@@ -4,6 +4,7 @@ export * from './clean.js';
 export * from './convertFunctionToExpression.js';
 export * from './handleEnterKey.js';
 export * from './initTippy.js';
+export * from './getActiveBandIndex.js';
 export * from './getIntervalList.js';
 export * from './getLayerSourceUrl.js';
 export * from './getPropertyValueFromExpression.js';

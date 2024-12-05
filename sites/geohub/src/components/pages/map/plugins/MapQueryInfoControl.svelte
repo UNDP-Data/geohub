@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { downloadFile, getActiveBandIndex, getLayerStyle } from '$lib/helper';
+	import { downloadFile, getLayerStyle } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import type { LayerListStore } from '$stores';
 	import {
 		Accordion,
 		clean,
+		getActiveBandIndex,
 		getValueFromRasterTileUrl,
 		handleEnterKey,
 		initTooltipTippy,

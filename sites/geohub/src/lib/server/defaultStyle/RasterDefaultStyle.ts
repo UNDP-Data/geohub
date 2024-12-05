@@ -1,5 +1,5 @@
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
-import { createAttributionFromTags, getActiveBandIndex, getMinMaxValuesInMode } from '$lib/helper';
+import { createAttributionFromTags, getMinMaxValuesInMode } from '$lib/helper';
 import type { DatasetDefaultLayerStyle, DatasetFeature } from '$lib/types';
 import chroma from 'chroma-js';
 import type { DefaultStyleTemplate } from './DefaultStyleTemplate';
@@ -11,7 +11,8 @@ import {
 	isDataSkewed,
 	type RasterLayerStats,
 	type BandMetadata,
-	type RasterTileMetadata
+	type RasterTileMetadata,
+	getActiveBandIndex
 } from '@undp-data/svelte-undp-components';
 
 export default class RasterDefaultStyle implements DefaultStyleTemplate {

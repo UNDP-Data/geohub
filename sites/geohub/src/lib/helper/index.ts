@@ -4,7 +4,6 @@ export * from './fetchWithTimeout';
 export * from './expression2cql';
 export * from './expression2fields';
 export * from './getAccessLevelIcon';
-export * from './getActiveBandIndex';
 export * from './getBase64EncodedUrl';
 export * from './getDecimalPlaces';
 export * from './getDefaultLayerStyle';

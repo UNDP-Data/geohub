@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
 import {
-	getActiveBandIndex,
 	getDefaltLayerStyle,
 	getDefaltLayerStyleForStac,
 	getDefaultLayerStyleForStacProducts,
@@ -8,7 +7,11 @@ import {
 } from './helper';
 import type { DatasetFeature, LayerCreationInfo } from './types';
 import type { Map } from 'maplibre-gl';
-import type { BandMetadata, RasterTileMetadata } from '@undp-data/svelte-undp-components';
+import {
+	type BandMetadata,
+	type RasterTileMetadata,
+	getActiveBandIndex
+} from '@undp-data/svelte-undp-components';
 
 export class RasterTileData {
 	private feature: DatasetFeature;

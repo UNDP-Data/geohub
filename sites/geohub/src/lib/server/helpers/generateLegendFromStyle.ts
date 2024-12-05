@@ -1,4 +1,4 @@
-import { fetchUrl, getActiveBandIndex, getDecimalPlaces, isRgbRaster } from '$lib/helper';
+import { fetchUrl, getDecimalPlaces, isRgbRaster } from '$lib/helper';
 import chroma from 'chroma-js';
 import { hexToCSSFilter } from 'hex-to-css-filter';
 import { SvgLegendCreator, type SvgLegendCreatorOptions } from '$lib/server/SvgLegendCreator';
@@ -16,7 +16,8 @@ import {
 	type VectorTileMetadata,
 	convertFunctionToExpression,
 	type BandMetadata,
-	type RasterTileMetadata
+	type RasterTileMetadata,
+	getActiveBandIndex
 } from '@undp-data/svelte-undp-components';
 
 /**

@@ -18,12 +18,12 @@
 </script>
 
 <script lang="ts">
-	import { getActiveBandIndex } from '$lib/helper';
 	import {
 		ClassificationMethods,
 		ClassificationMethodTypes,
 		ColorMapPicker,
 		FieldControl,
+		getActiveBandIndex,
 		getIntervalList,
 		getLayerSourceUrl,
 		getSampleFromHistogram,
