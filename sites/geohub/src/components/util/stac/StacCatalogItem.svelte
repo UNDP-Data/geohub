@@ -7,11 +7,10 @@
 		DatasetFeature,
 		Layer,
 		LayerCreationInfo,
-		RasterTileMetadata,
 		StacAsset,
 		StacItemFeature
 	} from '$lib/types';
-	import { Accordion, clean } from '@undp-data/svelte-undp-components';
+	import { Accordion, clean, type RasterTileMetadata } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { Map, NavigationControl, Popup, type LngLatLike } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';

@@ -8,7 +8,6 @@
 		Layer,
 		LayerCreationInfo,
 		Link,
-		RasterTileMetadata,
 		StacAsset,
 		StacCatalog,
 		StacCatalogBreadcrumb,
@@ -16,7 +15,12 @@
 		StacItemFeature,
 		TableViewType
 	} from '$lib/types';
-	import { Notification, SegmentButtons, handleEnterKey } from '@undp-data/svelte-undp-components';
+	import {
+		Notification,
+		SegmentButtons,
+		handleEnterKey,
+		type RasterTileMetadata
+	} from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination } from '@undp-data/svelte-undp-design';
 	import {
 		Map,

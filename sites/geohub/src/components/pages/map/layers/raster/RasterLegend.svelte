@@ -1,18 +1,20 @@
 <script lang="ts">
 	import RasterAlgorithms from '$components/maplibre/raster/RasterAlgorithms.svelte';
-	import RasterClassifyLegend from '$components/maplibre/raster/RasterClassifyLegend.svelte';
-	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
 	import {
-		getLayerStyle,
-		getValueFromRasterTileUrl,
-		isRgbRaster,
-		isUniqueValueRaster
-	} from '$lib/helper';
-	import type { Link, RasterAlgorithm, RasterTileMetadata, Tag } from '$lib/types';
+		NumberOfClassesMaximum,
+		NumberOfClassesMinimum,
+		NumberOfRandomSamplingPoints
+	} from '$lib/config/AppConfig';
+	import { getLayerStyle, isRgbRaster } from '$lib/helper';
+	import type { Link, RasterAlgorithm, Tag } from '$lib/types';
 	import {
+		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
+		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		RASTERRESCALE_CONTEXT_KEY,
+		type ClassificationMethodStore,
 		type ColorMapNameStore,
+		type NumberOfClassesStore,
 		type RasterRescaleStore
 	} from '$stores';
 	import {
@@ -20,21 +22,26 @@
 		ColorMapPicker,
 		FieldControl,
 		getLayerSourceUrl,
+		getValueFromRasterTileUrl,
 		Help,
 		HillshadeAccentColor,
 		HillshadeExaggeration,
 		HillshadeHighlightColor,
 		HillshadeIlluminationDirection,
 		HillshadeShadowColor,
+		isUniqueValueRaster,
 		MAPSTORE_CONTEXT_KEY,
 		RasterBrightnessMax,
 		RasterBrightnessMin,
+		RasterClassifyLegend,
 		RasterContrast,
 		RasterHueRotate,
 		RasterResampling,
+		RasterRescale,
 		RasterSaturation,
 		updateParamsInURL,
-		type MapStore
+		type MapStore,
+		type RasterTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { type LayerSpecification } from 'maplibre-gl';
@@ -46,6 +53,10 @@
 	}
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY);
+	const classificationMethodStore: ClassificationMethodStore = getContext(
+		CLASSIFICATION_METHOD_CONTEXT_KEY
+	);
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
 	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY);
 
@@ -56,11 +67,12 @@
 	let algorithmId: string | undefined = undefined;
 	let algorithm: RasterAlgorithm;
 	let layerStyle: LayerSpecification | undefined;
+	let classifyComponent: RasterClassifyLegend;
 
 	const isRgbTile = metadata.colorinterp ? isRgbRaster(metadata.colorinterp) : false;
 	let layerHasUniqueValues = isRgbTile ? false : isUniqueValueRaster(metadata);
 	let legendType: LegendType | undefined = undefined;
-	const unit = tags?.find((t) => t.key === 'unit')?.value;
+	let unit: string = tags?.find((t) => t.key === 'unit')?.value as string;
 
 	const handleSelectAlgorithm = () => {
 		layerStyle = $map.getStyle().layers.find((l: LayerSpecification) => l.id === layerId);
@@ -114,16 +126,19 @@
 		if (layerHasUniqueValues) return;
 		if (!$rescaleStore) return;
 		if (algorithmId && !hasRescaleProperty()) return;
-		if (legendType !== LegendType.LINEAR) return;
+
 		const layerStyle = getLayerStyle($map, layerId);
 		const layerUrl = getLayerSourceUrl($map, layerId) as string;
 		if (!(layerUrl && layerUrl.length > 0)) return;
+
 		const layerURL = new URL(layerUrl);
 		layerURL.searchParams.delete('colormap');
 
 		let updatedParams = { colormap_name: $colorMapNameStore, rescale: $rescaleStore.join(',') };
 
 		updateParamsInURL(layerStyle, layerURL, updatedParams, $map);
+
+		classifyComponent?.redraw();
 	}, 200);
 
 	const decideLegendType = () => {
@@ -190,7 +205,6 @@
 			 * if the layer is not unique, the legendType is set to DEFAULT
 			 */
 			decideLegendType();
-			rescaleStore?.subscribe(handleRescaleChanged);
 		} else {
 			expanded = { 'hillshade-accent-color': true };
 		}
@@ -326,7 +340,18 @@
 							</div>
 						</div>
 					{:else if legendType === LegendType.CATEGORISED}
-						<RasterClassifyLegend bind:layerId bind:metadata />
+						<RasterClassifyLegend
+							bind:layerId
+							bind:metadata
+							bind:rescale={$rescaleStore}
+							bind:numberOfClasses={$numberOfClassesStore}
+							bind:colorMapName={$colorMapNameStore}
+							bind:classificationMethod={$classificationMethodStore}
+							numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
+							numberOfClassesMaximum={NumberOfClassesMaximum}
+							numberOfClassesMinimum={NumberOfClassesMinimum}
+							bind:this={classifyComponent}
+						/>
 					{/if}
 				</div>
 				<div slot="buttons">
@@ -338,7 +363,13 @@
 		{#if (!layerHasUniqueValues && !isRgbTile && !algorithmId) || (algorithmId && hasRescaleProperty())}
 			<Accordion title="Rescale min/max values" bind:isExpanded={expanded['rescale']}>
 				<div class="pb-2" slot="content">
-					<RasterRescale bind:layerId bind:metadata bind:tags />
+					<RasterRescale
+						bind:layerId
+						bind:metadata
+						bind:unit
+						bind:rescale={$rescaleStore}
+						on:change={handleRescaleChanged}
+					/>
 				</div>
 				<div slot="buttons">
 					<Help>Rescale minimum/maximum values to filter</Help>

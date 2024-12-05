@@ -10,7 +10,6 @@
 		DatasetFeature,
 		Layer,
 		RasterAlgorithm,
-		RasterTileMetadata,
 		StacCatalog,
 		StacCatalogBreadcrumb,
 		StacCollection,
@@ -20,7 +19,8 @@
 		FieldControl,
 		HeroHeader,
 		ModalTemplate,
-		type BreadcrumbPage
+		type BreadcrumbPage,
+		type RasterTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import type {
