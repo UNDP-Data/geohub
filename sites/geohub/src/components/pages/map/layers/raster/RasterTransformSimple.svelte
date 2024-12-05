@@ -12,11 +12,12 @@
 	import Wizard from '$components/util/Wizard.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { RasterComparisonOperators } from '$lib/config/AppConfig';
-	import { getActiveBandIndex, getLayerStyle, getValueFromRasterTileUrl } from '$lib/helper';
+	import { getActiveBandIndex, getLayerStyle } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { RASTERRESCALE_CONTEXT_KEY, type RasterRescaleStore } from '$stores';
 	import {
 		getLayerSourceUrl,
+		getValueFromRasterTileUrl,
 		initTooltipTippy,
 		isInt,
 		MAPSTORE_CONTEXT_KEY,

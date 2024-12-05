@@ -18,7 +18,7 @@
 </script>
 
 <script lang="ts">
-	import { getActiveBandIndex, getValueFromRasterTileUrl } from '$lib/helper';
+	import { getActiveBandIndex } from '$lib/helper';
 	import {
 		ClassificationMethods,
 		ClassificationMethodTypes,
@@ -28,6 +28,7 @@
 		getLayerSourceUrl,
 		getSampleFromHistogram,
 		getSampleFromInterval,
+		getValueFromRasterTileUrl,
 		LegendColorMapRow,
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,

@@ -16,7 +16,6 @@ export * from './getLayerStyle';
 export * from './getLineWidth';
 export * from './getMapImageFromStyle';
 export * from './getPropertyValueFromExpression';
-export * from './getValueFromRasterTileUrl';
 export * from './loadImageToDataUrl';
 export * from './sleep';
 export * from './distinct';

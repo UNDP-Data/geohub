@@ -9,7 +9,7 @@
 		NumberOfClassesMinimum,
 		NumberOfRandomSamplingPoints
 	} from '$lib/config/AppConfig';
-	import { getLayerStyle, getValueFromRasterTileUrl, isRgbRaster } from '$lib/helper';
+	import { getLayerStyle, isRgbRaster } from '$lib/helper';
 	import type { Link, RasterAlgorithm, Tag } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
@@ -26,6 +26,7 @@
 		ColorMapPicker,
 		FieldControl,
 		getLayerSourceUrl,
+		getValueFromRasterTileUrl,
 		Help,
 		HillshadeAccentColor,
 		HillshadeExaggeration,

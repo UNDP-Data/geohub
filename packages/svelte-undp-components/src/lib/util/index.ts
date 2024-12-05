@@ -10,6 +10,7 @@ export * from './getPropertyValueFromExpression.js';
 export * from './getRandomColormap.js';
 export * from './getSampleFromHistogram.js';
 export * from './getSampleFromInterval.js';
+export * from './getValueFromRasterTileUrl.js';
 export * from './isInt.js';
 export * from './isValidUrl.js';
 export * from './remapInputValue.js';

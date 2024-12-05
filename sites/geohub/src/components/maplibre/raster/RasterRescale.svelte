@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { getActiveBandIndex, getValueFromRasterTileUrl } from '$lib/helper';
+	import { getActiveBandIndex } from '$lib/helper';
 	import type { Tag } from '$lib/types';
 	import { RASTERRESCALE_CONTEXT_KEY, type RasterRescaleStore } from '$stores';
 	import {
+		getValueFromRasterTileUrl,
 		isInt,
 		MAPSTORE_CONTEXT_KEY,
 		Slider,
