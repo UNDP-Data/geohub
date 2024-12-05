@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.16
+
+### Patch Changes
+
+- caf4859: fix: renamed header slot name from custom-button to customButton.
+
 ## 1.22.15
 
 ### Patch Changes
