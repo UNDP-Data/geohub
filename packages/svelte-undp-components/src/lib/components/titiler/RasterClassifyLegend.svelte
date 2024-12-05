@@ -18,29 +18,30 @@
 </script>
 
 <script lang="ts">
+	import type { ColorMapRow } from '$lib/components/maplibre/util/LegendColorMapRow.svelte';
+	import LegendColorMapRow from '$lib/components/maplibre/util/LegendColorMapRow.svelte';
+	import ColorMapPicker from '$lib/components/ui/ColorMapPicker.svelte';
+	import FieldControl from '$lib/components/ui/FieldControl.svelte';
+	import NumberInput from '$lib/components/ui/NumberInput.svelte';
 	import {
 		ClassificationMethods,
-		ClassificationMethodTypes,
-		ColorMapPicker,
-		FieldControl,
-		getActiveBandIndex,
-		getIntervalList,
-		getLayerSourceUrl,
-		getSampleFromHistogram,
-		getSampleFromInterval,
-		getValueFromRasterTileUrl,
-		LegendColorMapRow,
-		MAPSTORE_CONTEXT_KEY,
-		NumberInput,
-		remapInputValue,
-		updateIntervalValues,
-		updateParamsInURL,
-		type BandMetadata,
-		type ColorMapRow,
-		type MapStore,
-		type RasterLayerStats,
-		type RasterTileMetadata
-	} from '@undp-data/svelte-undp-components';
+		ClassificationMethodTypes
+	} from '$lib/constants/ClassificationMethod.js';
+	import type {
+		BandMetadata,
+		RasterLayerStats,
+		RasterTileMetadata
+	} from '$lib/interfaces/RasterTileMetadata.js';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { getActiveBandIndex } from '$lib/util/getActiveBandIndex.js';
+	import { getIntervalList } from '$lib/util/getIntervalList.js';
+	import { getLayerSourceUrl } from '$lib/util/getLayerSourceUrl.js';
+	import { getSampleFromHistogram } from '$lib/util/getSampleFromHistogram.js';
+	import { getSampleFromInterval } from '$lib/util/getSampleFromInterval.js';
+	import { getValueFromRasterTileUrl } from '$lib/util/getValueFromRasterTileUrl.js';
+	import { remapInputValue } from '$lib/util/remapInputValue.js';
+	import { updateIntervalValues } from '$lib/util/updateIntervalValues.js';
+	import { updateParamsInURL } from '$lib/util/updateParamsInUrl.js';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import type { RasterLayerSpecification } from 'maplibre-gl';
@@ -50,7 +51,7 @@
 
 	export let layerId: string;
 	export let metadata: RasterTileMetadata;
-	export let rescale: number[];
+	export let rescale: number[] | undefined = undefined;
 	export let numberOfClasses = 5;
 	export let colorMapName = 'viridis';
 	export let classificationMethod: ClassificationMethodTypes =

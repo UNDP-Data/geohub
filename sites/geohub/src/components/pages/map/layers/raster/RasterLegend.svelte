@@ -1,8 +1,5 @@
 <script lang="ts">
 	import RasterAlgorithms from '$components/maplibre/raster/RasterAlgorithms.svelte';
-	import RasterClassifyLegend, {
-		isUniqueValueRaster
-	} from '$components/maplibre/raster/RasterClassifyLegend.svelte';
 	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
 	import {
 		NumberOfClassesMaximum,
@@ -33,9 +30,11 @@
 		HillshadeHighlightColor,
 		HillshadeIlluminationDirection,
 		HillshadeShadowColor,
+		isUniqueValueRaster,
 		MAPSTORE_CONTEXT_KEY,
 		RasterBrightnessMax,
 		RasterBrightnessMin,
+		RasterClassifyLegend,
 		RasterContrast,
 		RasterHueRotate,
 		RasterResampling,
