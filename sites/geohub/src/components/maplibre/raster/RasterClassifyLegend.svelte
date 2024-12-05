@@ -3,23 +3,13 @@
 	import {
 		generateColorMap,
 		getActiveBandIndex,
-		getLayerStyle,
 		getValueFromRasterTileUrl,
 		isUniqueValueRaster
 	} from '$lib/helper';
 	import type { BandMetadata, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import {
-		CLASSIFICATION_METHOD_CONTEXT_KEY,
-		COLORMAP_NAME_CONTEXT_KEY,
-		NUMBER_OF_CLASSES_CONTEXT_KEY,
-		RASTERRESCALE_CONTEXT_KEY,
-		type ClassificationMethodStore,
-		type ColorMapNameStore,
-		type NumberOfClassesStore,
-		type RasterRescaleStore
-	} from '$stores';
-	import {
 		ClassificationMethods,
+		ClassificationMethodTypes,
 		ColorMapPicker,
 		FieldControl,
 		getLayerSourceUrl,
@@ -34,24 +24,20 @@
 	} from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
+	import type { RasterLayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
-	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY);
-	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY);
-	const classificationMethodStore: ClassificationMethodStore = getContext(
-		CLASSIFICATION_METHOD_CONTEXT_KEY
-	);
 
 	export let layerId: string;
 	export let metadata: RasterTileMetadata;
-	// export let manualClassificationEnabled: boolean;
+	export let rescale: number[];
+	export let numberOfClasses = 5;
+	export let colorMapName = 'viridis';
+	export let classificationMethod: ClassificationMethodTypes =
+		ClassificationMethodTypes.NATURAL_BREAK;
 
-	// const bandIndex = getActiveBandIndex(metadata);
-	// const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
-
-	const layerHasUniqueValues = isUniqueValueRaster(metadata);
+	const layerHasUniqueValues = isUniqueValueRaster(metadata) ?? false;
 
 	let colorMapRows: Array<ColorMapRow> = [];
 	let layerMax: number;
@@ -79,24 +65,23 @@
 		layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
 	}
 
-	if (!$rescaleStore) {
+	if (!rescale) {
 		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];
 		if (Array.isArray(colormap)) {
 			// interval legend
 			const first = colormap[0];
 			const last = colormap[colormap.length - 1];
-			$rescaleStore = [first[0][0], last[0][1]];
+			rescale = [first[0][0], last[0][1]];
 		} else {
 			// unique value legend or default legend
-			$rescaleStore = [layerMin, layerMax];
+			rescale = [layerMin, layerMax];
 		}
 	}
 
-	// let layerMean = Number(bandMetaStats['STATISTICS_MEAN'])
 	let percentile98 = !layerHasUniqueValues
 		? metadata.stats[metadata.active_band_no]['percentile_98']
 		: 0;
-	let legendLabels = {};
+	let legendLabels: { [key: string]: string } = {};
 
 	// NOTE: As we are now using a default classification method, there is no need to determine the classification method,
 	// based on the layer mean and max values. Commenting out the code for now, but will be removed in the future.
@@ -115,11 +100,11 @@
 	if (layerHasUniqueValues) {
 		const bandIndex = getActiveBandIndex(metadata);
 		const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
-		legendLabels = bandMetaStats['STATISTICS_UNIQUE_VALUES'];
+		legendLabels = bandMetaStats['STATISTICS_UNIQUE_VALUES'] as { [key: string]: string };
 		if (typeof legendLabels === 'string') {
 			legendLabels = JSON.parse(legendLabels);
 		}
-		$numberOfClassesStore = Object.keys(legendLabels).length;
+		numberOfClasses = Object.keys(legendLabels).length;
 	}
 
 	let containerWidth: number;
@@ -132,7 +117,7 @@
 	const setInitialColorMapRows = (isClassificationMethodEdited = false) => {
 		if (layerHasUniqueValues) {
 			let colorsList = chroma
-				.scale($colorMapNameStore)
+				.scale(colorMapName)
 				.mode('lrgb')
 				.colors(Object.keys(legendLabels).length);
 			colorMapRows = Object.keys(legendLabels).map((key, index) => {
@@ -146,18 +131,18 @@
 		} else {
 			// Fixme: Possible bug in titiler. The Max value is not the real max in some layers
 			// 0.01 is added to the max value as in some layers, the max value is not the real max value.
-			const min = $rescaleStore[0];
-			const max = $rescaleStore[1] + 0.01;
+			const min = rescale[0];
+			const max = rescale[1] + 0.01;
 
 			colorMapRows = generateColorMap(
 				min,
 				max,
 				colorMapRows,
-				$numberOfClassesStore,
-				$classificationMethodStore,
+				numberOfClasses,
+				classificationMethod,
 				isClassificationMethodEdited,
 				percentile98,
-				$colorMapNameStore,
+				colorMapName,
 				histogram
 			);
 		}
@@ -220,19 +205,16 @@
 				});
 			}
 		}
-		$numberOfClassesStore = colorMapRows.length;
+		numberOfClasses = colorMapRows.length;
 	};
 
-	const handleColorMapChanged = (e) => {
+	const handleColorMapChanged = (e: { detail: { colorMapName: string } }) => {
 		if (e.detail) {
-			let colorMapName = e.detail.colorMapName;
-			if (!colorMapName) return;
+			let name = e.detail.colorMapName;
+			if (!name) return;
 
-			let colorsList = chroma
-				.scale(colorMapName.replace('_r', ''))
-				.mode('lrgb')
-				.colors($numberOfClassesStore);
-			const isReverse = colorMapName.indexOf('_r') !== -1;
+			let colorsList = chroma.scale(name.replace('_r', '')).mode('lrgb').colors(numberOfClasses);
+			const isReverse = name.indexOf('_r') !== -1;
 			if (isReverse) {
 				colorsList = colorsList.reverse();
 			}
@@ -250,7 +232,7 @@
 	};
 
 	const handleIncrementDecrementClasses = (e: CustomEvent) => {
-		$numberOfClassesStore = e.detail.value;
+		numberOfClasses = e.detail.value;
 		colorMapRows = [];
 		setInitialColorMapRows();
 		classifyImage();
@@ -267,26 +249,31 @@
 	};
 
 	const handleRescaleChanged = debounce(() => {
-		if (!$rescaleStore) return;
+		if (layerHasUniqueValues) return;
+		if (!rescale) return;
 		let currentMin = colorMapRows[0].start;
 		if (!currentMin) currentMin = currentMin;
 		let currentMax = (colorMapRows[colorMapRows.length - 1].end as number) - 0.01;
 		if (!currentMax) currentMax = layerMax;
-		if ($rescaleStore[0] === currentMin && $rescaleStore[1] === currentMax) return;
+		if (rescale[0] === currentMin && rescale[1] === currentMax) return;
 		colorMapRows = [];
 		setInitialColorMapRows();
 		classifyImage();
 	}, 200);
 
-	const handleParamsUpdate = (encodeColorMapRows) => {
+	const handleParamsUpdate = (encodeColorMapRows: string) => {
 		const layerUrl = getLayerSourceUrl($map, layerId) as string;
 		if (!(layerUrl && layerUrl.length > 0)) return;
 		const layerURL = new URL(layerUrl);
 		layerURL.searchParams.delete('colormap_name');
 		layerURL.searchParams.delete('rescale');
 		const updatedParams = Object.assign({ colormap: encodeColorMapRows });
-		const layerStyle = getLayerStyle($map, layerId);
-		updateParamsInURL(layerStyle, layerURL, updatedParams, $map);
+
+		const style = $map.getStyle();
+		const layer = style?.layers?.find((l) => l.id === layerId);
+		if (layer) {
+			updateParamsInURL(layer as RasterLayerSpecification, layerURL, updatedParams, $map);
+		}
 	};
 
 	onMount(() => {
@@ -297,12 +284,9 @@
 		} else {
 			setColorMapRowsFromURL();
 		}
-		if (!layerHasUniqueValues) {
-			rescaleStore.subscribe(() => {
-				handleRescaleChanged();
-			});
-		}
 	});
+
+	$: rescale, handleRescaleChanged();
 </script>
 
 <div
@@ -312,7 +296,7 @@
 >
 	<div class="field">
 		<p class="control" style="width: {colormapPickerWidth}px">
-			<ColorMapPicker bind:colorMapName={$colorMapNameStore} on:change={handleColorMapChanged} />
+			<ColorMapPicker bind:colorMapName on:change={handleColorMapChanged} />
 		</p>
 	</div>
 
@@ -327,7 +311,7 @@
 					<div slot="control">
 						<div class="select is-normal is-fullwidth">
 							<select
-								bind:value={$classificationMethodStore}
+								bind:value={classificationMethod}
 								on:change={handleClassificationMethodChange}
 							>
 								{#each ClassificationMethods as classificationMethod}
@@ -347,7 +331,7 @@
 					<div slot="help">Increase of decrease the number of classes.</div>
 					<div slot="control">
 						<NumberInput
-							bind:value={$numberOfClassesStore}
+							bind:value={numberOfClasses}
 							minValue={NumberOfClassesMinimum}
 							maxValue={NumberOfClassesMaximum}
 							on:change={handleIncrementDecrementClasses}
@@ -383,7 +367,7 @@
 			{#each colorMapRows as colorMapRow}
 				<LegendColorMapRow
 					bind:colorMapRow
-					bind:colorMapName={$colorMapNameStore}
+					bind:colorMapName
 					hasUniqueValues={layerHasUniqueValues}
 					on:changeColorMap={handleColorMapChanged}
 					on:changeIntervalValues={handleChangeIntervalValues}

@@ -10,9 +10,13 @@
 	} from '$lib/helper';
 	import type { Link, RasterAlgorithm, RasterTileMetadata, Tag } from '$lib/types';
 	import {
+		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
+		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		RASTERRESCALE_CONTEXT_KEY,
+		type ClassificationMethodStore,
 		type ColorMapNameStore,
+		type NumberOfClassesStore,
 		type RasterRescaleStore
 	} from '$stores';
 	import {
@@ -46,6 +50,10 @@
 	}
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY);
+	const classificationMethodStore: ClassificationMethodStore = getContext(
+		CLASSIFICATION_METHOD_CONTEXT_KEY
+	);
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
 	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY);
 
@@ -326,7 +334,14 @@
 							</div>
 						</div>
 					{:else if legendType === LegendType.CATEGORISED}
-						<RasterClassifyLegend bind:layerId bind:metadata />
+						<RasterClassifyLegend
+							bind:layerId
+							bind:metadata
+							bind:rescale={$rescaleStore}
+							bind:numberOfClasses={$numberOfClassesStore}
+							bind:colorMapName={$colorMapNameStore}
+							bind:classificationMethod={$classificationMethodStore}
+						/>
 					{/if}
 				</div>
 				<div slot="buttons">
