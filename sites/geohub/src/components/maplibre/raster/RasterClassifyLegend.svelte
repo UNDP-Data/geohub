@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
 	import { getActiveBandIndex, getValueFromRasterTileUrl, isUniqueValueRaster } from '$lib/helper';
 	import type { BandMetadata, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import {
@@ -35,6 +34,8 @@
 	export let classificationMethod: ClassificationMethodTypes =
 		ClassificationMethodTypes.NATURAL_BREAK;
 	export let numberOfRandomSamplingPoints = 1000;
+	export let numberOfClassesMaximum = 25;
+	export let numberOfClassesMinimum = 2;
 
 	const layerHasUniqueValues = isUniqueValueRaster(metadata) ?? false;
 
@@ -437,8 +438,8 @@
 					<div slot="control">
 						<NumberInput
 							bind:value={numberOfClasses}
-							minValue={NumberOfClassesMinimum}
-							maxValue={NumberOfClassesMaximum}
+							minValue={numberOfClassesMinimum}
+							maxValue={numberOfClassesMaximum}
 							on:change={handleIncrementDecrementClasses}
 							size="normal"
 						/>

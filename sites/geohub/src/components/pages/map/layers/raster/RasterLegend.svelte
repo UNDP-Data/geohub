@@ -2,7 +2,11 @@
 	import RasterAlgorithms from '$components/maplibre/raster/RasterAlgorithms.svelte';
 	import RasterClassifyLegend from '$components/maplibre/raster/RasterClassifyLegend.svelte';
 	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
-	import { NumberOfRandomSamplingPoints } from '$lib/config/AppConfig';
+	import {
+		NumberOfClassesMaximum,
+		NumberOfClassesMinimum,
+		NumberOfRandomSamplingPoints
+	} from '$lib/config/AppConfig';
 	import {
 		getLayerStyle,
 		getValueFromRasterTileUrl,
@@ -346,6 +350,8 @@
 							bind:colorMapName={$colorMapNameStore}
 							bind:classificationMethod={$classificationMethodStore}
 							numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
+							numberOfClassesMaximum={NumberOfClassesMaximum}
+							numberOfClassesMinimum={NumberOfClassesMinimum}
 							bind:this={classifyComponent}
 						/>
 					{/if}
