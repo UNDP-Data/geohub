@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { getActiveBandIndex } from './getActiveBandIndex';
-import type { RasterTileMetadata } from '$lib/types';
+import type { RasterTileMetadata } from '@undp-data/svelte-undp-components';
 
 describe('getActiveBandIndex', () => {
 	it('should return the index of the active band', () => {

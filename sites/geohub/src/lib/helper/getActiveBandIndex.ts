@@ -1,4 +1,4 @@
-import type { RasterTileMetadata } from '$lib/types';
+import type { RasterTileMetadata } from '@undp-data/svelte-undp-components';
 
 /**
  * Get active band index number from RasterTileMetadata object

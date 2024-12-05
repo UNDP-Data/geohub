@@ -1,4 +1,4 @@
-import type { BandMetadata, RasterTileMetadata } from '$lib/types';
+import type { BandMetadata, RasterTileMetadata } from '@undp-data/svelte-undp-components';
 import { getActiveBandIndex } from './getActiveBandIndex';
 
 export const isUniqueValueRaster = (metadata: RasterTileMetadata) => {

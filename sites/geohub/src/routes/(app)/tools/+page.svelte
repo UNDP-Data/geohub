@@ -15,6 +15,7 @@
 	import { page } from '$app/stores';
 	import { algorithmCategory } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import PublishedDatasetRow from '$components/pages/data/datasets/PublishedDatasetRow.svelte';
+	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogTool from '$components/util/stac/StacCatalogTool.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { addDataToLocalStorage, getFirstSymbolLayerId } from '$lib/helper';
@@ -22,14 +23,14 @@
 		DatasetFeature,
 		DatasetFeatureCollection,
 		Layer,
-		RasterAlgorithm,
-		RasterTileMetadata
+		RasterAlgorithm
 	} from '$lib/types';
 	import {
 		HeroHeader,
 		Notification,
 		getRandomColormap,
-		type BreadcrumbPage
+		type BreadcrumbPage,
+		type RasterTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { Card, Loader, Pagination } from '@undp-data/svelte-undp-design';
 	import type {
@@ -41,7 +42,6 @@
 	} from 'maplibre-gl';
 	import { v4 as uuidv4 } from 'uuid';
 	import type { PageData } from './$types';
-	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 
 	export let data: PageData;
 

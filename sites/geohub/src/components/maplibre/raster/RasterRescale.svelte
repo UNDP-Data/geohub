@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { getActiveBandIndex, getValueFromRasterTileUrl } from '$lib/helper';
-	import type { BandMetadata, RasterTileMetadata, Tag } from '$lib/types';
+	import type { Tag } from '$lib/types';
 	import { RASTERRESCALE_CONTEXT_KEY, type RasterRescaleStore } from '$stores';
 	import {
 		isInt,
 		MAPSTORE_CONTEXT_KEY,
 		Slider,
-		type MapStore
+		type BandMetadata,
+		type MapStore,
+		type RasterTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher, getContext } from 'svelte';
 

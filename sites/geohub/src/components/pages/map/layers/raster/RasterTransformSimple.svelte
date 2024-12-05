@@ -13,7 +13,7 @@
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { RasterComparisonOperators } from '$lib/config/AppConfig';
 	import { getActiveBandIndex, getLayerStyle, getValueFromRasterTileUrl } from '$lib/helper';
-	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
+	import type { Layer } from '$lib/types';
 	import { RASTERRESCALE_CONTEXT_KEY, type RasterRescaleStore } from '$stores';
 	import {
 		getLayerSourceUrl,
@@ -23,7 +23,9 @@
 		Notification,
 		Slider,
 		updateParamsInURL,
-		type MapStore
+		type BandMetadata,
+		type MapStore,
+		type RasterTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { getContext, onMount } from 'svelte';
 

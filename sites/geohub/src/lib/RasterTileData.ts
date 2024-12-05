@@ -6,8 +6,9 @@ import {
 	getDefaultLayerStyleForStacProducts,
 	getFirstSymbolLayerId
 } from './helper';
-import type { RasterTileMetadata, DatasetFeature, LayerCreationInfo, BandMetadata } from './types';
+import type { DatasetFeature, LayerCreationInfo } from './types';
 import type { Map } from 'maplibre-gl';
+import type { BandMetadata, RasterTileMetadata } from '@undp-data/svelte-undp-components';
 
 export class RasterTileData {
 	private feature: DatasetFeature;

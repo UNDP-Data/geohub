@@ -1,12 +1,6 @@
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import { createAttributionFromTags, getActiveBandIndex, getMinMaxValuesInMode } from '$lib/helper';
-import type {
-	BandMetadata,
-	DatasetDefaultLayerStyle,
-	DatasetFeature,
-	RasterLayerStats,
-	RasterTileMetadata
-} from '$lib/types';
+import type { DatasetDefaultLayerStyle, DatasetFeature } from '$lib/types';
 import chroma from 'chroma-js';
 import type { DefaultStyleTemplate } from './DefaultStyleTemplate';
 import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
@@ -14,7 +8,10 @@ import { error } from '@sveltejs/kit';
 import {
 	getRandomColormap,
 	isDataHighlySkewed,
-	isDataSkewed
+	isDataSkewed,
+	type RasterLayerStats,
+	type BandMetadata,
+	type RasterTileMetadata
 } from '@undp-data/svelte-undp-components';
 
 export default class RasterDefaultStyle implements DefaultStyleTemplate {

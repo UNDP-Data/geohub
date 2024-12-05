@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { getActiveBandIndex, getValueFromRasterTileUrl, isUniqueValueRaster } from '$lib/helper';
-	import type { BandMetadata, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import {
 		ClassificationMethods,
 		ClassificationMethodTypes,
@@ -16,8 +15,11 @@
 		remapInputValue,
 		updateIntervalValues,
 		updateParamsInURL,
+		type BandMetadata,
 		type ColorMapRow,
-		type MapStore
+		type MapStore,
+		type RasterLayerStats,
+		type RasterTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';

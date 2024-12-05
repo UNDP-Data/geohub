@@ -29,13 +29,14 @@
 		isRgbRaster,
 		removeSasTokenFromDatasetUrl
 	} from '$lib/helper';
-	import type { DatasetFeature, Layer, RasterTileMetadata } from '$lib/types';
+	import type { DatasetFeature, Layer } from '$lib/types';
 	import {
 		CopyToClipboard,
 		FieldControl,
 		handleEnterKey,
 		HeroHeader,
 		type BreadcrumbPage,
+		type RasterTileMetadata,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';

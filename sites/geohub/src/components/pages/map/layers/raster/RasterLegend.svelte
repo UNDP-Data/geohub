@@ -13,7 +13,7 @@
 		isRgbRaster,
 		isUniqueValueRaster
 	} from '$lib/helper';
-	import type { Link, RasterAlgorithm, RasterTileMetadata, Tag } from '$lib/types';
+	import type { Link, RasterAlgorithm, Tag } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
@@ -43,7 +43,8 @@
 		RasterResampling,
 		RasterSaturation,
 		updateParamsInURL,
-		type MapStore
+		type MapStore,
+		type RasterTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { type LayerSpecification } from 'maplibre-gl';

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { isRgbRaster } from '$lib/helper';
-	import type { BandMetadata, RasterTileMetadata } from '$lib/types';
+	import type { BandMetadata, RasterTileMetadata } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();

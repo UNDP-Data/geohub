@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { getLayerStyle } from '$lib/helper';
-	import type { RasterTileMetadata } from '$lib/types';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
@@ -16,6 +15,7 @@
 		MAPSTORE_CONTEXT_KEY,
 		Slider,
 		type MapStore,
+		type RasterTileMetadata,
 		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
