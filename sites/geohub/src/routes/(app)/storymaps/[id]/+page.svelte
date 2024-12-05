@@ -4,7 +4,6 @@
 	import UserPermission, {
 		StorymapPermissionAPI
 	} from '$components/pages/data/datasets/UserPermission.svelte';
-	import Iframe from '$components/util/Iframe.svelte';
 	import Star from '$components/util/Star.svelte';
 	import {
 		AcceptedOrganisationDomains,
@@ -243,12 +242,14 @@
 
 				<FieldControl title="Preview" fontWeight="bold" showHelp={false}>
 					<div slot="control">
-						<Iframe
-							url={`${viewerLink}?embed=true`}
-							id={storymap.id}
+						<iframe
 							title={storymap.title}
+							id={storymap.id}
+							frameborder="0"
+							src={`${viewerLink}?embed=true`}
+							width="100%"
 							height={500}
-						/>
+						></iframe>
 					</div>
 				</FieldControl>
 			</div>
