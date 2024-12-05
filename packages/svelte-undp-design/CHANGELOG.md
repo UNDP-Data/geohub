@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 2.4.2
+
+### Patch Changes
+
+- caf4859: fix: renamed header slot name from custom-button to customButton.
+
 ## 2.4.1
 
 ### Patch Changes
