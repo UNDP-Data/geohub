@@ -1,18 +1,15 @@
 <script lang="ts">
 	import RasterAlgorithms from '$components/maplibre/raster/RasterAlgorithms.svelte';
-	import RasterClassifyLegend from '$components/maplibre/raster/RasterClassifyLegend.svelte';
+	import RasterClassifyLegend, {
+		isUniqueValueRaster
+	} from '$components/maplibre/raster/RasterClassifyLegend.svelte';
 	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
 	import {
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
 		NumberOfRandomSamplingPoints
 	} from '$lib/config/AppConfig';
-	import {
-		getLayerStyle,
-		getValueFromRasterTileUrl,
-		isRgbRaster,
-		isUniqueValueRaster
-	} from '$lib/helper';
+	import { getLayerStyle, getValueFromRasterTileUrl, isRgbRaster } from '$lib/helper';
 	import type { Link, RasterAlgorithm, Tag } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,

@@ -1,5 +1,24 @@
+<script lang="ts" context="module">
+	/**
+	 * Check if the raster is unique value dataset or not
+	 * @param metadata raster tile metadata
+	 */
+	export const isUniqueValueRaster = (metadata: RasterTileMetadata) => {
+		const bandIndex = getActiveBandIndex(metadata);
+		const bandMetaStats =
+			metadata && metadata['band_metadata'] && bandIndex > -1
+				? (metadata['band_metadata'][bandIndex][1] as BandMetadata)
+				: undefined;
+		const layerHasUniqueValues =
+			bandMetaStats &&
+			bandMetaStats['STATISTICS_UNIQUE_VALUES'] &&
+			Object.keys(bandMetaStats['STATISTICS_UNIQUE_VALUES']).length > 0;
+		return layerHasUniqueValues;
+	};
+</script>
+
 <script lang="ts">
-	import { getActiveBandIndex, getValueFromRasterTileUrl, isUniqueValueRaster } from '$lib/helper';
+	import { getActiveBandIndex, getValueFromRasterTileUrl } from '$lib/helper';
 	import {
 		ClassificationMethods,
 		ClassificationMethodTypes,
