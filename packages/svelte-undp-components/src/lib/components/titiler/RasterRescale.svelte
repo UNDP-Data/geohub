@@ -1,26 +1,20 @@
 <script lang="ts">
-	import type { Tag } from '$lib/types';
-	import { RASTERRESCALE_CONTEXT_KEY, type RasterRescaleStore } from '$stores';
-	import {
-		getActiveBandIndex,
-		getValueFromRasterTileUrl,
-		isInt,
-		MAPSTORE_CONTEXT_KEY,
-		Slider,
-		type BandMetadata,
-		type MapStore,
-		type RasterTileMetadata
-	} from '@undp-data/svelte-undp-components';
+	import Slider from '$lib/components/ui/Slider.svelte';
+	import type { BandMetadata, RasterTileMetadata } from '$lib/interfaces/RasterTileMetadata.js';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { getActiveBandIndex } from '$lib/util/getActiveBandIndex.js';
+	import { getValueFromRasterTileUrl } from '$lib/util/getValueFromRasterTileUrl.js';
+	import { isInt } from '$lib/util/isInt.js';
 	import { createEventDispatcher, getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
 
 	const dispatch = createEventDispatcher();
 
 	export let layerId: string;
 	export let metadata: RasterTileMetadata;
-	export let tags: Tag[] = [];
+	export let unit = '';
+	export let rescale: number[];
 
 	let layerMin = NaN;
 	let layerMax = NaN;
@@ -36,24 +30,22 @@
 		layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
 	}
 
-	const unit = tags?.find((t) => t.key === 'unit')?.value;
-
 	// restore rescale values from URL
-	if (!$rescaleStore) {
+	if (!rescale) {
 		// default legend uses `rescale` param
-		$rescaleStore = getValueFromRasterTileUrl($map, layerId, 'rescale') as number[];
+		rescale = getValueFromRasterTileUrl($map, layerId, 'rescale') as number[];
 
-		if (!$rescaleStore) {
+		if (!rescale) {
 			// classify legend uses `colormap` param
 			const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];
 			if (Array.isArray(colormap)) {
 				// interval legend
 				const first = colormap[0];
 				const last = colormap[colormap.length - 1];
-				$rescaleStore = [first[0][0], last[0][1]];
+				rescale = [first[0][0], last[0][1]];
 			} else {
 				// unique value legend or default legend
-				$rescaleStore = [layerMin, layerMax];
+				rescale = [layerMin, layerMax];
 			}
 		}
 	}
@@ -63,17 +55,17 @@
 	let step = isInt(layerMin) && isInt(layerMax) && layerMax - layerMin > 1 ? 1 : 0.1;
 
 	const onSliderStop = (e) => {
-		$rescaleStore = [...e.detail.values];
+		rescale = [...e.detail.values];
 		// you need to implement actual process of updating legend in the parent component by subscribing the 'change' event.
 		// see the detailed implementation at RasterDefaultLgend and RasterClassifyLegend.
 		dispatch('change', {
-			rescale: $rescaleStore
+			rescale: rescale
 		});
 	};
 </script>
 
 <Slider
-	bind:values={$rescaleStore}
+	bind:values={rescale}
 	min={layerMin}
 	max={layerMax}
 	{step}

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import RasterAlgorithms from '$components/maplibre/raster/RasterAlgorithms.svelte';
-	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
 	import {
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
@@ -38,6 +37,7 @@
 		RasterContrast,
 		RasterHueRotate,
 		RasterResampling,
+		RasterRescale,
 		RasterSaturation,
 		updateParamsInURL,
 		type MapStore,
@@ -72,7 +72,7 @@
 	const isRgbTile = metadata.colorinterp ? isRgbRaster(metadata.colorinterp) : false;
 	let layerHasUniqueValues = isRgbTile ? false : isUniqueValueRaster(metadata);
 	let legendType: LegendType | undefined = undefined;
-	const unit = tags?.find((t) => t.key === 'unit')?.value;
+	let unit: string = tags?.find((t) => t.key === 'unit')?.value as string;
 
 	const handleSelectAlgorithm = () => {
 		layerStyle = $map.getStyle().layers.find((l: LayerSpecification) => l.id === layerId);
@@ -363,7 +363,13 @@
 		{#if (!layerHasUniqueValues && !isRgbTile && !algorithmId) || (algorithmId && hasRescaleProperty())}
 			<Accordion title="Rescale min/max values" bind:isExpanded={expanded['rescale']}>
 				<div class="pb-2" slot="content">
-					<RasterRescale bind:layerId bind:metadata bind:tags on:change={handleRescaleChanged} />
+					<RasterRescale
+						bind:layerId
+						bind:metadata
+						bind:unit
+						bind:rescale={$rescaleStore}
+						on:change={handleRescaleChanged}
+					/>
 				</div>
 				<div slot="buttons">
 					<Help>Rescale minimum/maximum values to filter</Help>
