@@ -2,6 +2,7 @@
 	import RasterAlgorithms from '$components/maplibre/raster/RasterAlgorithms.svelte';
 	import RasterClassifyLegend from '$components/maplibre/raster/RasterClassifyLegend.svelte';
 	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
+	import { NumberOfRandomSamplingPoints } from '$lib/config/AppConfig';
 	import {
 		getLayerStyle,
 		getValueFromRasterTileUrl,
@@ -64,6 +65,7 @@
 	let algorithmId: string | undefined = undefined;
 	let algorithm: RasterAlgorithm;
 	let layerStyle: LayerSpecification | undefined;
+	let classifyComponent: RasterClassifyLegend;
 
 	const isRgbTile = metadata.colorinterp ? isRgbRaster(metadata.colorinterp) : false;
 	let layerHasUniqueValues = isRgbTile ? false : isUniqueValueRaster(metadata);
@@ -122,16 +124,19 @@
 		if (layerHasUniqueValues) return;
 		if (!$rescaleStore) return;
 		if (algorithmId && !hasRescaleProperty()) return;
-		if (legendType !== LegendType.LINEAR) return;
+
 		const layerStyle = getLayerStyle($map, layerId);
 		const layerUrl = getLayerSourceUrl($map, layerId) as string;
 		if (!(layerUrl && layerUrl.length > 0)) return;
+
 		const layerURL = new URL(layerUrl);
 		layerURL.searchParams.delete('colormap');
 
 		let updatedParams = { colormap_name: $colorMapNameStore, rescale: $rescaleStore.join(',') };
 
 		updateParamsInURL(layerStyle, layerURL, updatedParams, $map);
+
+		classifyComponent?.redraw();
 	}, 200);
 
 	const decideLegendType = () => {
@@ -198,7 +203,6 @@
 			 * if the layer is not unique, the legendType is set to DEFAULT
 			 */
 			decideLegendType();
-			rescaleStore?.subscribe(handleRescaleChanged);
 		} else {
 			expanded = { 'hillshade-accent-color': true };
 		}
@@ -341,6 +345,8 @@
 							bind:numberOfClasses={$numberOfClassesStore}
 							bind:colorMapName={$colorMapNameStore}
 							bind:classificationMethod={$classificationMethodStore}
+							numberOfRandomSamplingPoints={NumberOfRandomSamplingPoints}
+							bind:this={classifyComponent}
 						/>
 					{/if}
 				</div>
@@ -353,7 +359,7 @@
 		{#if (!layerHasUniqueValues && !isRgbTile && !algorithmId) || (algorithmId && hasRescaleProperty())}
 			<Accordion title="Rescale min/max values" bind:isExpanded={expanded['rescale']}>
 				<div class="pb-2" slot="content">
-					<RasterRescale bind:layerId bind:metadata bind:tags />
+					<RasterRescale bind:layerId bind:metadata bind:tags on:change={handleRescaleChanged} />
 				</div>
 				<div slot="buttons">
 					<Help>Rescale minimum/maximum values to filter</Help>

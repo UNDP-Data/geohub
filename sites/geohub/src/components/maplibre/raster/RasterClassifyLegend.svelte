@@ -1,18 +1,16 @@
 <script lang="ts">
 	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
-	import {
-		generateColorMap,
-		getActiveBandIndex,
-		getValueFromRasterTileUrl,
-		isUniqueValueRaster
-	} from '$lib/helper';
+	import { getActiveBandIndex, getValueFromRasterTileUrl, isUniqueValueRaster } from '$lib/helper';
 	import type { BandMetadata, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import {
 		ClassificationMethods,
 		ClassificationMethodTypes,
 		ColorMapPicker,
 		FieldControl,
+		getIntervalList,
 		getLayerSourceUrl,
+		getSampleFromHistogram,
+		getSampleFromInterval,
 		LegendColorMapRow,
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,
@@ -36,6 +34,7 @@
 	export let colorMapName = 'viridis';
 	export let classificationMethod: ClassificationMethodTypes =
 		ClassificationMethodTypes.NATURAL_BREAK;
+	export let numberOfRandomSamplingPoints = 1000;
 
 	const layerHasUniqueValues = isUniqueValueRaster(metadata) ?? false;
 
@@ -248,19 +247,6 @@
 		classifyImage();
 	};
 
-	const handleRescaleChanged = debounce(() => {
-		if (layerHasUniqueValues) return;
-		if (!rescale) return;
-		let currentMin = colorMapRows[0].start;
-		if (!currentMin) currentMin = currentMin;
-		let currentMax = (colorMapRows[colorMapRows.length - 1].end as number) - 0.01;
-		if (!currentMax) currentMax = layerMax;
-		if (rescale[0] === currentMin && rescale[1] === currentMax) return;
-		colorMapRows = [];
-		setInitialColorMapRows();
-		classifyImage();
-	}, 200);
-
 	const handleParamsUpdate = (encodeColorMapRows: string) => {
 		const layerUrl = getLayerSourceUrl($map, layerId) as string;
 		if (!(layerUrl && layerUrl.length > 0)) return;
@@ -276,6 +262,125 @@
 		}
 	};
 
+	const generateColorMap = (
+		min: number,
+		max: number,
+		colorMapRows: ColorMapRow[],
+		numberOfClasses: number,
+		classificationMethod: ClassificationMethodTypes,
+		isClassificationMethodEdited: boolean,
+		percentile98: number,
+		colorMapName: string,
+		histogram?: { bins: number[]; count: number[] }
+	) => {
+		const colorMap = [];
+		const isReverse = colorMapName.indexOf('_r') !== -1;
+		const scales = chroma.scale(colorMapName.replace('_r', ''));
+		if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
+			let randomSample: number[] = [];
+			if (histogram) {
+				randomSample = getSampleFromHistogram(
+					histogram,
+					numberOfRandomSamplingPoints,
+					min,
+					percentile98
+				);
+			}
+			if (randomSample.length === 0) {
+				randomSample = getSampleFromInterval(min, percentile98, numberOfRandomSamplingPoints);
+			}
+			const intervalList = getIntervalList(
+				classificationMethod,
+				min,
+				percentile98,
+				randomSample,
+				numberOfClasses
+			);
+			let scaleColorList = scales.colors(intervalList.length, 'rgb');
+			if (isReverse) {
+				scaleColorList = scaleColorList.reverse();
+			}
+			for (let i = 0; i <= numberOfClasses - 2; i++) {
+				const row: ColorMapRow = {
+					index: i,
+					color: [...scaleColorList[i], 1],
+					start:
+						isClassificationMethodEdited == false &&
+						colorMapRows.length > 0 &&
+						colorMapRows[i]?.start
+							? colorMapRows[i].start
+							: intervalList[i],
+					end:
+						isClassificationMethodEdited == false && colorMapRows.length > 0 && colorMapRows[i]?.end
+							? colorMapRows[i].end
+							: intervalList[i + 1]
+				};
+				colorMap.push(row);
+			}
+			const lastRow: ColorMapRow = {
+				index: numberOfClasses - 1,
+				color: [...scaleColorList[numberOfClasses - 1], 1],
+				start: Math.floor(percentile98),
+				end: Math.ceil(max)
+			};
+			colorMap.push(lastRow);
+			const replaceIndex = colorMap[colorMap.length - 2];
+
+			replaceIndex['end'] = Math.floor(percentile98);
+			colorMap.splice(colorMap.length - 2, replaceIndex);
+		} else {
+			let randomSample: number[] = [];
+			if (histogram) {
+				randomSample = getSampleFromHistogram(histogram, numberOfRandomSamplingPoints, min, max);
+			}
+			if (randomSample.length === 0) {
+				randomSample = getSampleFromInterval(min, max, numberOfRandomSamplingPoints);
+			}
+
+			const intervalList = getIntervalList(
+				classificationMethod,
+				min,
+				max,
+				randomSample,
+				numberOfClasses
+			);
+			let scaleColorList = scales.colors(intervalList.length, 'rgb');
+			if (isReverse) {
+				scaleColorList = scaleColorList.reverse();
+			}
+			for (let i = 0; i <= numberOfClasses - 1; i++) {
+				const row: ColorMapRow = {
+					index: i,
+					color: [...scaleColorList[i], 1],
+					start:
+						isClassificationMethodEdited == false &&
+						colorMapRows.length > 0 &&
+						colorMapRows[i]?.start
+							? colorMapRows[i].start
+							: intervalList[i],
+					end:
+						isClassificationMethodEdited == false && colorMapRows.length > 0 && colorMapRows[i]?.end
+							? colorMapRows[i].end
+							: intervalList[i + 1]
+				};
+				colorMap.push(row);
+			}
+		}
+		return colorMap;
+	};
+
+	export const redraw = debounce(() => {
+		if (layerHasUniqueValues === true) return;
+		let currentMin = colorMapRows[0].start;
+		if (!currentMin) currentMin = layerMin;
+		let currentMax = (colorMapRows[colorMapRows.length - 1].end as number) - 0.01;
+		if (!currentMax) currentMax = layerMax;
+		if (rescale[0] === currentMin && rescale[1] === currentMax) return;
+		colorMapRows = [];
+		setInitialColorMapRows();
+		classifyImage();
+	}, 200);
+
 	onMount(() => {
 		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap');
 		if (!colormap) {
@@ -286,7 +391,7 @@
 		}
 	});
 
-	$: rescale, handleRescaleChanged();
+	// $: rescale, handleRescaleChanged();
 </script>
 
 <div
