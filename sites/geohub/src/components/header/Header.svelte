@@ -32,7 +32,7 @@
 		bind:links={headerLinks}
 		bind:showMobileMenu
 	>
-		<div slot="custom-button">
+		<div slot="customButton">
 			{#if browser && showSignin}
 				<UserAccount />
 			{/if}
