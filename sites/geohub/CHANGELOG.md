@@ -1,5 +1,15 @@
 # geohub
 
+## 1.22.17
+
+### Patch Changes
+
+- 5988216: refactor: merged Iframe component to storymap's +page.svete
+- eff67e6: refactor: migrated RasterClassifyLegend and RasterRescale (and related funcitons and interfaces) to svelte-undp-components
+- 33d825b: refactor: moved RasterAlgorithmExplore to map/data folder of geohub
+- 404d7fa: fix: add an option of link type to apply icons like external link or download link for UNDP header.
+- 33d825b: refactor: migrated RasterAlgorithms to svelte-undp-components
+
 ## 1.22.16
 
 ### Patch Changes
