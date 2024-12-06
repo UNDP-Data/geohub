@@ -1,1 +1,1 @@
-export const HomePageMapSearchLimit = 5;
+export const HomePageMapSearchLimit = 3;
