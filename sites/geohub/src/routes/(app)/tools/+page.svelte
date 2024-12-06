@@ -13,8 +13,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { algorithmCategory } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import PublishedDatasetRow from '$components/pages/data/datasets/PublishedDatasetRow.svelte';
+	import { algorithmCategory } from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogTool from '$components/util/stac/StacCatalogTool.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';

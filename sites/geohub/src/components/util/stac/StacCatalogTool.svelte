@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ALGORITHM_TAG_KEY } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
+	import { ALGORITHM_TAG_KEY } from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { generateHashKey } from '$lib/helper';
 	import type {

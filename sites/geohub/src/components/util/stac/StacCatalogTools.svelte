@@ -5,7 +5,7 @@
 </script>
 
 <script lang="ts">
-	import RasterAlgorithmExplorer from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
+	import RasterAlgorithmExplorer from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 	import type { DatasetFeature, StacCollection, Tag } from '$lib/types';
 	import {
 		Breadcrumbs,

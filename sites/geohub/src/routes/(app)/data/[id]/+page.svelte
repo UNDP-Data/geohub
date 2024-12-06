@@ -2,14 +2,14 @@
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import RasterAlgorithmExplorer, {
-		type AlgorithmLayerSpec
-	} from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import DatasetPreview from '$components/pages/data/datasets/DatasetPreview.svelte';
 	import PublishedDatasetDeleteDialog from '$components/pages/data/datasets/PublishedDatasetDeleteDialog.svelte';
 	import UserPermission, {
 		DatasetPermissionAPI
 	} from '$components/pages/data/datasets/UserPermission.svelte';
+	import RasterAlgorithmExplorer, {
+		type AlgorithmLayerSpec
+	} from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 	import Star from '$components/util/Star.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';

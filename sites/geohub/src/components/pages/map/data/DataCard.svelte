@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { AlgorithmLayerSpec } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import RasterBandSelectbox from '$components/pages/data/datasets/RasterBandSelectbox.svelte';
 	import AddLayerButton from '$components/pages/map/data/AddLayerButton.svelte';
 	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
 	import DataVectorCard from '$components/pages/map/data/DataVectorCard.svelte';
+	import type { AlgorithmLayerSpec } from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 	import StacExplorerButton from '$components/pages/map/data/StacExplorerButton.svelte';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
