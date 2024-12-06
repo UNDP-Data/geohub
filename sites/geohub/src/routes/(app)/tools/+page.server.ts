@@ -1,9 +1,9 @@
-import { ALGORITHM_TAG_KEY } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
+import { ALGORITHM_TAG_KEY } from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 import type { DatasetFeatureCollection, Tag } from '$lib/types';
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { type RasterAlgorithm } from '$lib/types';
+import { type RasterAlgorithm } from '@undp-data/svelte-undp-components';
 
 export const load: PageServerLoad = async ({ fetch }) => {
 	const res = await fetch(`/api/tags?key=${ALGORITHM_TAG_KEY}`);

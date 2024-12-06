@@ -23,10 +23,11 @@
 <script lang="ts">
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { isRgbRaster } from '$lib/helper';
-	import type { DatasetFeature, Link, RasterAlgorithm } from '$lib/types';
+	import type { DatasetFeature, Link } from '$lib/types';
 	import {
 		getRandomColormap,
 		Notification,
+		type RasterAlgorithm,
 		type RasterTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { Card, Loader } from '@undp-data/svelte-undp-design';

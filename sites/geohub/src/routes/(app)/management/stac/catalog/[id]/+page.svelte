@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { ALGORITHM_TAG_KEY } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
+	import { ALGORITHM_TAG_KEY } from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
 	import { AccessLevel } from '$lib/config/AppConfig';
@@ -9,7 +9,6 @@
 	import type {
 		DatasetFeature,
 		Layer,
-		RasterAlgorithm,
 		StacCatalog,
 		StacCatalogBreadcrumb,
 		StacCollection,
@@ -20,6 +19,7 @@
 		HeroHeader,
 		ModalTemplate,
 		type BreadcrumbPage,
+		type RasterAlgorithm,
 		type RasterTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';

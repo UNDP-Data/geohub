@@ -5,9 +5,13 @@
 </script>
 
 <script lang="ts">
-	import RasterAlgorithmExplorer from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
-	import type { DatasetFeature, RasterAlgorithm, StacCollection, Tag } from '$lib/types';
-	import { Breadcrumbs, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
+	import RasterAlgorithmExplorer from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
+	import type { DatasetFeature, StacCollection, Tag } from '$lib/types';
+	import {
+		Breadcrumbs,
+		type BreadcrumbPage,
+		type RasterAlgorithm
+	} from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 	import StacCatalogTool from './StacCatalogTool.svelte';
 

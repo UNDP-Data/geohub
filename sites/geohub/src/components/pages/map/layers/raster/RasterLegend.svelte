@@ -1,12 +1,11 @@
 <script lang="ts">
-	import RasterAlgorithms from '$components/maplibre/raster/RasterAlgorithms.svelte';
 	import {
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
 		NumberOfRandomSamplingPoints
 	} from '$lib/config/AppConfig';
 	import { getLayerStyle, isRgbRaster } from '$lib/helper';
-	import type { Link, RasterAlgorithm, Tag } from '$lib/types';
+	import type { Link, Tag } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
@@ -31,6 +30,7 @@
 		HillshadeShadowColor,
 		isUniqueValueRaster,
 		MAPSTORE_CONTEXT_KEY,
+		RasterAlgorithms,
 		RasterBrightnessMax,
 		RasterBrightnessMin,
 		RasterClassifyLegend,
@@ -41,6 +41,7 @@
 		RasterSaturation,
 		updateParamsInURL,
 		type MapStore,
+		type RasterAlgorithm,
 		type RasterTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
@@ -73,6 +74,7 @@
 	let layerHasUniqueValues = isRgbTile ? false : isUniqueValueRaster(metadata);
 	let legendType: LegendType | undefined = undefined;
 	let unit: string = tags?.find((t) => t.key === 'unit')?.value as string;
+	let algorithmsApi = links.find((l) => l.rel === 'algorithms')?.href;
 
 	const handleSelectAlgorithm = () => {
 		layerStyle = $map.getStyle().layers.find((l: LayerSpecification) => l.id === layerId);
@@ -227,7 +229,7 @@
 				<div slot="content">
 					<RasterAlgorithms
 						bind:layerId
-						bind:links
+						bind:algorithmsApi
 						on:change={handleSelectAlgorithm}
 						bind:algorithmId
 					/>

@@ -1,4 +1,5 @@
+import RasterAlgorithms from './RasterAlgorithms.svelte';
 import RasterClassifyLegend, { isUniqueValueRaster } from './RasterClassifyLegend.svelte';
 import RasterRescale from './RasterRescale.svelte';
 
-export { RasterClassifyLegend, RasterRescale, isUniqueValueRaster };
+export { RasterAlgorithms, RasterClassifyLegend, RasterRescale, isUniqueValueRaster };
