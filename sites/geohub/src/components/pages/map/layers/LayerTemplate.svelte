@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { getLayerStyle } from '$lib/helper';
-	import type { Layer, RasterTileMetadata, VectorLayerSpecification } from '$lib/types';
+	import type { Layer, VectorLayerSpecification } from '$lib/types';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
@@ -23,6 +23,7 @@
 		ModalTemplate,
 		OpacityEditor,
 		type MapStore,
+		type RasterTileMetadata,
 		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';

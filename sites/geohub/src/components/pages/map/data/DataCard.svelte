@@ -1,22 +1,24 @@
 <script lang="ts">
-	import type { AlgorithmLayerSpec } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import RasterBandSelectbox from '$components/pages/data/datasets/RasterBandSelectbox.svelte';
 	import AddLayerButton from '$components/pages/map/data/AddLayerButton.svelte';
 	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
 	import DataVectorCard from '$components/pages/map/data/DataVectorCard.svelte';
+	import type { AlgorithmLayerSpec } from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 	import StacExplorerButton from '$components/pages/map/data/StacExplorerButton.svelte';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { AccessLevel } from '$lib/config/AppConfig';
-	import { getFirstSymbolLayerId, isRgbRaster, loadMap } from '$lib/helper';
-	import type { DatasetFeature, Layer, LayerCreationInfo, RasterTileMetadata } from '$lib/types';
+	import { getFirstSymbolLayerId, isRgbRaster } from '$lib/helper';
+	import type { DatasetFeature, Layer, LayerCreationInfo } from '$lib/types';
 	import { LAYERLISTSTORE_CONTEXT_KEY, type LayerListStore } from '$stores';
 	import {
 		Accordion,
 		initTooltipTippy,
+		loadMap,
 		MAPSTORE_CONTEXT_KEY,
 		type MapStore,
+		type RasterTileMetadata,
 		type VectorLayerTileStatLayer,
 		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';

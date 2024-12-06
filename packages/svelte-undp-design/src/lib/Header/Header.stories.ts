@@ -72,12 +72,14 @@ const links: HeaderLink[] = [
 	{
 		id: 'headerLink2',
 		title: 'Link 2',
-		href: '#'
+		href: '#',
+		linkType: 'external'
 	},
 	{
 		id: 'headerLink3',
 		title: 'Link 3',
-		href: '#'
+		href: '#',
+		linkType: 'download'
 	},
 	{
 		id: 'headerLink4',
@@ -108,18 +110,38 @@ const links: HeaderLink[] = [
 						id: 'headerLink6-subsubLink2',
 						title: 'Sub Sub link 2',
 						href: '#'
+					},
+					{
+						id: 'headerLink6-subsubLink3',
+						title: 'Sub Sub link 3',
+						href: '#',
+						linkType: 'external'
+					},
+					{
+						id: 'headerLink6-subsubLink4',
+						title: 'Sub Sub link 4',
+						href: '#',
+						linkType: 'download'
 					}
 				]
 			},
 			{
 				id: 'headerLink6-subLink2',
 				title: 'Sublink 2',
-				href: '#'
+				href: '#',
+				linkType: 'external'
 			},
 			{
 				id: 'headerLink6-subLink3',
 				title: 'Sublink 3',
-				href: '#'
+				href: '#',
+				linkType: 'download'
+			},
+			{
+				id: 'headerLink6-subLink4',
+				title: 'Sublink 4',
+				href: '#',
+				linkType: ''
 			}
 		]
 	},

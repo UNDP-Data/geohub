@@ -6,15 +6,16 @@
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { loadMap } from '$lib/helper';
-	import type { DatasetFeature, LayerCreationInfo, RasterTileMetadata } from '$lib/types';
+	import type { DatasetFeature, LayerCreationInfo } from '$lib/types';
 	import { LAYERLISTSTORE_CONTEXT_KEY, type LayerListStore } from '$stores';
 	import {
 		Accordion,
 		MAPSTORE_CONTEXT_KEY,
 		type MapStore,
+		type RasterTileMetadata,
 		type VectorLayerTileStatLayer,
-		type VectorTileMetadata
+		type VectorTileMetadata,
+		loadMap
 	} from '@undp-data/svelte-undp-components';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { LngLatBounds } from 'maplibre-gl';

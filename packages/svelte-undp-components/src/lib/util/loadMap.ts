@@ -1,4 +1,4 @@
-import { sleep } from '$lib/helper';
+import { sleep } from './sleep.js';
 import type { Map } from 'maplibre-gl';
 /**
  * Ensures the Maplibre map object is in sync with the caller

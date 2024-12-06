@@ -1,6 +1,6 @@
+import type { RasterTileMetadata } from '$lib/interfaces/RasterTileMetadata.js';
 import { describe, it, expect } from 'vitest';
-import { getActiveBandIndex } from './getActiveBandIndex';
-import type { RasterTileMetadata } from '$lib/types';
+import { getActiveBandIndex } from './getActiveBandIndex.js';
 
 describe('getActiveBandIndex', () => {
 	it('should return the index of the active band', () => {

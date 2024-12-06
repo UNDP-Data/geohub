@@ -1,7 +1,7 @@
 <script lang="ts">
 	import RasterAlgorithmExplorer, {
 		type AlgorithmLayerSpec
-	} from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
+	} from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 	import type { DatasetFeature } from '$lib/types';
 	import { handleEnterKey, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';

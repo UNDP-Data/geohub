@@ -1,5 +1,14 @@
 # @undp-data/svelte-undp-components
 
+## 1.5.14
+
+### Patch Changes
+
+- eff67e6: refactor: migrated RasterClassifyLegend and RasterRescale (and related funcitons and interfaces) to svelte-undp-components
+- 33d825b: refactor: migrated RasterAlgorithms to svelte-undp-components
+- Updated dependencies [404d7fa]
+  - @undp-data/svelte-undp-design@2.4.3
+
 ## 1.5.13
 
 ### Patch Changes

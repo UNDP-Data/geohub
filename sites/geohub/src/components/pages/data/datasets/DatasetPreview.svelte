@@ -7,8 +7,9 @@
 	import { VectorTileData } from '$lib/VectorTileData';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { addDataToLocalStorage, getFirstSymbolLayerId, isRgbRaster } from '$lib/helper';
-	import type { DatasetFeature, Layer, LayerCreationInfo, RasterTileMetadata } from '$lib/types';
+	import type { DatasetFeature, Layer, LayerCreationInfo } from '$lib/types';
 	import type {
+		RasterTileMetadata,
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';

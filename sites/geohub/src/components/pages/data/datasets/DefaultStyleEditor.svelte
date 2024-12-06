@@ -11,7 +11,6 @@
 	import type {
 		DatasetDefaultLayerStyle,
 		DatasetFeature,
-		RasterTileMetadata,
 		VectorLayerSpecification
 	} from '$lib/types';
 	import {
@@ -35,6 +34,7 @@
 		ShowDetails,
 		createMapStore,
 		getRandomColormap,
+		type RasterTileMetadata,
 		type VectorLayerTileStatLayer,
 		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';

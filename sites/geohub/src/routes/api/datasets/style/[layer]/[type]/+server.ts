@@ -6,7 +6,7 @@ import RasterDefaultStyle from '$lib/server/defaultStyle/RasterDefaultStyle';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import { env } from '$env/dynamic/private';
 import VectorDefaultStyle from '$lib/server/defaultStyle/VectorDefaultStyle';
-import { ALGORITHM_TAG_KEY } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
+import { ALGORITHM_TAG_KEY } from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 
 const LAYER_TYPES = ['raster', 'fill', 'symbol', 'line', 'circle', 'heatmap'];
 

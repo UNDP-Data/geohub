@@ -3,8 +3,12 @@
 	import { page } from '$app/stores';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import { addDataToLocalStorage, getFirstSymbolLayerId } from '$lib/helper';
-	import type { Layer, RasterTileMetadata, StacCollection } from '$lib/types';
-	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
+	import type { Layer, StacCollection } from '$lib/types';
+	import {
+		HeroHeader,
+		type BreadcrumbPage,
+		type RasterTileMetadata
+	} from '@undp-data/svelte-undp-components';
 	import type {
 		RasterLayerSpecification,
 		RasterSourceSpecification,

@@ -3,10 +3,10 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import DatasetPreview from '$components/pages/data/datasets/DatasetPreview.svelte';
 	import RasterAlgorithmExplorer, {
 		ALGORITHM_TAG_KEY
-	} from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
-	import DatasetPreview from '$components/pages/data/datasets/DatasetPreview.svelte';
+	} from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { isRgbRaster } from '$lib/helper';

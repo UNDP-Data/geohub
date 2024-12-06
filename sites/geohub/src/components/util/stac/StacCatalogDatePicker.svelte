@@ -1,13 +1,6 @@
 <script lang="ts">
-	import type {
-		Link,
-		RasterAlgorithm,
-		StacAsset,
-		StacCatalog,
-		StacCollection,
-		StacItemFeature
-	} from '$lib/types';
-	import { DatePicker } from '@undp-data/svelte-undp-components';
+	import type { Link, StacAsset, StacCatalog, StacCollection, StacItemFeature } from '$lib/types';
+	import { DatePicker, type RasterAlgorithm } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import dayjs from 'dayjs';
 	import { createEventDispatcher, onMount } from 'svelte';

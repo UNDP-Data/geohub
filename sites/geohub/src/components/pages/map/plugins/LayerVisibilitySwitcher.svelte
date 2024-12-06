@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { sleep } from '$lib/helper';
-	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { initTooltipTippy, sleep } from '@undp-data/svelte-undp-components';
 	import type { Map } from 'maplibre-gl';
 	import { onDestroy, onMount } from 'svelte';
 

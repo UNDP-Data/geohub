@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Star from '$components/util/Star.svelte';
 	import { createAttributionFromTags } from '$lib/helper';
-	import type { DatasetFeature, RasterTileMetadata } from '$lib/types';
-	import type { VectorTileMetadata } from '@undp-data/svelte-undp-components';
+	import type { DatasetFeature } from '$lib/types';
+	import type { RasterTileMetadata, VectorTileMetadata } from '@undp-data/svelte-undp-components';
 	import { CtaLink, Download } from '@undp-data/svelte-undp-design';
 	import { marked } from 'marked';
 	import { createEventDispatcher } from 'svelte';

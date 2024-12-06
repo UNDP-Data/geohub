@@ -18,20 +18,28 @@
 	import type { Writable } from 'svelte/store';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
-	let styleUrl: string = data.styleUrl;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
+	let styleUrl: string = $state(data.styleUrl);
 
 	let origin = $page.url.origin;
-	let apiUrl = '';
+	let apiUrl = $state('');
 
 	const headerHeight: Writable<number> = getContext('header-height');
-	let innerHeight: number;
-	$: sidebarHeight = innerHeight - $headerHeight;
+	let innerHeight: number = $state(0);
+	let sidebarHeight = $state(0);
 
-	let isExporting = false;
-	let showStyleDropdown = false;
+	$effect(() => {
+		sidebarHeight = innerHeight - $headerHeight;
+	});
 
-	let options: ControlOptions = {
+	let isExporting = $state(false);
+	let showStyleDropdown = $state(false);
+
+	let options: ControlOptions = $state({
 		width: 300,
 		height: 200,
 		bbox: [-180, -90, 180, 90],
@@ -45,16 +53,17 @@
 		extension: 'webp',
 		pageSize: 'custom',
 		orientation: 'portrait'
-	};
+	});
 
-	let mapContainer: HTMLDivElement;
+	let mapContainer: HTMLDivElement | undefined = $state();
 
-	let map: Map;
+	let map: Map | undefined = $state();
 
-	let showTileBoundaries = false;
-	let showCollisionBoxes = false;
+	let showTileBoundaries = $state(false);
+	let showCollisionBoxes = $state(false);
 
 	onMount(() => {
+		if (!mapContainer) return;
 		let protocol = new pmtiles.Protocol();
 		addProtocol('pmtiles', protocol.tile);
 
@@ -69,7 +78,7 @@
 		map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
 
 		map.on('load', () => {
-			map.resize();
+			map?.resize();
 		});
 	});
 
@@ -88,6 +97,7 @@
 	};
 
 	const handleExport = () => {
+		if (!map) return;
 		try {
 			isExporting = true;
 
@@ -109,6 +119,7 @@
 	};
 
 	const handleLoadStyle = () => {
+		if (!map) return;
 		if (apiUrl) {
 			const newUrl = new URL(apiUrl);
 			newUrl.searchParams.set('url', styleUrl);
@@ -127,136 +138,152 @@
 	bind:marginTop={$headerHeight}
 	bind:height={sidebarHeight}
 >
-	<div class="sidebar-content" slot="content" style="max-height: {sidebarHeight}px">
-		<nav class="panel">
-			<p class="panel-heading">Export settings</p>
-			<div class="panel-block">
-				<FieldControl
-					title="Maplibre Style URL"
-					fontWeight="bold"
-					showHelp={true}
-					showHelpPopup={false}
-				>
-					<div slot="control">
-						<div
-							class="dropdown {showStyleDropdown ? 'is-active' : ''}"
-							role="menu"
-							tabindex="-1"
-							on:mouseleave={() => {
-								showStyleDropdown = false;
-							}}
-						>
-							<div class="dropdown-trigger is-flex">
-								<input
-									class="input style-input"
-									type="text"
-									aria-haspopup="true"
-									aria-controls="dropdown-menu"
-									bind:value={styleUrl}
-									on:mouseenter={() => {
-										showStyleDropdown = true;
+	{#snippet content()}
+		<div class="sidebar-content" style="max-height: {sidebarHeight}px">
+			<nav class="panel">
+				<p class="panel-heading">Export settings</p>
+				<div class="panel-block">
+					<FieldControl
+						title="Maplibre Style URL"
+						fontWeight="bold"
+						showHelp={true}
+						showHelpPopup={false}
+					>
+						{#snippet control()}
+							<div>
+								<div
+									class="dropdown {showStyleDropdown ? 'is-active' : ''}"
+									role="menu"
+									tabindex="-1"
+									onmouseleave={() => {
+										showStyleDropdown = false;
 									}}
-								/>
-								<button
-									class="button is-link is-uppercase has-text-weight-bold"
-									disabled={!isValidUrl(styleUrl)}
-									on:click={handleLoadStyle}>Load</button
 								>
-							</div>
-							<div class="dropdown-menu" id="dropdown-menu" role="menu">
-								<div class="dropdown-content">
-									{#each data.examples as example}
-										<!-- svelte-ignore a11y-missing-attribute -->
-										<a
-											class="dropdown-item"
-											role="menuitem"
-											tabindex="-1"
-											on:click={(e) => {
-												e.preventDefault();
-												styleUrl = example;
-												showStyleDropdown = false;
+									<div class="dropdown-trigger is-flex">
+										<input
+											class="input style-input"
+											type="text"
+											aria-haspopup="true"
+											aria-controls="dropdown-menu"
+											bind:value={styleUrl}
+											onmouseenter={() => {
+												showStyleDropdown = true;
 											}}
-											on:keydown={handleEnterKey}
+										/>
+										<button
+											class="button is-link is-uppercase has-text-weight-bold"
+											disabled={!isValidUrl(styleUrl)}
+											onclick={handleLoadStyle}>Load</button
 										>
-											{example}
-										</a>
-									{/each}
+									</div>
+									<div class="dropdown-menu" id="dropdown-menu" role="menu">
+										<div class="dropdown-content">
+											{#each data.examples as example}
+												<!-- svelte-ignore a11y_missing_attribute -->
+												<a
+													class="dropdown-item"
+													role="menuitem"
+													tabindex="-1"
+													onclick={(e) => {
+														e.preventDefault();
+														styleUrl = example;
+														showStyleDropdown = false;
+													}}
+													onkeydown={handleEnterKey}
+												>
+													{example}
+												</a>
+											{/each}
+										</div>
+									</div>
 								</div>
 							</div>
-						</div>
-					</div>
-					<div slot="help">Select an example from dropdown, or paste your own style URL.</div>
-				</FieldControl>
-			</div>
-			<div class="panel-block">
-				<FieldControl title="Map Settings" fontWeight="bold" showHelp={false}>
-					<div slot="control">
-						<div class="pb-2">
-							<Switch
-								bind:toggled={showTileBoundaries}
-								toggledText="Tile boundaries is shown"
-								untoggledText="Tile boundaries is hidden"
-								showValue={true}
-								on:change={handleShowTileBoundaryChange}
-							/>
-						</div>
-						<div>
-							<Switch
-								bind:toggled={showCollisionBoxes}
-								toggledText="Collision Boxes is shown"
-								untoggledText="Collision Boxes is hidden"
-								showValue={true}
-								on:change={handleShowCollisionBoxes}
-							/>
-						</div>
-					</div>
-				</FieldControl>
-			</div>
-
-			<div class="panel-block">
-				{#if map}
-					<FieldControl title="Export Settings" fontWeight="bold" showHelp={false}>
-						<div slot="control">
-							<StaticImageControl
-								bind:map
-								show={true}
-								bind:style={styleUrl}
-								apiBase="{origin}/api"
-								showAdvanced={true}
-								bind:options
-								on:change={handleUrlChanged}
-							/>
-						</div>
+						{/snippet}
+						{#snippet help()}
+							<div>Select an example from dropdown, or paste your own style URL.</div>
+						{/snippet}
 					</FieldControl>
-				{/if}
-			</div>
-			{#if apiUrl}
-				<div class="panel-block">
-					<button
-						class="button is-link is-uppercase has-text-weight-bold is-fullwidth {isExporting
-							? 'is-loading'
-							: ''}"
-						on:click={handleExport}
-						disabled={isExporting}
-					>
-						Export
-					</button>
 				</div>
-			{/if}
-		</nav>
-	</div>
-	<div slot="main">
-		<div bind:this={mapContainer} class="map" style="height: {sidebarHeight}px;">
-			<div class="overlay has-background-white p-2">
-				<FieldControl title="Static image URL" fontWeight="bold">
-					<div slot="control">
-						<CopyToClipboard bind:value={apiUrl} />
+				<div class="panel-block">
+					<FieldControl title="Map Settings" fontWeight="bold" showHelp={false}>
+						{#snippet control()}
+							<div>
+								<div class="pb-2">
+									<Switch
+										bind:toggled={showTileBoundaries}
+										toggledText="Tile boundaries is shown"
+										untoggledText="Tile boundaries is hidden"
+										showValue={true}
+										on:change={handleShowTileBoundaryChange}
+									/>
+								</div>
+								<div>
+									<Switch
+										bind:toggled={showCollisionBoxes}
+										toggledText="Collision Boxes is shown"
+										untoggledText="Collision Boxes is hidden"
+										showValue={true}
+										on:change={handleShowCollisionBoxes}
+									/>
+								</div>
+							</div>
+						{/snippet}
+					</FieldControl>
+				</div>
+
+				<div class="panel-block">
+					{#if map}
+						<FieldControl title="Export Settings" fontWeight="bold" showHelp={false}>
+							{#snippet control()}
+								<div>
+									<StaticImageControl
+										bind:map
+										show={true}
+										bind:style={styleUrl}
+										apiBase="{origin}/api"
+										showAdvanced={true}
+										bind:options
+										on:change={handleUrlChanged}
+									/>
+								</div>
+							{/snippet}
+						</FieldControl>
+					{/if}
+				</div>
+				{#if apiUrl}
+					<div class="panel-block">
+						<button
+							class="button is-link is-uppercase has-text-weight-bold is-fullwidth {isExporting
+								? 'is-loading'
+								: ''}"
+							onclick={handleExport}
+							disabled={isExporting}
+						>
+							Export
+						</button>
 					</div>
-					<div slot="help">Copy the URL of static image API</div>
-				</FieldControl>
+				{/if}
+			</nav>
+		</div>
+	{/snippet}
+	{#snippet main()}
+		<div>
+			<div bind:this={mapContainer} class="map" style="height: {sidebarHeight}px;">
+				<div class="overlay has-background-white p-2">
+					<FieldControl title="Static image URL" fontWeight="bold">
+						{#snippet control()}
+							<div>
+								<CopyToClipboard bind:value={apiUrl} />
+							</div>
+						{/snippet}
+						{#snippet help()}
+							<div>Copy the URL of static image API</div>
+						{/snippet}
+					</FieldControl>
+				</div>
 			</div>
 		</div>
-	</div>
+	{/snippet}
 </Sidebar>
 
 <style lang="scss">

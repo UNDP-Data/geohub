@@ -4,8 +4,9 @@
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import type { DatasetFeature, RasterTileMetadata, StacCollection } from '$lib/types';
+	import type { DatasetFeature, StacCollection } from '$lib/types';
 	import type {
+		RasterTileMetadata,
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';

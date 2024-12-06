@@ -2,15 +2,16 @@
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { FooterItem } from '@undp-data/svelte-undp-design';
-	import { Footer, Header, type HeaderLink } from '@undp-data/svelte-undp-design';
+	import { Footer, Header } from '@undp-data/svelte-undp-design';
 	import { setContext } from 'svelte';
 	import { writable } from 'svelte/store';
 
-	let title = $page.data.title ?? 'GeoHub Static Image API';
-	let site_name = $page.data.site_name ?? 'GeoHub Static Image API';
-	let site_description =
+	let title = $state($page.data.title ?? 'GeoHub Static Image API');
+	let site_name = $state($page.data.site_name ?? 'GeoHub Static Image API');
+	let site_description = $state(
 		$page.data.site_description ??
-		'Static image API can generate an PNG image dynamically by specified maplibre style JSON.';
+			'Static image API can generate an PNG image dynamically by specified maplibre style JSON.'
+	);
 
 	afterNavigate(() => {
 		title = $page.data.title ?? 'GeoHub Static Image API';
@@ -23,7 +24,7 @@
 	let headerHeight = writable(<number>0);
 	setContext('header-height', headerHeight);
 
-	let links: HeaderLink[] = [
+	let links = $state([
 		{
 			id: 'header-link-home',
 			title: 'Home',
@@ -34,11 +35,11 @@
 			title: 'API',
 			href: '/api'
 		}
-	];
+	]);
 
 	let footerItems: {
 		[key: string]: FooterItem[];
-	} = {
+	} = $state({
 		'Static Image API': [
 			{
 				title: 'Home',
@@ -49,7 +50,13 @@
 				url: '/api'
 			}
 		]
-	};
+	});
+
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 </script>
 
 <svelte:head>
@@ -96,7 +103,7 @@
 />
 
 <div style="margin-top: {$headerHeight}px">
-	<slot />
+	{@render children?.()}
 </div>
 
 <Footer logoUrl="/assets/undp-images/undp-logo-white.svg" bind:footerItems />

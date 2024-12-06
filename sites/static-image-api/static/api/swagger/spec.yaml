@@ -229,7 +229,7 @@ components:
       required: true
       schema:
         type: string
-        example: 'https://unpkg.com/@undp-data/style@latest/dist/style.json'
+        example: 'https:/dev.undpgeohub.org/api/mapstyle/style.json'
       description: URL of style.json
     bearing:
       name: bearing
@@ -323,7 +323,7 @@ components:
                       - -90
                       - 180
                       - 90
-                sprite: 'https://unpkg.com/@undp-data/style@1.0.2/dist/sprite/sprite'
+                sprite: 'https:/dev.undpgeohub.org/api/mapstyle/sprite/sprite'
                 glyphs: 'https://fonts.undpgeohub.org/fonts/{fontstack}/{range}.pbf'
                 layers:
                   - id: background

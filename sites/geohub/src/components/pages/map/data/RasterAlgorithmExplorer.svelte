@@ -23,8 +23,13 @@
 <script lang="ts">
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { isRgbRaster } from '$lib/helper';
-	import type { DatasetFeature, Link, RasterAlgorithm, RasterTileMetadata } from '$lib/types';
-	import { Notification, getRandomColormap } from '@undp-data/svelte-undp-components';
+	import type { DatasetFeature, Link } from '$lib/types';
+	import {
+		getRandomColormap,
+		Notification,
+		type RasterAlgorithm,
+		type RasterTileMetadata
+	} from '@undp-data/svelte-undp-components';
 	import { Card, Loader } from '@undp-data/svelte-undp-design';
 	import type {
 		HillshadeLayerSpecification,
