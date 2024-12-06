@@ -9,12 +9,13 @@
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { AccessLevel } from '$lib/config/AppConfig';
-	import { getFirstSymbolLayerId, isRgbRaster, loadMap } from '$lib/helper';
+	import { getFirstSymbolLayerId, isRgbRaster } from '$lib/helper';
 	import type { DatasetFeature, Layer, LayerCreationInfo } from '$lib/types';
 	import { LAYERLISTSTORE_CONTEXT_KEY, type LayerListStore } from '$stores';
 	import {
 		Accordion,
 		initTooltipTippy,
+		loadMap,
 		MAPSTORE_CONTEXT_KEY,
 		type MapStore,
 		type RasterTileMetadata,

@@ -5,6 +5,7 @@
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import { getLayerSourceUrl } from '$lib/util/getLayerSourceUrl.js';
 	import { getValueFromRasterTileUrl } from '$lib/util/getValueFromRasterTileUrl.js';
+	import { loadMap } from '$lib/util/loadMap.js';
 	import { updateParamsInURL } from '$lib/util/updateParamsInUrl.js';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import type { RasterLayerSpecification } from 'maplibre-gl';
@@ -105,7 +106,8 @@
 		updateAlgoParams(layerURL);
 	};
 
-	onMount(() => {
+	const initialized = async () => {
+		await loadMap($map);
 		algorithmId = (getValueFromRasterTileUrl($map, layerId, 'algorithm') as string) ?? undefined;
 
 		getAlgorithms().then(() => {
@@ -113,6 +115,10 @@
 				setDefaultParameters();
 			}
 		});
+	};
+
+	onMount(() => {
+		initialized();
 	});
 </script>
 

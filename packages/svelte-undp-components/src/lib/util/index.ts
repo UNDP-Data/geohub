@@ -14,6 +14,8 @@ export * from './getSampleFromInterval.js';
 export * from './getValueFromRasterTileUrl.js';
 export * from './isInt.js';
 export * from './isValidUrl.js';
+export * from './loadMap.js';
 export * from './remapInputValue.js';
+export * from './sleep.js';
 export * from './updateIntervalValues.js';
 export * from './updateParamsInUrl.js';
