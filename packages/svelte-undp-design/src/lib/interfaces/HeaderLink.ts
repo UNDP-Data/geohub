@@ -7,4 +7,5 @@ export interface HeaderLink {
 	preloadCode?: 'eager' | 'hover' | 'off' | 'tap' | 'viewport';
 	preloadData?: 'hover' | 'off' | 'tap';
 	children?: HeaderLink[];
+	linkType?: '' | 'download' | 'external';
 }
