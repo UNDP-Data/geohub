@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import MapStyleCardList from '$components/pages/map/MapStyleCardList.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import { AccessLevel, MapSortingColumns, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { DashboardMapStyle, MapsData, TableViewType } from '$lib/types';
@@ -7,7 +8,6 @@
 	import { Checkbox, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import MapStyleCardList from '../home/MapStyleCardList.svelte';
 
 	const dispatch = createEventDispatcher();
 

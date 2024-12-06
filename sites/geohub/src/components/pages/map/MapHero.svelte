@@ -7,11 +7,11 @@
 
 	let container: HTMLDivElement;
 	let innerHeight = 1000;
-	let innerWidth: number;
 	let map: Map;
 	export let interactive = true;
 	export let excludeHeaderHeight = true;
 	export let styleId: number;
+	export let width = '100%';
 
 	let headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 
@@ -67,6 +67,4 @@
 	};
 </script>
 
-<svelte:window bind:innerHeight bind:innerWidth />
-
-<div bind:this={container} class="map" style="height: {mapHeight}px; width: 100%;" />
+<div bind:this={container} class="map" style="height: {mapHeight}px; width: {width};" />

@@ -1,41 +1,41 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
-	import DashboardContents from '$components/pages/home/DashboardContents.svelte';
-	import ExploreDatasets from '$components/pages/home/ExploreDatasets.svelte';
-	import MapHero from '$components/pages/home/MapHero.svelte';
-	import MapStyleCardList from '$components/pages/home/MapStyleCardList.svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import MapHero from '$components/pages/map/MapHero.svelte';
+	import MapStyleCardList from '$components/pages/map/MapStyleCardList.svelte';
 	import { MapStyleId } from '$lib/config/AppConfig';
-	import type { MapsData } from '$lib/types';
-	import { HeroLink, handleEnterKey } from '@undp-data/svelte-undp-components';
-	import {
-		Card,
-		DefaultLink,
-		PagewideFeaturedContentCard,
-		Stats
-	} from '@undp-data/svelte-undp-design';
+	import type { MapsData, StorymapsData } from '$lib/types';
+	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
+	import { type BreadcrumbPage, Breadcrumbs, HeroLink } from '@undp-data/svelte-undp-components';
+	import { Button, Card, CardWithImage, Loader } from '@undp-data/svelte-undp-design';
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 
 	let innerWidth: number;
-	$: isMobile = innerWidth < 768 ? true : false;
+	// $: isMobile = innerWidth < 768 ? true : false;
+	let headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 
 	let stats = data.stats;
 	let mapsData: MapsData = data.styles;
 
-	let docsUrl = data.headerLinks.find((l) => l.title.toLowerCase() === 'support')?.href;
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'DATA FUTURES EXCHANGED', url: 'https://data.undp.org' },
+		{ title: data.title, url: $page.url.href }
+	];
+	let storiesData: StorymapsData | undefined;
 
-	const scrollTo = (hash: string) => {
-		if (browser) {
-			const anchor = document.getElementById(hash);
-			window.scrollTo({
-				top: anchor.offsetTop - 120,
-				behavior: 'smooth'
-			});
-		}
+	const loadStorymaps = async () => {
+		storiesData = undefined;
+
+		const res = await fetch(`/api/storymaps?limit=3&sortby=updatedat,desc&accesslevel=3`);
+		const stories: StorymapsData = await res.json();
+
+		storiesData = stories;
+		return storiesData;
 	};
 
 	onMount(() => {
@@ -46,176 +46,206 @@
 
 <svelte:window bind:innerWidth />
 
-<div class="map-hero">
-	<MapHero styleId={MapStyleId} interactive={false} />
+<section class="top-section columns mb-0" style="margin-top: {$headerHeightStore}px;">
+	<div class="column p-0">
+		<div class="top-content is-flex is-flex-direction-column is-justify-space-between">
+			<Breadcrumbs pages={breadcrumbs} />
 
-	<div class="map-menu columns p-4">
-		<div class="column is-4 p-1">
-			<Card
-				linkName="Explore"
-				url="/maps"
-				tag=""
-				title="Maps"
-				description={!isMobile
-					? 'Explore comunity maps created and shared by users or create your own map'
-					: ''}
-			/>
+			<div class="content is-flex is-flex-direction-column">
+				<h1 class="title is-1">
+					{data.title}
+				</h1>
+				<p class="summary is-size-2 mb-0">
+					open-source geospatial services for supporting SDG development
+				</p>
+
+				<div class="map-button">
+					<Button
+						title="CREATE MAP"
+						isArrow={true}
+						on:clicked={() => {
+							goto('/maps/edit');
+						}}
+					></Button>
+				</div>
+			</div>
 		</div>
-		<div class="column is-4 p-1">
-			<Card
-				linkName="Explore"
-				url="/data"
-				tag=""
-				title="Datasets"
-				description={!isMobile ? 'Explore data catalogue or upload your datasets' : ''}
-			/>
-		</div>
-		{#if docsUrl}
-			<div class="column is-4 p-1">
+	</div>
+	<div class="column p-0 is-7">
+		<MapHero styleId={MapStyleId} interactive={false} />
+	</div>
+</section>
+
+<section class="overview-section">
+	<div class="overview-header is-flex is-align-items-flex-start">
+		<h2 class="title is-2 has-text-white">Overview</h2>
+		<p class="has-text-white is-size-4">
+			UNDP GeoHub is an <u>open-source</u> centralized platform offering geospatial tools and data to
+			help policymakers and staff make informed decisions and drive progress on the SDGs.
+		</p>
+	</div>
+	<div class="fixed-grid has-3-cols">
+		<div class="grid is-gap-4">
+			<div class="cell">
 				<Card
-					linkName="Read more"
-					url={docsUrl}
+					linkName="CREAT MAP"
+					url="/maps/edit"
 					tag=""
-					title="User Guide"
-					description={!isMobile ? 'User guide is available to describe core features.' : ''}
+					title="Create and customize maps"
+					description="Explore datasets and extract key insights through interactive maps."
 				/>
 			</div>
-		{/if}
-	</div>
-
-	<div class="scroll-down-arrow">
-		<!-- svelte-ignore a11y-missing-attribute -->
-		<a
-			role="button"
-			tabindex="0"
-			on:click={() => scrollTo('top')}
-			on:keydown={handleEnterKey}
-			data-sveltekit-preload-data="off"
-			data-sveltekit-preload-code="off"
-		>
-			<span class="icon has-text-grey"><i class="fa-solid fa-angle-down fa-4x"></i></span>
-		</a>
-	</div>
-</div>
-
-<section id="top" class="hero is-medium is-link">
-	<div class="hero-body has-text-centered">
-		<p class="title is-3 mx-auto max-width">
-			UNDP GeoHub is a centralised ecosystem of geospatial services to support staff and development
-			policy makers in the context of SDGs.
-		</p>
+			<div class="cell">
+				<Card
+					linkName="Explore tools"
+					url="/tools"
+					tag=""
+					title="Analyze data with tools"
+					description="Use advanced analytical tools to refine data and create tailored maps."
+				/>
+			</div>
+			<div class="cell">
+				<Card
+					linkName="Create storymap"
+					url="/storymaps/edit"
+					tag=""
+					title="Share findings with stories"
+					description="Create map-based stories that communicate your insights effectively."
+				/>
+			</div>
+		</div>
 	</div>
 </section>
 
-<p class="title is-2 mt-6 mb-4 has-text-centered">Why GeoHub?</p>
-<div
-	class="is-flex is-justify-content-center is-flex-direction-column has-text-centered p-4 mx-auto max-width"
->
-	<p class="is-size-5 mb-4">The reasons and challenges why we developed GeoHub:</p>
-	<div class="is-flex is-flex-direction-column">
-		<div class="pb-5">
-			<span class="icon">
-				<i class="fas fa-database fa-2x"></i>
-			</span>
-			<p class="is-size-6">No centralised geospatial repository</p>
-		</div>
-		<div class="pb-5">
-			<span class="icon">
-				<i class="fas fa-chart-simple fa-2x"></i>
-			</span>
-			<p class="is-size-6">Specialized staff and skills required to work with geospatial</p>
-		</div>
-		<div class="pb-5">
-			<span class="icon">
-				<i class="fas fa-dollar-sign fa-2x"></i>
-			</span>
-			<p class="is-size-6">Geospatial analytics and work was carried out by consultants</p>
-		</div>
-		<div class="pb-5">
-			<span class="icon">
-				<i class="fas fa-server fa-2x"></i>
-			</span>
-			<p class="is-size-6">Limited hardware/software capabilities, mainly commercial</p>
-		</div>
-	</div>
-
-	<p class="is-size-5">
-		GeoHub was designed for users to do geospatial analytical works without having advanced
-		geospatial knowledge and skills
+<section class="dataset-section p-6 my-4">
+	<h2 class="title is-2">
+		Visualize {stats.dataset.find((d) => d.title === 'Public datasets')?.stat} datasets
+	</h2>
+	<p class="description is-size-4">
+		Explore datasets and extract key insights through interactive maps.
 	</p>
-</div>
 
-<section class="hero is-link py-6 my-6">
-	<div class="hero-body has-text-centered">
-		<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Community Maps</h2>
-
-		<p class="is-size-5 has-text-white mx-auto mb-4 max-width">
-			Community maps are created and shared by users to visualize GeoHub datasets for their
-			purposes. You can start <DefaultLink href="/maps" title="exploring more maps" target="" /> or
-			<DefaultLink href="/maps/edit" title="creating a new map" target="" />.
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 798" height="798" width="100%">
+		<rect width="100%" height="100%" fill="white" stroke="gray" stroke-width="2" />
+		<text
+			x="50%"
+			y="50%"
+			dominant-baseline="middle"
+			text-anchor="middle"
+			fill="black"
+			font-size="48px"
+			font-family="Arial"
+		>
+			Dummy
+		</text>
+	</svg>
+	<div class="turn-data-section is-flex is-flex-direction-column has-text-centered">
+		<h2 class="title is-2">Turn data into insights</h2>
+		<p class="is-size-5">
+			Bring your ideas to life by transforming data into interactive maps.
+			<br />
+			Use GeoHub’s tools to visualize and analyze the data.
 		</p>
+		<div class="is-flex mt-6 mx-auto">
+			<div>
+				<Button
+					title="EXPLORE DATASETS"
+					isArrow={true}
+					on:clicked={() => {
+						goto('/data');
+					}}
+				></Button>
+			</div>
+			<a
+				class="upload-button is-flex is-align-items-center has-text-black is-uppercase has-text-weight-bold py-4 pl-5 ml-5"
+				href="/data/upload"
+			>
+				upload dataset
+
+				<span class="ml-3 icon is-small">
+					<i class="fa-solid fa-chevron-right has-text-primary"></i>
+				</span>
+			</a>
+		</div>
+	</div>
+
+	<div class="map-section">
+		<h3 class="title is-3 mb-5">Explore maps</h3>
+
+		<div class="mb-5">
+			<MapStyleCardList bind:mapData={mapsData} showMenu={false} />
+		</div>
+
+		<div class="explore-button">
+			<Button
+				title="EXPLORE ALL MAPS"
+				isArrow={true}
+				on:clicked={() => {
+					goto('/maps');
+				}}
+			></Button>
+		</div>
 	</div>
 </section>
 
-<div class="main-section m-6">
-	<div id="maps">
-		<MapStyleCardList bind:mapData={mapsData} showMenu={false} />
-	</div>
-</div>
+<section class="storymap-section p-6 my-4">
+	<h2 class="title is-2">Share your findings</h2>
+	<p class="description is-size-4">Create a storymap to present and share your insights.</p>
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 798" height="798" width="100%">
+		<rect width="100%" height="100%" fill="white" stroke="gray" stroke-width="2" />
+		<text
+			x="50%"
+			y="50%"
+			dominant-baseline="middle"
+			text-anchor="middle"
+			fill="black"
+			font-size="48px"
+			font-family="Arial"
+		>
+			Dummy
+		</text>
+	</svg>
 
-<section id="explore-data" class="hero is-link py-6 my-4">
-	<div class="hero-body has-text-centered">
-		<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Explore GeoHub datasets</h2>
+	<div class="map-section">
+		<h3 class="title is-3 mb-5">Explore storymaps</h3>
 
-		<p class="is-size-5 has-text-white mx-auto mb-4 max-width">
-			You can start exploring and analysing datasets in GeoHub, or upload your datasets.
-		</p>
+		<div class="mb-5">
+			{#await loadStorymaps()}
+				<div class="is-flex is-justify-content-center">
+					<Loader size="large" />
+				</div>
+			{:then stories}
+				<div class="columns is-multiline is-mobile">
+					{#each stories.stories as story}
+						{@const storyLink = story.links?.find((l) => l.rel === 'storymap')?.href}
+						{@const staticLink = story.links?.find((l) => l.rel === 'static-auto')?.href}
+
+						<div class="column is-one-third-tablet is-one-third-desktop is-full-mobile">
+							<CardWithImage
+								title={story.title ?? ''}
+								url={storyLink}
+								tag="Story"
+								image={staticLink?.replace('{width}', '298').replace('{height}', '180') ?? ''}
+								width={298}
+								height={180}
+								linkName="Explore"
+							/>
+						</div>
+					{/each}
+				</div>
+			{/await}
+		</div>
+		<div class="explore-button">
+			<Button
+				title="EXPLORE ALL STORYMAPS"
+				isArrow={true}
+				on:clicked={() => {
+					goto('/storymaps');
+				}}
+			></Button>
+		</div>
 	</div>
 </section>
-
-<section>
-	<div
-		class="stat-grid is-flex {isMobile ? 'is-flex-direction-column' : 'is-flex-direction-row'} my-4"
-	>
-		{#each stats.dataset as card}
-			<Stats bind:card size={isMobile ? 'medium' : 'small'} />
-		{/each}
-	</div>
-
-	<ExploreDatasets />
-</section>
-
-<HeroLink title="Analytical tools" linkName="Explore analytical tools" href="/tools">
-	More and more geospatial analytical tools for decision making are being developed to GeoHub.
-</HeroLink>
-
-<section class="main-section m-6">
-	<PagewideFeaturedContentCard
-		href="/storymaps"
-		title="Storymaps"
-		description="GeoHub storymap editor can provide you a tool to build your own story from GeoHub maps. You can explore other users' storymaps, or start creating your own story."
-		tag="Tool"
-		image="/assets/storymap-screenshot.webp"
-		buttonText="Explore"
-	/>
-</section>
-
-<section id="dashboards" class="hero is-link py-6 mb-6">
-	<div class="hero-body has-text-centered">
-		<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Explore dashboards</h2>
-
-		<p class="is-size-5 has-text-white mx-auto mb-4 max-width">
-			GeoHub dashboards are special use cases which use the datasets from GeoHub repository. You can
-			explore our dashboards.
-		</p>
-	</div>
-</section>
-
-{#if browser}
-	<div class="mx-6 my-6">
-		<DashboardContents />
-	</div>
-{/if}
 
 <HeroLink
 	title="Fully open source"
@@ -228,79 +258,91 @@
 </HeroLink>
 
 <style lang="scss">
-	.map-hero {
-		position: relative;
+	.top-section {
+		.top-content {
+			margin-left: 117.5px;
+			padding-top: 100px;
 
-		.map-menu {
-			position: absolute;
-			width: 100%;
-			bottom: 50px;
-			left: 51%;
-			transform: translateX(-50%);
-		}
-
-		.scroll-down-arrow {
-			position: absolute;
-			bottom: 40px;
-			left: 50%;
-			transform: translateX(-50%);
-			cursor: pointer;
-
-			a {
-				padding-top: 70px;
-
-				span {
-					position: absolute;
-					bottom: 15px;
-					left: 50%;
-					width: 24px;
-					height: 24px;
-					margin-left: -12px;
-					-webkit-animation: sdb05 1.5s infinite;
-					animation: sdb05 1.5s infinite;
-					box-sizing: border-box;
-
-					@-webkit-keyframes sdb05 {
-						0% {
-							-webkit-transform: translate(0, 0);
-							opacity: 0;
-						}
-						50% {
-							opacity: 1;
-						}
-						100% {
-							-webkit-transform: translate(0, 20px);
-							opacity: 0;
-						}
-					}
-					@keyframes sdb05 {
-						0% {
-							transform: translate(0, 0);
-							opacity: 0;
-						}
-						50% {
-							opacity: 1;
-						}
-						100% {
-							transform: translate(0, 20px);
-							opacity: 0;
-						}
-					}
+			.content {
+				margin-top: 150px;
+				.title {
+					font-size: 55px !important;
+				}
+				.summary {
+					font-size: 35px;
+					line-height: 39.97px;
+				}
+				.map-button {
+					width: 173px;
+					margin-top: 48px;
 				}
 			}
 		}
 	}
 
-	.stat-grid {
-		margin: 0 auto;
-		width: fit-content;
+	.overview-section {
+		padding: 100px 142px;
+		background-color: var(--undpds-color-gray-700);
 
-		:global(.stats-card) {
-			margin: 5px;
+		.overview-header {
+			gap: 119px;
+			margin-bottom: 4rem;
+
+			.title {
+				width: fit-content;
+				white-space: nowrap;
+			}
+		}
+
+		:global(.content-card) {
+			border-top: 1px solid var(--undpds-color-white) !important;
+			background-color: transparent !important;
+		}
+		:global(.content-caption) {
+			color: var(--undpds-color-white) !important;
+		}
+		:global(.cta__link) {
+			color: var(--undpds-color-white) !important;
 		}
 	}
 
-	.max-width {
-		max-width: 768px;
+	.dataset-section {
+		.title {
+			line-height: 109%;
+		}
+
+		.turn-data-section {
+			background: var(--undpds-color-gray-300);
+			margin: 64px 0;
+			padding: 96px 144px;
+
+			.upload-button {
+				border: none;
+				background-color: transparent;
+			}
+		}
+
+		.map-section {
+			.explore-button {
+				width: 240px;
+			}
+		}
+	}
+
+	.storymap-section {
+		.title {
+			line-height: 109%;
+		}
+
+		.description {
+			margin-bottom: 32px;
+		}
+
+		.map-section {
+			margin-top: 32px;
+			.explore-button {
+				width: 300px;
+			}
+		}
 	}
 </style>
