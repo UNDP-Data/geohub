@@ -20,7 +20,6 @@ export * from './Pages';
 export * from './PgtileservDetailJson';
 export * from './PgtileservIndexJson';
 export * from './Product';
-export * from './RasterAlgorithm';
 export * from './RasterSimpleExpression';
 export * from './Region';
 export * from './Sprite';

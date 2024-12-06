@@ -1,25 +1,31 @@
 <script lang="ts">
-	import { getLayerStyle } from '$lib/helper';
-	import type { Link, RasterAlgorithm } from '$lib/types';
-	import {
-		FieldControl,
-		getLayerSourceUrl,
-		getValueFromRasterTileUrl,
-		MAPSTORE_CONTEXT_KEY,
-		PropertyEditor,
-		updateParamsInURL,
-		type MapStore
-	} from '@undp-data/svelte-undp-components';
+	import FieldControl from '$lib/components/ui/FieldControl.svelte';
+	import PropertyEditor from '$lib/components/ui/PropertyEditor.svelte';
+	import type { RasterAlgorithm } from '$lib/interfaces/RasterAlgorithm.js';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { getLayerSourceUrl } from '$lib/util/getLayerSourceUrl.js';
+	import { getValueFromRasterTileUrl } from '$lib/util/getValueFromRasterTileUrl.js';
+	import { updateParamsInURL } from '$lib/util/updateParamsInUrl.js';
 	import { Loader } from '@undp-data/svelte-undp-design';
+	import type { RasterLayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
+	/**
+	 * maplibre layer ID
+	 */
 	export let layerId: string;
-	export let links: Link[] = [];
+
+	/**
+	 * Titiler Algorithm ID
+	 */
 	export let algorithmId = '';
 
-	let algorithmsLink = links.find((l) => l.rel === 'algorithms')?.href;
+	/**
+	 * Titiler alrgorithms endpoint URL
+	 */
+	export let algorithmsApi = '';
 
 	let algorithms: { [key: string]: RasterAlgorithm };
 
@@ -44,7 +50,7 @@
 	}
 
 	const getAlgorithms = async () => {
-		const res = await fetch(algorithmsLink);
+		const res = await fetch(algorithmsApi);
 		algorithms = await res.json();
 	};
 
@@ -86,7 +92,8 @@
 		if (dumpedParams) {
 			params['algorithm_params'] = dumpedParams;
 		}
-		const layerStyle = getLayerStyle($map, layerId);
+		const style = $map.getStyle();
+		const layerStyle = style?.layers?.find((l) => l.id === layerId) as RasterLayerSpecification;
 		updateParamsInURL(layerStyle, url, params, $map);
 	};
 

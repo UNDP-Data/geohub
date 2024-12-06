@@ -19,17 +19,13 @@
 	import StacCatalogTool from '$components/util/stac/StacCatalogTool.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { addDataToLocalStorage, getFirstSymbolLayerId } from '$lib/helper';
-	import type {
-		DatasetFeature,
-		DatasetFeatureCollection,
-		Layer,
-		RasterAlgorithm
-	} from '$lib/types';
+	import type { DatasetFeature, DatasetFeatureCollection, Layer } from '$lib/types';
 	import {
 		HeroHeader,
 		Notification,
 		getRandomColormap,
 		type BreadcrumbPage,
+		type RasterAlgorithm,
 		type RasterTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { Card, Loader, Pagination } from '@undp-data/svelte-undp-design';

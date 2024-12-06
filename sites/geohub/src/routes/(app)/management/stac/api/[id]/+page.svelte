@@ -7,18 +7,13 @@
 	import { generateHashKey } from '$lib/helper';
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
-	import type {
-		DatasetFeatureCollection,
-		RasterAlgorithm,
-		StacCollection,
-		StacCollections,
-		Tag
-	} from '$lib/types';
+	import type { DatasetFeatureCollection, StacCollection, StacCollections, Tag } from '$lib/types';
 	import {
 		FieldControl,
 		HeroHeader,
 		ModalTemplate,
-		type BreadcrumbPage
+		type BreadcrumbPage,
+		type RasterAlgorithm
 	} from '@undp-data/svelte-undp-components';
 	import { Loader, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';

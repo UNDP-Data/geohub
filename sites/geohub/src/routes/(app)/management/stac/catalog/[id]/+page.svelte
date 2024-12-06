@@ -9,7 +9,6 @@
 	import type {
 		DatasetFeature,
 		Layer,
-		RasterAlgorithm,
 		StacCatalog,
 		StacCatalogBreadcrumb,
 		StacCollection,
@@ -20,6 +19,7 @@
 		HeroHeader,
 		ModalTemplate,
 		type BreadcrumbPage,
+		type RasterAlgorithm,
 		type RasterTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';

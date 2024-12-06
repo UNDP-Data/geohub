@@ -6,11 +6,14 @@
 		DatasetFeature,
 		Layer,
 		LayerCreationInfo,
-		RasterAlgorithm,
 		StacAsset,
 		StacCollection
 	} from '$lib/types';
-	import { FieldControl, Notification } from '@undp-data/svelte-undp-components';
+	import {
+		FieldControl,
+		Notification,
+		type RasterAlgorithm
+	} from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 	import StacCatalogDatePicker from './StacCatalogDatePicker.svelte';
 
