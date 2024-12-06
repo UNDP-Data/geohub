@@ -16,7 +16,7 @@
 	export let data: PageData;
 
 	let innerWidth: number;
-	// $: isMobile = innerWidth < 768 ? true : false;
+	$: isMobile = innerWidth < 768 ? true : false;
 	let headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 
 	let stats = data.stats;
@@ -55,36 +55,52 @@
 				<h1 class="title is-1">
 					{data.title}
 				</h1>
-				<p class="summary is-size-2 mb-0">
-					open-source geospatial services for supporting SDG development
-				</p>
+				<p class="summary mb-0">open-source geospatial services for supporting SDG development</p>
 
-				<div class="map-button">
-					<Button
-						title="CREATE MAP"
-						isArrow={true}
-						on:clicked={() => {
-							goto('/maps/edit');
-						}}
-					></Button>
-				</div>
+				{#if !isMobile}
+					<div class="map-button">
+						<Button
+							title="CREATE MAP"
+							isArrow={true}
+							on:clicked={() => {
+								goto('/maps/edit');
+							}}
+						></Button>
+					</div>
+				{/if}
 			</div>
 		</div>
 	</div>
 	<div class="column p-0 is-7">
-		<MapHero styleId={MapStyleId} interactive={false} />
+		<MapHero styleId={MapStyleId} interactive={false} height={isMobile ? 344 : 0} />
 	</div>
+
+	{#if isMobile}
+		<div class="column p-0 map-button mx-5 my-5">
+			<Button
+				title="CREATE MAP"
+				isArrow={true}
+				on:clicked={() => {
+					goto('/maps/edit');
+				}}
+			></Button>
+		</div>
+	{/if}
 </section>
 
 <section class="overview-section">
-	<div class="overview-header is-flex is-align-items-flex-start">
-		<h2 class="title is-2 has-text-white">Overview</h2>
-		<p class="has-text-white is-size-4">
-			UNDP GeoHub is an <u>open-source</u> centralized platform offering geospatial tools and data to
-			help policymakers and staff make informed decisions and drive progress on the SDGs.
-		</p>
+	<div class="overview-header columns">
+		<div class="column">
+			<h2 class="title is-2 has-text-white">Overview</h2>
+		</div>
+		<div class="column is-8">
+			<p class="overview-description has-text-white is-size-4">
+				UNDP GeoHub is an <u>open-source</u> centralized platform offering geospatial tools and data
+				to help policymakers and staff make informed decisions and drive progress on the SDGs.
+			</p>
+		</div>
 	</div>
-	<div class="fixed-grid has-3-cols">
+	<div class="fixed-grid {isMobile ? 'has-1-cols' : 'has-3-cols'}">
 		<div class="grid is-gap-4">
 			<div class="cell">
 				<Card
@@ -117,7 +133,7 @@
 	</div>
 </section>
 
-<section class="dataset-section p-6 my-4">
+<section class="dataset-section">
 	<h2 class="title is-2">
 		Visualize {stats.dataset.find((d) => d.title === 'Public datasets')?.stat} datasets
 	</h2>
@@ -125,20 +141,27 @@
 		Explore datasets and extract key insights through interactive maps.
 	</p>
 
-	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 798" height="798" width="100%">
-		<rect width="100%" height="100%" fill="white" stroke="gray" stroke-width="2" />
-		<text
-			x="50%"
-			y="50%"
-			dominant-baseline="middle"
-			text-anchor="middle"
-			fill="black"
-			font-size="48px"
-			font-family="Arial"
+	<div class="animation">
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 {innerWidth - 48} {isMobile ? 220 : 798}"
+			height={isMobile ? 220 : 798}
+			width="100%"
 		>
-			Dummy
-		</text>
-	</svg>
+			<rect width="100%" height="100%" fill="white" stroke="gray" stroke-width="2" />
+			<text
+				x="50%"
+				y="50%"
+				dominant-baseline="middle"
+				text-anchor="middle"
+				fill="black"
+				font-size="48px"
+				font-family="Arial"
+			>
+				Dummy
+			</text>
+		</svg>
+	</div>
 	<div class="turn-data-section is-flex is-flex-direction-column has-text-centered">
 		<h2 class="title is-2">Turn data into insights</h2>
 		<p class="is-size-5">
@@ -146,8 +169,8 @@
 			<br />
 			Use GeoHub’s tools to visualize and analyze the data.
 		</p>
-		<div class="is-flex mt-6 mx-auto">
-			<div>
+		<div class="columns mt-6 mx-auto">
+			<div class="column p-0">
 				<Button
 					title="EXPLORE DATASETS"
 					isArrow={true}
@@ -156,16 +179,18 @@
 					}}
 				></Button>
 			</div>
-			<a
-				class="upload-button is-flex is-align-items-center has-text-black is-uppercase has-text-weight-bold py-4 pl-5 ml-5"
-				href="/data/upload"
-			>
-				upload dataset
+			<div class="column p-0">
+				<a
+					class="upload-button is-flex is-align-items-center has-text-black is-uppercase has-text-weight-bold py-4 pl-5 ml-5"
+					href="/data/upload"
+				>
+					upload dataset
 
-				<span class="ml-3 icon is-small">
-					<i class="fa-solid fa-chevron-right has-text-primary"></i>
-				</span>
-			</a>
+					<span class="ml-3 icon is-small">
+						<i class="fa-solid fa-chevron-right has-text-primary"></i>
+					</span>
+				</a>
+			</div>
 		</div>
 	</div>
 
@@ -188,23 +213,31 @@
 	</div>
 </section>
 
-<section class="storymap-section p-6 my-4">
+<section class="storymap-section">
 	<h2 class="title is-2">Share your findings</h2>
 	<p class="description is-size-4">Create a storymap to present and share your insights.</p>
-	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 798" height="798" width="100%">
-		<rect width="100%" height="100%" fill="white" stroke="gray" stroke-width="2" />
-		<text
-			x="50%"
-			y="50%"
-			dominant-baseline="middle"
-			text-anchor="middle"
-			fill="black"
-			font-size="48px"
-			font-family="Arial"
+
+	<div class="animation">
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 {innerWidth - 48} {isMobile ? 220 : 798}"
+			height={isMobile ? 220 : 798}
+			width="100%"
 		>
-			Dummy
-		</text>
-	</svg>
+			<rect width="100%" height="100%" fill="white" stroke="gray" stroke-width="2" />
+			<text
+				x="50%"
+				y="50%"
+				dominant-baseline="middle"
+				text-anchor="middle"
+				fill="black"
+				font-size="48px"
+				font-family="Arial"
+			>
+				Dummy
+			</text>
+		</svg>
+	</div>
 
 	<div class="map-section">
 		<h3 class="title is-3 mb-5">Explore storymaps</h3>
@@ -249,7 +282,7 @@
 
 <HeroLink
 	title="Fully open source"
-	linkName="Open GitHub"
+	linkName="Visit GitHub"
 	href={data.footerLinks['For Developers'][0].url}
 >
 	GeoHub is being developed under an open source software license, and most datasets are published
@@ -263,18 +296,41 @@
 			margin-left: 117.5px;
 			padding-top: 100px;
 
+			@media (max-width: 48em) {
+				margin: 0 32px;
+				padding: 32px 0;
+			}
+
 			.content {
 				margin-top: 150px;
+
+				@media (max-width: 48em) {
+					margin-top: 64px;
+				}
+
 				.title {
 					font-size: 55px !important;
+
+					@media (max-width: 48em) {
+						font-size: 40px !important;
+					}
 				}
 				.summary {
 					font-size: 35px;
 					line-height: 39.97px;
+
+					@media (max-width: 48em) {
+						font-size: 25px;
+						line-height: 114.2%;
+					}
 				}
 				.map-button {
 					width: 173px;
 					margin-top: 48px;
+
+					@media (max-width: 48em) {
+						width: 100%;
+					}
 				}
 			}
 		}
@@ -284,13 +340,30 @@
 		padding: 100px 142px;
 		background-color: var(--undpds-color-gray-700);
 
+		@media (max-width: 48em) {
+			padding: 48px 16px;
+		}
+
 		.overview-header {
 			gap: 119px;
 			margin-bottom: 4rem;
 
+			@media (max-width: 48em) {
+				gap: none;
+				margin-bottom: 2rem;
+			}
+
 			.title {
 				width: fit-content;
 				white-space: nowrap;
+			}
+
+			.overview-description {
+				margin-right: 142px;
+
+				@media (max-width: 48em) {
+					margin-right: 0;
+				}
 			}
 		}
 
@@ -307,14 +380,37 @@
 	}
 
 	.dataset-section {
+		margin: 64px 48px;
+
 		.title {
 			line-height: 109%;
+		}
+
+		@media (max-width: 48em) {
+			margin: 48px 0;
+
+			.title {
+				margin: 0 24px;
+			}
+
+			.description {
+				margin: 0 24px;
+			}
+
+			.animation {
+				margin: 0 24px;
+			}
 		}
 
 		.turn-data-section {
 			background: var(--undpds-color-gray-300);
 			margin: 64px 0;
 			padding: 96px 144px;
+
+			@media (max-width: 48em) {
+				padding: 96px 24px;
+				margin-bottom: 0;
+			}
 
 			.upload-button {
 				border: none;
@@ -326,10 +422,41 @@
 			.explore-button {
 				width: 240px;
 			}
+
+			@media (max-width: 48em) {
+				padding: 48px 16px;
+				padding-bottom: 0;
+
+				.explore-button {
+					width: 100%;
+				}
+			}
 		}
 	}
 
 	.storymap-section {
+		margin: 48px 64px;
+
+		@media (max-width: 48em) {
+			margin: 16px 48px;
+
+			@media (max-width: 48em) {
+				margin: 48px 0;
+
+				.title {
+					margin: 0 24px;
+				}
+
+				.description {
+					margin: 0 24px;
+				}
+
+				.animation {
+					margin: 0 24px;
+				}
+			}
+		}
+
 		.title {
 			line-height: 109%;
 		}
@@ -342,6 +469,15 @@
 			margin-top: 32px;
 			.explore-button {
 				width: 300px;
+			}
+
+			@media (max-width: 48em) {
+				padding: 48px 16px;
+				padding-bottom: 0;
+
+				.explore-button {
+					width: 100%;
+				}
 			}
 		}
 	}
