@@ -30,9 +30,6 @@
 
 	const title = 'Raster Algorithms Control';
 
-	// SAS token of blob storage will be expired every year.
-	// if it is expired, please update it for the below dataset.
-	// https://geohub.data.undp.org/data/00d5add9be37e465398b081683c3ec03#Info
 	const source: RasterSourceSpecification = {
 		type: 'raster',
 		tiles: [
