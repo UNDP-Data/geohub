@@ -34,12 +34,14 @@ export const HeaderItems = (linkNames: LineName[]) => {
 				{
 					id: 'header-sublink-documentation',
 					title: 'Documentation',
-					href: env.GEOHUB_DOCS_ENDPOINT ?? ''
+					href: env.GEOHUB_DOCS_ENDPOINT ?? '',
+					linkType: 'external'
 				},
 				{
 					id: 'header-sublink-github',
 					title: 'GitHub repo',
-					href: 'https://github.com/UNDP-Data/geohub'
+					href: 'https://github.com/UNDP-Data/geohub',
+					linkType: 'external'
 				},
 				{
 					id: 'header-sublink-contactus',
