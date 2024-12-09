@@ -534,6 +534,13 @@
 			<div>
 				<Breadcrumbs pages={breadcrumbs} />
 			</div>
+			{#if !data.session}
+				<div>
+					<Notification showCloseButton={false} showIcon={false} type="warning">
+						You can't save a storymap. Please sign in first.
+					</Notification>
+				</div>
+			{/if}
 
 			<div class="ml-auto is-flex is-align-items-center">
 				<button
@@ -570,11 +577,13 @@
 					class="button is-link is-uppercase has-text-weight-bold {isProcessing
 						? 'is-loading'
 						: ''}"
-					disabled={isProcessing}
+					disabled={isProcessing || !data.session}
 					on:click={() => {
 						showSaveDialog = true;
 					}}
-					use:tippyTooltip={{ content: 'Save current story settings to the database.' }}
+					use:tippyTooltip={{
+						content: 'Save current story settings to the database.'
+					}}
 				>
 					save
 				</button>
