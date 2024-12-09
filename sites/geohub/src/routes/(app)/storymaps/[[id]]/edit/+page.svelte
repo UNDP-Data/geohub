@@ -150,7 +150,13 @@
 				terrain: mapConfig.terrain,
 				access_level: AccessLevel.PRIVATE,
 				showProgress: true,
-				chapters: []
+				chapters: [],
+				location: {
+					center: [0, 0],
+					zoom: 0,
+					bearing: 0,
+					pitch: 0
+				}
 			};
 			$configStore = initConfig;
 
@@ -196,82 +202,89 @@
 	};
 
 	const handleNewSlide = async () => {
-		const base_style_id = ($configStore as StoryMapConfig).base_style_id;
-		const style_id = ($configStore as StoryMapConfig).style_id;
+		try {
+			isProcessing = true;
 
-		let styleUrl = '';
+			const base_style_id = ($configStore as StoryMapConfig).base_style_id;
+			const style_id = ($configStore as StoryMapConfig).style_id;
 
-		if (style_id) {
-			const mapUrl = new URL(`/api/style/${style_id}.json`, $page.url.origin);
-			if (base_style_id) {
-				mapUrl.searchParams.set('basemap', base_style_id);
+			let styleUrl = '';
+
+			if (style_id) {
+				const mapUrl = new URL(`/api/style/${style_id}.json`, $page.url.origin);
+				if (base_style_id) {
+					mapUrl.searchParams.set('basemap', base_style_id);
+				}
+				styleUrl = mapUrl.href;
+			} else {
+				const baseMap =
+					MapStyles.find(
+						(m) =>
+							m.id.toLowerCase() === ($configStore as StoryMapConfig).base_style_id?.toLowerCase()
+					) ?? MapStyles[0];
+				styleUrl = new URL(baseMap.uri, $page.url.origin).href;
 			}
-			styleUrl = mapUrl.href;
-		} else {
-			const baseMap =
-				MapStyles.find(
-					(m) =>
-						m.id.toLowerCase() === ($configStore as StoryMapConfig).base_style_id?.toLowerCase()
-				) ?? MapStyles[0];
-			styleUrl = new URL(baseMap.uri, $page.url.origin).href;
+
+			const lastChapter: StoryMapChapter | undefined =
+				$configStore.chapters.length > 0
+					? ($configStore.chapters[$configStore.chapters.length - 1] as unknown as StoryMapChapter)
+					: undefined;
+
+			const location = {
+				center: lastChapter?.location.center ??
+					($configStore as StoryMapConfig).location?.center ?? [0, 0],
+				zoom: lastChapter?.location.zoom ?? ($configStore as StoryMapConfig).location?.zoom ?? 0,
+				bearing:
+					lastChapter?.location.bearing ?? ($configStore as StoryMapConfig).location?.bearing ?? 0,
+				pitch: lastChapter?.location.pitch ?? ($configStore as StoryMapConfig).location?.pitch ?? 0
+			};
+
+			if (!lastChapter) {
+				const res = await fetch(styleUrl);
+				const style: StyleSpecification = await res.json();
+				if (style.center) {
+					location.center = style.center;
+				}
+				if (style.zoom) {
+					location.zoom = style.zoom;
+				}
+				if (style.bearing) {
+					location.bearing = style.bearing;
+				}
+				if (style.pitch) {
+					location.pitch = style.pitch;
+				}
+			}
+
+			$configStore.chapters = [
+				...$configStore.chapters,
+				{
+					id: uuidv4(),
+					title: 'Input title...',
+					description: 'Input description...',
+					location: location,
+					style: lastChapter?.style ?? styleUrl,
+					alignment: data.config.StorymapChapterCardAlignment,
+					hidden: false,
+					mapAnimation: data.config.StorymapChapterTransitionAnimation,
+					mapInteractive: false,
+					mapNavigationPosition: data.config.StorymapChapterNavigationControlPosition,
+					spinGlobe: false,
+					showLegend: true,
+					legendPosition: 'bottom-left',
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					style_id: lastChapter?.style_id ?? style_id,
+					base_style_id:
+						lastChapter?.base_style_id ?? ($configStore as StoryMapConfig).base_style_id
+				}
+			];
+
+			showSlideSetting = false;
+			requirePreviewUpdated = !requirePreviewUpdated;
+		} finally {
+			isProcessing = false;
 		}
-
-		const lastChapter: StoryMapChapter | undefined =
-			$configStore.chapters.length > 0
-				? ($configStore.chapters[$configStore.chapters.length - 1] as unknown as StoryMapChapter)
-				: undefined;
-
-		const location = {
-			center: lastChapter?.location.center ??
-				($configStore as StoryMapConfig).location?.center ?? [0, 0],
-			zoom: lastChapter?.location.zoom ?? ($configStore as StoryMapConfig).location?.zoom ?? 0,
-			bearing:
-				lastChapter?.location.bearing ?? ($configStore as StoryMapConfig).location?.bearing ?? 0,
-			pitch: lastChapter?.location.pitch ?? ($configStore as StoryMapConfig).location?.pitch ?? 0
-		};
-
-		if (!lastChapter) {
-			const res = await fetch(styleUrl);
-			const style: StyleSpecification = await res.json();
-			if (style.center) {
-				location.center = style.center;
-			}
-			if (style.zoom) {
-				location.zoom = style.zoom;
-			}
-			if (style.bearing) {
-				location.bearing = style.bearing;
-			}
-			if (style.pitch) {
-				location.pitch = style.pitch;
-			}
-		}
-
-		$configStore.chapters = [
-			...$configStore.chapters,
-			{
-				id: uuidv4(),
-				title: 'Input title...',
-				description: 'Input description...',
-				location: location,
-				style: lastChapter?.style ?? styleUrl,
-				alignment: data.config.StorymapChapterCardAlignment,
-				hidden: false,
-				mapAnimation: data.config.StorymapChapterTransitionAnimation,
-				mapInteractive: false,
-				mapNavigationPosition: data.config.StorymapChapterNavigationControlPosition,
-				spinGlobe: false,
-				showLegend: true,
-				legendPosition: 'bottom-left',
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				style_id: lastChapter?.style_id ?? style_id,
-				base_style_id: lastChapter?.base_style_id ?? ($configStore as StoryMapConfig).base_style_id
-			}
-		];
-
-		showSlideSetting = false;
-		requirePreviewUpdated = !requirePreviewUpdated;
 	};
 
 	const handleHeaderEdit = () => {
@@ -524,7 +537,11 @@
 
 			<div class="ml-auto is-flex is-align-items-center">
 				<button
-					class="button is-link is-outlined is-uppercase has-text-weight-bold mr-2"
+					class="button {isProcessing
+						? ''
+						: 'is-link is-outlined'}  is-uppercase has-text-weight-bold mr-2 {isProcessing
+						? 'is-loading'
+						: ''}"
 					disabled={isProcessing}
 					use:tippyTooltip={{
 						content: 'Edit general settings of this story.'
@@ -536,7 +553,11 @@
 					settings
 				</button>
 				<button
-					class="button is-link is-outlined is-uppercase has-text-weight-bold mr-2"
+					class="button {isProcessing
+						? ''
+						: 'is-link is-outlined'}  is-uppercase has-text-weight-bold mr-2 {isProcessing
+						? 'is-loading'
+						: ''}"
 					disabled={isProcessing}
 					on:click={() => {
 						showPreview = true;
@@ -546,7 +567,9 @@
 					preview
 				</button>
 				<button
-					class="button is-link is-uppercase has-text-weight-bold"
+					class="button is-link is-uppercase has-text-weight-bold {isProcessing
+						? 'is-loading'
+						: ''}"
 					disabled={isProcessing}
 					on:click={() => {
 						showSaveDialog = true;
@@ -649,7 +672,9 @@
 			</div>
 			<div class="p-2" bind:clientHeight={newslideButtonHeight}>
 				<button
-					class="button is-link is-uppercase has-text-weight-bold is-fullwidth"
+					class="button is-link is-uppercase has-text-weight-bold is-fullwidth {isProcessing
+						? 'is-loading'
+						: ''}"
 					on:click={handleNewSlide}
 					disabled={isProcessing ||
 						!($configStore?.title && $configStore.title.length > 0 && $configStore?.style)}

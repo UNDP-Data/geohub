@@ -573,11 +573,11 @@ class StorymapManager {
 					footer: this.storymap.footer,
 					templateId: this.storymap.template_id,
 					center: sql.raw(
-						`ST_GeomFromText('POINT(${this.storymap.location.center.join(' ')})', 4326)`
+						`ST_GeomFromText('POINT(${this.storymap.location.center ? this.storymap.location.center.join(' ') : [0, 0].join(' ')})', 4326)`
 					),
-					zoom: this.storymap.location.zoom,
-					bearing: this.storymap.location.bearing,
-					pitch: this.storymap.location.pitch,
+					zoom: this.storymap.location.zoom ?? 0,
+					bearing: this.storymap.location.bearing ?? 0,
+					pitch: this.storymap.location.pitch ?? 0,
 					styleId: this.storymap.style_id,
 					baseStyleId: this.storymap.base_style_id,
 					accessLevel: this.storymap.access_level,
@@ -597,11 +597,11 @@ class StorymapManager {
 						footer: this.storymap.footer,
 						templateId: this.storymap.template_id,
 						center: sql.raw(
-							`ST_GeomFromText('POINT(${this.storymap.location.center.join(' ')})', 4326)`
+							`ST_GeomFromText('POINT(${this.storymap.location.center ? this.storymap.location.center.join(' ') : [0, 0].join(' ')})', 4326)`
 						),
-						zoom: this.storymap.location.zoom,
-						bearing: this.storymap.location.bearing,
-						pitch: this.storymap.location.pitch,
+						zoom: this.storymap.location.zoom ?? 0,
+						bearing: this.storymap.location.bearing ?? 0,
+						pitch: this.storymap.location.pitch ?? 0,
 						styleId: this.storymap.style_id,
 						baseStyleId: this.storymap.base_style_id,
 						accessLevel: this.storymap.access_level,
