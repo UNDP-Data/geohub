@@ -5,7 +5,7 @@
 	import RasterTransformSimple from '$components/pages/map/layers/raster/RasterTransformSimple.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
-	import type { Layer, RasterTileMetadata } from '$lib/types';
+	import type { Layer } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
@@ -23,6 +23,7 @@
 		Tabs,
 		getRandomColormap,
 		type MapStore,
+		type RasterTileMetadata,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { getContext, onMount, setContext } from 'svelte';

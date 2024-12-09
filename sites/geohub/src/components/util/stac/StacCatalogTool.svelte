@@ -1,16 +1,19 @@
 <script lang="ts">
-	import { ALGORITHM_TAG_KEY } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
+	import { ALGORITHM_TAG_KEY } from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { generateHashKey } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		Layer,
 		LayerCreationInfo,
-		RasterAlgorithm,
 		StacAsset,
 		StacCollection
 	} from '$lib/types';
-	import { FieldControl, Notification } from '@undp-data/svelte-undp-components';
+	import {
+		FieldControl,
+		Notification,
+		type RasterAlgorithm
+	} from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 	import StacCatalogDatePicker from './StacCatalogDatePicker.svelte';
 

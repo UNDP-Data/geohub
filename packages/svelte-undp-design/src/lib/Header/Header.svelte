@@ -119,12 +119,27 @@
 																				on:click={() => callback(grandchild.id)}
 																				tabindex="0"
 																				on:keydown={onKeyPressed}
+																				class={grandchild.linkType}
 																			>
 																				{grandchild.title}
+																				{#if grandchild.linkType === 'download'}
+																					<span class="download-animated"><i></i></span>
+																				{:else if grandchild.linkType === 'external'}
+																					<span class="external-link-animated"><i></i></span>
+																				{/if}
 																			</a>
 																		{:else}
-																			<a href={grandchild.href} class="" tabindex="0">
+																			<a
+																				href={grandchild.href}
+																				class={grandchild.linkType}
+																				tabindex="0"
+																			>
 																				{grandchild.title}
+																				{#if grandchild.linkType === 'download'}
+																					<span class="download-animated"><i></i></span>
+																				{:else if grandchild.linkType === 'external'}
+																					<span class="external-link-animated"><i></i></span>
+																				{/if}
 																			</a>
 																		{/if}
 																	</li>
@@ -141,8 +156,14 @@
 																	on:click={() => callback(child.id)}
 																	tabindex="0"
 																	on:keydown={onKeyPressed}
+																	class={child.linkType}
 																>
 																	{child.title}
+																	{#if child.linkType === 'download'}
+																		<span class="download-animated"><i></i></span>
+																	{:else if child.linkType === 'external'}
+																		<span class="external-link-animated"><i></i></span>
+																	{/if}
 																</a>
 															{:else}
 																<a
@@ -151,8 +172,14 @@
 																	tabindex="0"
 																	data-sveltekit-preload-code={child.preloadCode ?? 'viewport'}
 																	data-sveltekit-preload-data={child.preloadData ?? 'hover'}
+																	class={child.linkType}
 																>
 																	{child.title}
+																	{#if child.linkType === 'download'}
+																		<span class="download-animated"><i></i></span>
+																	{:else if child.linkType === 'external'}
+																		<span class="external-link-animated"><i></i></span>
+																	{/if}
 																</a>
 															{/if}
 														</li>

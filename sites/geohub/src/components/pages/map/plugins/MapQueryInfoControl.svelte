@@ -1,18 +1,17 @@
 <script lang="ts">
-	import {
-		downloadFile,
-		getActiveBandIndex,
-		getLayerStyle,
-		getValueFromRasterTileUrl
-	} from '$lib/helper';
-	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
+	import { downloadFile, getLayerStyle } from '$lib/helper';
+	import type { Layer } from '$lib/types';
 	import type { LayerListStore } from '$stores';
 	import {
 		Accordion,
 		clean,
+		getActiveBandIndex,
+		getValueFromRasterTileUrl,
 		handleEnterKey,
 		initTooltipTippy,
-		isValidUrl
+		isValidUrl,
+		type BandMetadata,
+		type RasterTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { Checkbox, DefaultLink, Loader } from '@undp-data/svelte-undp-design';
 	import { Map, MapMouseEvent, Popup, type ControlPosition, type PointLike } from 'maplibre-gl';

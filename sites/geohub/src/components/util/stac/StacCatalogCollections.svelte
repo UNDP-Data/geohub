@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ALGORITHM_TAG_KEY } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
+	import { ALGORITHM_TAG_KEY } from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 	import StacCollectionMap from '$components/util/stac/StacCollectionMap.svelte';
 	import type { DatasetFeature, StacCatalogBreadcrumb, StacCollection } from '$lib/types';
 	import { Tabs, type Tab } from '@undp-data/svelte-undp-components';

@@ -1,15 +1,8 @@
-import { fetchUrl, getActiveBandIndex, getDecimalPlaces, isRgbRaster } from '$lib/helper';
+import { fetchUrl, getDecimalPlaces, isRgbRaster } from '$lib/helper';
 import chroma from 'chroma-js';
 import { hexToCSSFilter } from 'hex-to-css-filter';
 import { SvgLegendCreator, type SvgLegendCreatorOptions } from '$lib/server/SvgLegendCreator';
-import type {
-	BandMetadata,
-	DashboardMapStyle,
-	Layer,
-	RasterTileMetadata,
-	SpriteIcon,
-	VectorLayerSpecification
-} from '$lib/types';
+import type { DashboardMapStyle, Layer, SpriteIcon, VectorLayerSpecification } from '$lib/types';
 import type {
 	HillshadeLayerSpecification,
 	RasterLayerSpecification,
@@ -21,7 +14,10 @@ import { clipSprite } from './clipSprite';
 import { recolorPngToSvg } from './recolorPngDataUrl';
 import {
 	type VectorTileMetadata,
-	convertFunctionToExpression
+	convertFunctionToExpression,
+	type BandMetadata,
+	type RasterTileMetadata,
+	getActiveBandIndex
 } from '@undp-data/svelte-undp-components';
 
 /**

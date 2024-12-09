@@ -1,9 +1,9 @@
 import type { RasterLayerSpecification, SourceSpecification } from 'maplibre-gl';
 import type { VectorLayerSpecification } from './VectorLayerSpecification';
-import type { RasterTileMetadata } from './RasterTileMetadata';
 import type {
 	VectorTileMetadata,
-	ClassificationMethodTypes
+	ClassificationMethodTypes,
+	RasterTileMetadata
 } from '@undp-data/svelte-undp-components';
 
 export interface DatasetDefaultLayerStyle {

@@ -1,9 +1,9 @@
 import type { TabNames } from '$lib/config/AppConfig';
-import type { RasterTileMetadata } from './RasterTileMetadata';
 import type { DatasetFeature } from './DatasetFeature';
 import type {
 	VectorTileMetadata,
-	ClassificationMethodTypes
+	ClassificationMethodTypes,
+	RasterTileMetadata
 } from '@undp-data/svelte-undp-components';
 
 export interface Layer {
