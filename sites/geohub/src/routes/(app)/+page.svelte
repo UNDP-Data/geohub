@@ -142,25 +142,14 @@
 	</p>
 
 	<div class="animation">
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			viewBox="0 0 {innerWidth - 48} {isMobile ? 220 : 798}"
-			height={isMobile ? 220 : 798}
-			width="100%"
-		>
-			<rect width="100%" height="100%" fill="white" stroke="gray" stroke-width="2" />
-			<text
-				x="50%"
-				y="50%"
-				dominant-baseline="middle"
-				text-anchor="middle"
-				fill="black"
-				font-size="48px"
-				font-family="Arial"
-			>
-				Dummy
-			</text>
-		</svg>
+		<video
+			class="video"
+			src="https://undpgeohub.blob.core.windows.net/geohub/assets/geohub-landing-page-create-map.mp4"
+			poster="https://undpgeohub.blob.core.windows.net/geohub/assets/geohub-landing-page-create-map.webp"
+			autoplay
+			loop
+			muted
+		></video>
 	</div>
 	<div class="turn-data-section is-flex is-flex-direction-column has-text-centered">
 		<h2 class="title is-2">Turn data into insights</h2>
@@ -218,25 +207,14 @@
 	<p class="description is-size-4">Create a storymap to present and share your insights.</p>
 
 	<div class="animation">
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			viewBox="0 0 {innerWidth - 48} {isMobile ? 220 : 798}"
-			height={isMobile ? 220 : 798}
-			width="100%"
-		>
-			<rect width="100%" height="100%" fill="white" stroke="gray" stroke-width="2" />
-			<text
-				x="50%"
-				y="50%"
-				dominant-baseline="middle"
-				text-anchor="middle"
-				fill="black"
-				font-size="48px"
-				font-family="Arial"
-			>
-				Dummy
-			</text>
-		</svg>
+		<video
+			class="video"
+			src="https://undpgeohub.blob.core.windows.net/geohub/assets/geohub-landing-page-create-map.mp4"
+			poster="https://undpgeohub.blob.core.windows.net/geohub/assets/geohub-landing-page-create-map.webp"
+			autoplay
+			loop
+			muted
+		></video>
 	</div>
 
 	<div class="map-section">
