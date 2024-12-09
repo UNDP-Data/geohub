@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.20
+
+### Patch Changes
+
+- a237520: fix: show storymap builder even users do not sign in.
+
 ## 1.22.19
 
 ### Patch Changes
