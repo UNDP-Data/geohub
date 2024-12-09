@@ -340,11 +340,11 @@
 
 						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 							<Card
-								linkName="Explore storymaps"
+								linkName="Launch"
 								tag="Tool"
-								title="Storymaps"
-								description="Explore users' stories or create your own story from GeoHub maps"
-								url="/storymaps"
+								title="New Storymap"
+								description="Launch a storymap builder to create your own story from GeoHub maps"
+								url="/storymaps/edit"
 								accent="yellow"
 							/>
 						</div>
