@@ -1,5 +1,12 @@
 # geohub
 
+## 1.22.19
+
+### Patch Changes
+
+- 9eb2873: fix: fixed bug of saving storymap without chapters from base style
+- db79d07: fix: fixed bug of saving storymap when it is created directlink of map
+
 ## 1.22.18
 
 ### Patch Changes
