@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.18
+
+### Patch Changes
+
+- 98151d9: fix: fixed bug of not returning label layer from /style/{id} endpoint
+
 ## 1.22.17
 
 ### Patch Changes
