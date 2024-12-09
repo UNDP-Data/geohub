@@ -318,10 +318,12 @@
 				.summary {
 					font-size: 35px;
 					line-height: 39.97px;
+					padding-right: 23px;
 
 					@media (max-width: 48em) {
 						font-size: 25px;
 						line-height: 114.2%;
+						padding-right: 16px;
 					}
 				}
 				.map-button {
