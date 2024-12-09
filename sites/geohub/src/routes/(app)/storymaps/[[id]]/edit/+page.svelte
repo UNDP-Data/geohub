@@ -150,7 +150,13 @@
 				terrain: mapConfig.terrain,
 				access_level: AccessLevel.PRIVATE,
 				showProgress: true,
-				chapters: []
+				chapters: [],
+				location: {
+					center: [0, 0],
+					zoom: 0,
+					bearing: 0,
+					pitch: 0
+				}
 			};
 			$configStore = initConfig;
 
