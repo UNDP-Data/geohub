@@ -7,7 +7,7 @@
 	import type { MapsData, StorymapsData } from '$lib/types';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import { type BreadcrumbPage, Breadcrumbs, HeroLink } from '@undp-data/svelte-undp-components';
-	import { Button, Card, CardWithImage, DefaultLink, Loader } from '@undp-data/svelte-undp-design';
+	import { Button, Card, CardWithImage, Loader } from '@undp-data/svelte-undp-design';
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { getContext, onMount } from 'svelte';
@@ -207,8 +207,7 @@
 <section class="storymap-section">
 	<h2 class="title is-2">Share your findings</h2>
 	<p class="description is-size-4">
-		<DefaultLink title="Create a storymap" href="/storymaps/edit" target="" /> to present and share your
-		insights.
+		<a class="undp-link" href="/storymaps/edit">Create a storymap</a> to present and share your insights.
 	</p>
 
 	<div class="animation">
@@ -464,6 +463,42 @@
 
 				.explore-button {
 					width: 100%;
+				}
+			}
+		}
+	}
+
+	.undp-link {
+		background-image: linear-gradient(var(--undpds-color-dark-red), var(--undpds-color-dark-red)),
+			linear-gradient(var(--undpds-color-dark-red), var(--undpds-color-dark-red));
+		background-position:
+			100% 100%,
+			-30px 100%;
+		background-repeat: no-repeat;
+		background-size:
+			100% 2px,
+			0 1px;
+		color: inherit;
+
+		&:hover {
+			animation: lineLoop-animation 2s linear infinite;
+
+			@keyframes lineLoop-animation {
+				0% {
+					background-position:
+						100% 100%,
+						-30px 100%;
+					background-size:
+						100% 2px,
+						0 2px;
+				}
+				to {
+					background-position:
+						calc(100% + 30px) 100%,
+						0 100%;
+					background-size:
+						0 2px,
+						100% 2px;
 				}
 			}
 		}
