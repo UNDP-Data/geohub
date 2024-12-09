@@ -201,7 +201,18 @@ export const getStyleById = async (
 		style.style.glyphs = baseStyle.glyphs;
 
 		const geohubLayerIds = style.layers?.map((l) => l.id);
-		const layersExludesGeoHub = style.style.layers.filter((l) => !geohubLayerIds?.includes(l.id));
+		const geohubSourceIds: string[] = [];
+		style.layers?.forEach((l) => {
+			const mapLayer = style.style?.layers.find((layer) => layer.id === l.id);
+			if (mapLayer && 'source' in mapLayer) {
+				if (!geohubSourceIds.includes(mapLayer.source)) {
+					geohubSourceIds.push(mapLayer.source);
+				}
+			}
+		});
+		const layersExludesGeoHub = style.style.layers.filter((l) => {
+			return !('source' in l && geohubSourceIds.includes(l.source));
+		});
 		// compare base style and saved style by layers excluding geohub.
 		// they should be the same if no update from base style.
 		// if layers on basemap are different, add geohub layers to base style
@@ -215,7 +226,7 @@ export const getStyleById = async (
 				}
 			});
 			for (const layer of style.style.layers.filter((l) => geohubLayerIds?.includes(l.id))) {
-				if (!geohubLayerIds?.includes(layer.id)) continue;
+				if (!('source' in layer && geohubSourceIds.includes(layer.source))) continue;
 				if (['raster', 'hillshade'].includes(layer.type)) {
 					// if raster or hillshade, insert befpre first symbol layer
 					const firstSymbolLayerId = getFirstSymbolLayerId(baseStyle.layers);
