@@ -1,5 +1,4 @@
 import type { PageServerLoad } from './$types';
-import { error } from '@sveltejs/kit';
 import { AccessLevel } from '$lib/config/AppConfig';
 import type { DashboardMapStyle, StoryMapConfig } from '$lib/types';
 import { loadStorymapById } from '$lib/server/helpers/loadStorymapById';
@@ -7,9 +6,6 @@ import { loadStorymapById } from '$lib/server/helpers/loadStorymapById';
 export const load: PageServerLoad = async ({ params, parent, fetch, url }) => {
 	const { session, socialImage } = await parent();
 
-	if (!session) {
-		error(403, { message: 'No permission to access' });
-	}
 	const user = session?.user;
 	const id = params.id;
 
