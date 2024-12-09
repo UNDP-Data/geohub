@@ -7,7 +7,7 @@
 	import type { MapsData, StorymapsData } from '$lib/types';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import { type BreadcrumbPage, Breadcrumbs, HeroLink } from '@undp-data/svelte-undp-components';
-	import { Button, Card, CardWithImage, Loader } from '@undp-data/svelte-undp-design';
+	import { Button, Card, CardWithImage, DefaultLink, Loader } from '@undp-data/svelte-undp-design';
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { getContext, onMount } from 'svelte';
@@ -206,7 +206,10 @@
 
 <section class="storymap-section">
 	<h2 class="title is-2">Share your findings</h2>
-	<p class="description is-size-4">Create a storymap to present and share your insights.</p>
+	<p class="description is-size-4">
+		<DefaultLink title="Create a storymap" href="/storymaps/edit" target="" /> to present and share your
+		insights.
+	</p>
 
 	<div class="animation">
 		<video
