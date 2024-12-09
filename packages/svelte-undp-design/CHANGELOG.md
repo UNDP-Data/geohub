@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 2.4.3
+
+### Patch Changes
+
+- 404d7fa: fix: add an option of link type to apply icons like external link or download link for UNDP header.
+
 ## 2.4.2
 
 ### Patch Changes
