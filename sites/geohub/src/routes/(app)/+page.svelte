@@ -149,6 +149,8 @@
 			autoplay
 			loop
 			muted
+			playsinline
+			preload="auto"
 		></video>
 	</div>
 	<div class="turn-data-section is-flex is-flex-direction-column has-text-centered">
@@ -209,11 +211,13 @@
 	<div class="animation">
 		<video
 			class="video"
-			src="https://undpgeohub.blob.core.windows.net/geohub/assets/geohub-landing-page-create-map.mp4"
-			poster="https://undpgeohub.blob.core.windows.net/geohub/assets/geohub-landing-page-create-map.webp"
+			src="https://undpgeohub.blob.core.windows.net/geohub/assets/geohub-landing-page-create-storymap.mp4"
+			poster="https://undpgeohub.blob.core.windows.net/geohub/assets/geohub-landing-page-create-storymap.webp"
 			autoplay
 			loop
 			muted
+			playsinline
+			preload="auto"
 		></video>
 	</div>
 
