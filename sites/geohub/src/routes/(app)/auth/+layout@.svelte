@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Header from '$components/header/Header.svelte';
-	import MapHero from '$components/pages/home/MapHero.svelte';
+	import MapHero from '$components/pages/map/MapHero.svelte';
 	import { MapStyleId } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
 	import { setContext } from 'svelte';
