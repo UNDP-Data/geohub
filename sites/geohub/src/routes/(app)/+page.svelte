@@ -12,6 +12,7 @@
 	import * as pmtiles from 'pmtiles';
 	import { getContext, onMount } from 'svelte';
 	import type { PageData } from './$types';
+	import DashboardsExplorer from './dashboards/DashboardsExplorer.svelte';
 
 	export let data: PageData;
 
@@ -200,6 +201,32 @@
 				isArrow={true}
 				on:clicked={() => {
 					goto('/maps');
+				}}
+			></Button>
+		</div>
+	</div>
+</section>
+
+<section class="solution-section">
+	<h2 class="title is-2">Discover geospatial solutions</h2>
+	<p class="description is-size-4">
+		Leverage dashboards and geospatial tools for{'\u00A0'}informed decision-making
+	</p>
+	<DashboardsExplorer />
+
+	<div class="tool-section">
+		<h3 class="title is-3 mb-5">Explore tools</h3>
+
+		<div class="mb-5">
+			<div class="columns is-multiline is-mobile"></div>
+		</div>
+
+		<div class="explore-button">
+			<Button
+				title="EXPLORE ALL TOOLS"
+				isArrow={true}
+				on:clicked={() => {
+					goto('/tools');
 				}}
 			></Button>
 		</div>
@@ -406,6 +433,50 @@
 		.map-section {
 			.explore-button {
 				width: 240px;
+			}
+
+			@media (max-width: 48em) {
+				padding: 48px 16px;
+				padding-bottom: 0;
+
+				.explore-button {
+					width: 100%;
+				}
+			}
+		}
+	}
+
+	.solution-section {
+		margin: 64px 48px;
+
+		@media (max-width: 48em) {
+			margin: 16px 48px;
+
+			@media (max-width: 48em) {
+				margin: 48px 0;
+
+				.title {
+					margin: 0 24px;
+				}
+
+				.description {
+					margin: 0 24px;
+				}
+			}
+		}
+
+		.title {
+			line-height: 109%;
+		}
+
+		.description {
+			margin-bottom: 32px;
+		}
+
+		.tool-section {
+			margin-top: 32px;
+			.explore-button {
+				width: 300px;
 			}
 
 			@media (max-width: 48em) {
