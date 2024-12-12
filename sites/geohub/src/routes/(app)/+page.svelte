@@ -23,7 +23,7 @@
 	let mapsData: MapsData = data.styles;
 
 	let breadcrumbs: BreadcrumbPage[] = [
-		{ title: 'DATA FUTURES EXCHANGED', url: 'https://data.undp.org' },
+		{ title: 'DATA FUTURES EXCHANGE', url: 'https://data.undp.org' },
 		{ title: data.title, url: $page.url.href }
 	];
 	let storiesData: StorymapsData | undefined;
@@ -55,7 +55,9 @@
 				<h1 class="title is-1">
 					{data.title}
 				</h1>
-				<p class="summary mb-0">open-source geospatial services for supporting SDG development</p>
+				<p class="summary mb-0">
+					open-source geospatial services for{'\u00A0'}supporting SDG development
+				</p>
 
 				{#if !isMobile}
 					<div class="map-button">
@@ -343,14 +345,6 @@
 				width: fit-content;
 				white-space: nowrap;
 			}
-
-			.overview-description {
-				margin-right: 142px;
-
-				@media (max-width: 48em) {
-					margin-right: 0;
-				}
-			}
 		}
 
 		:global(.content-card) {
@@ -359,6 +353,7 @@
 		}
 		:global(.content-caption) {
 			color: var(--undpds-color-white) !important;
+			padding: 24px;
 		}
 		:global(.cta__link) {
 			color: var(--undpds-color-white) !important;
@@ -370,6 +365,10 @@
 
 		.title {
 			line-height: 109%;
+		}
+
+		.description {
+			margin-bottom: 32px;
 		}
 
 		@media (max-width: 48em) {
@@ -421,7 +420,7 @@
 	}
 
 	.storymap-section {
-		margin: 48px 64px;
+		margin: 64px 48px;
 
 		@media (max-width: 48em) {
 			margin: 16px 48px;
