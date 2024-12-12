@@ -797,8 +797,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/undp-bulma
       '@watergis/maplibre-gl-sky':
-        specifier: ^0.0.8
-        version: 0.0.8
+        specifier: ^0.0.9
+        version: 0.0.9
       '@watergis/svelte-splitter':
         specifier: ^2.0.0
         version: 2.0.0(svelte@4.2.19)
@@ -2886,8 +2886,8 @@ packages:
   '@vitest/utils@2.1.8':
     resolution: {integrity: sha512-dwSoui6djdwbfFmIgbIjX2ZhIoG7Ex/+xpxyiEgIGzjliY8xGkcpITKTlp6B4MgtGkF2ilvm97cPM96XZaAgcA==}
 
-  '@watergis/maplibre-gl-sky@0.0.8':
-    resolution: {integrity: sha512-llVOocqHoCdYR/48EZIF5+2QpjSLIKYwjr3j2AR49B1TkvBgjdIZt7uDxa+QIlolClzAanLH4KW5Qqq9UGvmiA==}
+  '@watergis/maplibre-gl-sky@0.0.9':
+    resolution: {integrity: sha512-UZuXxp+oBxsKcp3kHOHNQEQuX5H7Uy1QODWfErR4m5nLOoUOZ6sddrq+oIusVYOKWoOENgMFZZg7KWOyiYmaIA==}
     engines: {pnpm: ^9.0.0}
 
   '@watergis/svelte-splitter@2.0.0':
@@ -8055,7 +8055,7 @@ snapshots:
       loupe: 3.1.2
       tinyrainbow: 1.2.0
 
-  '@watergis/maplibre-gl-sky@0.0.8':
+  '@watergis/maplibre-gl-sky@0.0.9':
     dependencies:
       maplibre-gl: 4.7.1
       suncalc: 1.9.0
