@@ -14,9 +14,19 @@
 		</p>
 
 		<div class="mt-4">
-			<a class="button is-primary is-uppercase has-text-weight-bold" {href}>
+			<a class="cta-button button is-primary is-uppercase has-text-weight-bold" {href}>
 				<span>{linkName}</span>
 			</a>
 		</div>
 	</div>
 </section>
+
+<style lang="scss">
+	.hero-body {
+		padding: 96px 144px;
+
+		@media (max-width: 48em) {
+			padding: 96px 24px;
+		}
+	}
+</style>

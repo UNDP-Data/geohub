@@ -2,7 +2,7 @@
 	import { browser } from '$app/environment';
 	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
-	import MapStyleCardList from '$components/pages/home/MapStyleCardList.svelte';
+	import MapStyleCardList from '$components/pages/map/MapStyleCardList.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import {
 		AccessLevel,

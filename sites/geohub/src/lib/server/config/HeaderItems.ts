@@ -13,18 +13,7 @@ export const HeaderItems = (linkNames: LineName[]) => {
 		map: {
 			id: 'header-link-map',
 			title: 'Maps',
-			children: [
-				{
-					id: 'header-link-map-1',
-					title: 'Create a map',
-					href: '/maps/edit'
-				},
-				{
-					id: 'header-link-map-2',
-					title: 'Explore maps',
-					href: '/maps'
-				}
-			]
+			href: '/map'
 		},
 		support: {
 			id: 'header-link-support',
@@ -53,59 +42,27 @@ export const HeaderItems = (linkNames: LineName[]) => {
 		data: {
 			id: 'header-link-data',
 			title: 'Data',
-			children: [
-				{
-					id: 'header-link-data-1',
-					title: 'Upload dataset',
-					href: '/data/upload'
-				},
-				{
-					id: 'header-link-data-2',
-					title: 'Explore datasets',
-					href: '/data'
-				}
-			]
+			href: '/data'
 		},
 		tools: {
 			id: 'header-link-tool',
-			title: 'Tools',
+			title: 'Solutions',
 			children: [
 				{
 					id: 'header-link-tool-1',
-					title: 'Explore tools',
+					title: 'Tools',
 					href: '/tools'
 				},
-				{
-					id: 'header-link-tool-2',
-					title: 'Create storymap',
-					href: '/storymaps/edit'
-				},
-				{
-					id: 'header-link-tool-3',
-					title: 'Explore Storymaps',
-					href: '/storymaps'
-				},
+
 				{
 					id: 'header-link-tool-3',
 					title: 'Dashboards',
-					href: '/dashboards',
-					children: [
-						{
-							id: 'header-link-tool-4',
-							title: 'Electricity dashboard',
-							href: '/dashboards/electricity'
-						},
-						{
-							id: 'header-link-tool-5',
-							title: 'CEEI dashboard',
-							href: '/dashboards/ceei'
-						},
-						{
-							id: 'header-link-tool-6',
-							title: 'Zanbibar dashboard',
-							href: '/dashboards/zanzibar'
-						}
-					]
+					href: '/dashboards'
+				},
+				{
+					id: 'header-link-tool-2',
+					title: 'Storymaps',
+					href: '/storymaps'
 				}
 			]
 		}

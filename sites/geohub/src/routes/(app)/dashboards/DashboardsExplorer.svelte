@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { FluidCarousel, type CarouselContent } from '@undp-data/svelte-undp-design';
 
 	let contents: CarouselContent[] = [
@@ -33,4 +34,6 @@
 	];
 </script>
 
-<FluidCarousel bind:contents />
+{#if browser}
+	<FluidCarousel bind:contents />
+{/if}

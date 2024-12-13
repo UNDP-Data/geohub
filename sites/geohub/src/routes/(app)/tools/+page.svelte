@@ -11,7 +11,7 @@
 </script>
 
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import PublishedDatasetRow from '$components/pages/data/datasets/PublishedDatasetRow.svelte';
 	import { algorithmCategory } from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
@@ -36,6 +36,7 @@
 		RasterSourceSpecification,
 		StyleSpecification
 	} from 'maplibre-gl';
+	import { onMount } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 	import type { PageData } from './$types';
 
@@ -301,6 +302,22 @@
 		// move to /map page
 		goto(mapUrl.url, { invalidateAll: true });
 	};
+
+	onMount(() => {
+		const algoId = $page.url.searchParams.get('algorithm');
+		if (algoId && data.algorithms[algoId]) {
+			const defaultAlgo = data.algorithms[algoId];
+			handleToolSelected({
+				title: defaultAlgo.title ?? algoId,
+				type: 'Tool',
+				algorithmId: algoId,
+				algorithm: defaultAlgo
+			});
+			const pageUrl = $page.url;
+			pageUrl.searchParams.delete('algorithm');
+			replaceState(pageUrl, '');
+		}
+	});
 </script>
 
 <HeroHeader
@@ -334,17 +351,6 @@
 								title="New Map"
 								description="Launch a standard map editor tool to create new map."
 								url="/maps/edit"
-								accent="yellow"
-							/>
-						</div>
-
-						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
-							<Card
-								linkName="Explore storymaps"
-								tag="Tool"
-								title="Storymaps"
-								description="Explore users' stories or create your own story from GeoHub maps"
-								url="/storymaps"
 								accent="yellow"
 							/>
 						</div>
