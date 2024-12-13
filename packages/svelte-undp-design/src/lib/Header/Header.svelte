@@ -11,8 +11,18 @@
 	export let links: HeaderLink[] = [];
 	export let progressBarSize: 'xsmall' | 'small' | 'medium' | 'large' = 'xsmall';
 	export let regionUrl = '';
-
 	export let showMobileMenu = false;
+	export let actionMenu:
+		| {
+				title: string;
+				placeholder: string;
+				showLanguageIcon: boolean;
+				links: HeaderLink[];
+		  }
+		| undefined = undefined;
+
+	let showActionMenu = false;
+	let showActionMobileMenu = false;
 
 	const onKeyPressed = (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
@@ -32,6 +42,11 @@
 	const hideMobileSubMenu = () => {
 		submenuLink = undefined;
 		isMobileSubMenuShown = false;
+	};
+
+	const hideActionMobileMenu = () => {
+		hideMobileSubMenu();
+		showActionMobileMenu = false;
 	};
 </script>
 
@@ -219,6 +234,27 @@
 					</div>
 				{/if}
 				<div class="cell small-3 large-auto top-right">
+					{#if actionMenu}
+						<div class="dropdown-language {showActionMenu ? 'active' : ''}">
+							<button
+								class="blue {actionMenu.showLanguageIcon === true ? '' : 'icon-hidden'}"
+								aria-label={actionMenu.placeholder}
+								aria-expanded="false"
+								on:click={() => {
+									showActionMenu = !showActionMenu;
+								}}
+							>
+								{actionMenu.title}
+							</button>
+							<ul role="menu">
+								{#each actionMenu.links as actionLink}
+									<li role="menuitem">
+										<a href={actionLink.href} tabindex="-1">{actionLink.title}</a>
+									</li>
+								{/each}
+							</ul>
+						</div>
+					{/if}
 					<button
 						class="menu-hamburger {showMobileMenu ? 'is-active' : ''}"
 						aria-label="menu-icon"
@@ -234,7 +270,11 @@
 				{#if links.length > 0}
 					<div class="mobile-nav {showMobileMenu ? 'show' : ''}">
 						<div class="grid-x">
-							<div class="cell mobile-links {isMobileSubMenuShown ? 'hide' : ''}">
+							<div
+								class="cell mobile-links {isMobileSubMenuShown || showActionMobileMenu
+									? 'hide'
+									: ''}"
+							>
 								<ul>
 									{#each links as link}
 										<li>
@@ -291,6 +331,79 @@
 										</li>
 									{/each}
 								</ul>
+								{#if actionMenu}
+									<div class="mobile-nav-options">
+										<!-- svelte-ignore a11y-invalid-attribute -->
+										<a
+											href=""
+											class="mob-lang-switcher"
+											on:click={(e) => {
+												e.preventDefault();
+												showActionMobileMenu = true;
+											}}
+										>
+											{#if actionMenu.showLanguageIcon}
+												<svg
+													width="25"
+													height="26"
+													viewBox="0 0 25 26"
+													fill="none"
+													xmlns="http://www.w3.org/2000/svg"
+												>
+													<g clip-path="url(#clip0)">
+														<path
+															d="M16.599 23.688C17.7895 22.3987 18.4193 20.6895 18.35 18.936H0.75V0.75H23.88V15.468L23.875 15.474C23.875 15.521 23.875 15.568 23.875 15.616C23.905 20.278 17.206 24.488 16.175 24.488C15.921 24.488 16.004 24.24 16.599 23.688Z"
+															stroke="#006EB5"
+															stroke-width="1.5"
+														/>
+														<path
+															d="M13.5854 13.542L16.9429 5.45215L20.2144 13.542"
+															stroke="#006EB5"
+															stroke-width="1.5"
+															stroke-linecap="round"
+															stroke-linejoin="round"
+														/>
+														<path
+															d="M15.0576 10.6704H18.9863"
+															stroke="#006EB5"
+															stroke-width="1.5"
+														/>
+														<path
+															d="M4.13086 6.76706H10.6748"
+															stroke="#006EB5"
+															stroke-width="1.5"
+															stroke-linecap="round"
+														/>
+														<path
+															d="M4.13086 13.1656C4.13086 13.1656 9.59778 13.6368 9.92578 6.90781"
+															stroke="#006EB5"
+															stroke-width="1.5"
+															stroke-linecap="round"
+														/>
+														<path
+															d="M10.8271 13.5417C10.8271 13.5417 6.38075 13.065 5.21875 9.11597"
+															stroke="#006EB5"
+															stroke-width="1.5"
+															stroke-linecap="round"
+														/>
+														<path
+															d="M7.40723 4.08563V6.56317"
+															stroke="#006EB5"
+															stroke-width="1.5"
+															stroke-linecap="round"
+														/>
+													</g>
+													<defs>
+														<clipPath id="clip0">
+															<rect width="24.63" height="25.239" fill="white" />
+														</clipPath>
+													</defs>
+												</svg>
+											{/if}
+											{actionMenu.title}
+										</a>
+									</div>
+								{/if}
 							</div>
 
 							<div class="cell mobile-sub-menu {isMobileSubMenuShown ? 'show' : ''}">
@@ -403,6 +516,36 @@
 									{/each}
 								</div>
 							</div>
+							{#if actionMenu}
+								<div class="cell mob-sub-lang {showActionMobileMenu ? 'show' : ''}">
+									<button class="back-nav" on:click={hideActionMobileMenu}>
+										<svg
+											width="33"
+											height="17"
+											viewBox="0 0 33 17"
+											fill="none"
+											xmlns="http://www.w3.org/2000/svg"
+										>
+											<path
+												d="M9.29569 1.0354L2.00009 8.17012M2.00009 8.17012L9.29569 15.3083M2.00009 8.17012L32.6416 8.17012"
+												stroke="#D12800"
+												stroke-width="2"
+											/>
+										</svg>
+										Back
+									</button>
+									<ul class="sub-sub-lang">
+										<li>
+											<span>{actionMenu.title}</span>
+											<ul>
+												{#each actionMenu.links as link}
+													<li><a href={link.href}>{link.title}</a></li>
+												{/each}
+											</ul>
+										</li>
+									</ul>
+								</div>
+							{/if}
 						</div>
 					</div>
 				{/if}
@@ -426,6 +569,7 @@
 	@use '../css/menu-multi-level.min.css';
 	@use '../css/mobile-nav.min.css';
 	@use '../css/cta-link.min.css';
+	@use '../css/language-switcher.min.css';
 
 	.custom-button {
 		display: block;

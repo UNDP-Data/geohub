@@ -44,7 +44,7 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 	];
 	const footerLinks = getFooterItems(footerTypes, is_superuser);
 
-	const headerLinks: HeaderLink[] = HeaderItems(['data', 'map', 'tools', 'support', 'create']);
+	const headerLinks: HeaderLink[] = HeaderItems(['data', 'map', 'tools', 'support']);
 
 	return {
 		session,

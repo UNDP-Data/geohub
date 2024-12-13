@@ -1,7 +1,7 @@
 import type { HeaderLink } from '@undp-data/svelte-undp-design';
 import { env } from '$env/dynamic/private';
 
-export type LineName = 'home' | 'map' | 'support' | 'data' | 'tools' | 'create';
+export type LineName = 'home' | 'map' | 'support' | 'data' | 'tools';
 
 export const HeaderItems = (linkNames: LineName[]) => {
 	const links: { [key: string]: HeaderLink } = {
@@ -63,27 +63,6 @@ export const HeaderItems = (linkNames: LineName[]) => {
 					id: 'header-link-tool-2',
 					title: 'Storymaps',
 					href: '/storymaps'
-				}
-			]
-		},
-		create: {
-			id: 'header-link-create',
-			title: 'Create/Upload',
-			children: [
-				{
-					id: 'header-link-create-1',
-					title: 'Dataset',
-					href: '/data/upload'
-				},
-				{
-					id: 'header-link-create-2',
-					title: 'Map',
-					href: '/maps/edit'
-				},
-				{
-					id: 'header-link-create-3',
-					title: 'storymap',
-					href: '/storymaps/edit'
 				}
 			]
 		}
