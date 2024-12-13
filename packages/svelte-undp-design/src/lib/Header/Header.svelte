@@ -73,7 +73,7 @@
 								{region}
 							{/if}
 						</span>
-						<span>{siteTitle}</span>
+						<span><a href={url}>{siteTitle}</a></span>
 					</div>
 				</div>
 				{#if links.length > 0}
