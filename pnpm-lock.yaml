@@ -830,8 +830,8 @@ importers:
         specifier: ^1.11.13
         version: 1.11.13
       drizzle-kit:
-        specifier: ^0.29.0
-        version: 0.29.1
+        specifier: ^0.30.0
+        version: 0.30.0
       easymde:
         specifier: ^2.18.0
         version: 2.18.0
@@ -3534,8 +3534,8 @@ packages:
   domutils@2.8.0:
     resolution: {integrity: sha512-w96Cjofp72M5IIhpjgobBimYEfoPjx1Vx0BSX9P30WBdZW2WIKU0T1Bd0kz2eNZ9ikjKgHbEyKx8BB6H1L3h3A==}
 
-  drizzle-kit@0.29.1:
-    resolution: {integrity: sha512-OvHL8RVyYiPR3LLRE3SHdcON8xGXl+qMfR9uTTnFWBPIqVk/3NWYZPb7nfpM1Bhix3H+BsxqPyyagG7YZ+Z63A==}
+  drizzle-kit@0.30.0:
+    resolution: {integrity: sha512-zAf0qg/BX2lV/Xip4igXrtbDv+Ub8S39U6qSOEGNvqcHrnmaQjS4mkkFZOUsgXRbuH56QUeWZxfnLHefrKCV5g==}
     hasBin: true
 
   drizzle-orm@0.38.1:
@@ -8739,7 +8739,7 @@ snapshots:
       domelementtype: 2.3.0
       domhandler: 4.3.1
 
-  drizzle-kit@0.29.1:
+  drizzle-kit@0.30.0:
     dependencies:
       '@drizzle-team/brocli': 0.10.2
       '@esbuild-kit/esm-loader': 2.6.5
