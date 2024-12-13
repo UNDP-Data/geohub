@@ -1,5 +1,12 @@
 # @undp-data/svelte-undp-design
 
+## 2.4.4
+
+### Patch Changes
+
+- 84e2d1e: fix: add language menu option to show additional action links in header
+- 84e2d1e: fix: align FluidCarousel to the latest UNDP design system with slider and prev/next buttons.
+
 ## 2.4.3
 
 ### Patch Changes

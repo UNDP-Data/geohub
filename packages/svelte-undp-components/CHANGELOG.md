@@ -1,5 +1,14 @@
 # @undp-data/svelte-undp-components
 
+## 1.5.15
+
+### Patch Changes
+
+- 84e2d1e: fix: adjusted HeroLink padding
+- Updated dependencies [84e2d1e]
+- Updated dependencies [84e2d1e]
+  - @undp-data/svelte-undp-design@2.4.4
+
 ## 1.5.14
 
 ### Patch Changes

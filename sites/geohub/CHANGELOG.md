@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.21
+
+### Patch Changes
+
+- 84e2d1e: feat: redesigned GeoHub landing page
+
 ## 1.22.20
 
 ### Patch Changes
