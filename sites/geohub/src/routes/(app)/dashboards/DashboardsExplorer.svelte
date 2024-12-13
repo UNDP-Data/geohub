@@ -35,7 +35,5 @@
 </script>
 
 {#if browser}
-	<div class="m-6">
-		<FluidCarousel bind:contents />
-	</div>
+	<FluidCarousel bind:contents />
 {/if}
