@@ -3,6 +3,8 @@ import { getDatasetStats } from '$lib/server/helpers';
 import type { MapsData } from '$lib/types';
 import { AccessLevel } from '$lib/config/AppConfig';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
+import { env } from '$env/dynamic/private';
+import type { RasterAlgorithm } from '@undp-data/svelte-undp-components';
 
 export const load: PageServerLoad = async ({ parent, depends, fetch }) => {
 	const parentData = await parent();
@@ -15,6 +17,8 @@ export const load: PageServerLoad = async ({ parent, depends, fetch }) => {
 	);
 	const styles: MapsData = await res.json();
 
+	const algorithms = await getAlgorithms(fetch);
+
 	depends('data:styles');
 
 	const title = 'GeoHub';
@@ -26,6 +30,14 @@ export const load: PageServerLoad = async ({ parent, depends, fetch }) => {
 		stats: {
 			dataset: dataset_stats
 		},
-		styles
+		styles,
+		algorithms
 	};
+};
+
+const getAlgorithms = async (fetch) => {
+	const apiUrl = `${env.TITILER_ENDPOINT.replace('/cog', '')}/algorithms`;
+	const res = await fetch(apiUrl);
+	const algorithms: { [key: string]: RasterAlgorithm } = await res.json();
+	return algorithms;
 };

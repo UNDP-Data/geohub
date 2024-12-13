@@ -4,7 +4,7 @@
 	import MapHero from '$components/pages/map/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/map/MapStyleCardList.svelte';
 	import { MapStyleId } from '$lib/config/AppConfig';
-	import type { MapsData, StorymapsData } from '$lib/types';
+	import type { DatasetFeatureCollection, MapsData, StorymapsData } from '$lib/types';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import { type BreadcrumbPage, Breadcrumbs, HeroLink } from '@undp-data/svelte-undp-components';
 	import { Button, Card, CardWithImage, Loader } from '@undp-data/svelte-undp-design';
@@ -37,6 +37,15 @@
 
 		storiesData = stories;
 		return storiesData;
+	};
+
+	const loadDynamicDatasets = async () => {
+		// get dynamic similation datasets
+		const resDynamic = await fetch(
+			`/api/datasets?type=pgtileserv&layertype=function&query=dynamic&limit=2`
+		);
+		const dynamicDatasets: DatasetFeatureCollection = await resDynamic.json();
+		return dynamicDatasets;
 	};
 
 	onMount(() => {
@@ -218,7 +227,45 @@
 		<h3 class="title is-3 mb-5">Explore tools</h3>
 
 		<div class="mb-5">
-			<div class="columns is-multiline is-mobile"></div>
+			<div class="columns is-multiline is-mobile">
+				{#if data.algorithms}
+					{@const algo = data.algorithms['rca']}
+					{#if algo}
+						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+							<Card
+								linkName="Explore more"
+								tag="Tool"
+								title={algo.title}
+								description={algo.description}
+								url="/tools?algorithm=rca"
+								accent="yellow"
+							/>
+						</div>
+					{/if}
+				{/if}
+				{#await loadDynamicDatasets() then datasets}
+					{#each datasets.features as dataset}
+						{@const datasetUrl = dataset.properties.links?.find((l) => l.rel === 'dataset')?.href}
+						{@const sdgs = dataset.properties.tags
+							?.filter((t) => t.key === 'sdg_goal')
+							.map((t) => Number(t.value))
+							.sort((a, b) => a - b)
+							.map((v) => `SDG${v}`)}
+						{#if datasetUrl}
+							<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+								<Card
+									linkName="Explore more"
+									tag={sdgs?.length > 0 ? sdgs.join(', ') : 'Simulation'}
+									title={dataset.properties.name}
+									description={dataset.properties.description}
+									url={datasetUrl}
+									accent="yellow"
+								/>
+							</div>
+						{/if}
+					{/each}
+				{/await}
+			</div>
 		</div>
 
 		<div class="explore-button">
