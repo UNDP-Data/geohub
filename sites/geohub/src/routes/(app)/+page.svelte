@@ -41,7 +41,9 @@
 	const loadStorymaps = async () => {
 		storiesData = undefined;
 
-		const res = await fetch(`/api/storymaps?limit=3&sortby=updatedat,desc&accesslevel=4`);
+		const res = await fetch(
+			`/api/storymaps?limit=4&sortby=updatedat,desc&accesslevel=${AccessLevel.PUBLIC}`
+		);
 		const stories: StorymapsData = await res.json();
 
 		storiesData = stories;
