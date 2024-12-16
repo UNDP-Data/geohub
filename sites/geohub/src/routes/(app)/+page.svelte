@@ -416,14 +416,6 @@
 	.dataset-section {
 		margin: 64px 48px;
 
-		.title {
-			line-height: 109%;
-		}
-
-		.description {
-			margin-bottom: 32px;
-		}
-
 		@media (max-width: 48em) {
 			margin: 48px 0;
 
@@ -438,6 +430,14 @@
 			.animation {
 				margin: 0 24px;
 			}
+		}
+
+		.title {
+			line-height: 109%;
+		}
+
+		.description {
+			margin-bottom: 32px;
 		}
 
 		.turn-data-section {
@@ -477,13 +477,14 @@
 	}
 
 	.solution-section {
-		margin: 64px 48px;
+		background-color: var(--undpds-color-gray-200);
+		padding: 64px 48px;
 
 		@media (max-width: 48em) {
-			margin: 16px 48px;
+			padding: 16px 48px;
 
 			@media (max-width: 48em) {
-				margin: 48px 0;
+				padding: 48px 0;
 
 				.title {
 					margin: 0 24px;
