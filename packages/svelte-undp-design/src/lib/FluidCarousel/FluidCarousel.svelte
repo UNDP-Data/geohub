@@ -155,9 +155,17 @@
 	@use '../css/buttons.min.css';
 	@use '../css/swiper.min.css';
 
+	.fluid-carousel {
+		padding-right: 0 !important;
+	}
 	.fluid-carousel__image {
 		user-drag: none;
 		-webkit-user-drag: none;
 		-moz-user-select: none;
+		width: 65%;
+
+		@media (max-width: 48em) {
+			width: 100%;
+		}
 	}
 </style>
