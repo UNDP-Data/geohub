@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import MapHero from '$components/pages/map/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/map/MapStyleCardList.svelte';
-	import { MapStyleId } from '$lib/config/AppConfig';
+	import { AccessLevel, MapStyleId } from '$lib/config/AppConfig';
 	import type { DatasetFeatureCollection, MapsData, StorymapsData } from '$lib/types';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import { type BreadcrumbPage, Breadcrumbs, HeroLink } from '@undp-data/svelte-undp-components';
@@ -20,7 +20,7 @@
 	let headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 
 	let stats = data.stats;
-	let mapsData: MapsData = data.styles;
+	let mapsData: MapsData | undefined;
 
 	let breadcrumbs: BreadcrumbPage[] = [
 		{ title: 'DATA FUTURES EXCHANGE', url: 'https://data.undp.org' },
@@ -28,10 +28,20 @@
 	];
 	let storiesData: StorymapsData | undefined;
 
+	const loadMaps = async () => {
+		mapsData = undefined;
+		const res = await fetch(
+			`/api/style?accesslevel=${AccessLevel.PUBLIC}&limit=4&sortby=updatedat,desc`
+		);
+		const styles: MapsData = await res.json();
+		mapsData = styles;
+		return mapsData;
+	};
+
 	const loadStorymaps = async () => {
 		storiesData = undefined;
 
-		const res = await fetch(`/api/storymaps?limit=3&sortby=updatedat,desc&accesslevel=3`);
+		const res = await fetch(`/api/storymaps?limit=3&sortby=updatedat,desc&accesslevel=4`);
 		const stories: StorymapsData = await res.json();
 
 		storiesData = stories;
@@ -182,7 +192,13 @@
 		<h3 class="title is-3 mb-5">Explore maps</h3>
 
 		<div class="mb-5">
-			<MapStyleCardList bind:mapData={mapsData} showMenu={false} />
+			{#await loadMaps()}
+				<div class="is-flex is-justify-content-center">
+					<Loader size="large" />
+				</div>
+			{:then maps}
+				<MapStyleCardList mapData={maps} showMenu={false} />
+			{/await}
 		</div>
 
 		<div class="explore-button">
@@ -282,7 +298,7 @@
 						{@const storyLink = story.links?.find((l) => l.rel === 'storymap')?.href}
 						{@const staticLink = story.links?.find((l) => l.rel === 'static-auto')?.href}
 
-						<div class="column is-one-third-tablet is-one-third-desktop is-full-mobile">
+						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 							<CardWithImage
 								title={story.title ?? ''}
 								url={storyLink}

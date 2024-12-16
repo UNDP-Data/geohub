@@ -35,8 +35,6 @@ import type {
 	ClassificationMethodTypes,
 	SidebarPosition as SidebarPositionType
 } from '@undp-data/svelte-undp-components';
-import { HomePageMapSearchLimit } from './HomePageMapSearchLimit';
-import { HomePageMapSortingColumn } from './HomePageMapSortingColumn';
 import { MaplibreDevMode } from './MaplibreDevMode';
 import { MapPageTableViewType } from './MapPageTableViewType';
 import { StorymapPageSortingColumn } from './StorymapPageSortingColumn';
@@ -71,8 +69,6 @@ export interface UserConfig {
 	ClassificationMethod: ClassificationMethodTypes;
 	RasterResamplingMethod: 'nearest' | 'linear';
 	LayerOpacity: number;
-	HomePageMapSearchLimit: number;
-	HomePageMapSortingColumn: string;
 	IconImage: string;
 	IconSize: number;
 	IconOverlapPriority: 'always' | 'never' | 'cooperative';
@@ -119,8 +115,6 @@ export const DefaultUserConfig = {
 	LabelFontSize,
 	LabelHaloWidth,
 	LabelTextFont,
-	HomePageMapSearchLimit,
-	HomePageMapSortingColumn,
 	IconOverlapPriority,
 	IconSize,
 	IconImage,

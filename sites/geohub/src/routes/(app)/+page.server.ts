@@ -1,21 +1,10 @@
 import type { PageServerLoad } from './$types';
 import { getDatasetStats } from '$lib/server/helpers';
-import type { MapsData } from '$lib/types';
-import { AccessLevel } from '$lib/config/AppConfig';
-import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import { env } from '$env/dynamic/private';
 import type { RasterAlgorithm } from '@undp-data/svelte-undp-components';
 
-export const load: PageServerLoad = async ({ parent, depends, fetch }) => {
-	const parentData = await parent();
-	const config: UserConfig = parentData.config;
-
+export const load: PageServerLoad = async ({ depends, fetch }) => {
 	const dataset_stats = await getDatasetStats();
-
-	const res = await fetch(
-		`/api/style?accesslevel=${AccessLevel.PUBLIC}&limit=${config.HomePageMapSearchLimit}&sortby=${config.HomePageMapSortingColumn}`
-	);
-	const styles: MapsData = await res.json();
 
 	const algorithms = await getAlgorithms(fetch);
 
@@ -30,7 +19,6 @@ export const load: PageServerLoad = async ({ parent, depends, fetch }) => {
 		stats: {
 			dataset: dataset_stats
 		},
-		styles,
 		algorithms
 	};
 };
