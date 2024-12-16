@@ -1,5 +1,16 @@
 # @undp-data/svelte-undp-components
 
+## 1.5.16
+
+### Patch Changes
+
+- d98a8c3: fix: add href prop for Button in svelte-undp-design, and it uses href prop in a element instead of click event.
+- Updated dependencies [d98a8c3]
+- Updated dependencies [29f1785]
+- Updated dependencies [d98a8c3]
+- Updated dependencies [1900ed3]
+  - @undp-data/svelte-undp-design@2.4.5
+
 ## 1.5.15
 
 ### Patch Changes

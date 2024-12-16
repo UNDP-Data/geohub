@@ -1,5 +1,18 @@
 # @undp-data/svelte-undp-design
 
+## 2.4.5
+
+### Patch Changes
+
+- d98a8c3: fix: fixed layout of FluidCarousel.
+
+  - fix: adjust image width and padding
+  - fix: enable swiper slider in responsive.
+
+- 29f1785: fix: set height as auto for FluidCarousel image, and replaced dashboard screenshot to new one
+- d98a8c3: fix: add href prop for Button in svelte-undp-design, and it uses href prop in a element instead of click event.
+- 1900ed3: fix: nowrap for region title in UNDP header.
+
 ## 2.4.4
 
 ### Patch Changes
