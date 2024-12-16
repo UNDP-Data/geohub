@@ -154,7 +154,7 @@
 	@use '../css/swiper.min.css';
 
 	.fluid-carousel {
-		padding-right: 0 !important;
+		padding-right: 0px !important;
 
 		.fluid-carousel__image {
 			user-drag: none;
@@ -164,6 +164,8 @@
 
 			@media (max-width: 48em) {
 				width: 100%;
+				padding-left: 16px !important;
+				padding-right: 16px !important;
 			}
 		}
 	}
