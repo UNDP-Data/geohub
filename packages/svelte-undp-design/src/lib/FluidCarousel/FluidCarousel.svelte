@@ -161,6 +161,7 @@
 			-webkit-user-drag: none;
 			-moz-user-select: none;
 			width: 65%;
+			height: auto;
 
 			@media (max-width: 48em) {
 				width: 100%;
