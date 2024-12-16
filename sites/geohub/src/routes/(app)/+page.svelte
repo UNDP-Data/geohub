@@ -465,6 +465,10 @@
 				padding: 48px 16px;
 				padding-bottom: 0;
 
+				.title {
+					margin: 0;
+				}
+
 				.explore-button {
 					width: 100%;
 				}
@@ -508,6 +512,10 @@
 			@media (max-width: 48em) {
 				padding: 48px 16px;
 				padding-bottom: 0;
+
+				.title {
+					margin: 0;
+				}
 
 				.explore-button {
 					width: 100%;
@@ -556,6 +564,10 @@
 			@media (max-width: 48em) {
 				padding: 48px 16px;
 				padding-bottom: 0;
+
+				.title {
+					margin: 0;
+				}
 
 				.explore-button {
 					width: 100%;
