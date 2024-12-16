@@ -2,4 +2,7 @@
 "@undp-data/svelte-undp-design": patch
 ---
 
-fix: adjust image width and padding for FluidCarousel.
+fix: fixed layout of FluidCarousel.
+
+- fix: adjust image width and padding
+- fix: enable swiper slider in responsive.

@@ -5,7 +5,6 @@
 	export let contents: CarouselContent[] = [];
 
 	let innerWidth: number;
-	$: isMobile = innerWidth < 768 ? true : false;
 
 	let initialPageIndex = 0;
 	let clientWidth = 0;
@@ -21,7 +20,7 @@
 		if (pageIndex === 0) {
 			pageProgress = 0;
 		} else if (pageIndex === contents.length - 1) {
-			pageProgress = clientWidth - 300;
+			pageProgress = clientWidth - equalDistance;
 		} else {
 			pageProgress = equalDistance * pageIndex;
 		}
@@ -36,14 +35,13 @@
 	dir="ltr"
 	bind:clientWidth
 >
-	{#if !isMobile}
-		<div class="swiper-scrollbar swiper-scrollbar-horizontal">
-			<div
-				class="swiper-scrollbar-drag"
-				style="width: 437px; transform: translate3d({pageProgress}px, 0px, 0px);"
-			></div>
-		</div>
-	{/if}
+	<div class="swiper-scrollbar swiper-scrollbar-horizontal">
+		<div
+			class="swiper-scrollbar-drag"
+			style="width: {innerWidth /
+				contents.length}px; transform: translate3d({pageProgress}px, 0px, 0px);"
+		></div>
+	</div>
 	<div class="swiper-wrapper" id="swiper-wrapper-a216a249874be9bd" aria-live="polite">
 		<Carousel
 			bind:this={carousel}
@@ -157,15 +155,16 @@
 
 	.fluid-carousel {
 		padding-right: 0 !important;
-	}
-	.fluid-carousel__image {
-		user-drag: none;
-		-webkit-user-drag: none;
-		-moz-user-select: none;
-		width: 65%;
 
-		@media (max-width: 48em) {
-			width: 100%;
+		.fluid-carousel__image {
+			user-drag: none;
+			-webkit-user-drag: none;
+			-moz-user-select: none;
+			width: 65%;
+
+			@media (max-width: 48em) {
+				width: 100%;
+			}
 		}
 	}
 </style>
