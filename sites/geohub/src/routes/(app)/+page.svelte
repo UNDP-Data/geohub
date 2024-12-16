@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import MapHero from '$components/pages/map/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/map/MapStyleCardList.svelte';
-	import { MapStyleId } from '$lib/config/AppConfig';
+	import { AccessLevel, MapStyleId } from '$lib/config/AppConfig';
 	import type { DatasetFeatureCollection, MapsData, StorymapsData } from '$lib/types';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import { type BreadcrumbPage, Breadcrumbs, HeroLink } from '@undp-data/svelte-undp-components';
@@ -21,7 +20,7 @@
 	let headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 
 	let stats = data.stats;
-	let mapsData: MapsData = data.styles;
+	let mapsData: MapsData | undefined;
 
 	let breadcrumbs: BreadcrumbPage[] = [
 		{ title: 'DATA FUTURES EXCHANGE', url: 'https://data.undp.org' },
@@ -29,10 +28,20 @@
 	];
 	let storiesData: StorymapsData | undefined;
 
+	const loadMaps = async () => {
+		mapsData = undefined;
+		const res = await fetch(
+			`/api/style?accesslevel=${AccessLevel.PUBLIC}&limit=4&sortby=updatedat,desc`
+		);
+		const styles: MapsData = await res.json();
+		mapsData = styles;
+		return mapsData;
+	};
+
 	const loadStorymaps = async () => {
 		storiesData = undefined;
 
-		const res = await fetch(`/api/storymaps?limit=3&sortby=updatedat,desc&accesslevel=3`);
+		const res = await fetch(`/api/storymaps?limit=3&sortby=updatedat,desc&accesslevel=4`);
 		const stories: StorymapsData = await res.json();
 
 		storiesData = stories;
@@ -71,13 +80,7 @@
 
 				{#if !isMobile}
 					<div class="map-button">
-						<Button
-							title="CREATE MAP"
-							isArrow={true}
-							on:clicked={() => {
-								goto('/maps/edit');
-							}}
-						></Button>
+						<Button title="CREATE MAP" isArrow={true} href="/maps/edit"></Button>
 					</div>
 				{/if}
 			</div>
@@ -89,13 +92,7 @@
 
 	{#if isMobile}
 		<div class="column p-0 map-button mx-5 my-5">
-			<Button
-				title="CREATE MAP"
-				isArrow={true}
-				on:clicked={() => {
-					goto('/maps/edit');
-				}}
-			></Button>
+			<Button title="CREATE MAP" isArrow={true} href="/maps/edit"></Button>
 		</div>
 	{/if}
 </section>
@@ -174,13 +171,7 @@
 		</p>
 		<div class="columns mt-6 mx-auto">
 			<div class="column p-0">
-				<Button
-					title="EXPLORE DATASETS"
-					isArrow={true}
-					on:clicked={() => {
-						goto('/data');
-					}}
-				></Button>
+				<Button title="EXPLORE DATASETS" isArrow={true} href="/data"></Button>
 			</div>
 			<div class="column p-0">
 				<a
@@ -201,17 +192,17 @@
 		<h3 class="title is-3 mb-5">Explore maps</h3>
 
 		<div class="mb-5">
-			<MapStyleCardList bind:mapData={mapsData} showMenu={false} />
+			{#await loadMaps()}
+				<div class="is-flex is-justify-content-center">
+					<Loader size="large" />
+				</div>
+			{:then maps}
+				<MapStyleCardList mapData={maps} showMenu={false} />
+			{/await}
 		</div>
 
 		<div class="explore-button">
-			<Button
-				title="EXPLORE ALL MAPS"
-				isArrow={true}
-				on:clicked={() => {
-					goto('/maps');
-				}}
-			></Button>
+			<Button title="EXPLORE ALL MAPS" isArrow={true} href="/maps"></Button>
 		</div>
 	</div>
 </section>
@@ -269,13 +260,7 @@
 		</div>
 
 		<div class="explore-button">
-			<Button
-				title="EXPLORE ALL TOOLS"
-				isArrow={true}
-				on:clicked={() => {
-					goto('/tools');
-				}}
-			></Button>
+			<Button title="EXPLORE ALL TOOLS" isArrow={true} href="/tools"></Button>
 		</div>
 	</div>
 </section>
@@ -313,7 +298,7 @@
 						{@const storyLink = story.links?.find((l) => l.rel === 'storymap')?.href}
 						{@const staticLink = story.links?.find((l) => l.rel === 'static-auto')?.href}
 
-						<div class="column is-one-third-tablet is-one-third-desktop is-full-mobile">
+						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 							<CardWithImage
 								title={story.title ?? ''}
 								url={storyLink}
@@ -329,13 +314,7 @@
 			{/await}
 		</div>
 		<div class="explore-button">
-			<Button
-				title="EXPLORE ALL STORYMAPS"
-				isArrow={true}
-				on:clicked={() => {
-					goto('/storymaps');
-				}}
-			></Button>
+			<Button title="EXPLORE ALL STORYMAPS" isArrow={true} href="/storymaps"></Button>
 		</div>
 	</div>
 </section>
@@ -437,14 +416,6 @@
 	.dataset-section {
 		margin: 64px 48px;
 
-		.title {
-			line-height: 109%;
-		}
-
-		.description {
-			margin-bottom: 32px;
-		}
-
 		@media (max-width: 48em) {
 			margin: 48px 0;
 
@@ -461,9 +432,17 @@
 			}
 		}
 
+		.title {
+			line-height: 109%;
+		}
+
+		.description {
+			margin-bottom: 32px;
+		}
+
 		.turn-data-section {
 			background: var(--undpds-color-gray-300);
-			margin: 64px 0;
+			margin: 32px 0;
 			padding: 96px 144px;
 
 			@media (max-width: 48em) {
@@ -486,6 +465,10 @@
 				padding: 48px 16px;
 				padding-bottom: 0;
 
+				.title {
+					margin: 0;
+				}
+
 				.explore-button {
 					width: 100%;
 				}
@@ -494,13 +477,14 @@
 	}
 
 	.solution-section {
-		margin: 64px 48px;
+		background-color: var(--undpds-color-gray-200);
+		padding: 64px 48px;
 
 		@media (max-width: 48em) {
-			margin: 16px 48px;
+			padding: 16px 48px;
 
 			@media (max-width: 48em) {
-				margin: 48px 0;
+				padding: 48px 0;
 
 				.title {
 					margin: 0 24px;
@@ -529,6 +513,10 @@
 			@media (max-width: 48em) {
 				padding: 48px 16px;
 				padding-bottom: 0;
+
+				.title {
+					margin: 0;
+				}
 
 				.explore-button {
 					width: 100%;
@@ -577,6 +565,10 @@
 			@media (max-width: 48em) {
 				padding: 48px 16px;
 				padding-bottom: 0;
+
+				.title {
+					margin: 0;
+				}
 
 				.explore-button {
 					width: 100%;

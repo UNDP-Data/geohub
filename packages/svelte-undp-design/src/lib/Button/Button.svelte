@@ -9,6 +9,7 @@
 	export let isDisabled = false;
 	export let isDownload = false;
 	export let isExternalLink = false;
+	export let href = '';
 
 	const handleClicked = () => {
 		if (!isDisabled) {
@@ -23,29 +24,51 @@
 	};
 </script>
 
-<!-- svelte-ignore a11y-missing-attribute -->
-<a
-	class="button button-{isPrimary ? 'primary' : 'secondary'} {isArrow
-		? 'button-arrow'
-		: isDownload
-			? 'button-download'
-			: isExternalLink
-				? 'button-external-link'
-				: 'button-without-arrow'}"
-	class:disabled={isDisabled}
-	role="button"
-	alt={title}
-	tabindex="0"
-	on:keydown={handleKeyDown}
-	on:click={handleClicked}
->
-	{title}
-	{#if isDownload}
-		<span class="download-animated"><i></i></span>
-	{:else if isExternalLink}
-		<span class="external-link-animated"><i></i></span>
-	{/if}
-</a>
+{#if href}
+	<a
+		class="button button-{isPrimary ? 'primary' : 'secondary'} {isArrow
+			? 'button-arrow'
+			: isDownload
+				? 'button-download'
+				: isExternalLink
+					? 'button-external-link'
+					: 'button-without-arrow'}"
+		class:disabled={isDisabled}
+		role="button"
+		{href}
+	>
+		{title}
+		{#if isDownload}
+			<span class="download-animated"><i></i></span>
+		{:else if isExternalLink}
+			<span class="external-link-animated"><i></i></span>
+		{/if}
+	</a>
+{:else}
+	<!-- svelte-ignore a11y-missing-attribute -->
+	<a
+		class="button button-{isPrimary ? 'primary' : 'secondary'} {isArrow
+			? 'button-arrow'
+			: isDownload
+				? 'button-download'
+				: isExternalLink
+					? 'button-external-link'
+					: 'button-without-arrow'}"
+		class:disabled={isDisabled}
+		role="button"
+		alt={title}
+		tabindex="0"
+		on:keydown={handleKeyDown}
+		on:click={handleClicked}
+	>
+		{title}
+		{#if isDownload}
+			<span class="download-animated"><i></i></span>
+		{:else if isExternalLink}
+			<span class="external-link-animated"><i></i></span>
+		{/if}
+	</a>
+{/if}
 
 <style lang="scss">
 	@use '../css/base-minimal.min.css';

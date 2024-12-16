@@ -1,8 +1,11 @@
 <script lang="ts">
+	import { Button } from '@undp-data/svelte-undp-design';
+
 	export let title: string;
 	export let linkName: string;
 	export let href: string;
 	export let size: 'small' | 'normal' | 'medium' | 'large' = 'normal';
+	export let isArrow = true;
 </script>
 
 <section class="hero is-{size} has-background-grey-darker mt-6">
@@ -13,10 +16,8 @@
 			<slot />
 		</p>
 
-		<div class="mt-4">
-			<a class="cta-button button is-primary is-uppercase has-text-weight-bold" {href}>
-				<span>{linkName}</span>
-			</a>
+		<div class="cta-button mt-4 mx-auto">
+			<Button title={linkName} {isArrow} bind:href />
 		</div>
 	</div>
 </section>
@@ -27,6 +28,10 @@
 
 		@media (max-width: 48em) {
 			padding: 96px 24px;
+		}
+
+		.cta-button {
+			width: fit-content;
 		}
 	}
 </style>
