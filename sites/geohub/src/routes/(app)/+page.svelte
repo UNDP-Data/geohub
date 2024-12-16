@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import MapHero from '$components/pages/map/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/map/MapStyleCardList.svelte';
@@ -71,13 +70,7 @@
 
 				{#if !isMobile}
 					<div class="map-button">
-						<Button
-							title="CREATE MAP"
-							isArrow={true}
-							on:clicked={() => {
-								goto('/maps/edit');
-							}}
-						></Button>
+						<Button title="CREATE MAP" isArrow={true} href="/maps/edit"></Button>
 					</div>
 				{/if}
 			</div>
@@ -89,13 +82,7 @@
 
 	{#if isMobile}
 		<div class="column p-0 map-button mx-5 my-5">
-			<Button
-				title="CREATE MAP"
-				isArrow={true}
-				on:clicked={() => {
-					goto('/maps/edit');
-				}}
-			></Button>
+			<Button title="CREATE MAP" isArrow={true} href="/maps/edit"></Button>
 		</div>
 	{/if}
 </section>
@@ -174,13 +161,7 @@
 		</p>
 		<div class="columns mt-6 mx-auto">
 			<div class="column p-0">
-				<Button
-					title="EXPLORE DATASETS"
-					isArrow={true}
-					on:clicked={() => {
-						goto('/data');
-					}}
-				></Button>
+				<Button title="EXPLORE DATASETS" isArrow={true} href="/data"></Button>
 			</div>
 			<div class="column p-0">
 				<a
@@ -205,13 +186,7 @@
 		</div>
 
 		<div class="explore-button">
-			<Button
-				title="EXPLORE ALL MAPS"
-				isArrow={true}
-				on:clicked={() => {
-					goto('/maps');
-				}}
-			></Button>
+			<Button title="EXPLORE ALL MAPS" isArrow={true} href="/maps"></Button>
 		</div>
 	</div>
 </section>
@@ -269,13 +244,7 @@
 		</div>
 
 		<div class="explore-button">
-			<Button
-				title="EXPLORE ALL TOOLS"
-				isArrow={true}
-				on:clicked={() => {
-					goto('/tools');
-				}}
-			></Button>
+			<Button title="EXPLORE ALL TOOLS" isArrow={true} href="/tools"></Button>
 		</div>
 	</div>
 </section>
@@ -329,13 +298,7 @@
 			{/await}
 		</div>
 		<div class="explore-button">
-			<Button
-				title="EXPLORE ALL STORYMAPS"
-				isArrow={true}
-				on:clicked={() => {
-					goto('/storymaps');
-				}}
-			></Button>
+			<Button title="EXPLORE ALL STORYMAPS" isArrow={true} href="/storymaps"></Button>
 		</div>
 	</div>
 </section>
