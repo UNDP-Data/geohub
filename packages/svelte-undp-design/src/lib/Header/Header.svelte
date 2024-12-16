@@ -577,9 +577,7 @@
 		margin-left: 0.75rem !important;
 	}
 
-	@media (max-width: 48em) {
-		:global(.country-header .header .site-title span:first-of-type:not(:last-of-type)) {
-			max-width: 140px;
-		}
+	.country-header .header .site-title span:first-of-type:not(:last-of-type) {
+		white-space: nowrap;
 	}
 </style>
