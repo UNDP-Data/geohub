@@ -426,7 +426,7 @@
 
 		.turn-data-section {
 			background: var(--undpds-color-gray-300);
-			margin: 64px 0;
+			margin: 32px 0;
 			padding: 96px 144px;
 
 			@media (max-width: 48em) {
