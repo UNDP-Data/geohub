@@ -156,6 +156,13 @@
 	.fluid-carousel {
 		padding-right: 0px !important;
 
+		&.swiper-initialized {
+			@media (max-width: 48em) {
+				padding-left: 16px !important;
+				padding-right: 16px !important;
+			}
+		}
+
 		.fluid-carousel__image {
 			user-drag: none;
 			-webkit-user-drag: none;
@@ -165,8 +172,6 @@
 
 			@media (max-width: 48em) {
 				width: 100%;
-				padding-left: 16px !important;
-				padding-right: 16px !important;
 			}
 		}
 	}
