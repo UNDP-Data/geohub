@@ -208,26 +208,68 @@ export const SmallProgressbar: Story = {
 	}
 };
 
-// Example source code
-// <Header
-// 	region="REGION"
-// 	siteTitle="Site Title"
-// 	url="https://undpgeohub.org"
-// 	logoUrl="assets/undp-logo-blue.svg"
-// 	bind:showProgressBar
-// 	bind:height={headerHeight}
-// >
-// 	<div slot="menu-buttons" class="menu-buttons">
-// 		<div role="button" aria-label="Layer panel" class="menu-button" tabindex="0">
-// 			<span class="icon">
-// 				<i class="fa-solid fa-bars fa-xl" />
-// 			</span>
-// 		</div>
+export const ActionMenu: Story = {
+	args: {
+		region: 'REGION',
+		siteTitle: 'Site Title',
+		url: 'https://undpgeohub.org',
+		logoUrl: 'assets/undp-logo-blue.svg',
+		links: links,
+		isPositionFixed: false,
+		actionMenu: {
+			title: 'create/upload',
+			placeholder: 'create maps or upload datasets',
+			showLanguageIcon: false,
+			links: [
+				{
+					id: 'data-upload',
+					title: 'Dataset',
+					href: '#'
+				},
+				{
+					id: 'new-map',
+					title: 'Map',
+					href: '#'
+				},
+				{
+					id: 'new-storymap',
+					title: 'Storymap',
+					href: '#'
+				}
+			]
+		}
+	}
+};
 
-// 		<div role="button" aria-label="Layer panel" class="menu-button" tabindex="0">
-// 			<span class="icon">
-// 				<i class="fa-solid fa-bars fa-xl" />
-// 			</span>
-// 		</div>
-// 	</div>
-// </Header>
+export const LanguageMenu: Story = {
+	args: {
+		region: 'REGION',
+		siteTitle: 'Site Title',
+		url: 'https://undpgeohub.org',
+		logoUrl: 'assets/undp-logo-blue.svg',
+		links: links,
+		isPositionFixed: false,
+		actionMenu: {
+			title: 'Language',
+			placeholder: 'Select a language',
+			showLanguageIcon: true,
+			links: [
+				{
+					id: 'english',
+					title: 'English',
+					href: '#'
+				},
+				{
+					id: 'french',
+					title: 'French',
+					href: '#'
+				},
+				{
+					id: 'spanish',
+					title: 'Spanish',
+					href: '#'
+				}
+			]
+		}
+	}
+};

@@ -7,15 +7,17 @@
 
 	let container: HTMLDivElement;
 	let innerHeight = 1000;
-	let innerWidth: number;
 	let map: Map;
 	export let interactive = true;
 	export let excludeHeaderHeight = true;
 	export let styleId: number;
+	export let width = '100%';
+	export let height = 0;
 
 	let headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 
-	$: mapHeight = excludeHeaderHeight ? innerHeight - $headerHeightStore : innerHeight;
+	$: mapHeight =
+		height > 0 ? height : excludeHeaderHeight ? innerHeight - $headerHeightStore : innerHeight;
 
 	onMount(async () => {
 		let styleUrl = `/api/style/${styleId}.json`;
@@ -67,6 +69,6 @@
 	};
 </script>
 
-<svelte:window bind:innerHeight bind:innerWidth />
+<svelte:window bind:innerHeight />
 
-<div bind:this={container} class="map" style="height: {mapHeight}px; width: 100%;" />
+<div bind:this={container} class="map" style="height: {mapHeight}px; width: {width};" />

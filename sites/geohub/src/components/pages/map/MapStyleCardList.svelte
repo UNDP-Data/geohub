@@ -116,7 +116,7 @@
 								? 'blue'
 								: 'yellow'}
 					{#if styleLink}
-						<div class="column is-one-third-tablet is-one-third-desktop is-full-mobile">
+						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 							{#if mode === 'browse'}
 								{@const mapLink = style.links.find((l) => l.rel === 'map')?.href}
 

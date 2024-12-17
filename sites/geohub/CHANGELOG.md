@@ -1,5 +1,25 @@
 # geohub
 
+## 1.22.23
+
+### Patch Changes
+
+- 650420a: fix: fixed signin page layout collapse in mobile
+
+## 1.22.22
+
+### Patch Changes
+
+- d98a8c3: fix: adjusted landing page layout in terms of UI concerns
+- 29f1785: fix: set height as auto for FluidCarousel image, and replaced dashboard screenshot to new one
+- 9bbb57b: fix: get only public storymap (max 4 items) for landing page
+
+## 1.22.21
+
+### Patch Changes
+
+- 84e2d1e: feat: redesigned GeoHub landing page
+
 ## 1.22.20
 
 ### Patch Changes
