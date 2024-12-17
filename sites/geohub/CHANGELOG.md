@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.23
+
+### Patch Changes
+
+- 650420a: fix: fixed signin page layout collapse in mobile
+
 ## 1.22.22
 
 ### Patch Changes
