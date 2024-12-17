@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 2.4.6
+
+### Patch Changes
+
+- 2494e91: fix: set 16px of horizontal padding for swiper slider in FluidCarousel in mobile
+
 ## 2.4.5
 
 ### Patch Changes
