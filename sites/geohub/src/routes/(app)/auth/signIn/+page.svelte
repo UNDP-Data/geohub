@@ -60,6 +60,16 @@
 		width: 360px;
 		background-color: rgba(255, 255, 255, 1);
 
+		@media (max-height: 24em) {
+			max-height: 240px;
+			overflow-y: auto;
+			top: 30px;
+			bottom: 0;
+			transform: translateX(-50%);
+			-webkit-transform: translateX(-50%);
+			-ms-transform: translateX(-50%);
+		}
+
 		.login-button {
 			&:hover {
 				background-color: #005893;
