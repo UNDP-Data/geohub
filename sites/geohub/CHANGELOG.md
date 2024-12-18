@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.24
+
+### Patch Changes
+
+- 61d95f4: fix: use /tiles/WebMercatorQuad/{z}/{x}/{y}.png in Electricity Dashboard
+
 ## 1.22.23
 
 ### Patch Changes
