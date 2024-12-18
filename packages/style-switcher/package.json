@@ -27,7 +27,7 @@
 		"@sveltejs/package": "^2.3.7",
 		"@sveltejs/vite-plugin-svelte": "^4.0.0",
 		"@types/json-stable-stringify": "^1.1.0",
-		"@typescript-eslint/eslint-plugin": "8.18.0",
+		"@typescript-eslint/eslint-plugin": "8.18.1",
 		"@typescript-eslint/parser": "^8.12.2",
 		"eslint": "^9.13.0",
 		"eslint-config-prettier": "^9.1.0",
