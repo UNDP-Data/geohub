@@ -108,7 +108,7 @@
 
 			const layerSource: SourceSpecification = {
 				type: 'raster',
-				tiles: [`${titilerUrl}/tiles/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
+				tiles: [`${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
 				tileSize: 256,
 				// bounds: layerInfo['bounds'],
 				attribution:
