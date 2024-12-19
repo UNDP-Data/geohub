@@ -4,17 +4,7 @@ import { db } from '$lib/server/db';
 import { productInGeohub, stacCollectionProductInGeohub } from '$lib/server/schema';
 import { eq, sql } from 'drizzle-orm';
 
-export const GET: RequestHandler = async ({ locals, params }) => {
-	// get product details
-	/**
-	 * get product details
-	 * Needs to be logged in to get product details
-	 */
-	const session = await locals.auth();
-	if (!session) {
-		error(403, { message: 'Permission error' });
-	}
-
+export const GET: RequestHandler = async ({ params }) => {
 	const productDetails = await db
 		.select({
 			stac_id: stacCollectionProductInGeohub.stacId,
