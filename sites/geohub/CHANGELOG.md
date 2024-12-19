@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.25
+
+### Patch Changes
+
+- 9baaa43: fix: allow unsigned users to access stac product api to get information.
+
 ## 1.22.24
 
 ### Patch Changes
