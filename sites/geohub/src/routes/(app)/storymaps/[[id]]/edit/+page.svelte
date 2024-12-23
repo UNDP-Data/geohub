@@ -1,10 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import StorymapChapterEdit, {
-		ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY,
-		createActiveStorymapChapterStore
-	} from '$components/pages/storymap/StorymapChapterEdit.svelte';
+	import StorymapChapterEdit from '$components/pages/storymap/StorymapChapterEdit.svelte';
 	import StorymapChapterMiniPreview from '$components/pages/storymap/StorymapChapterMiniPreview.svelte';
 	import StorymapEditPreview from '$components/pages/storymap/StorymapEditPreview.svelte';
 	import StorymapFooterEdit from '$components/pages/storymap/StorymapFooterEdit.svelte';
@@ -18,7 +15,12 @@
 	import { AccessLevel, getAttribution, MapStyles } from '$lib/config/AppConfig';
 	import { imageUrlToBase64 } from '$lib/helper';
 	import type { StoryMapChapter, StoryMapConfig } from '$lib/types';
-	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
+	import {
+		ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY,
+		createActiveStorymapChapterStore,
+		HEADER_HEIGHT_CONTEXT_KEY,
+		type HeaderHeightStore
+	} from '$stores';
 	import {
 		createStoryMapConfigStore,
 		StoryMap,

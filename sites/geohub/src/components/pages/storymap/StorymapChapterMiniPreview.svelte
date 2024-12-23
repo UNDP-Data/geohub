@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { getMapImageFromStyle } from '$lib/helper';
-	import type { StoryMapChapterType, StoryMapConfig } from '$lib/types';
+	import type { StoryMapChapter as StoryMapChapterType, StoryMapConfig } from '$lib/types';
+	import { ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY, type ActiveStorymapChapterStore } from '$stores';
 	import {
 		layerTypes,
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
@@ -14,10 +15,6 @@
 	import { debounce, isEqual } from 'lodash-es';
 	import { type StyleSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
-	import {
-		ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY,
-		type ActiveStorymapChapterStore
-	} from './StorymapChapterEdit.svelte';
 
 	const dispatch = createEventDispatcher();
 
