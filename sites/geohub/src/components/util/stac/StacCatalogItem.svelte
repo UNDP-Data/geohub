@@ -347,8 +347,10 @@
 				<div class="p-4" slot="content">
 					<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
 						<thead>
-							<th>Parameter</th>
-							<th>Value</th>
+							<tr>
+								<th>Parameter</th>
+								<th>Value</th>
+							</tr>
 						</thead>
 						<tbody>
 							{#each viewgeometryProps as prop}
