@@ -10,3 +10,4 @@ export * from './progressBar';
 export * from './editingLayer';
 export * from './editingMenuShown';
 export * from './sidebarWidth';
+export * from './activeStorymapChapter';

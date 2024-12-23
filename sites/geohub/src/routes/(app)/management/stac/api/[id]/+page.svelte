@@ -287,10 +287,12 @@
 							{/if}
 						</tbody>
 						<tfoot>
-							<th>No.</th>
-							<th>Title</th>
-							<th>STAC page</th>
-							<th>Operation</th>
+							<tr>
+								<th>No.</th>
+								<th>Title</th>
+								<th>STAC page</th>
+								<th>Operation</th>
+							</tr>
 						</tfoot>
 					</table>
 				</div>

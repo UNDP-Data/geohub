@@ -1,16 +1,6 @@
-<script context="module" lang="ts">
-	import { writable, type Writable } from 'svelte/store';
-
-	export const ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY = 'active-storymap-chapter-store';
-	export type ActiveStorymapChapterStore = Writable<StoryMapChapter | undefined>;
-	export const createActiveStorymapChapterStore = () => {
-		return writable(<StoryMapChapter | undefined>undefined);
-	};
-</script>
-
 <script lang="ts">
 	import { page } from '$app/stores';
-	import type { StoryMapChapter } from '$lib/types';
+	import { ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY, type ActiveStorymapChapterStore } from '$stores';
 	import {
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		type StoryMapConfigStore

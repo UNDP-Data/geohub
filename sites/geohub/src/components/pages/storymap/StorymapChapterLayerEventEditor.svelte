@@ -1,15 +1,12 @@
 <script lang="ts">
 	import type { DashboardMapStyle } from '$lib/types';
+	import { ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY, type ActiveStorymapChapterStore } from '$stores';
 	import { layerTypes, type StoryMapChapterLayerEvent } from '@undp-data/svelte-maplibre-storymap';
 	import { FieldControl, initTooltipTippy, OpacityEditor } from '@undp-data/svelte-undp-components';
 	import { Loader, Switch } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification, StyleSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
-	import {
-		ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY,
-		type ActiveStorymapChapterStore
-	} from './StorymapChapterEdit.svelte';
 
 	const tippyTooltip = initTooltipTippy();
 	const dipatch = createEventDispatcher();
