@@ -39,11 +39,13 @@
 	<Accordion title="metadata" isExpanded={isMetadataExpanded}>
 		<div slot="content">
 			<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-				<tr><th>STAC version</th><td>{stacCatalog.stac_version}</td></tr>
-				<tr><th>Description</th><td>{stacCatalog.description}</td></tr>
-				{#if stacCatalog.license}
-					<tr><th>License</th><td>{stacCatalog.license}</td></tr>
-				{/if}
+				<tbody>
+					<tr><th>STAC version</th><td>{stacCatalog.stac_version}</td></tr>
+					<tr><th>Description</th><td>{stacCatalog.description}</td></tr>
+					{#if stacCatalog.license}
+						<tr><th>License</th><td>{stacCatalog.license}</td></tr>
+					{/if}
+				</tbody>
 			</table>
 		</div>
 	</Accordion>
