@@ -75,13 +75,15 @@
 			{/each}
 		</tbody>
 		<tfoot>
-			<th>No.</th>
-			{#each Object.keys(layers[0]) as col}
-				{#if !skipCols.includes(col)}
-					<th>{col}</th>
-				{/if}
-			{/each}
-			<th>registered</th>
+			<tr>
+				<th>No.</th>
+				{#each Object.keys(layers[0]) as col}
+					{#if !skipCols.includes(col)}
+						<th>{col}</th>
+					{/if}
+				{/each}
+				<th>registered</th>
+			</tr>
 		</tfoot>
 	</table>
 </div>
