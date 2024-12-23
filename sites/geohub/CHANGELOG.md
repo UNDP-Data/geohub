@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.26
+
+### Patch Changes
+
+- 27d2c90: refactor: fixed some codes and html for svelte 5 migration
+
 ## 1.22.25
 
 ### Patch Changes
