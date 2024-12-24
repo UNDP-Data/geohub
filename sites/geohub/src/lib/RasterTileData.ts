@@ -17,9 +17,11 @@ export class RasterTileData {
 	private feature: DatasetFeature;
 
 	constructor(feature: DatasetFeature) {
+		this.feature = JSON.parse(JSON.stringify(feature));
 		// delete all algorithm tags. set algorithm Id at getMetadata or add functions instead.
-		feature.properties.tags = feature.properties.tags?.filter((t) => t.key !== 'algorithm');
-		this.feature = feature;
+		this.feature.properties.tags = this.feature.properties.tags?.filter(
+			(t) => t.key !== 'algorithm'
+		);
 	}
 
 	public getBounds = async () => {
