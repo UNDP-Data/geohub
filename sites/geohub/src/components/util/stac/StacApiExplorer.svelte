@@ -588,20 +588,20 @@
 					dispatch('dataAdded', {
 						layers: [data]
 					});
-				}
-
-				const data: LayerCreationInfo & { geohubLayer?: Layer } = layerCreationInfo;
-				if (data && data.layer) {
-					data.geohubLayer = {
-						id: data.layer.id,
-						name: stacDatasetFeature.properties.name as string,
-						info: data.metadata,
-						dataset: stacDatasetFeature,
-						colorMapName: data.colormap_name
-					};
-					dispatch('dataAdded', {
-						layers: [data]
-					});
+				} else {
+					const data: LayerCreationInfo & { geohubLayer?: Layer } = layerCreationInfo;
+					if (data && data.layer) {
+						data.geohubLayer = {
+							id: data.layer.id,
+							name: stacDatasetFeature.properties.name as string,
+							info: data.metadata,
+							dataset: stacDatasetFeature,
+							colorMapName: data.colormap_name
+						};
+						dispatch('dataAdded', {
+							layers: [data]
+						});
+					}
 				}
 			}
 		} finally {
