@@ -25,6 +25,7 @@
 		clean,
 		DatePicker,
 		FieldControl,
+		initTooltipTippy,
 		Notification,
 		type RasterAlgorithm,
 		type RasterTileMetadata,
@@ -51,6 +52,8 @@
 
 	const NOTIFICATION_MESSAGE_TIME = 5000;
 	const MAX_ZOOM = 8;
+
+	const tooltipTippy = initTooltipTippy();
 
 	let config: UserConfig = $page.data.config;
 
@@ -463,6 +466,18 @@
 		});
 		for (const feature of clickedFeatures) {
 			map.setFeatureState(feature, { click: true });
+		}
+	};
+
+	const removeClickedFeature = (feature?: MapGeoJSONFeature) => {
+		if (feature) {
+			map.setFeatureState(feature, { click: false });
+			clickedFeatures = [...clickedFeatures.filter((f) => f !== feature)];
+		} else {
+			for (const feature of clickedFeatures) {
+				map.setFeatureState(feature, { click: false });
+			}
+			clickedFeatures = [];
 		}
 	};
 
@@ -939,7 +954,7 @@
 						<ShowDetails bind:show={showDetails} />
 					</div>
 					{#if showDetails}
-						<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+						<table class="table is-narrow is-hoverable is-fullwidth">
 							<thead>
 								<tr>
 									<th>No.</th>
@@ -947,21 +962,43 @@
 									{#if stacInstance.hasCloudCoverProp}
 										<th>Cloud cover (%)</th>
 									{/if}
+									<th>
+										<button
+											class="delete-button"
+											on:click={() => {
+												removeClickedFeature();
+											}}
+											use:tooltipTippy={{ content: 'Clear all selected features' }}
+										>
+											<span class="material-symbols-outlined"> clear_all </span>
+										</button>
+									</th>
 								</tr>
 							</thead>
 							<tbody>
 								{#each clickedFeatures as feature, index}
 									<tr>
-										<th>{index + 1}</th>
-										<th
+										<td>{index + 1}</td>
+										<td
 											><Time
 												timestamp={feature.properties.datetime}
 												format="HH:mm, MM/DD/YYYY"
-											/></th
+											/></td
 										>
 										{#if stacInstance.hasCloudCoverProp}
-											<th>{feature.properties[stacInstance.cloudCoverPropName].toFixed(2)}%</th>
+											<td>{feature.properties[stacInstance.cloudCoverPropName].toFixed(2)}%</td>
 										{/if}
+										<td>
+											<button
+												class="delete-button"
+												on:click={() => {
+													removeClickedFeature(feature);
+												}}
+												use:tooltipTippy={{ content: `Deselect No. ${index + 1} feature` }}
+											>
+												<span class="material-symbols-outlined"> remove_selection </span>
+											</button>
+										</td>
 									</tr>
 								{/each}
 							</tbody>
