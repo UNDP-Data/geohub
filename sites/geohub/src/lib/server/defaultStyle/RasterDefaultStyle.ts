@@ -199,6 +199,16 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 		return data;
 	};
 
+	public getBounds = async () => {
+		const boundsUrl = this.dataset.properties?.links?.find((l) => l.rel === 'bounds')?.href;
+		if (!boundsUrl) return;
+		const res = await fetch(boundsUrl);
+		if (!res.ok) return;
+		const json = await res.json();
+		const bounds = json.bounds as number[];
+		return bounds;
+	};
+
 	public getMetadata = async (algorithmId?: string) => {
 		const metadataUrl = this.dataset.properties?.links?.find((l) => l.rel === 'info').href;
 		const product = this.dataset.properties.tags?.find((t) => t.key === 'product')?.value;
@@ -207,6 +217,7 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 		if (!res.ok) {
 			error(res.status, res.statusText);
 		}
+		const bounds = await this.getBounds();
 		if (product) {
 			// FIXME: this is a hack to get the metadata for the product
 			const assetMeta = await res.json();
@@ -221,6 +232,9 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 			this.metadata.band_descriptions = [[this.metadata.active_band_no]];
 		} else {
 			this.metadata = await res.json();
+		}
+		if (bounds) {
+			this.metadata.bounds = bounds;
 		}
 		if (this.metadata && this.metadata.band_metadata && this.metadata.band_metadata.length > 0) {
 			const scales = this.metadata.scales;
