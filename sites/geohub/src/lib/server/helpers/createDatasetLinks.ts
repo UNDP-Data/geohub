@@ -87,6 +87,11 @@ export const createDatasetLinks = async (
 					)}&asset_as_band=true&unscale=false&resampling=nearest&reproject=nearest&max_size=1024&categorical=false&histogram_bins=8`
 				});
 				feature.properties.links.push({
+					rel: 'bounds',
+					type: 'application/json',
+					href: `${titilerUrl}/bounds?url=${b64EncodedUrl}&crs=EPSG:4326`
+				});
+				feature.properties.links.push({
 					rel: 'tiles',
 					type: 'image/png',
 					href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
@@ -132,6 +137,11 @@ export const createDatasetLinks = async (
 					href: `${titilerUrl}/statistics?url=${b64EncodedUrl}`
 				});
 				feature.properties.links.push({
+					rel: 'bounds',
+					type: 'application/json',
+					href: `${titilerUrl}/bounds?url=${b64EncodedUrl}&crs=EPSG:4326`
+				});
+				feature.properties.links.push({
 					rel: 'tiles',
 					type: 'image/png',
 					href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
@@ -166,6 +176,11 @@ export const createDatasetLinks = async (
 				rel: 'statistics',
 				type: 'application/json',
 				href: `${titilerUrl}/statistics?url=${b64EncodedUrl}`
+			});
+			feature.properties.links.push({
+				rel: 'bounds',
+				type: 'application/json',
+				href: `${titilerUrl}/bounds?url=${b64EncodedUrl}&crs=EPSG:4326`
 			});
 			feature.properties.links.push({
 				rel: 'tilejson',
@@ -234,6 +249,11 @@ export const createDatasetLinks = async (
 				rel: 'statistics',
 				type: 'application/json',
 				href: `${titilerUrl}/statistics?url=${b64EncodedUrl}${algorithmId ? `&algorithm=${algorithmId}` : '&bidx=1'}`
+			});
+			feature.properties.links.push({
+				rel: 'bounds',
+				type: 'application/json',
+				href: `${titilerUrl}/bounds?url=${b64EncodedUrl}&crs=EPSG:4326`
 			});
 			feature.properties.links.push({
 				rel: 'tiles',
