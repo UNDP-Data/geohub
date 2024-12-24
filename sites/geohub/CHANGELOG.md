@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.27
+
+### Patch Changes
+
+- bccd5c8: fix: use `/bounds?crs=EPSG:4326` to fetch bounds info in LngLat coordinates since the latest titiler does not return LngLat bounds from /info and /statistics.
+
 ## 1.22.26
 
 ### Patch Changes
