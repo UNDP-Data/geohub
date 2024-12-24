@@ -25,6 +25,7 @@
 		clean,
 		DatePicker,
 		FieldControl,
+		initTooltipTippy,
 		Notification,
 		type RasterAlgorithm,
 		type RasterTileMetadata,
@@ -51,6 +52,8 @@
 
 	const NOTIFICATION_MESSAGE_TIME = 5000;
 	const MAX_ZOOM = 8;
+
+	const tooltipTippy = initTooltipTippy();
 
 	let config: UserConfig = $page.data.config;
 
@@ -466,6 +469,18 @@
 		}
 	};
 
+	const removeClickedFeature = (feature?: MapGeoJSONFeature) => {
+		if (feature) {
+			map.setFeatureState(feature, { click: false });
+			clickedFeatures = [...clickedFeatures.filter((f) => f !== feature)];
+		} else {
+			for (const feature of clickedFeatures) {
+				map.setFeatureState(feature, { click: false });
+			}
+			clickedFeatures = [];
+		}
+	};
+
 	const handleSelectedAssets = async () => {
 		selectedProduct = '';
 		assetSelectionDone = !assetSelectionDone;
@@ -541,7 +556,7 @@
 
 					data.geohubLayer = {
 						id: data.layer.id,
-						name: feature.properties.name,
+						name: feature.properties.name as string,
 						info: data.metadata,
 						dataset: feature,
 						colorMapName: data.colormap_name
@@ -573,19 +588,21 @@
 					dispatch('dataAdded', {
 						layers: [data]
 					});
+				} else {
+					const data: LayerCreationInfo & { geohubLayer?: Layer } = layerCreationInfo;
+					if (data && data.layer) {
+						data.geohubLayer = {
+							id: data.layer.id,
+							name: stacDatasetFeature.properties.name as string,
+							info: data.metadata,
+							dataset: stacDatasetFeature,
+							colorMapName: data.colormap_name
+						};
+						dispatch('dataAdded', {
+							layers: [data]
+						});
+					}
 				}
-
-				const data: LayerCreationInfo & { geohubLayer?: Layer } = layerCreationInfo;
-				data.geohubLayer = {
-					id: data.layer.id,
-					name: stacDatasetFeature.properties.name,
-					info: data.metadata,
-					dataset: stacDatasetFeature,
-					colorMapName: data.colormap_name
-				};
-				dispatch('dataAdded', {
-					layers: [data]
-				});
 			}
 		} finally {
 			isLoading = false;
@@ -597,18 +614,16 @@
 	};
 
 	const handleTabChange = () => {
-		for (const feature of clickedFeatures) {
-			map.setFeatureState(feature, { click: false });
-		}
-		clickedFeatures = [];
 		if (activeTab === 'Products') {
 			selectedAsset = '';
 			selectedTool = '';
+			selectedAlgorithmName = '';
 			toolSelectionComplete = false;
 		}
 		if (activeTab === 'Assets') {
 			selectedProduct = '';
 			selectedTool = '';
+			selectedAlgorithmName = '';
 			toolSelectionComplete = false;
 		}
 		if (activeTab === 'Tools') {
@@ -900,7 +915,7 @@
 								</div>
 							</div>
 						</FieldControl>
-						{#if selectedTool}
+						{#if selectedAlgorithmName && selectedTool}
 							<!-- eslint-disable-next-line no-unused-vars -->
 							{#each selectedTool.inputs.bands as band}
 								{@const index = selectedTool.inputs.bands.indexOf(band)}
@@ -939,7 +954,7 @@
 						<ShowDetails bind:show={showDetails} />
 					</div>
 					{#if showDetails}
-						<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+						<table class="table is-narrow is-hoverable is-fullwidth">
 							<thead>
 								<tr>
 									<th>No.</th>
@@ -947,21 +962,43 @@
 									{#if stacInstance.hasCloudCoverProp}
 										<th>Cloud cover (%)</th>
 									{/if}
+									<th>
+										<button
+											class="delete-button"
+											on:click={() => {
+												removeClickedFeature();
+											}}
+											use:tooltipTippy={{ content: 'Clear all selected features' }}
+										>
+											<span class="material-symbols-outlined"> clear_all </span>
+										</button>
+									</th>
 								</tr>
 							</thead>
 							<tbody>
 								{#each clickedFeatures as feature, index}
 									<tr>
-										<th>{index + 1}</th>
-										<th
+										<td>{index + 1}</td>
+										<td
 											><Time
 												timestamp={feature.properties.datetime}
 												format="HH:mm, MM/DD/YYYY"
-											/></th
+											/></td
 										>
 										{#if stacInstance.hasCloudCoverProp}
-											<th>{feature.properties[stacInstance.cloudCoverPropName].toFixed(2)}%</th>
+											<td>{feature.properties[stacInstance.cloudCoverPropName].toFixed(2)}%</td>
 										{/if}
+										<td>
+											<button
+												class="delete-button"
+												on:click={() => {
+													removeClickedFeature(feature);
+												}}
+												use:tooltipTippy={{ content: `Deselect No. ${index + 1} feature` }}
+											>
+												<span class="material-symbols-outlined"> remove_selection </span>
+											</button>
+										</td>
 									</tr>
 								{/each}
 							</tbody>

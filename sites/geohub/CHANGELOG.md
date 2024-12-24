@@ -1,5 +1,18 @@
 # geohub
 
+## 1.22.28
+
+### Patch Changes
+
+- e88e947: fix: show tool components when a tool is selected. Also, fixed bug of tools tab is not shown in map page
+- 81c0b7a: fix: add buttons in selected feature table in STAC API Explorer to deselect a feature or all features.
+
+## 1.22.27
+
+### Patch Changes
+
+- bccd5c8: fix: use `/bounds?crs=EPSG:4326` to fetch bounds info in LngLat coordinates since the latest titiler does not return LngLat bounds from /info and /statistics.
+
 ## 1.22.26
 
 ### Patch Changes

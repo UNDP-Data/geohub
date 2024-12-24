@@ -61,8 +61,7 @@
 
 	let layerCreationInfo: LayerCreationInfo;
 
-	const isCatalog =
-		feature.properties.tags?.find((t) => t.key === 'stacApiType')?.value === 'catalog';
+	const isCatalog = tags?.find((t) => t.key === 'stacApiType')?.value === 'catalog';
 
 	const getMetadata = async () => {
 		if (is_raster) {

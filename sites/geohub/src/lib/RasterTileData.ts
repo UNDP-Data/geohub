@@ -17,16 +17,29 @@ export class RasterTileData {
 	private feature: DatasetFeature;
 
 	constructor(feature: DatasetFeature) {
+		this.feature = JSON.parse(JSON.stringify(feature));
 		// delete all algorithm tags. set algorithm Id at getMetadata or add functions instead.
-		feature.properties.tags = feature.properties.tags?.filter((t) => t.key !== 'algorithm');
-		this.feature = feature;
+		this.feature.properties.tags = this.feature.properties.tags?.filter(
+			(t) => t.key !== 'algorithm'
+		);
 	}
+
+	public getBounds = async () => {
+		const boundsUrl = this.feature.properties?.links?.find((l) => l.rel === 'bounds')?.href;
+		if (!boundsUrl) return;
+		const res = await fetch(boundsUrl);
+		if (!res.ok) return;
+		const json = await res.json();
+		const bounds = json.bounds as number[];
+		return bounds;
+	};
 
 	public getMetadata = async (algorithmId?: string, expression?: string, nodata?: string) => {
 		const metadataUrl = this.feature.properties?.links?.find((l) => l.rel === 'info')?.href;
 		const product = this.feature.properties.tags?.find((t) => t.key === 'product')?.value;
 
 		if (!metadataUrl) return;
+		const bounds = await this.getBounds();
 		const res = await fetch(metadataUrl);
 		if (product) {
 			const metadata_json = await res.json();
@@ -36,6 +49,9 @@ export class RasterTileData {
 			return metadata;
 		}
 		const metadata: RasterTileMetadata = await res.json();
+		if (bounds) {
+			metadata.bounds = bounds;
+		}
 		if (metadata && metadata.band_metadata && metadata.band_metadata.length > 0) {
 			const scales = metadata.scales;
 			let unscale = 'false';
