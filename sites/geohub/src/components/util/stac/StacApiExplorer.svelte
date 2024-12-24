@@ -556,7 +556,7 @@
 
 					data.geohubLayer = {
 						id: data.layer.id,
-						name: feature.properties.name,
+						name: feature.properties.name as string,
 						info: data.metadata,
 						dataset: feature,
 						colorMapName: data.colormap_name
@@ -588,19 +588,21 @@
 					dispatch('dataAdded', {
 						layers: [data]
 					});
+				} else {
+					const data: LayerCreationInfo & { geohubLayer?: Layer } = layerCreationInfo;
+					if (data && data.layer) {
+						data.geohubLayer = {
+							id: data.layer.id,
+							name: stacDatasetFeature.properties.name as string,
+							info: data.metadata,
+							dataset: stacDatasetFeature,
+							colorMapName: data.colormap_name
+						};
+						dispatch('dataAdded', {
+							layers: [data]
+						});
+					}
 				}
-
-				const data: LayerCreationInfo & { geohubLayer?: Layer } = layerCreationInfo;
-				data.geohubLayer = {
-					id: data.layer.id,
-					name: stacDatasetFeature.properties.name,
-					info: data.metadata,
-					dataset: stacDatasetFeature,
-					colorMapName: data.colormap_name
-				};
-				dispatch('dataAdded', {
-					layers: [data]
-				});
 			}
 		} finally {
 			isLoading = false;
@@ -612,18 +614,16 @@
 	};
 
 	const handleTabChange = () => {
-		for (const feature of clickedFeatures) {
-			map.setFeatureState(feature, { click: false });
-		}
-		clickedFeatures = [];
 		if (activeTab === 'Products') {
 			selectedAsset = '';
 			selectedTool = '';
+			selectedAlgorithmName = '';
 			toolSelectionComplete = false;
 		}
 		if (activeTab === 'Assets') {
 			selectedProduct = '';
 			selectedTool = '';
+			selectedAlgorithmName = '';
 			toolSelectionComplete = false;
 		}
 		if (activeTab === 'Tools') {
@@ -915,7 +915,7 @@
 								</div>
 							</div>
 						</FieldControl>
-						{#if selectedTool}
+						{#if selectedAlgorithmName && selectedTool}
 							<!-- eslint-disable-next-line no-unused-vars -->
 							{#each selectedTool.inputs.bands as band}
 								{@const index = selectedTool.inputs.bands.indexOf(band)}
