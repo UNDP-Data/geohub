@@ -133,7 +133,7 @@
 	{/if}
 {:else}
 	<div class="is-flex is-justify-content-center my-4">
-		<Loader />
+		<Loader></Loader>
 	</div>
 {/if}
 
