@@ -27,11 +27,11 @@
 {#if electricitySelected == 'HREA'}
 	<div class="is-flex is-flex-direction-column mt-2" style="background-color: #F7F7F7">
 		<div class="is-flex is-align-items-center p-2 border-bottom">
-			<div class="legend without_electricity" />
+			<div class="legend without_electricity"></div>
 			&nbsp;-&nbsp;<span class="is-capitalized">without electricity</span>
 		</div>
 		<div class="is-flex is-align-items-center p-2">
-			<div class="legend electrified" />
+			<div class="legend electrified"></div>
 			&nbsp;-&nbsp;<span class="is-capitalized">electrified</span>
 		</div>
 	</div>

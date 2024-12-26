@@ -81,6 +81,7 @@
 				class="button menu-button menu-button-{dataset.id}"
 				use:tippy={{ content: tooltipContent }}
 				aria-expanded="true"
+				aria-label="menu"
 			>
 				<span class="icon is-small">
 					<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
@@ -89,7 +90,7 @@
 			<div class="dropdown-content" bind:this={tooltipContent}>
 				<a class="dropdown-item" role="button" href={dataset.url.replace('pmtiles://', '')}>
 					<span class="icon">
-						<i class="fa-solid fa-download" />
+						<i class="fa-solid fa-download"></i>
 					</span>
 					<span>Download</span>
 				</a>
@@ -97,13 +98,14 @@
 				<!-- svelte-ignore a11y-missing-attribute -->
 				<a class="dropdown-item" use:previewTippy={{ content: previewContent }}>
 					<span class="icon">
-						<i class="fa-solid fa-map" />
+						<i class="fa-solid fa-map"></i>
 					</span>
 					<span>Preview</span>
 				</a>
 				<div bind:this={previewContent} class="tooltip p-2 preview">
 					{#if isLoadPreviewMap}
-						<DatasetPreview bind:feature={dataset.feature} height="300px" showButtons={false} />
+						<DatasetPreview bind:feature={dataset.feature} height="300px" showButtons={false}
+						></DatasetPreview>
 					{/if}
 				</div>
 
@@ -113,7 +115,7 @@
 					href={getEditMetadataPage(dataset.url, dataset.processing)}
 				>
 					<span class="icon">
-						<i class="fa-solid {dataset.processing ? 'fa-lock-open' : 'fa-pen-to-square'}" />
+						<i class="fa-solid {dataset.processing ? 'fa-lock-open' : 'fa-pen-to-square'}"></i>
 					</span>
 					<span>
 						{#if dataset.processing}
@@ -146,7 +148,7 @@
 						on:keydown={handleEnterKey}
 					>
 						<span class="icon">
-							<i class="fa-solid fa-trash" />
+							<i class="fa-solid fa-trash"></i>
 						</span>
 						<span>Unpublish</span>
 					</a>

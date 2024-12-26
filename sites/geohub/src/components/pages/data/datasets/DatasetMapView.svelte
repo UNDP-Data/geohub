@@ -158,7 +158,7 @@
 <svelte:window bind:innerHeight />
 
 <div class="map-viewer" style="height: {mapHeight}px;">
-	<div bind:this={mapContainer} class="map" />
+	<div bind:this={mapContainer} class="map"></div>
 	<div class="overlay has-background-white p-2">
 		<Checkbox label="Hide global/satellite datasets from the map" bind:checked={hideGlobal} />
 	</div>
@@ -230,14 +230,14 @@
 			top: 5px;
 			left: 5px;
 		}
+	}
 
-		.popup {
-			.description {
-				overflow: hidden;
-				display: -webkit-box;
-				-webkit-box-orient: vertical;
-				-webkit-line-clamp: 3;
-			}
+	.popup {
+		.description {
+			overflow: hidden;
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 3;
 		}
 	}
 </style>

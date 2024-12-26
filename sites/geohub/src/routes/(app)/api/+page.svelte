@@ -27,7 +27,7 @@
 
 <div class="mx-5 my-4">
 	{#if browser}
-		<div bind:this={swaggerDiv} />
+		<div bind:this={swaggerDiv}></div>
 	{/if}
 </div>
 

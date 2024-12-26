@@ -167,7 +167,7 @@
 				class="map"
 				style="width:{width}; height:{isLoading ? '0' : height}; opacity: {isLoading ? '0' : '1'};"
 				bind:this={mapContainer}
-			/>
+			></div>
 		{/if}
 	{/if}
 </div>

@@ -342,17 +342,18 @@
 				use:tippyTooltip={{ content: 'Change the layer visibility' }}
 			>
 				{#if layerDetails.isVisible}
-					<i class="fa fa-eye" />
+					<i class="fa fa-eye"></i>
 				{:else}
-					<i class="fa fa-eye-slash" />
+					<i class="fa fa-eye-slash"></i>
 				{/if}
 			</button>
 			<div class="dropdown is-hoverable is-right">
 				<div class="dropdown-trigger">
 					<button
 						class="button menu-button px-0 py-0 is-flex is-align-items-center is-justify-content-center"
+						aria-label="menu"
 					>
-						<i class="fa fa-ellipsis" />
+						<i class="fa fa-ellipsis"></i>
 					</button>
 				</div>
 				<div class="dropdown-menu">

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import MapHero from '$components/pages/map/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/map/MapStyleCardList.svelte';
 	import { AccessLevel, MapStyleId } from '$lib/config/AppConfig';
@@ -13,10 +13,14 @@
 	import type { PageData } from './$types';
 	import DashboardsExplorer from './dashboards/DashboardsExplorer.svelte';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
 
-	let innerWidth: number;
-	$: isMobile = innerWidth < 768 ? true : false;
+	let { data }: Props = $props();
+
+	let innerWidth: number = $state();
+	let isMobile = $derived(innerWidth < 768 ? true : false);
 	let headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 
 	let stats = data.stats;
@@ -24,7 +28,7 @@
 
 	let breadcrumbs: BreadcrumbPage[] = [
 		{ title: 'DATA FUTURES EXCHANGE', url: 'https://data.undp.org' },
-		{ title: data.title, url: $page.url.href }
+		{ title: data.title, url: page.url.href }
 	];
 	let storiesData: StorymapsData | undefined;
 

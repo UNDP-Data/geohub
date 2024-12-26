@@ -310,7 +310,7 @@
 		<div class="toast-wrapper">
 			<SvelteToast />
 		</div>
-		<div class="map" bind:this={mapContainer} />
+		<div class="map" bind:this={mapContainer}></div>
 	</div>
 </Sidebar>
 

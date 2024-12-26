@@ -530,9 +530,10 @@
 						</tr>
 					</thead>
 
+					<!-- svelte-ignore node_invalid_placement_ssr -->
 					{#if !tableData}
 						<div class="loader-container mt-4">
-							<Loader />
+							<Loader></Loader>
 						</div>
 					{:else if tableData.features.length > 0}
 						<tbody>

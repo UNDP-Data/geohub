@@ -779,6 +779,7 @@
 			on:click={() => {
 				showPreview = false;
 			}}
+			aria-label="delete"
 		></button>
 	</div>
 {/if}

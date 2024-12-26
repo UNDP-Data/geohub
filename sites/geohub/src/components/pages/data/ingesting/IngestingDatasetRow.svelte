@@ -237,7 +237,7 @@
 <tr>
 	<td class="px-1">
 		{#if dataset.datasets.length > 0}
-			<button class="toggle-button button" on:click={toggleChevron}>
+			<button class="toggle-button button" on:click={toggleChevron} aria-label="toggle">
 				<span class="icon has-text-primary">
 					<i class="fa-solid fa-chevron-down toggle-icon {isDetailsShown ? 'active' : ''} fa-lg"
 					></i>
@@ -270,7 +270,7 @@
 						on:keydown={handleEnterKey}
 					>
 						<span class="icon">
-							<i class="fa-solid fa-arrow-up-right-from-square fa-lg has-text-primary" />
+							<i class="fa-solid fa-arrow-up-right-from-square fa-lg has-text-primary"></i>
 						</span>
 					</div>
 				</div>
@@ -311,7 +311,7 @@
 				</progress>
 				<p>{progress}%: {stage}</p>
 			{:else}
-				<progress class="ingesting-progress m-0 progress is-small is-info" max="100" />
+				<progress class="ingesting-progress m-0 progress is-small is-info" max="100"></progress>
 				<p>Preparing...</p>
 			{/if}
 		{:else if status === 'Failed'}
@@ -348,6 +348,7 @@
 				class="button menu-button menu-button-{dataset.raw.id}"
 				use:tippy={{ content: tooltipContent }}
 				aria-expanded="true"
+				aria-label="menu"
 			>
 				<span class="icon is-small">
 					<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
@@ -369,14 +370,14 @@
 						on:keydown={handleEnterKey}
 					>
 						<span class="icon">
-							<i class="fa-solid fa-file-lines" />
+							<i class="fa-solid fa-file-lines"></i>
 						</span>
 						<span>Cancel</span>
 					</a>
 				{/if}
 				<a class="dropdown-item" role="button" href={dataset.raw.url.replace('pmtiles://', '')}>
 					<span class="icon">
-						<i class="fa-solid fa-download" />
+						<i class="fa-solid fa-download"></i>
 					</span>
 					<span>Download</span>
 				</a>
@@ -393,7 +394,7 @@
 						on:keydown={handleEnterKey}
 					>
 						<span class="icon">
-							<i class="fa-solid fa-file-lines" />
+							<i class="fa-solid fa-file-lines"></i>
 						</span>
 						<span>Show logs</span>
 					</a>
@@ -411,7 +412,7 @@
 						on:keydown={handleEnterKey}
 					>
 						<span class="icon">
-							<i class="fa-solid fa-triangle-exclamation" />
+							<i class="fa-solid fa-triangle-exclamation"></i>
 						</span>
 						<span>Show error logs</span>
 					</a>
@@ -429,7 +430,7 @@
 						on:keydown={handleEnterKey}
 					>
 						<span class="icon">
-							<i class="fa-solid fa-trash" />
+							<i class="fa-solid fa-trash"></i>
 						</span>
 						<span>Delete</span>
 					</a>
@@ -478,7 +479,7 @@
 
 <ModalTemplate title="Error" bind:show={logDialogVisible} hiddenButtons={true}>
 	<div slot="content">
-		<textarea class="textarea error-log" bind:value={logText} readonly />
+		<textarea class="textarea error-log" bind:value={logText} readonly></textarea>
 	</div>
 </ModalTemplate>
 

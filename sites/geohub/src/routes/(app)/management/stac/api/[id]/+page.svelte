@@ -343,6 +343,7 @@
 							on:click={() => {
 								toolTags = toolTags.filter((t) => t.value !== tag.value);
 							}}
+							aria-label="delete"
 						></button>
 					</div>
 				{/each}

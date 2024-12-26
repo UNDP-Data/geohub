@@ -673,6 +673,7 @@
 												disabled={isUploading}
 												on:click={() => removeFileWithIndex(index)}
 												class="delete"
+												aria-label="delete"
 											></button>
 										</td>
 									{:else}

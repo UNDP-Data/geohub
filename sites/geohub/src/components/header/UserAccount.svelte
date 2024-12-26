@@ -67,7 +67,8 @@
 	<div class="dropdown-trigger">
 		{#if $page.data.session}
 			{#if $page.data.session.user?.image}
-				<span style="background-image: url('{$page.data.session.user.image}')" class="avatar" />
+				<span style="background-image: url('{$page.data.session.user.image}')" class="avatar"
+				></span>
 			{:else}
 				<span
 					class="initial-avator is-flex is-justify-content-center is-align-items-center has-background-grey-lighter"
@@ -84,7 +85,7 @@
 				class="initial-avator is-flex is-justify-content-center is-align-items-center has-text-primary"
 			>
 				<span class="icon is-small has-text-primary">
-					<i class="fas fa-right-to-bracket fa-lg" />
+					<i class="fas fa-right-to-bracket fa-lg"></i>
 				</span>
 			</span>
 		{:else}
@@ -163,7 +164,7 @@
 										class="fa-solid fa-chevron-down toggle-icon {sections[index].isOpen
 											? 'active'
 											: ''} has-text-primary"
-									/>
+									></i>
 								</span>
 								<span>
 									<!-- eslint-disable svelte/no-at-html-tags -->
@@ -235,10 +236,10 @@
 			:global(h2) {
 				margin-bottom: 0 !important;
 			}
+		}
 
-			.changelog-section:not(:first-child) .changelog-header {
-				margin-top: 1em;
-			}
+		.changelog-section:not(:first-child) .changelog-header {
+			margin-top: 1em;
 		}
 	}
 </style>

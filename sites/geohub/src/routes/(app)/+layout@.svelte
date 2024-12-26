@@ -3,14 +3,19 @@
 	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
 	import { BackToTop } from '@undp-data/svelte-undp-components';
 	import { Footer } from '@undp-data/svelte-undp-design';
-	import { setContext } from 'svelte';
+	import { setContext, type Snippet } from 'svelte';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+		children?: Snippet;
+	}
 
-	let innerWidth = 0;
+	let { data = $bindable(), children }: Props = $props();
 
-	$: backToTopPosition = innerWidth >= 1023 ? '130px' : '90px';
+	let innerWidth = $state(0);
+
+	let backToTopPosition = $derived(innerWidth >= 1023 ? '130px' : '90px');
 
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
@@ -23,12 +28,12 @@
 </div>
 
 <div style="margin-top: {$headerHeightStore}px">
-	<slot />
+	{@render children?.()}
 </div>
 
-<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" bind:footerItems={data.footerLinks} />
+<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" footerItems={data.footerLinks} />
 
-<BackToTop bind:top={backToTopPosition} />
+<BackToTop top={backToTopPosition} />
 
 <style global lang="scss">
 	@import 'bulma-divider/dist/css/bulma-divider.min.css';

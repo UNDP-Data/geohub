@@ -129,9 +129,10 @@
 								deleteStacId = stac.id;
 								showDeleteDialog = true;
 							}}
+							aria-label="delete"
 						>
 							<span class="icon">
-								<i class="fa-solid fa-trash" />
+								<i class="fa-solid fa-trash"></i>
 							</span>
 						</button>
 					</td>
@@ -178,7 +179,7 @@
 						/>
 						{#if registerStac.url}
 							<span class="icon is-small is-right">
-								<i class="fas fa-check has-text-success" />
+								<i class="fas fa-check has-text-success"></i>
 							</span>
 						{/if}
 					</div>
@@ -212,7 +213,7 @@
 						/>
 						{#if registerStac.id}
 							<span class="icon is-small is-right">
-								<i class="fas fa-check has-text-success" />
+								<i class="fas fa-check has-text-success"></i>
 							</span>
 						{/if}
 					</div>
@@ -233,7 +234,7 @@
 						/>
 						{#if registerStac.name}
 							<span class="icon is-small is-right">
-								<i class="fas fa-check has-text-success" />
+								<i class="fas fa-check has-text-success"></i>
 							</span>
 						{/if}
 					</div>

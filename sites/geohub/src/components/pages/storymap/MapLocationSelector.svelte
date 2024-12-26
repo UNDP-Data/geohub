@@ -252,7 +252,7 @@
 	showHelp={false}
 >
 	<div slot="control">
-		<div class="map" bind:this={locationMapContainer} />
+		<div class="map" bind:this={locationMapContainer}></div>
 	</div>
 </FieldControl>
 

@@ -50,6 +50,7 @@
 				class="icon is-small is-right"
 				style="pointer-events: all; cursor: pointer"
 				on:click={handleClear}
+				aria-label="close"
 			>
 				<i class="fa-solid fa-xmark"></i>
 			</button>

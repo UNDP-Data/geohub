@@ -47,7 +47,7 @@
 				on:click={handleDataChanged}
 			>
 				<span class="icon">
-					<i class="fa-solid fa-rotate" />
+					<i class="fa-solid fa-rotate"></i>
 				</span>
 				<span>Refresh</span>
 			</button>

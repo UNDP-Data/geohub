@@ -572,7 +572,7 @@
 						placeholder="Type description of dataset"
 						disabled={isRegistering}
 						bind:value={description}
-					/>
+					></textarea>
 				</div>
 				<div slot="help">
 					Describe the dataset briefly. This information will be shown in data catalog.

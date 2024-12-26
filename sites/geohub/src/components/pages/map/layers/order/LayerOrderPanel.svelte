@@ -251,10 +251,6 @@
 			border-bottom: 0.1rem solid rgb(197, 197, 197);
 		}
 
-		.legend-panel-block li {
-			display: block;
-		}
-
 		.legend-panel-block:hover {
 			background-color: rgb(239, 239, 239);
 		}

@@ -73,9 +73,9 @@
 		>
 			<span class="icon is-small">
 				{#if isStar}
-					<i class="fa-solid fa-star" style="color:#fccf03" />
+					<i class="fa-solid fa-star" style="color:#fccf03"></i>
 				{:else}
-					<i class="fa-regular fa-star" />
+					<i class="fa-regular fa-star"></i>
 				{/if}
 			</span>
 			<span>
@@ -94,7 +94,7 @@
 	{:else}
 		<button class="button is-{size}" disabled>
 			<span class="icon">
-				<i class="fa-solid fa-star" style="color:#fccf03" />
+				<i class="fa-solid fa-star" style="color:#fccf03"></i>
 			</span>
 			<span class="star-container-no-login">
 				Star
@@ -115,9 +115,9 @@
 	>
 		<span class="icon">
 			{#if isStar}
-				<i class="fa-solid fa-star fa-lg" style="color:#fccf03" />
+				<i class="fa-solid fa-star fa-lg" style="color:#fccf03"></i>
 			{:else}
-				<i class="fa-regular fa-star fa-lg" />
+				<i class="fa-regular fa-star fa-lg"></i>
 			{/if}
 		</span>
 	</button>

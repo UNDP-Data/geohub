@@ -217,7 +217,7 @@
 					title="move back to start"
 					class="button is-link is-small is-uppercase has-text-weight-bold"
 				>
-					<i class="fa fa-angles-left" /> &nbsp;Back
+					<i class="fa fa-angles-left"></i> &nbsp;Back
 				</button>
 
 				<button
@@ -273,7 +273,7 @@
 					title="Operator categories"
 					class="button is-link is-small is-uppercase has-text-weight-bold"
 				>
-					<i class="fa fa-angles-left" /> &nbsp;Operator
+					<i class="fa fa-angles-left"></i> &nbsp;Operator
 				</button>
 
 				<button

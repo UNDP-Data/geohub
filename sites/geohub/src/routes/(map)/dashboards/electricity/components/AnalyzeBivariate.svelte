@@ -119,6 +119,7 @@
 										use:tippyTooltip={{
 											content: `Wealth: ${20 * (5 - rowIndex - 1)}-${20 * (5 - rowIndex)}%, E.A.: ${20 * colIndex}-${20 * (colIndex + 1)}%`
 										}}
+										aria-label="legend"
 										on:click={() => gridSelectHandler(rowIndex, colIndex)}
 									></button>
 								{/each}

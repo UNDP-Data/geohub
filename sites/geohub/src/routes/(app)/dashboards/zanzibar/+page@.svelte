@@ -572,6 +572,7 @@
 				on:keydown={handleEnterKey}
 				data-sveltekit-preload-data="off"
 				data-sveltekit-preload-code="off"
+				aria-label="move to next"
 			>
 				<span class="icon has-text-white"><i class="fa-solid fa-angle-down fa-4x"></i></span>
 			</a>
@@ -633,6 +634,7 @@
 				on:keydown={handleEnterKey}
 				data-sveltekit-preload-data="off"
 				data-sveltekit-preload-code="off"
+				aria-label="move to next"
 			>
 				<span class="icon has-text-grey"><i class="fa-solid fa-angle-down fa-4x"></i></span>
 			</a>
