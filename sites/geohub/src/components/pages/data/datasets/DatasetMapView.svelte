@@ -71,7 +71,6 @@
 
 	const addDatasetsToMap = () => {
 		if (!map) return;
-		if (!map.loaded()) return;
 		if (map.getSource(mapSourceId)) {
 			const layers = map.getStyle().layers.filter((l) => {
 				return l['source'] === mapSourceId;
