@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { MapStyles } from '$lib/config/AppConfig';
 	import type { DatasetFeatureCollection } from '$lib/types';
-	import { FieldControl, clean, handleEnterKey } from '@undp-data/svelte-undp-components';
+	import { FieldControl, clean, handleEnterKey, loadMap } from '@undp-data/svelte-undp-components';
 	import { Checkbox, CtaLink } from '@undp-data/svelte-undp-design';
 	import { Map, NavigationControl, Popup, type MapGeoJSONFeature } from 'maplibre-gl';
 	import { onMount } from 'svelte';
@@ -69,8 +69,10 @@
 			.addTo(map);
 	};
 
-	const addDatasetsToMap = () => {
+	const addDatasetsToMap = async () => {
 		if (!map) return;
+		if (!datasets) return;
+		await loadMap(map);
 		if (map.getSource(mapSourceId)) {
 			const layers = map.getStyle().layers.filter((l) => {
 				return l['source'] === mapSourceId;
