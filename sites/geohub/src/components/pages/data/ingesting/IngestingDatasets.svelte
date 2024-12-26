@@ -5,17 +5,22 @@
 	import type { IngestingDataset } from '$lib/types';
 	import { Notification } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { onMount } from 'svelte';
+	import { onMount, type Snippet } from 'svelte';
 	import IngestingDatasetRow from './IngestingDatasetRow.svelte';
 
-	export let datasets: IngestingDataset[] | undefined;
+	interface Props {
+		datasets: IngestingDataset[] | undefined;
+		button?: Snippet;
+	}
+
+	let { datasets = $bindable(), button }: Props = $props();
 
 	const config: UserConfig = $page.data.config;
 
-	let sortby = config.DataPageIngestingSortingColumn;
-	let sortingorder = config.DataPageIngestingSortingOrder;
+	let sortby = $state(config.DataPageIngestingSortingColumn);
+	let sortingorder = $state(config.DataPageIngestingSortingOrder);
 
-	const headerCols = [
+	const headerCols = $state([
 		{
 			name: 'name',
 			title: 'File name',
@@ -37,7 +42,7 @@
 			title: 'Uploaded at',
 			sortingCol: true
 		}
-	];
+	]);
 
 	const handleColumnClick = (e) => {
 		const name = e.detail.name;
@@ -47,7 +52,7 @@
 		}
 		sortby = name;
 
-		datasets = datasets.sort((a, b) => {
+		datasets = datasets?.sort((a, b) => {
 			if (a.raw[sortby] > b.raw[sortby]) {
 				return sortingorder === 'desc' ? -1 : 1;
 			} else if (a.raw[sortby] < b.raw[sortby]) {
@@ -74,7 +79,7 @@
 
 <section class="header-content columns is-flex is-flex-wrap-wrap mx-0 pb-4">
 	<div class="column is-12-mobile is-2 mt-auto p-0">
-		<slot name="button" />
+		{@render button?.()}
 	</div>
 	<div
 		class="column is-12-mobile is-flex is-align-items-center is-justify-content-flex-end is-flex-wrap-wrap p-0"
@@ -82,7 +87,7 @@
 		<div class="refresh-button">
 			<button
 				class="button is-link is-uppercase has-text-weight-bold my-2"
-				on:click={getIngestingDatasets}
+				onclick={getIngestingDatasets}
 			>
 				<span class="icon">
 					<i class="fa-solid fa-rotate"></i>
@@ -121,7 +126,7 @@
 				</thead>
 				<tbody>
 					{#each datasets as dataset}
-						<IngestingDatasetRow bind:dataset on:change={getIngestingDatasets} />
+						<IngestingDatasetRow {dataset} change={getIngestingDatasets} />
 					{/each}
 				</tbody>
 			</table>

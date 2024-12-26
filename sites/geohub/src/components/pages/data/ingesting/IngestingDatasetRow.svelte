@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { IngestingDataset, IngestingWebsocketMessage } from '$lib/types';
 	import type { OnGroupDataMessageArgs, WebPubSubClient } from '@azure/web-pubsub-client';
@@ -10,13 +9,16 @@
 		initTippy
 	} from '@undp-data/svelte-undp-components';
 	import { filesize } from 'filesize';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import Time from 'svelte-time';
 	import IngestingDatasetRowDetail from './IngestingDatasetRowDetail.svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		dataset: IngestingDataset;
+		change: () => void;
+	}
 
-	export let dataset: IngestingDataset;
+	let { dataset = $bindable(), change = () => {} }: Props = $props();
 	const userId = $page.data.session?.user?.id;
 
 	const tippy = initTippy({
@@ -28,14 +30,14 @@
 			strategy: 'fixed'
 		}
 	});
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
 	// get AzureWebPubSubClient from +page.svelte
-	const wpsClient: WebPubSubClient = $page.data.wss.url
+	const wpsClient: WebPubSubClient | undefined = $page.data.wss.url
 		? getContext($page.data.wss.group)
 		: undefined;
 
-	let isDetailsShown = false;
+	let isDetailsShown = $state(false);
 
 	const clickMenuButton = () => {
 		const buttons = document.getElementsByClassName(`menu-button-${dataset.raw.id}`);
@@ -64,12 +66,12 @@
 
 	let logAvailable = dataset.raw.log ? true : false;
 	let deletable =
-		status !== 'Published' && dataset.datasets.filter((ds) => ds.processing !== true).length === 0;
+		status !== 'Published' && dataset.datasets?.filter((ds) => ds.processing !== true).length === 0;
 
-	let confirmDeleteDialogVisible = false;
-	let deletedDataset: IngestingDataset = undefined;
-	let deletedDatasetName = '';
-	let isDeleting = false;
+	let confirmDeleteDialogVisible = $state(false);
+	let deletedDataset: IngestingDataset | undefined = $state(undefined);
+	let deletedDatasetName = $state('');
+	let isDeleting = $state(false);
 
 	const openDeleteDialog = (dataset: IngestingDataset) => {
 		deletedDataset = dataset;
@@ -84,8 +86,7 @@
 	};
 
 	const handleDatasetRowChanged = async () => {
-		await invalidateAll();
-		dispatch('change');
+		change();
 	};
 
 	const handleDeleteDataset = async () => {
@@ -107,8 +108,9 @@
 						urls.push(f);
 					});
 				}
-
-				urls.push(ds.url);
+				if (ds.url) {
+					urls.push(ds.url);
+				}
 				if (ds.processing === true && ds.processingFile) {
 					urls.push(ds.processingFile);
 				}
@@ -122,16 +124,15 @@
 				}
 			}
 
-			await invalidateAll();
-			dispatch('change');
+			change();
 			closeDeleteDialog();
 		} finally {
 			isDeleting = false;
 		}
 	};
 
-	let logDialogVisible = false;
-	let logText = '';
+	let logDialogVisible = $state(false);
+	let logText = $state('');
 
 	const showLogDialog = async (file: string) => {
 		const res = await fetch(file);
@@ -139,8 +140,8 @@
 		logDialogVisible = true;
 	};
 
-	let cancelDialogVisible = false;
-	let cancelledDatasetName = '';
+	let cancelDialogVisible = $state(false);
+	let cancelledDatasetName = $state('');
 
 	const openCancelDialog = () => {
 		cancelDialogVisible = true;
@@ -161,7 +162,7 @@
 		wpsClient.sendToGroup(
 			wss.group,
 			{
-				user: $page.data.session.user.id,
+				user: $page.data.session?.user.id,
 				url: `${rawUrl.origin}${rawUrl.pathname}`,
 				cancel: true
 			},
@@ -215,11 +216,9 @@
 
 					if (dataset.raw.progress >= 100) {
 						// once progress become 100%, remove event listener and refresh table from server.
-						wpsClient.off('group-message', onMessage);
+						wpsClient?.off('group-message', onMessage);
 
-						invalidateAll().then(() => {
-							dispatch('change');
-						});
+						change();
 					}
 				}
 			}
@@ -236,8 +235,8 @@
 
 <tr>
 	<td class="px-1">
-		{#if dataset.datasets.length > 0}
-			<button class="toggle-button button" on:click={toggleChevron} aria-label="toggle">
+		{#if dataset.datasets && dataset.datasets.length > 0}
+			<button class="toggle-button button" onclick={toggleChevron} aria-label="toggle">
 				<span class="icon has-text-primary">
 					<i class="fa-solid fa-chevron-down toggle-icon {isDetailsShown ? 'active' : ''} fa-lg"
 					></i>
@@ -246,14 +245,14 @@
 		{/if}
 	</td>
 	<td class="pl-0">
-		<!-- svelte-ignore a11y-missing-attribute -->
+		<!-- svelte-ignore a11y_missing_attribute -->
 		<a
 			class="name"
 			role="button"
 			tabindex="-1"
 			data-sveltekit-preload-data="off"
-			on:click={toggleChevron}
-			on:keydown={handleEnterKey}>{dataset.raw.name}</a
+			onclick={toggleChevron}
+			onkeydown={handleEnterKey}>{dataset.raw.name}</a
 		>
 
 		<div class="columns is-vcentered">
@@ -264,10 +263,10 @@
 						class="error-dialog-button pl-1"
 						role="button"
 						tabindex="0"
-						on:click={() => {
-							showLogDialog(dataset.raw.error);
+						onclick={() => {
+							showLogDialog(dataset.raw.error ?? '');
 						}}
-						on:keydown={handleEnterKey}
+						onkeydown={handleEnterKey}
 					>
 						<span class="icon">
 							<i class="fa-solid fa-arrow-up-right-from-square fa-lg has-text-primary"></i>
@@ -315,12 +314,14 @@
 				<p>Preparing...</p>
 			{/if}
 		{:else if status === 'Failed'}
-			<span class="tag {dataset.datasets.length === 0 ? 'is-danger' : 'is-warning'}">
+			<span
+				class="tag {dataset.datasets && dataset.datasets.length === 0 ? 'is-danger' : 'is-warning'}"
+			>
 				<span class="icon">
 					<i class="fa-solid fa-triangle-exclamation"></i>
 				</span>
 				<span>
-					{#if dataset.datasets.length === 0}
+					{#if dataset.datasets && dataset.datasets.length === 0}
 						{status}
 					{:else}
 						Partially done
@@ -357,17 +358,17 @@
 			<div class="dropdown-content" bind:this={tooltipContent}>
 				<!-- cancellation is only avaiable if progress variable is not undefined after receving message from pipeline-->
 				{#if status === 'In progress' && dataset.raw.progress < 100}
-					<!-- svelte-ignore a11y-missing-attribute -->
+					<!-- svelte-ignore a11y_missing_attribute -->
 					<a
 						class="dropdown-item {dataset.raw.progress ? '' : 'disabled'}"
 						role="button"
 						tabindex="0"
-						on:click={() => {
+						onclick={() => {
 							if (!dataset.raw.progress) return;
 							clickMenuButton();
 							openCancelDialog();
 						}}
-						on:keydown={handleEnterKey}
+						onkeydown={handleEnterKey}
 					>
 						<span class="icon">
 							<i class="fa-solid fa-file-lines"></i>
@@ -382,16 +383,16 @@
 					<span>Download</span>
 				</a>
 				{#if logAvailable}
-					<!-- svelte-ignore a11y-missing-attribute -->
+					<!-- svelte-ignore a11y_missing_attribute -->
 					<a
 						class="dropdown-item"
 						role="button"
 						tabindex="0"
-						on:click={() => {
+						onclick={() => {
 							clickMenuButton();
-							showLogDialog(dataset.raw.log);
+							showLogDialog(dataset.raw.log ?? '');
 						}}
-						on:keydown={handleEnterKey}
+						onkeydown={handleEnterKey}
 					>
 						<span class="icon">
 							<i class="fa-solid fa-file-lines"></i>
@@ -400,16 +401,16 @@
 					</a>
 				{/if}
 				{#if dataset.raw.error}
-					<!-- svelte-ignore a11y-missing-attribute -->
+					<!-- svelte-ignore a11y_missing_attribute -->
 					<a
 						class="dropdown-item"
 						role="button"
 						tabindex="0"
-						on:click={() => {
+						onclick={() => {
 							clickMenuButton();
-							showLogDialog(dataset.raw.error);
+							showLogDialog(dataset.raw.error ?? '');
 						}}
-						on:keydown={handleEnterKey}
+						onkeydown={handleEnterKey}
 					>
 						<span class="icon">
 							<i class="fa-solid fa-triangle-exclamation"></i>
@@ -418,16 +419,16 @@
 					</a>
 				{/if}
 				{#if deletable}
-					<!-- svelte-ignore a11y-missing-attribute -->
+					<!-- svelte-ignore a11y_missing_attribute -->
 					<a
 						class="dropdown-item"
 						role="button"
 						tabindex="0"
-						on:click={() => {
+						onclick={() => {
 							clickMenuButton();
 							openDeleteDialog(dataset);
 						}}
-						on:keydown={handleEnterKey}
+						onkeydown={handleEnterKey}
 					>
 						<span class="icon">
 							<i class="fa-solid fa-trash"></i>
@@ -440,9 +441,9 @@
 	</td>
 </tr>
 
-{#if isDetailsShown}
+{#if isDetailsShown && dataset.datasets}
 	{#each dataset.datasets as ds}
-		<IngestingDatasetRowDetail bind:dataset={ds} on:change={handleDatasetRowChanged} />
+		<IngestingDatasetRowDetail dataset={ds} change={handleDatasetRowChanged} />
 	{/each}
 {/if}
 
@@ -451,63 +452,73 @@
 	bind:show={confirmDeleteDialogVisible}
 	showClose={!isDeleting}
 >
-	<div slot="content">
-		<Notification type="warning" showCloseButton={false}>
-			Unexpected bad things will happen if you don't read this!
-		</Notification>
-		<div class="mt-2">
-			This action <b>cannot</b> be undone. This will permanently delete
-			<b>{deletedDataset?.raw.name}</b>
-			which were uploaded and ingested. All ingested datasets associated to this raw file will also be
-			deleted.
+	{#snippet content()}
+		<div>
+			<Notification type="warning" showCloseButton={false}>
+				Unexpected bad things will happen if you don't read this!
+			</Notification>
+			<div class="mt-2">
+				This action <b>cannot</b> be undone. This will permanently delete
+				<b>{deletedDataset?.raw.name}</b>
+				which were uploaded and ingested. All ingested datasets associated to this raw file will also
+				be deleted.
+				<br />
+				Please type <b>{deletedDataset?.raw.name}</b> to confirm.
+			</div>
 			<br />
-			Please type <b>{deletedDataset?.raw.name}</b> to confirm.
+			<input class="input" type="text" bind:value={deletedDatasetName} />
 		</div>
-		<br />
-		<input class="input" type="text" bind:value={deletedDatasetName} />
-	</div>
-	<div slot="buttons">
-		<button
-			class="button is-primary is-uppercase has-text-weight-bold {isDeleting ? 'is-loading' : ''}"
-			on:click={handleDeleteDataset}
-			disabled={isDeleting || deletedDatasetName !== deletedDataset?.raw.name}
-		>
-			Delete this ingesting dataset
-		</button>
-	</div>
+	{/snippet}
+	{#snippet buttons()}
+		<div>
+			<button
+				class="button is-primary is-uppercase has-text-weight-bold {isDeleting ? 'is-loading' : ''}"
+				onclick={handleDeleteDataset}
+				disabled={isDeleting || deletedDatasetName !== deletedDataset?.raw.name}
+			>
+				Delete this ingesting dataset
+			</button>
+		</div>
+	{/snippet}
 </ModalTemplate>
 
 <ModalTemplate title="Error" bind:show={logDialogVisible} hiddenButtons={true}>
-	<div slot="content">
-		<textarea class="textarea error-log" bind:value={logText} readonly></textarea>
-	</div>
+	{#snippet content()}
+		<div>
+			<textarea class="textarea error-log" bind:value={logText} readonly></textarea>
+		</div>
+	{/snippet}
 </ModalTemplate>
 
 <ModalTemplate title="Are you sure cancelling this job?" bind:show={cancelDialogVisible}>
-	<div slot="content">
-		<Notification type="warning" showCloseButton={false}>
-			Unexpected bad things will happen if you don't read this!
-		</Notification>
-		<div class="mt-2">
-			This action <b>cannot</b> be undone. This will permanently cancel and delete
-			<b>{dataset?.raw.name}</b>
-			which was uploaded and being ingested now.
+	{#snippet content()}
+		<div>
+			<Notification type="warning" showCloseButton={false}>
+				Unexpected bad things will happen if you don't read this!
+			</Notification>
+			<div class="mt-2">
+				This action <b>cannot</b> be undone. This will permanently cancel and delete
+				<b>{dataset?.raw.name}</b>
+				which was uploaded and being ingested now.
+				<br />
+				Please type <b>{dataset?.raw.name}</b> to confirm.
+			</div>
 			<br />
-			Please type <b>{dataset?.raw.name}</b> to confirm.
+			<input class="input" type="text" bind:value={cancelledDatasetName} />
 		</div>
-		<br />
-		<input class="input" type="text" bind:value={cancelledDatasetName} />
-	</div>
+	{/snippet}
 
-	<div slot="buttons">
-		<button
-			class="button is-primary is-uppercase has-text-weight-bold"
-			on:click={handleCancelDataset}
-			disabled={cancelledDatasetName !== dataset?.raw.name}
-		>
-			Cancel this ingesting process
-		</button>
-	</div>
+	{#snippet buttons()}
+		<div>
+			<button
+				class="button is-primary is-uppercase has-text-weight-bold"
+				onclick={handleCancelDataset}
+				disabled={cancelledDatasetName !== dataset?.raw.name}
+			>
+				Cancel this ingesting process
+			</button>
+		</div>
+	{/snippet}
 </ModalTemplate>
 
 <style lang="scss">
