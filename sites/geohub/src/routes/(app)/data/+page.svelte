@@ -21,7 +21,7 @@
 	export let data: PageData;
 
 	let datasets: DatasetFeatureCollection | undefined;
-	let ingestingDatasets: IngestingDataset[] | undefined = data.ingestingDatasets;
+	let ingestingDatasets: IngestingDataset[];
 
 	let breadcrumbs: BreadcrumbPage[] = [
 		{ title: 'home', url: '/' },

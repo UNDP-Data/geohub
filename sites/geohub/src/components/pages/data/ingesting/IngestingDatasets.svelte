@@ -1,27 +1,53 @@
 <script lang="ts">
-	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
+	import VectorTableColumn from '$components/pages/map/layers/vector/VectorTableColumn.svelte';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import type { IngestingDataset } from '$lib/types';
 	import { Notification } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import IngestingDatasetHeader from './IngestingDatasetHeader.svelte';
+	import { onMount } from 'svelte';
 	import IngestingDatasetRow from './IngestingDatasetRow.svelte';
 
-	export let datasets: IngestingDataset[];
+	export let datasets: IngestingDataset[] | undefined;
 
-	const handleDataChanged = async () => {
-		datasets = undefined;
-		await invalidate('data:ingestingDatasets');
-		datasets = $page.data.ingestingDatasets;
-	};
+	const config: UserConfig = $page.data.config;
 
-	const handleSortChanged = (e) => {
-		const sortby = e.detail.sortby;
-		const sortingorder = e.detail.sortingorder;
+	let sortby = config.DataPageIngestingSortingColumn;
+	let sortingorder = config.DataPageIngestingSortingOrder;
 
-		if (!(datasets && datasets.length > 0)) return;
+	const headerCols = [
+		{
+			name: 'name',
+			title: 'File name',
+			sortingCol: true
+		},
+		{
+			name: 'status',
+			title: 'Status',
+			sortingCol: false
+		},
+		{
+			name: 'contentLength',
+			title: 'Size',
+			sortingCol: true
+		},
 
-		const sortedDatasets = datasets.sort((a, b) => {
+		{
+			name: 'createdat',
+			title: 'Uploaded at',
+			sortingCol: true
+		}
+	];
+
+	const handleColumnClick = (e) => {
+		const name = e.detail.name;
+		const order = e.detail.order;
+		if (sortby === name) {
+			sortingorder = order;
+		}
+		sortby = name;
+
+		datasets = datasets.sort((a, b) => {
 			if (a.raw[sortby] > b.raw[sortby]) {
 				return sortingorder === 'desc' ? -1 : 1;
 			} else if (a.raw[sortby] < b.raw[sortby]) {
@@ -30,8 +56,20 @@
 				return 0;
 			}
 		});
-		datasets = [...sortedDatasets];
 	};
+
+	const getIngestingDatasets = async () => {
+		datasets = undefined;
+		const resIngesting = await fetch(
+			`/api/datasets/ingesting?sortby=${sortby}&sortorder=${sortingorder}`
+		);
+		datasets = await resIngesting.json();
+		return datasets;
+	};
+
+	onMount(() => {
+		getIngestingDatasets();
+	});
 </script>
 
 <section class="header-content columns is-flex is-flex-wrap-wrap mx-0 pb-4">
@@ -44,7 +82,7 @@
 		<div class="refresh-button">
 			<button
 				class="button is-link is-uppercase has-text-weight-bold my-2"
-				on:click={handleDataChanged}
+				on:click={getIngestingDatasets}
 			>
 				<span class="icon">
 					<i class="fa-solid fa-rotate"></i>
@@ -60,11 +98,30 @@
 		<div class="table-container">
 			<table class="table is-hoverable is-fullwidth">
 				<thead>
-					<IngestingDatasetHeader on:sortChanged={handleSortChanged} />
+					<tr>
+						<th class="px-1"></th>
+						{#each headerCols as col, index}
+							<th class={index === 0 ? 'pl-0' : ''}>
+								{#if col.sortingCol}
+									<VectorTableColumn
+										bind:name={col.name}
+										bind:order={sortingorder}
+										isActive={sortby === col.name}
+										on:change={handleColumnClick}
+									/>
+								{:else}
+									<p class="has-text-weight-bold">{col.title}</p>
+								{/if}
+							</th>
+						{/each}
+						<th>
+							<p></p>
+						</th>
+					</tr>
 				</thead>
 				<tbody>
 					{#each datasets as dataset}
-						<IngestingDatasetRow bind:dataset on:change={handleDataChanged} />
+						<IngestingDatasetRow bind:dataset on:change={getIngestingDatasets} />
 					{/each}
 				</tbody>
 			</table>
