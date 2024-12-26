@@ -1088,10 +1088,6 @@
 		position: relative;
 		width: 100%;
 
-		:global() {
-			--date-input-width: 115px;
-		}
-
 		.map {
 			position: relative;
 			width: 100%;
