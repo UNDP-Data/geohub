@@ -4,10 +4,13 @@
 	import { onMount } from 'svelte';
 	import { loadAdmin, reloadAdmin } from '../utils/adminLayer';
 
-	export let showMapLabels: boolean;
+	let colorMapNameStore: string = $state('pubu');
+	interface Props {
+		showMapLabels: boolean;
+		scaleColorList?: string[];
+	}
 
-	let colorMapNameStore: string = 'pubu';
-	export let scaleColorList: string[] = [];
+	let { showMapLabels = $bindable(), scaleColorList = $bindable([]) }: Props = $props();
 	let isReverse: boolean = false;
 
 	const showLabelsHandler = () => {
@@ -37,7 +40,7 @@
 	<p class="mb-2">Electricity access</p>
 	<ColorMapPicker colorMapName={colorMapNameStore} on:change={colorPickerChangeHandler} />
 	<label class="checkbox mt-2">
-		<input type="checkbox" on:change={showLabelsHandler} checked={showMapLabels} />
+		<input type="checkbox" onchange={showLabelsHandler} checked={showMapLabels} />
 		Show Labels
 	</label>
 </div>

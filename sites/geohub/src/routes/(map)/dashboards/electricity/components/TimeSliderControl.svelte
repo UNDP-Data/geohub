@@ -1,8 +1,8 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	import type { ControlPosition, IControl, Map } from 'maplibre-gl';
 	class TimeSliderControl implements IControl {
-		private map: Map;
-		private controlContainer: HTMLElement;
+		private map: Map | undefined;
+		private controlContainer: HTMLElement | undefined;
 		private controlDiv: HTMLDivElement;
 
 		constructor(controlDiv: HTMLDivElement) {
@@ -44,20 +44,32 @@
 	import { onDestroy, onMount } from 'svelte';
 	import TimeSlider from './TimeSlider.svelte';
 
-	export let map: Map;
-	export let scaleColorList = [];
-	export let loadRasterLayer;
-	export let rasterColorMapName = '';
-	export let electricitySelected: string;
-	export let loadAdminLabels: boolean | undefined = undefined;
-	export let newColorExpression = undefined;
-	export let isActive = false;
+	interface Props {
+		map: Map;
+		scaleColorList?: string[];
+		rasterColorMapName?: string;
+		electricitySelected: string;
+		loadAdminLabels?: boolean | undefined;
+		newColorExpression?: string;
+		isActive?: boolean;
+	}
 
-	let controlElement: HTMLDivElement;
+	let {
+		map = $bindable(),
+		scaleColorList = $bindable([]),
+		rasterColorMapName = $bindable(''),
+		electricitySelected = $bindable(),
+		loadAdminLabels = $bindable(undefined),
+		newColorExpression = $bindable(undefined),
+		isActive = $bindable(false)
+	}: Props = $props();
 
-	let control: TimeSliderControl;
+	let controlElement: HTMLDivElement | undefined = $state();
+
+	let control: TimeSliderControl | undefined;
 
 	onMount(() => {
+		if (!controlElement) return;
 		control = new TimeSliderControl(controlElement);
 		map.addControl(control, 'top-left');
 	});
@@ -68,12 +80,18 @@
 			control = undefined;
 		}
 	});
+
+	let timeSlider: TimeSlider | undefined = $state();
+
+	export const loadRasterLayer = () => {
+		timeSlider?.loadLayer();
+	};
 </script>
 
 <div class="time-slider-control {isActive ? 'is-active' : ''}" bind:this={controlElement}>
 	<TimeSlider
+		bind:this={timeSlider}
 		bind:electricitySelected
-		bind:loadLayer={loadRasterLayer}
 		bind:scaleColorList
 		bind:rasterColorMapName
 		bind:isActive

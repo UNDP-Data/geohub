@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	export interface DashboardType {
 		name: string;
 		text: string;
@@ -17,7 +17,7 @@
 </script>
 
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
 	import { downloadFile } from '$lib/helper';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
@@ -58,7 +58,11 @@
 	} from './stores/electricityDataType';
 	import { loadAdmin, setAdminUrl, unloadAdmin } from './utils/adminLayer';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();
 
@@ -71,7 +75,7 @@
 	setAdminUrl(adminUrl);
 
 	let styleUrl = MapStyles[0].uri;
-	let exportOptions: ControlOptions = {
+	let exportOptions: ControlOptions = $state({
 		width: 300,
 		height: 200,
 		bbox: [-180, -90, 180, 90],
@@ -85,25 +89,21 @@
 		extension: 'png',
 		pageSize: 'A4',
 		orientation: 'landscape'
-	};
+	});
 
-	let mapContainer: HTMLDivElement;
-	let map: Map;
+	let mapContainer: HTMLDivElement = $state();
+	let map: Map = $state();
 
-	let showIntro = true;
-	let showMapLabels = true;
-	let electricitySelected: string;
-	let drawerWidth = 355;
+	let showIntro = $state(true);
+	let showMapLabels = $state(true);
+	let electricitySelected: string = $state('');
+	let drawerWidth = $state(355);
 
-	let loadRasterLayer = () => {
-		return;
-	};
+	let colormapName = $state('pubu');
+	let scaleColorList: string[] = $state([]);
+	let newColorExpression = $state(undefined);
 
-	let colormapName = 'pubu';
-	let scaleColorList: string[] = [];
-	let newColorExpression = undefined;
-
-	let isTimeSliderActive = false;
+	let isTimeSliderActive = $state(false);
 
 	onMount(() => {
 		const promises = loadDatasets();
@@ -138,7 +138,7 @@
 		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {});
 		map.addControl(styleSwitcher, 'bottom-left');
 
-		const apiKey = $page.data.maptilerKey;
+		const apiKey = page.data.maptilerKey;
 		if (apiKey) {
 			const gc = new GeocodingControl({
 				apiKey: apiKey,
@@ -205,15 +205,16 @@
 		};
 	};
 
+	let timeSliderControl: TimeSliderControl | undefined = $state();
 	let loadLayers = () => {
-		loadRasterLayer();
+		timeSliderControl?.loadRasterLayer();
 		loadAdmin(false);
 	};
 
 	// Electricity Dashboard v2 -- start
-	let showDialog = false;
+	let showDialog = $state(false);
 
-	let layers = [
+	let layers = $state([
 		{
 			text: 'COG',
 			title: 'Settlement-level electricty access',
@@ -231,14 +232,14 @@
 		{ text: 'ADM2', title: 'Subnational level 2 data', format: 'CSV' }
 		// { text: 'ADM3', title: 'Subnational level 3 data', format: 'CSV' },
 		// { text: 'ADM4', title: 'Subnational level 4 data', format: 'CSV' }
-	];
+	]);
 	let formats = ['CSV', 'XLSX', 'GPKG', 'SHP', 'FGB', 'PMTILES'];
 
 	const HREA_ID = 'HREA';
 	const NONE_ID = 'NONE';
 
-	let activeDashboard: DashboardType;
-	let dashboardSelections: DashboardType[] = [
+	let activeDashboard: DashboardType = $state();
+	let dashboardSelections: DashboardType[] = $state([
 		{
 			name: 'explore',
 			text: 'Electricity access data at district, province and country level',
@@ -264,7 +265,7 @@
 			show: false,
 			help: `This provide a slightly different way for you to explore data by using bivariate data matrix table for wealth index and electricity access. By clicking any cell that you are interested in, the tool automatically filter data on the map to find which administrative area is related.`
 		}
-	];
+	]);
 
 	let electricityChoices = [{ name: HREA_ID, title: 'Electricity Access Data' }];
 
@@ -315,156 +316,169 @@
 	bind:marginTop={$headerHeightStore}
 	border="none"
 >
-	<div slot="content" class="drawer-content m-0 px-4 pb-4">
-		<h2 class="title is-size-6 mt-4 mb-4">DASHBOARD</h2>
-		<h2 class="title is-size-4">Electricity Access Dashboard</h2>
-		<p class="mb-5">
-			<b
-				>Developed with IBM through the <a
-					href="https://www.ibm.com/impact/initiatives/ibm-sustainability-accelerator"
-					>IBM Sustainability Accelerator</a
-				></b
-			>
-		</p>
-		{#if showIntro}
-			<IntroductionPanel
-				bind:dashboardSelections
-				on:click={() => {
-					showIntro = false;
-					activeDashboard = dashboardSelections.find((d) => d.show === true);
-					if (activeDashboard.name === 'compare') {
-						electricitySelected = electricityChoices[0].name;
-						unloadAdmin();
-					} else {
-						electricitySelected = NONE_ID;
-					}
-					isTimeSliderActive = setTimeSliderActive();
-				}}
-			/>
-		{:else}
-			{#if activeDashboard}
-				{#each dashboardSelections as dbs, index (dbs.name)}
-					<div class="a-box p-4 mb-4 {activeDashboard.name === dbs.name ? 'active' : ''}">
-						<button
-							class="a-reset a-button is-flex is-flex-wrap-wrap is-flex-direction-row is-justify-content-space-between is-align-items-flex-start
-							{dbs.show ? 'mb-4' : ''}"
-							style="width: 100%"
-							type="button"
-							on:click={() => optionsHandler(index)}
-						>
-							<div
-								class="a-title__container is-flex is-justify-content-space-between is-align-items-center"
+	{#snippet content()}
+		<div class="drawer-content m-0 px-4 pb-4">
+			<h2 class="title is-size-6 mt-4 mb-4">DASHBOARD</h2>
+			<h2 class="title is-size-4">Electricity Access Dashboard</h2>
+			<p class="mb-5">
+				<b
+					>Developed with IBM through the <a
+						href="https://www.ibm.com/impact/initiatives/ibm-sustainability-accelerator"
+						>IBM Sustainability Accelerator</a
+					></b
+				>
+			</p>
+			{#if showIntro}
+				<IntroductionPanel
+					bind:dashboardSelections
+					onclick={() => {
+						showIntro = false;
+						activeDashboard = dashboardSelections.find((d) => d.show === true);
+						if (activeDashboard.name === 'compare') {
+							electricitySelected = electricityChoices[0].name;
+							unloadAdmin();
+						} else {
+							electricitySelected = NONE_ID;
+						}
+						isTimeSliderActive = setTimeSliderActive();
+					}}
+				/>
+			{:else}
+				{#if activeDashboard}
+					{#each dashboardSelections as dbs, index (dbs.name)}
+						<div class="a-box p-4 mb-4 {activeDashboard.name === dbs.name ? 'active' : ''}">
+							<button
+								class="a-reset a-button is-flex is-flex-wrap-wrap is-flex-direction-row is-justify-content-space-between is-align-items-flex-start
+								{dbs.show ? 'mb-4' : ''}"
+								style="width: 100%"
+								type="button"
+								onclick={() => optionsHandler(index)}
 							>
-								<span class="a-title">{dbs.text}</span>
-							</div>
-							<span class="material-icons-outlined" use:tippyTooltip={{ content: dbs.help }}>
-								info
-							</span>
-						</button>
+								<div
+									class="a-title__container is-flex is-justify-content-space-between is-align-items-center"
+								>
+									<span class="a-title">{dbs.text}</span>
+								</div>
+								<span class="material-icons-outlined" use:tippyTooltip={{ content: dbs.help }}>
+									info
+								</span>
+							</button>
 
-						{#if dbs.show && dbs.name === 'explore'}
-							<ElectricityControl
-								bind:electricitySelected
-								on:change={(e) => {
-									colormapName = e.detail.colormapName;
-								}}
-							/>
-							<ExploreEvolution bind:showMapLabels bind:scaleColorList />
-						{:else if dbs.show && dbs.name === 'compare'}
-							<div>
-								<ElectricityControl
-									bind:electricitySelected
-									on:change={(e) => {
-										colormapName = e.detail.colormapName;
-									}}
-								/>
-								<Charts />
-							</div>
-						{:else if dbs.show && dbs.name === 'analyse'}
-							<AnalyzeBivariate />
-						{/if}
-					</div>
-				{/each}
-			{/if}
+							{#if dbs.show && dbs.name === 'explore'}
+								<ElectricityControl bind:electricityDataType={$electricityDataType} />
+								<ExploreEvolution bind:showMapLabels bind:scaleColorList />
+							{:else if dbs.show && dbs.name === 'compare'}
+								<div>
+									<ElectricityControl bind:electricityDataType={$electricityDataType} />
 
-			<div class="mt-auto mb-4 a-bb-1 pb-4">
-				<CtaLink label="Download" isArrow on:clicked={modalHandler} />
-			</div>
-		{/if}
-	</div>
+									<div class="electricity-legend">
+										<div
+											class="is-flex is-flex-direction-column mt-2"
+											style="background-color: #F7F7F7"
+										>
+											<div class="is-flex is-align-items-center p-2 border-bottom">
+												<div class="legend without_electricity"></div>
+												&nbsp;-&nbsp;<span class="is-capitalized">without electricity</span>
+											</div>
+											<div class="is-flex is-align-items-center p-2">
+												<div class="legend electrified"></div>
+												&nbsp;-&nbsp;<span class="is-capitalized">electrified</span>
+											</div>
+										</div>
+									</div>
 
-	<div slot="main">
-		<div class="map" id="map" bind:this={mapContainer}>
-			{#if map}
-				<TimeSliderControl
-					bind:map
-					bind:electricitySelected
-					bind:loadRasterLayer
-					bind:scaleColorList
-					bind:rasterColorMapName={colormapName}
-					bind:loadAdminLabels={showMapLabels}
-					bind:newColorExpression
-					bind:isActive={isTimeSliderActive}
-				/>
+									<Charts />
+								</div>
+							{:else if dbs.show && dbs.name === 'analyse'}
+								<AnalyzeBivariate />
+							{/if}
+						</div>
+					{/each}
+				{/if}
 
-				<MaplibreStaticImageControl
-					bind:map
-					show={false}
-					style={styleUrl}
-					apiBase={data.staticApiUrl}
-					bind:options={exportOptions}
-					hiddenApiTypes={true}
-					position="top-right"
-				/>
+				<div class="mt-auto mb-4 a-bb-1 pb-4">
+					<CtaLink label="Download" isArrow on:clicked={modalHandler} />
+				</div>
 			{/if}
 		</div>
-	</div>
+	{/snippet}
+
+	{#snippet main()}
+		<div>
+			<div class="map" id="map" bind:this={mapContainer}>
+				{#if map}
+					<TimeSliderControl
+						bind:this={timeSliderControl}
+						bind:map
+						bind:electricitySelected
+						bind:scaleColorList
+						bind:rasterColorMapName={colormapName}
+						bind:loadAdminLabels={showMapLabels}
+						bind:newColorExpression
+						bind:isActive={isTimeSliderActive}
+					/>
+
+					<MaplibreStaticImageControl
+						bind:map
+						show={false}
+						style={styleUrl}
+						apiBase={data.staticApiUrl}
+						bind:options={exportOptions}
+						hiddenApiTypes={true}
+						position="top-right"
+					/>
+				{/if}
+			</div>
+		</div>
+	{/snippet}
 </Sidebar>
 
 <ModalTemplate title="Download data" bind:show={showDialog}>
-	<div class="download-contents" slot="content">
-		{#each layers as l}
-			<div
-				class="is-flex is-flex-wrap-wrap is-justify-content-space-between is-align-items-center a-box p-4 mt-4"
-			>
-				<p>
-					<strong>{l.title}</strong>
-					<br />
-					{l.text}
-				</p>
+	{#snippet content()}
+		<div class="download-contents">
+			{#each layers as l}
+				<div
+					class="is-flex is-flex-wrap-wrap is-justify-content-space-between is-align-items-center a-box p-4 mt-4"
+				>
+					<p>
+						<strong>{l.title}</strong>
+						<br />
+						{l.text}
+					</p>
 
-				<div class="is-flex is-flex-wrap-wrap is-justify-content-flex-end is-align-items-center">
-					{#if l.text === 'COG'}
-						<div class="select">
-							<select bind:value={l.format}>
-								{#if $hrea}
-									{#each $hrea as dataset}
-										{#if 'years' in l && dataset.year >= l.years[0] && dataset.year <= l.years[1]}
-											<option value={dataset.year.toString()}>{dataset.year}</option>
-										{/if}
+					<div class="is-flex is-flex-wrap-wrap is-justify-content-flex-end is-align-items-center">
+						{#if l.text === 'COG'}
+							<div class="select">
+								<select bind:value={l.format}>
+									{#if $hrea}
+										{#each $hrea as dataset}
+											{#if 'years' in l && dataset.year >= l.years[0] && dataset.year <= l.years[1]}
+												<option value={dataset.year.toString()}>{dataset.year}</option>
+											{/if}
+										{/each}
+									{/if}
+								</select>
+							</div>
+						{:else}
+							<div class="select">
+								<select bind:value={l.format}>
+									{#each formats as f}
+										<option value={f}>{f}</option>
 									{/each}
-								{/if}
-							</select>
-						</div>
-					{:else}
-						<div class="select">
-							<select bind:value={l.format}>
-								{#each formats as f}
-									<option value={f}>{f}</option>
-								{/each}
-							</select>
-						</div>
-					{/if}
+								</select>
+							</div>
+						{/if}
 
-					<button class="download-button button ml-2" on:click={() => download(l.text, l.format)}>
-						<span class="icon is-small">
-							<span class="material-icons"> download </span>
-						</span>
-					</button>
+						<button class="download-button button ml-2" onclick={() => download(l.text, l.format)}>
+							<span class="icon is-small">
+								<span class="material-icons"> download </span>
+							</span>
+						</button>
+					</div>
 				</div>
-			</div>
-		{/each}
-	</div>
+			{/each}
+		</div>
+	{/snippet}
 </ModalTemplate>
 
 <style lang="scss">
@@ -524,6 +538,25 @@
 		.download-button {
 			border: none;
 			box-shadow: none;
+		}
+	}
+
+	.electricity-legend {
+		.border-bottom {
+			border-bottom: 1px solid #d4d6d8;
+		}
+
+		.legend {
+			height: 20px;
+			width: 20px;
+
+			&.without_electricity {
+				background-color: rgb(12, 12, 12);
+			}
+
+			&.electrified {
+				background-color: rgb(242, 166, 4);
+			}
 		}
 	}
 </style>

@@ -1,56 +1,29 @@
 <script lang="ts">
-	import { createEventDispatcher, getContext } from 'svelte';
-	import {
-		ELECTRICITY_DATATYPE_CONTEXT_KEY,
-		electricityDataTypes,
-		type ElectricityDataTypeStore
-	} from '../stores/electricityDataType';
-	import ElectricityLegend from './ElectricityLegend.svelte';
+	import { electricityDataTypes } from '../stores/electricityDataType';
 
-	const dispatch = createEventDispatcher();
-
-	const electricityDataType: ElectricityDataTypeStore = getContext(
-		ELECTRICITY_DATATYPE_CONTEXT_KEY
-	);
-
-	const HREA_ID = 'HREA';
-
-	export let electricitySelected = HREA_ID;
-
-	let rasterColorMapName = 'pubu';
-
-	function updateRasterColorMap(event) {
-		rasterColorMapName = event.detail.rasterColorMapName;
-		dispatch('change', {
-			colormapName: rasterColorMapName
-		});
+	interface Props {
+		electricityDataType: number[];
 	}
+
+	let { electricityDataType = $bindable() }: Props = $props();
 </script>
 
 <div>
 	<div class="button-container mt-2">
 		{#each electricityDataTypes as choice}
 			<button
-				class="button data-option pl-3 {`${choice.value === $electricityDataType ? 'is-active' : ''}`}"
-				on:click={() => {
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
-					$electricityDataType = choice.value;
+				class="button data-option pl-3 {`${JSON.stringify(choice.value) === JSON.stringify(electricityDataType) ? 'is-active' : ''}`}"
+				onclick={() => {
+					electricityDataType = choice.value as number[];
 				}}
 			>
 				<span class="is-size-7">{choice.title}</span>
 			</button>
 		{/each}
 	</div>
-
-	<ElectricityLegend bind:electricitySelected on:onRasterColorMapChange={updateRasterColorMap} />
 </div>
 
 <style lang="scss">
-	.data-title {
-		background-color: #edf5fd;
-	}
-
 	.button-container {
 		display: flex;
 		flex-direction: column;
@@ -66,10 +39,5 @@
 				}
 			}
 		}
-	}
-
-	.raster-time-slider {
-		padding-top: 1em;
-		padding-bottom: 1em;
 	}
 </style>
