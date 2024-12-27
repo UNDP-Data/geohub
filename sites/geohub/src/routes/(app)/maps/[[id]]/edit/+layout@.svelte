@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { beforeNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Header from '$components/header/Header.svelte';
 	import Content from '$components/pages/map/Content.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
@@ -35,10 +35,15 @@
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
-	import { onMount, setContext } from 'svelte';
+	import { onMount, setContext, type Snippet } from 'svelte';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+		children?: Snippet;
+	}
+
+	let { data = $bindable(), children }: Props = $props();
 
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
@@ -69,29 +74,31 @@
 	const tablegMenuShownStore = createEditingMenuShownStore();
 	setContext(TABLE_MENU_SHOWN_CONTEXT_KEY, tablegMenuShownStore);
 
-	let innerWidth: number;
-	let innerHeight: number;
+	let innerWidth = $state(0);
+	let innerHeight = $state(0);
 
-	$: if ($editingMenuShownStore === false) {
-		editingLayerStore.set(undefined);
-	}
+	$effect(() => {
+		if ($editingMenuShownStore === false) {
+			editingLayerStore.set(undefined);
+		}
+	});
 
-	let sideBarPosition: SidebarPosition = $page.data.config.SidebarPosition;
+	let sideBarPosition: SidebarPosition = $state(page.data.config.SidebarPosition);
 
-	$: splitHeight = innerHeight - $headerHeightStore;
+	let splitHeight = $derived(innerHeight - $headerHeightStore);
 
-	const layerListStorageKey = storageKeys.layerList($page.url.host);
-	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
-	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+	const layerListStorageKey = storageKeys.layerList(page.url.host);
+	const mapStyleStorageKey = storageKeys.mapStyle(page.url.host);
+	const mapStyleIdStorageKey = storageKeys.mapStyleId(page.url.host);
 	// get initial local storage style when page is loaded
 	const initiaLayerList: Layer[] = fromLocalStorage(layerListStorageKey, null);
 	const initiaMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, null);
 	const initiaMapStyleId: string | null = fromLocalStorage(mapStyleIdStorageKey, null);
 
-	let dialogOpen = false;
-	let toUrl: URL | undefined = undefined;
+	let dialogOpen = $state(false);
+	let toUrl: URL | undefined = $state(undefined);
 
-	let isNewMapPage = $page.url.pathname === '/maps/edit';
+	let isNewMapPage = page.url.pathname === '/maps/edit';
 
 	if (isNewMapPage && initiaMapStyleId) {
 		toLocalStorage(layerListStorageKey, []);
@@ -104,7 +111,7 @@
 		if (!to) return;
 		toUrl = to.url;
 
-		if ($page.url.pathname === toUrl.pathname) {
+		if (page.url.pathname === toUrl.pathname) {
 			return;
 		}
 
@@ -136,7 +143,7 @@
 			}
 		} else {
 			// /map/{id} saved map page
-			let databaseStyle: DashboardMapStyle = $page.data.style;
+			let databaseStyle: DashboardMapStyle = page.data.style;
 			if (databaseStyle?.style && isStyleChanged(databaseStyle.style, storageMapStyle)) {
 				// if there is any difference between database style and current state
 				cancel();
@@ -188,40 +195,42 @@
 	bind:width={$sidebarWidthStore}
 	border="none"
 >
-	<div slot="content">
-		<Content bind:splitterHeight={splitHeight} />
-	</div>
-	<div slot="main">
-		<slot />
-	</div>
+	{#snippet content()}
+		<Content splitterHeight={splitHeight} />
+	{/snippet}
+	{#snippet main()}
+		{@render children?.()}
+	{/snippet}
 </Sidebar>
 
 <ModalTemplate title="Unsaved changes" bind:show={dialogOpen}>
-	<div slot="content">
+	{#snippet content()}
 		<span>
 			You have unsaved changes on your map. Would you like to discard the changes or stay on the map
 			to save them?
 		</span>
-	</div>
-	<div class="buttons" slot="buttons">
-		<div class="footer-button">
-			<button
-				data-testid="cancel-button"
-				class="button is-primary is-uppercase has-text-weight-bold"
-				on:click={handleDiscard}
-			>
-				Discard changes
-			</button>
+	{/snippet}
+	{#snippet buttons()}
+		<div class="buttons">
+			<div class="footer-button">
+				<button
+					data-testid="cancel-button"
+					class="button is-primary is-uppercase has-text-weight-bold"
+					onclick={handleDiscard}
+				>
+					Discard changes
+				</button>
+			</div>
+			<div class="footer-button">
+				<button
+					class="cancel-button button is-light is-uppercase has-text-weight-bold"
+					onclick={handleCancel}
+				>
+					stay on map
+				</button>
+			</div>
 		</div>
-		<div class="footer-button">
-			<button
-				class="cancel-button button is-light is-uppercase has-text-weight-bold"
-				on:click={handleCancel}
-			>
-				stay on map
-			</button>
-		</div>
-	</div>
+	{/snippet}
 </ModalTemplate>
 
 <SvelteToast />

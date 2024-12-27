@@ -13,7 +13,8 @@ export default defineConfig({
 			'maplibre-gl',
 			'@maptiler/geocoding-control',
 			'@maplibre/maplibre-gl-geocoder',
-			'@watergis/maplibre-gl-export'
+			'@watergis/maplibre-gl-export',
+			'@neodrag/svelte'
 		]
 	},
 	resolve: {

@@ -44,9 +44,7 @@
 		}
 	]);
 
-	const handleColumnClick = (e) => {
-		const name = e.detail.name;
-		const order = e.detail.order;
+	const handleColumnClick = (name: string, order: 'asc' | 'desc') => {
 		if (sortby === name) {
 			sortingorder = order;
 		}
@@ -112,7 +110,7 @@
 										bind:name={col.name}
 										bind:order={sortingorder}
 										isActive={sortby === col.name}
-										on:change={handleColumnClick}
+										change={handleColumnClick}
 									/>
 								{:else}
 									<p class="has-text-weight-bold">{col.title}</p>
