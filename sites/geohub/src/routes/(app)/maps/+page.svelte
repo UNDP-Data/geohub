@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { goto, replaceState } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import MapStyleCardList from '$components/pages/map/MapStyleCardList.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import {
@@ -35,7 +35,7 @@
 
 	let breadcrumbs: BreadcrumbPage[] = $state([
 		{ title: 'home', url: '/' },
-		{ title: 'maps', url: $page.url.href }
+		{ title: 'maps', url: page.url.href }
 	]);
 
 	enum TabNames {
@@ -45,7 +45,7 @@
 
 	let tabs: Tab[] = $state([]);
 	let activeTab: string = $state('');
-	const hash = $page.url.hash;
+	const hash = page.url.hash;
 
 	const mapStore = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, mapStore);
@@ -53,21 +53,21 @@
 	let layerListStore: LayerListStore = createLayerListStore();
 	setContext(LAYERLISTSTORE_CONTEXT_KEY, layerListStore);
 
-	const _limit = $page.url.searchParams.get('limit');
-	let limit = $state(_limit ? Number(_limit) : $page.data.config.MapPageSearchLimit);
-	let offset = Number($page.url.searchParams.get('offset'));
-	let query = $state($page.url.searchParams.get('query') ?? '');
+	const _limit = page.url.searchParams.get('limit');
+	let limit = $state(_limit ? Number(_limit) : page.data.config.MapPageSearchLimit);
+	let offset = Number(page.url.searchParams.get('offset'));
+	let query = $state(page.url.searchParams.get('query') ?? '');
 
-	const _level = $page.url.searchParams.get('accesslevel');
+	const _level = page.url.searchParams.get('accesslevel');
 	let accessLevel: AccessLevel = $state(
 		_level
 			? (Number(_level) as AccessLevel)
-			: $page.data.session
+			: page.data.session
 				? AccessLevel.ALL
 				: AccessLevel.PUBLIC
 	);
 
-	const _onlyStar = $page.url.searchParams.get('staronly') || 'false';
+	const _onlyStar = page.url.searchParams.get('staronly') || 'false';
 	let onlyStar = $state(_onlyStar.toLowerCase() === 'true');
 
 	const getSortByFromUrl = (url: URL) => {
@@ -80,12 +80,12 @@
 		}
 	};
 
-	let sortby = $state(getSortByFromUrl($page.url) ?? $page.data.config.MapPageSortingColumn);
+	let sortby = $state(getSortByFromUrl(page.url) ?? page.data.config.MapPageSortingColumn);
 
-	let viewType: TableViewType = $state($page.data.viewType);
+	let viewType: TableViewType = $state(page.data.viewType);
 
 	const handleLimitChanged = async () => {
-		const apiUrl = new URL($page.url.toString());
+		const apiUrl = new URL(page.url.toString());
 		const currentLimit = apiUrl.searchParams.get('limit')
 			? Number(apiUrl.searchParams.get('limit'))
 			: undefined;
@@ -101,7 +101,7 @@
 	const handleSortbyChanged = async () => {
 		offset = 0;
 
-		const apiUrl = new URL($page.url.toString());
+		const apiUrl = new URL(page.url.toString());
 		apiUrl.searchParams.set('offset', `${offset}`);
 		apiUrl.searchParams.set('sortby', sortby);
 
@@ -111,7 +111,7 @@
 	const handleViewTypeChanged = (e: { detail: { value: TableViewType } }) => {
 		viewType = e.detail.value;
 
-		const apiUrl = new URL($page.url);
+		const apiUrl = new URL(page.url);
 		apiUrl.searchParams.set('viewType', viewType);
 		replaceState(apiUrl, '');
 	};
@@ -125,7 +125,7 @@
 	};
 
 	const handleFilterInput = async () => {
-		const apiUrl = new URL($page.url.toString());
+		const apiUrl = new URL(page.url.toString());
 		offset = 0;
 		apiUrl.searchParams.set('offset', `${offset}`);
 
@@ -147,7 +147,7 @@
 	const handleAccessLevelChanged = async () => {
 		offset = 0;
 
-		const apiUrl = new URL($page.url.toString());
+		const apiUrl = new URL(page.url.toString());
 		apiUrl.searchParams.set('offset', `${offset}`);
 		if (accessLevel === AccessLevel.ALL) {
 			apiUrl.searchParams.delete('accesslevel');
@@ -161,7 +161,7 @@
 	const handleClickFavourite = async () => {
 		onlyStar = !onlyStar;
 
-		const apiUrl = new URL($page.url.toString());
+		const apiUrl = new URL(page.url.toString());
 		offset = 0;
 		apiUrl.searchParams.set('offset', `${offset}`);
 
@@ -206,7 +206,7 @@
 		if (tabs.length > 0) {
 			activeTab = (hash ? tabs.find((t) => t.id === hash)?.id : tabs[0].id) as string;
 
-			const apiUrl = new URL($page.url.toString());
+			const apiUrl = new URL(page.url.toString());
 			if (activeTab === '#maps') {
 				apiUrl.searchParams.delete('mymap');
 			} else {
@@ -219,7 +219,7 @@
 	const handleTabChanged = async (e: { detail: { activeTab: string } }) => {
 		const active = e.detail.activeTab;
 
-		const apiUrl = new URL($page.url.toString());
+		const apiUrl = new URL(page.url.toString());
 		offset = 0;
 		apiUrl.searchParams.set('offset', `${offset}`);
 
@@ -331,7 +331,7 @@
 				loading={!mapData}
 			/>
 
-			{#if $page.data.session}
+			{#if page.data.session}
 				<div class="py-2">
 					<FieldControl title="Access Level" showHelp={false}>
 						{#snippet control()}
