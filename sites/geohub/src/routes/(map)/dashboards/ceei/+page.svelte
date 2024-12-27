@@ -1,7 +1,5 @@
 <script lang="ts">
-	import DropdownSearch from './components/DropdownSearch.svelte';
-
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import { GeocodingControl } from '@maptiler/geocoding-control/maplibregl';
@@ -33,22 +31,27 @@
 	import * as topojson from 'topojson-client';
 	import { read, utils } from 'xlsx';
 	import type { PageData } from './$types';
+	import DropdownSearch from './components/DropdownSearch.svelte';
 	import LayerControl from './components/LayerControl.svelte';
 	import { layers as layerStore, mapPopup as popupStore, type Layer } from './stores';
 	import { computeCEEI, headerMapping, loadInitial } from './utils/layerHelper';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
 
-	let drawerWidth = 355;
-	let map: Map;
-	let mapContainer: HTMLDivElement;
-	let popup: Popup;
+	let { data }: Props = $props();
+
+	let drawerWidth = $state(355);
+	let map: Map = $state();
+	let mapContainer: HTMLDivElement = $state();
+	let popup: Popup = $state();
 	let styles = MapStyles;
 
-	let baseCeeiJson: FeatureCollection;
-	let fullCountries;
-	let countriesList: { label: string; value: string }[];
-	let selectedCountryFilter = null;
+	let baseCeeiJson: FeatureCollection = $state();
+	let fullCountries = $state();
+	let countriesList: { label: string; value: string }[] = $state();
+	let selectedCountryFilter: string | null = $state(null);
 
 	const headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 	const mapStore = createMapStore();
@@ -139,7 +142,7 @@
 		};
 	};
 
-	$: {
+	$effect(() => {
 		let filter =
 			selectedCountryFilter === null ? undefined : ['==', 'Country', selectedCountryFilter];
 		$layerStore.forEach((l) => {
@@ -173,7 +176,7 @@
 				}
 			}
 		}
-	}
+	});
 
 	onMount(async () => {
 		let protocol = new pmtiles.Protocol();
@@ -206,7 +209,7 @@
 		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {});
 		map.addControl(styleSwitcher, 'bottom-left');
 
-		const apiKey = $page.data.maptilerKey;
+		const apiKey = page.data.maptilerKey;
 		if (apiKey) {
 			const gc = new GeocodingControl({
 				apiKey: apiKey,
@@ -263,55 +266,56 @@
 	bind:marginTop={$headerHeightStore}
 	border="none"
 >
-	<div
-		slot="content"
-		class="drawer-content m-0 px-4 pb-4 is-flex is-flex-direction-column is-gap-1"
-	>
-		<div class="is-flex is-flex-direction-column is-gap-1">
-			{#if $layerStore.length === 0}
-				<div
-					class="is-flex is-flex-direction-column is-align-items-center is-justify-content-center"
-				>
-					<Loader />
-					<div>Loading data...</div>
-				</div>
-			{:else}
-				<div class="field is-fullwidth">
-					<h2 class="title is-size-6 mt-4 mb-4">DASHBOARD</h2>
-					<h2 class="title is-size-4 mb-5">CEEI Dashboard</h2>
-					<p>
-						<b
-							>Developed with IBM through the <a
-								href="https://www.ibm.com/impact/initiatives/ibm-sustainability-accelerator"
-								>IBM Sustainability Accelerator</a
-							></b
-						>
-					</p>
-					<label class="label mt-4" for="country-filter">Filter map to a country</label>
-					<div class="is-fullwidth">
-						<DropdownSearch
-							items={countriesList}
-							on:select={(e) => {
-								selectedCountryFilter = e.detail === null ? null : e.detail.value;
-							}}
-						></DropdownSearch>
+	{#snippet content()}
+		<div class="drawer-content m-0 px-4 pb-4 is-flex is-flex-direction-column is-gap-1">
+			<div class="is-flex is-flex-direction-column is-gap-1">
+				{#if $layerStore.length === 0}
+					<div
+						class="is-flex is-flex-direction-column is-align-items-center is-justify-content-center"
+					>
+						<Loader />
+						<div>Loading data...</div>
 					</div>
-				</div>
+				{:else}
+					<div class="field is-fullwidth">
+						<h2 class="title is-size-6 mt-4 mb-4">DASHBOARD</h2>
+						<h2 class="title is-size-4 mb-5">CEEI Dashboard</h2>
+						<p>
+							<b
+								>Developed with IBM through the <a
+									href="https://www.ibm.com/impact/initiatives/ibm-sustainability-accelerator"
+									>IBM Sustainability Accelerator</a
+								></b
+							>
+						</p>
+						<label class="label mt-4" for="country-filter">Filter map to a country</label>
+						<div class="is-fullwidth">
+							<DropdownSearch
+								items={countriesList}
+								select={(item) => {
+									selectedCountryFilter = item?.value ?? null;
+								}}
+							></DropdownSearch>
+						</div>
+					</div>
 
-				{#each $layerStore as l, i}
-					<div>
-						<LayerControl layerDetails={l} index={i} />
-					</div>
-				{/each}
-			{/if}
+					{#each $layerStore as l, i}
+						<div>
+							<LayerControl layerDetails={l} index={i} />
+						</div>
+					{/each}
+				{/if}
+			</div>
 		</div>
-	</div>
-	<div slot="main">
-		<div class="toast-wrapper">
-			<SvelteToast />
+	{/snippet}
+	{#snippet main()}
+		<div>
+			<div class="toast-wrapper">
+				<SvelteToast />
+			</div>
+			<div class="map" bind:this={mapContainer}></div>
 		</div>
-		<div class="map" bind:this={mapContainer}></div>
-	</div>
+	{/snippet}
 </Sidebar>
 
 <style lang="scss">
