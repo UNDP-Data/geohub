@@ -25,22 +25,26 @@
 	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
 
-	let mapData: MapsData | undefined = data.styles;
+	let { data }: Props = $props();
 
-	let breadcrumbs: BreadcrumbPage[] = [
+	let mapData: MapsData | undefined = $state(data.styles);
+
+	let breadcrumbs: BreadcrumbPage[] = $state([
 		{ title: 'home', url: '/' },
 		{ title: 'maps', url: $page.url.href }
-	];
+	]);
 
 	enum TabNames {
 		MAPS = 'Maps',
 		MY_MAP = 'My maps'
 	}
 
-	let tabs: Tab[] = [];
-	let activeTab: string;
+	let tabs: Tab[] = $state([]);
+	let activeTab: string = $state('');
 	const hash = $page.url.hash;
 
 	const mapStore = createMapStore();
@@ -50,19 +54,21 @@
 	setContext(LAYERLISTSTORE_CONTEXT_KEY, layerListStore);
 
 	const _limit = $page.url.searchParams.get('limit');
-	let limit = _limit ? Number(_limit) : $page.data.config.MapPageSearchLimit;
+	let limit = $state(_limit ? Number(_limit) : $page.data.config.MapPageSearchLimit);
 	let offset = Number($page.url.searchParams.get('offset'));
-	let query = $page.url.searchParams.get('query') ?? '';
+	let query = $state($page.url.searchParams.get('query') ?? '');
 
 	const _level = $page.url.searchParams.get('accesslevel');
-	let accessLevel: AccessLevel = _level
-		? (Number(_level) as AccessLevel)
-		: $page.data.session
-			? AccessLevel.ALL
-			: AccessLevel.PUBLIC;
+	let accessLevel: AccessLevel = $state(
+		_level
+			? (Number(_level) as AccessLevel)
+			: $page.data.session
+				? AccessLevel.ALL
+				: AccessLevel.PUBLIC
+	);
 
 	const _onlyStar = $page.url.searchParams.get('staronly') || 'false';
-	let onlyStar = _onlyStar.toLowerCase() === 'true';
+	let onlyStar = $state(_onlyStar.toLowerCase() === 'true');
 
 	const getSortByFromUrl = (url: URL) => {
 		const sortByValue = url.searchParams.get('sortby');
@@ -74,9 +80,9 @@
 		}
 	};
 
-	let sortby = getSortByFromUrl($page.url) ?? $page.data.config.MapPageSortingColumn;
+	let sortby = $state(getSortByFromUrl($page.url) ?? $page.data.config.MapPageSortingColumn);
 
-	let viewType: TableViewType = $page.data.viewType;
+	let viewType: TableViewType = $state($page.data.viewType);
 
 	const handleLimitChanged = async () => {
 		const apiUrl = new URL($page.url.toString());
@@ -102,7 +108,7 @@
 		await reload(apiUrl);
 	};
 
-	const handleViewTypeChanged = (e) => {
+	const handleViewTypeChanged = (e: { detail: { value: TableViewType } }) => {
 		viewType = e.detail.value;
 
 		const apiUrl = new URL($page.url);
@@ -191,7 +197,7 @@
 		mapData = data.styles;
 	};
 
-	const handlePaginationClicked = async (e) => {
+	const handlePaginationClicked = async (e: { detail: { url: URL } }) => {
 		const apiUrl = e.detail.url;
 		await reload(apiUrl);
 	};
@@ -210,7 +216,7 @@
 		}
 	};
 
-	const handleTabChanged = async (e) => {
+	const handleTabChanged = async (e: { detail: { activeTab: string } }) => {
 		const active = e.detail.activeTab;
 
 		const apiUrl = new URL($page.url.toString());
@@ -264,42 +270,48 @@
 		>
 			<div class="mr-2">
 				<FieldControl title="Limits" showHelp={false}>
-					<div slot="control">
-						<div class="select mt-auto">
-							<select bind:value={limit} on:change={handleLimitChanged}>
-								{#each LimitOptions as limit}
-									<option value={limit}>{limit}</option>
-								{/each}
-							</select>
+					{#snippet control()}
+						<div>
+							<div class="select mt-auto">
+								<select bind:value={limit} onchange={handleLimitChanged}>
+									{#each LimitOptions as limit}
+										<option value={limit}>{limit}</option>
+									{/each}
+								</select>
+							</div>
 						</div>
-					</div>
+					{/snippet}
 				</FieldControl>
 			</div>
 			<div class="mr-2">
 				<FieldControl title="Sort results" showHelp={false}>
-					<div slot="control">
-						<div class="select mt-auto">
-							<select bind:value={sortby} on:change={handleSortbyChanged}>
-								{#each MapSortingColumns as option}
-									<option value={option.value}>{option.label}</option>
-								{/each}
-							</select>
+					{#snippet control()}
+						<div>
+							<div class="select mt-auto">
+								<select bind:value={sortby} onchange={handleSortbyChanged}>
+									{#each MapSortingColumns as option}
+										<option value={option.value}>{option.label}</option>
+									{/each}
+								</select>
+							</div>
 						</div>
-					</div>
+					{/snippet}
 				</FieldControl>
 			</div>
 			<div>
 				<FieldControl title="View as" showHelp={false}>
-					<div slot="control">
-						<SegmentButtons
-							buttons={[
-								{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
-								{ title: 'List', icon: 'fa-solid fa-list', value: 'list' }
-							]}
-							bind:selected={viewType}
-							on:change={handleViewTypeChanged}
-						/>
-					</div>
+					{#snippet control()}
+						<div>
+							<SegmentButtons
+								buttons={[
+									{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
+									{ title: 'List', icon: 'fa-solid fa-list', value: 'list' }
+								]}
+								bind:selected={viewType}
+								on:change={handleViewTypeChanged}
+							/>
+						</div>
+					{/snippet}
 				</FieldControl>
 			</div>
 		</div>
@@ -322,13 +334,15 @@
 			{#if $page.data.session}
 				<div class="py-2">
 					<FieldControl title="Access Level" showHelp={false}>
-						<div slot="control">
-							<AccessLevelSwitcher
-								bind:accessLevel
-								on:change={handleAccessLevelChanged}
-								isSegmentButton={false}
-							/>
-						</div>
+						{#snippet control()}
+							<div>
+								<AccessLevelSwitcher
+									bind:accessLevel
+									on:change={handleAccessLevelChanged}
+									isSegmentButton={false}
+								/>
+							</div>
+						{/snippet}
 					</FieldControl>
 				</div>
 
