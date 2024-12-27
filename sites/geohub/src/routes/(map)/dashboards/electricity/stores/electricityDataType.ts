@@ -15,5 +15,5 @@ export const electricityDataTypes: SegmentButton[] = [
 export const ELECTRICITY_DATATYPE_CONTEXT_KEY = 'electricity-data-type-store';
 export type ElectricityDataTypeStore = Writable<number[]>;
 export const createElectricityDataTypeStore = () => {
-	return writable(<string>electricityDataTypes[0].value);
+	return writable(<number[]>electricityDataTypes[0].value);
 };

@@ -71,7 +71,7 @@
 								<td class="map-col">
 									{#if accessIcon}
 										<span class="icon">
-											<i class={accessIcon} />
+											<i class={accessIcon}></i>
 										</span>
 									{/if}
 								</td>

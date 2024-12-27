@@ -483,10 +483,11 @@
 	use:tippyTooltip={{
 		content: `${!isActive ? 'Start to query information' : 'Stop to query information'}`
 	}}
+	aria-label="query"
 >
 	<span class="fa-stack fa-xl">
-		<i class="fa-solid fa-comment fa-stack-1x {isActive ? 'has-text-success' : ''}" />
-		<i class="fa-solid fa-info fa-stack fa-inverse mb-2" style="font-size: 0.5rem;" />
+		<i class="fa-solid fa-comment fa-stack-1x {isActive ? 'has-text-success' : ''}"></i>
+		<i class="fa-solid fa-info fa-stack fa-inverse mb-2" style="font-size: 0.5rem;"></i>
 	</span>
 </button>
 
@@ -597,7 +598,7 @@
 						}}
 					>
 						<span class="icon is-small">
-							<i class="fa-solid fa-download" />
+							<i class="fa-solid fa-download"></i>
 						</span>
 						<span>Download</span>
 						<span class="icon is-small">

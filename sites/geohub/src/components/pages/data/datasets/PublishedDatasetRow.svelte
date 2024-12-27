@@ -75,7 +75,7 @@
 				</span>
 				{#if accessIcon}
 					<span class="icon ml-auto">
-						<i class={accessIcon} />
+						<i class={accessIcon}></i>
 					</span>
 				{/if}
 			</div>

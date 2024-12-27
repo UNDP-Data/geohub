@@ -280,24 +280,6 @@ export const deleteLayer = (map: Map, index: number) => {
 	updateMapInteraction(map);
 };
 
-export const toggleLayerVisibility = (map: Map, index: number) => {
-	if (!map || !get(layersStore)) return;
-
-	const layers = get(layersStore);
-
-	const mapVisibility = map.getLayoutProperty(layers[index].layerId, 'visibility');
-	if (mapVisibility === 'visible') {
-		map.setLayoutProperty(layers[index].layerId, 'visibility', 'none');
-		layers[index].isVisible = false;
-	} else {
-		map.setLayoutProperty(layers[index].layerId, 'visibility', 'visible');
-		layers[index].isVisible = true;
-	}
-
-	layersStore.set(layers);
-	updateMapInteraction(map);
-};
-
 export const duplicateLayer = (map: Map, index: number) => {
 	if (!map || !get(layersStore)) return;
 

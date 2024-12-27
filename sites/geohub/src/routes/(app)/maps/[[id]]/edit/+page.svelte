@@ -2,7 +2,11 @@
 	import Map from '$components/pages/map/Map.svelte';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data = $bindable() }: Props = $props();
 </script>
 
-<Map bind:defaultStyle={data.config.DefaultMapStyle} />
+<Map defaultStyle={data.config.DefaultMapStyle} />

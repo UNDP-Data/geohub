@@ -369,7 +369,7 @@
 	<span class="is-size-6 has-text-centered mx-1">All conditions must be true</span>
 </div>
 
-<div style="margin:10px" class="is-divider" />
+<div style="margin:10px" class="is-divider"></div>
 <Wizard {initialStep}>
 	<Step num={1} let:nextStep>
 		<div class="wizard-button-container">
@@ -393,7 +393,7 @@
 				>
 					<span>View</span>
 					<span class="icon is-small">
-						<i class="fas fa-angle-down" aria-hidden="true" />
+						<i class="fas fa-angle-down" aria-hidden="true"></i>
 					</span>
 				</button>
 				<div class="dropdown-content" bind:this={tooltipContent}>
@@ -412,7 +412,7 @@
 								<div
 									class="is-divider is-danger m-4"
 									data-content={selectedCombiningOperator == 'all' ? 'AND' : 'OR'}
-								/>
+								></div>
 							{/if}
 						{/if}
 					{/each}
@@ -439,7 +439,7 @@
 				>
 					<span>&nbsp;Operator</span>
 					<span class="icon is-small">
-						<i class="fa fa-angles-right" />
+						<i class="fa fa-angles-right"></i>
 					</span>
 				</button>
 			{/if}
@@ -476,7 +476,7 @@
 				on:click={prevStep}
 				class="button is-small is-link has-text-weight-bold is-uppercase"
 			>
-				<i class="fa fa-angles-left" />&nbsp;Properties
+				<i class="fa fa-angles-left"></i>&nbsp;Properties
 			</button>
 			<button
 				on:click={() => {
@@ -488,7 +488,7 @@
 				Cancel
 			</button>
 		</div>
-		<div class="is-divider separator is-danger" data-content="Select an operator..." />
+		<div class="is-divider separator is-danger" data-content="Select an operator..."></div>
 		<div class="pb-3 px-3">
 			<OperationButtons
 				on:enableTags={handleEnableTags}
@@ -509,7 +509,7 @@
 				title="move back to operators"
 				class="button is-small is-link has-text-weight-bold is-uppercase"
 			>
-				<i class="fa fa-angles-left" /> &nbsp;Operators
+				<i class="fa fa-angles-left"></i> &nbsp;Operators
 			</button>
 			<button
 				on:click={() => {
@@ -522,7 +522,7 @@
 			</button>
 		</div>
 
-		<div class="is-divider separator is-danger" data-content="Select/input a value..." />
+		<div class="is-divider separator is-danger" data-content="Select/input a value..."></div>
 		<div class="pb-3 px-3">
 			<ValueInput
 				on:apply={() => {

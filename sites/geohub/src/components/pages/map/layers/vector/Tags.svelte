@@ -368,17 +368,17 @@
 					{/if}
 				</span>
 				{#if !disable}
-					<!-- svelte-ignore a11y-missing-attribute -->
-					<!-- svelte-ignore a11y-missing-content -->
+					<!-- svelte-ignore a11y_missing_attribute -->
 					<a
 						tabindex="0"
 						role="button"
+						aria-label="delete"
 						class="tag is-delete mb-0"
 						data-sveltekit-preload-code="off"
 						data-sveltekit-preload-data="off"
 						on:click={() => removeTag(i)}
 						on:keydown={handleEnterKey}
-					/>
+					></a>
 				{/if}
 			</div>
 		{/each}

@@ -22,9 +22,9 @@
 	>
 		<figure class="category image center is-64x64">
 			{#if category.icon.startsWith('fa')}
-				<i class="{category.icon} fa-4x" />
+				<i class="{category.icon} fa-4x"></i>
 			{:else if category.icon.startsWith('fi')}
-				<span class={category.icon} />
+				<span class={category.icon}></span>
 			{:else if category.icon.startsWith('sdg')}
 				<span class="icon is-large sdg-icon">
 					<i class={category.icon}></i>

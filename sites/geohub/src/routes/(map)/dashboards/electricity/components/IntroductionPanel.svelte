@@ -1,22 +1,24 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import { hrea } from '../stores';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		dashboardSelections: {
+			show: boolean;
+			mapIcon: string;
+			mapIconAlt: string;
+			text: string;
+		}[];
+		onclick: () => void;
+	}
 
-	export let dashboardSelections: {
-		show: boolean;
-		mapIcon: string;
-		mapIconAlt: string;
-		text: string;
-	}[];
+	let { dashboardSelections = $bindable(), onclick = () => {} }: Props = $props();
 	const hideIntro = () => {
-		dispatch('click');
+		onclick();
 	};
 
-	$: disabled = !($hrea?.length > 0);
+	let disabled = $derived(!($hrea?.length > 0));
 
-	let showDialog = false;
+	let showDialog = $state(false);
 	const modalHandler = () => {
 		showDialog = !showDialog;
 	};
@@ -42,25 +44,25 @@
 
 <button
 	class="button is-link is-uppercase has-text-weight-bold {disabled ? 'is-loading' : ''}"
-	on:click={modalHandler}
+	onclick={modalHandler}
 	>Start exploring
 </button>
 
 <div class="modal {showDialog ? 'is-active' : ''}">
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-	<div class="modal-background" role="dialog" on:click={modalHandler}></div>
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+	<div class="modal-background" role="dialog" onclick={modalHandler}></div>
 	<div class="modal-content has-background-white p-4">
 		<div class="is-flex is-justify-content-space-between is-align-items-flex-end">
 			<p>What do you want to explore?</p>
-			<button class="delete is-white is-large mb-4" aria-label="close" on:click={modalHandler}
+			<button class="delete is-white is-large mb-4" aria-label="close" onclick={modalHandler}
 			></button>
 		</div>
 
 		{#each dashboardSelections as dbs}
 			<button
 				class="a-reset a-box p-4 is-flex is-flex-wrap-wrap is-justify-content-space-between is-align-items-center my-4"
-				on:click={() => {
+				onclick={() => {
 					dbs.show = true;
 					hideIntro();
 				}}

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import { clickOutside } from 'svelte-use-click-outside';
 
 	interface Item {
@@ -7,28 +6,37 @@
 		value: string;
 	}
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		items: Item[];
+		selectedItem?: Item | null;
+		select?: (item: Item | null) => void;
+	}
 
-	export let items: Item[];
-	export let selectedItem = null;
+	let {
+		items,
+		selectedItem = $bindable(null),
+		select = (item) => {
+			console.log(item);
+		}
+	}: Props = $props();
 
-	let showResults = false;
-	let inputValue = '';
-	$: filteredItemResults = items.filter((i) =>
-		i.label.toLowerCase().includes(inputValue.toLowerCase())
+	let showResults = $state(false);
+	let inputValue = $state('');
+	let filteredItemResults = $derived(
+		items.filter((i) => i.label.toLowerCase().includes(inputValue.toLowerCase()))
 	);
 
 	const handleItemClick = (item: Item) => {
 		selectedItem = item;
 		inputValue = item.label;
 		showResults = false;
-		dispatch('select', item);
+		select(item);
 	};
 
 	const handleClear = () => {
 		inputValue = '';
 		selectedItem = null;
-		dispatch('select', null);
+		select(null);
 	};
 </script>
 
@@ -41,7 +49,7 @@
 				placeholder="Select a country..."
 				use:clickOutside={() => (showResults = false)}
 				bind:value={inputValue}
-				on:focusin={() => (showResults = true)}
+				onfocusin={() => (showResults = true)}
 			/>
 			<div class="icon is-small is-left">
 				<i class="fa fa-search"></i>
@@ -49,7 +57,8 @@
 			<button
 				class="icon is-small is-right"
 				style="pointer-events: all; cursor: pointer"
-				on:click={handleClear}
+				onclick={handleClear}
+				aria-label="close"
 			>
 				<i class="fa-solid fa-xmark"></i>
 			</button>
@@ -63,7 +72,7 @@
 					<button
 						class="dropdown-item"
 						class:is-active={selectedItem?.value === item.value}
-						on:click={() => handleItemClick(item)}
+						onclick={() => handleItemClick(item)}
 					>
 						{item.label}
 					</button>

@@ -1,24 +1,25 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import DefaultStyleEditor from '$components/pages/data/datasets/DefaultStyleEditor.svelte';
-	import type { DatasetFeature } from '$lib/types';
 	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
 
-	let feature: DatasetFeature = data.feature;
+	let { data }: Props = $props();
 
-	let breadcrumbs: BreadcrumbPage[] = [
+	let breadcrumbs: BreadcrumbPage[] = $state([
 		{ title: 'home', url: '/' },
 		{ title: 'datasets', url: '/data' },
-		{ title: feature.properties.name, url: `/data/${feature.properties.id}` },
-		{ title: 'edit default appearance', url: $page.url.href }
-	];
+		{ title: data.feature.properties.name as string, url: `/data/${data.feature.properties.id}` },
+		{ title: 'edit default appearance', url: page.url.href }
+	]);
 </script>
 
 <HeroHeader title="Edit default appearance" bind:breadcrumbs />
 
 <div class="m-6">
-	<DefaultStyleEditor bind:feature />
+	<DefaultStyleEditor feature={data.feature} />
 </div>

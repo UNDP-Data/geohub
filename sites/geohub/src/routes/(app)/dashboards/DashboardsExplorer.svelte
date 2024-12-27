@@ -2,7 +2,7 @@
 	import { browser } from '$app/environment';
 	import { FluidCarousel, type CarouselContent } from '@undp-data/svelte-undp-design';
 
-	let contents: CarouselContent[] = [
+	let contents: CarouselContent[] = $state([
 		{
 			tag: 'Dashboard',
 			imageUrl: '/assets/electricity-snapshot.webp',
@@ -31,7 +31,7 @@
 			linkName: 'Open dashboard',
 			linkUrl: '/dashboards/zanzibar'
 		}
-	];
+	]);
 </script>
 
 {#if browser}

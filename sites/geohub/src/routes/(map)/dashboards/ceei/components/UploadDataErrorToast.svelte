@@ -1,5 +1,9 @@
 <script lang="ts">
-	export let dataErrors: { index: number; error }[];
+	interface Props {
+		dataErrors: { index: number; error }[];
+	}
+
+	let { dataErrors }: Props = $props();
 </script>
 
 <p>Errors were found while parsing your file</p>

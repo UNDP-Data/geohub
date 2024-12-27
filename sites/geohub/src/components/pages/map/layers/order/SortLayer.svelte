@@ -77,7 +77,7 @@
 
 <div class="layer-container" style="cursor:'grab'};">
 	<span class="draggable-icon" use:tippyTooltip={{ content: 'Drag to change order' }}>
-		<i class="fa-solid fa-grip-vertical" />
+		<i class="fa-solid fa-grip-vertical"></i>
 	</span>
 	<div class="layer-name">
 		{layerTitle}
@@ -95,7 +95,7 @@
 				on:click={moveBefore}
 				on:keydown={handleKeydownMoveBefore}
 			>
-				<i class="fa-solid fa-sort-up" />
+				<i class="fa-solid fa-sort-up"></i>
 			</span>
 		{/if}
 		{#if !isLastLayer}
@@ -107,7 +107,7 @@
 				on:click={moveAfter}
 				on:keydown={handleKeydownmoveAfter}
 			>
-				<i class="fa-solid fa-sort-down" />
+				<i class="fa-solid fa-sort-down"></i>
 			</span>
 		{/if}
 	</div>

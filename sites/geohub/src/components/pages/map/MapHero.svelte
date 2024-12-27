@@ -71,4 +71,4 @@
 
 <svelte:window bind:innerHeight />
 
-<div bind:this={container} class="map" style="height: {mapHeight}px; width: {width};" />
+<div bind:this={container} class="map" style="height: {mapHeight}px; width: {width};"></div>

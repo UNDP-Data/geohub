@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { MapStyles } from '$lib/config/AppConfig';
 	import type { DatasetFeatureCollection } from '$lib/types';
-	import { FieldControl, clean, handleEnterKey } from '@undp-data/svelte-undp-components';
+	import { FieldControl, clean, handleEnterKey, loadMap } from '@undp-data/svelte-undp-components';
 	import { Checkbox, CtaLink } from '@undp-data/svelte-undp-design';
 	import { Map, NavigationControl, Popup, type MapGeoJSONFeature } from 'maplibre-gl';
 	import { onMount } from 'svelte';
@@ -69,9 +69,10 @@
 			.addTo(map);
 	};
 
-	const addDatasetsToMap = () => {
+	const addDatasetsToMap = async () => {
 		if (!map) return;
-		if (!map.loaded()) return;
+		if (!datasets) return;
+		await loadMap(map);
 		if (map.getSource(mapSourceId)) {
 			const layers = map.getStyle().layers.filter((l) => {
 				return l['source'] === mapSourceId;
@@ -158,7 +159,7 @@
 <svelte:window bind:innerHeight />
 
 <div class="map-viewer" style="height: {mapHeight}px;">
-	<div bind:this={mapContainer} class="map" />
+	<div bind:this={mapContainer} class="map"></div>
 	<div class="overlay has-background-white p-2">
 		<Checkbox label="Hide global/satellite datasets from the map" bind:checked={hideGlobal} />
 	</div>
@@ -230,14 +231,14 @@
 			top: 5px;
 			left: 5px;
 		}
+	}
 
-		.popup {
-			.description {
-				overflow: hidden;
-				display: -webkit-box;
-				-webkit-box-orient: vertical;
-				-webkit-line-clamp: 3;
-			}
+	.popup {
+		.description {
+			overflow: hidden;
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 3;
 		}
 	}
 </style>

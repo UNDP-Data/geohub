@@ -1,10 +1,9 @@
-import { CGAZ_SOURCE_ID } from '@undp-data/cgaz-admin-tool';
 import { isEqual } from 'lodash-es';
 import type { StyleSpecification } from 'maplibre-gl';
 
 const deleteAdminSources = (style: StyleSpecification) => {
 	const copied: StyleSpecification = JSON.parse(JSON.stringify(style));
-	const IGNORE_SOURCE_IDS = [CGAZ_SOURCE_ID, 'full-geom'];
+	const IGNORE_SOURCE_IDS = ['cgaz', 'full-geom'];
 	copied.layers = [
 		...copied.layers.filter((l) => !('source' in l && IGNORE_SOURCE_IDS.includes(l.source)))
 	];

@@ -57,7 +57,7 @@
 						>
 							{#if currentSelectedOperation === operation.value}
 								<span class="icon">
-									<i class="fa-solid fa-check" />
+									<i class="fa-solid fa-check"></i>
 								</span>
 							{/if}
 							{operation.label}

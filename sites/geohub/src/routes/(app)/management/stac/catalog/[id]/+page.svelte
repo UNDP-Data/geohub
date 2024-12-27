@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { ALGORITHM_TAG_KEY } from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
@@ -31,26 +31,30 @@
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
-	let stac = data.stac;
+	interface Props {
+		data: PageData;
+	}
 
-	let isProcessing = false;
+	let { data }: Props = $props();
+	let stac = $state(data.stac);
+
+	let isProcessing = $state(false);
 	let datasetId = data.datasetId;
-	let isRegistered = data.isRegistered;
+	let isRegistered = $state(data.isRegistered);
 	let dataset: DatasetFeature = data.dataset;
 
-	let showRegisterDialog = false;
-	let breadcrumbSelected: StacCatalogBreadcrumb;
-	let accessLevel: AccessLevel = AccessLevel.PUBLIC;
+	let showRegisterDialog = $state(false);
+	let breadcrumbSelected: StacCatalogBreadcrumb | undefined = $state();
+	let accessLevel: AccessLevel = $state(AccessLevel.PUBLIC);
 
-	let algorithms: { [key: string]: RasterAlgorithm };
-	let selectedAlgorithmId = '';
-	let toolTags: Tag[] = [];
+	let algorithms: { [key: string]: RasterAlgorithm } | undefined = $state();
+	let selectedAlgorithmId = $state('');
+	let toolTags: Tag[] = $state([]);
 
 	const generateCatalogDatasetFeature = async () => {
 		const providers: Tag[] = stac.providers?.map((p) => {
 			return { key: 'provider', value: p };
-		});
+		}) as Tag[];
 
 		const res = await fetch(stac.url);
 		const catalog: StacCatalog = await res.json();
@@ -92,7 +96,8 @@
 	};
 
 	const generateCollectionDatasetFeature = async () => {
-		const collectionUrl = breadcrumbSelected.url ?? breadcrumbSelected.dataUrl;
+		const collectionUrl = breadcrumbSelected?.url ?? breadcrumbSelected?.dataUrl;
+		if (!collectionUrl) return;
 		const res = await fetch(collectionUrl);
 		if (!res.ok) {
 			toast.push(`${res.status}: ${res.statusText}`);
@@ -102,7 +107,7 @@
 
 		const providers: Tag[] = collection.providers?.map((p) => {
 			return { key: 'provider', value: p.name };
-		});
+		}) as Tag[];
 
 		const bbox = collection.extent.spatial.bbox[0];
 		const feature: DatasetFeature = {
@@ -141,7 +146,8 @@
 		return feature;
 	};
 
-	const handleRegister = async (bc: StacCatalogBreadcrumb) => {
+	const handleRegister = async (bc?: StacCatalogBreadcrumb) => {
+		if (!bc) return;
 		isProcessing = true;
 		try {
 			const feature =
@@ -151,7 +157,7 @@
 
 			const formData = new FormData();
 			formData.append('feature', JSON.stringify(feature));
-			const res = await fetch(`${$page.url.pathname}?/register`, {
+			const res = await fetch(`${page.url.pathname}?/register`, {
 				method: 'POST',
 				body: formData
 			});
@@ -202,7 +208,7 @@
 		};
 	}) => {
 		const mapUrl = await addDataToLocalStorage(
-			$page.url,
+			page.url,
 			(layers: Layer[], style: StyleSpecification, styleId: string) => {
 				let dataArray = e.detail.layers;
 
@@ -229,12 +235,12 @@
 		goto(mapUrl.url, { invalidateAll: true });
 	};
 
-	let breadcrumbs: BreadcrumbPage[] = [
+	let breadcrumbs: BreadcrumbPage[] = $state([
 		{ title: 'home', url: '/' },
 		{ title: 'management', url: '/management' },
 		{ title: 'stac', url: '/management/stac' },
-		{ title: stac.name, url: $page.url.href }
-	];
+		{ title: stac.name, url: page.url.href }
+	]);
 
 	const handleBreadcrumbSelected = async (e) => {
 		const bc: StacCatalogBreadcrumb = e.detail;
@@ -254,7 +260,7 @@
 		}
 		if (dataset) {
 			accessLevel = dataset.properties.access_level;
-			toolTags = dataset.properties.tags.filter((t) => t.key === ALGORITHM_TAG_KEY);
+			toolTags = dataset.properties.tags?.filter((t) => t.key === ALGORITHM_TAG_KEY) as Tag[];
 		} else {
 			accessLevel = AccessLevel.PUBLIC;
 			toolTags = [];
@@ -288,7 +294,7 @@
 					? 'is-loading'
 					: ''} "
 				disabled={isProcessing}
-				on:click={() => {
+				onclick={() => {
 					showRegisterDialog = true;
 				}}
 			>
@@ -305,7 +311,7 @@
 						? 'is-loading'
 						: ''} "
 					disabled={isProcessing}
-					on:click={() => {
+					onclick={() => {
 						handleDelete();
 					}}
 				>
@@ -323,74 +329,83 @@
 </section>
 
 <ModalTemplate title={isRegistered ? 'Edit' : 'Register'} bind:show={showRegisterDialog}>
-	<div slot="content">
-		<FieldControl title="Access level" showHelp={false} fontWeight="bold">
-			<div slot="control">
-				<AccessLevelSwitcher bind:accessLevel />
-			</div>
-		</FieldControl>
-		{#if breadcrumbSelected?.type === 'Collection'}
-			<FieldControl title="Tools" showHelp={false} fontWeight="bold">
-				<div slot="control">
-					{#if algorithms}
-						<div class="is-flex">
-							<div class="select is-fullwidth">
-								<select bind:value={selectedAlgorithmId}>
-									<option value="">Select a tool</option>
-									{#each Object.keys(algorithms) as id}
-										{#if toolTags.findIndex((t) => t.value === id) === -1}
-											<option value={id}>{algorithms[id].title}</option>
-										{/if}
-									{/each}
-								</select>
-							</div>
-							<button
-								type="button"
-								class="button is-link ml-2"
-								disabled={selectedAlgorithmId === ''}
-								on:click={() => {
-									toolTags = [
-										...toolTags,
-										{
-											key: ALGORITHM_TAG_KEY,
-											value: selectedAlgorithmId
-										}
-									];
-								}}>Add</button
-							>
-						</div>
-						<div class="tags my-2">
-							{#each toolTags as tag}
-								<div class="tags has-addons m-1">
-									<span class="tag is-link">{tag.value}</span>
-									<button
-										class="tag is-delete"
-										on:click={() => {
-											toolTags = toolTags.filter((t) => t.value !== tag.value);
-										}}
-									></button>
-								</div>
-							{/each}
-						</div>
-					{/if}
-				</div>
+	{#snippet content()}
+		<div>
+			<FieldControl title="Access level" showHelp={false} fontWeight="bold">
+				{#snippet control()}
+					<div>
+						<AccessLevelSwitcher bind:accessLevel />
+					</div>
+				{/snippet}
 			</FieldControl>
-		{/if}
-	</div>
-	<div slot="buttons">
-		<button
-			class="button is-primary is-upppercase has-text-weight-bold {isProcessing
-				? 'is-loading'
-				: ''}"
-			on:click={() => {
-				handleRegister(breadcrumbSelected);
-			}}
-			disabled={isProcessing}
-			type="button"
-		>
-			{isRegistered ? 'Update' : 'Register'}
-		</button>
-	</div>
+			{#if breadcrumbSelected?.type === 'Collection'}
+				<FieldControl title="Tools" showHelp={false} fontWeight="bold">
+					{#snippet control()}
+						<div>
+							{#if algorithms}
+								<div class="is-flex">
+									<div class="select is-fullwidth">
+										<select bind:value={selectedAlgorithmId}>
+											<option value="">Select a tool</option>
+											{#each Object.keys(algorithms) as id}
+												{#if toolTags.findIndex((t) => t.value === id) === -1}
+													<option value={id}>{algorithms[id].title}</option>
+												{/if}
+											{/each}
+										</select>
+									</div>
+									<button
+										type="button"
+										class="button is-link ml-2"
+										disabled={selectedAlgorithmId === ''}
+										onclick={() => {
+											toolTags = [
+												...toolTags,
+												{
+													key: ALGORITHM_TAG_KEY,
+													value: selectedAlgorithmId
+												}
+											];
+										}}>Add</button
+									>
+								</div>
+								<div class="tags my-2">
+									{#each toolTags as tag}
+										<div class="tags has-addons m-1">
+											<span class="tag is-link">{tag.value}</span>
+											<button
+												class="tag is-delete"
+												onclick={() => {
+													toolTags = toolTags.filter((t) => t.value !== tag.value);
+												}}
+												aria-label="delete"
+											></button>
+										</div>
+									{/each}
+								</div>
+							{/if}
+						</div>
+					{/snippet}
+				</FieldControl>
+			{/if}
+		</div>
+	{/snippet}
+	{#snippet buttons()}
+		<div>
+			<button
+				class="button is-primary is-upppercase has-text-weight-bold {isProcessing
+					? 'is-loading'
+					: ''}"
+				onclick={() => {
+					handleRegister(breadcrumbSelected);
+				}}
+				disabled={isProcessing}
+				type="button"
+			>
+				{isRegistered ? 'Update' : 'Register'}
+			</button>
+		</div>
+	{/snippet}
 </ModalTemplate>
 
 <SvelteToast />

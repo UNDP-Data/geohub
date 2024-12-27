@@ -1,11 +1,9 @@
 import type { PageServerLoad } from './$types';
-import type { IngestingDataset } from '$lib/types';
-import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import { WebPubSubServiceClient } from '@azure/web-pubsub';
 import { env } from '$env/dynamic/private';
 
 export const load: PageServerLoad = async (event) => {
-	const { url, parent, depends } = event;
+	const { parent } = event;
 	const { session } = await parent();
 
 	const wss = {
@@ -21,37 +19,12 @@ export const load: PageServerLoad = async (event) => {
 		wss.url = token.url;
 	}
 
-	const parentData = await parent();
-	const config: UserConfig = parentData.config;
-
-	const ingestingsortby =
-		url.searchParams.get('ingestingsortby') ?? config.DataPageIngestingSortingColumn;
-	const ingestingsortorder =
-		url.searchParams.get('ingestingsortorder') ?? config.DataPageIngestingSortingOrder;
-
-	depends('data:ingestingDatasets');
-
 	const title = 'Data | GeoHub';
 	const content = 'Data Portal';
 
 	return {
 		title,
 		content,
-		wss,
-		ingestingDatasets: session
-			? await getIngestingDatasets(event.fetch, ingestingsortby, ingestingsortorder)
-			: undefined
+		wss
 	};
-};
-
-const getIngestingDatasets = async (
-	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
-	sortby: string,
-	sortorder: string
-) => {
-	const resIngesting = await fetch(
-		`/api/datasets/ingesting?sortby=${sortby}&sortorder=${sortorder}`
-	);
-	const ingestingDatasets: IngestingDataset[] = await resIngesting.json();
-	return ingestingDatasets;
 };

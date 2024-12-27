@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { getBase64EncodedUrl } from '$lib/helper';
 	import { LineChart, ScaleTypes, type LineChartOptions } from '@carbon/charts-svelte';
 	import '@carbon/charts-svelte/styles.css';
-	import { Notification, type SegmentButton } from '@undp-data/svelte-undp-components';
-	import { format } from 'd3-format';
+	import { Notification } from '@undp-data/svelte-undp-components';
 	import { getContext, onMount } from 'svelte';
 	import { admin, hrea, map } from '../stores';
 	import {
@@ -16,14 +15,12 @@
 		ELECTRICITY_DATATYPE_CONTEXT_KEY
 	);
 
-	let minYear = electricityDataType[0];
-	let maxYear = electricityDataType[1];
+	let minYear = $state(electricityDataType[0]);
+	let maxYear = $state(electricityDataType[1]);
 
-	const titilerUrl = $page.data.titilerUrl;
+	const titilerUrl = page.data.titilerUrl;
 
 	const HREA_ID = 'HREA';
-	const HOVER = 'hover';
-	const CLICK = 'click';
 
 	const HREA_NODATA = 254;
 
@@ -73,20 +70,15 @@
 		},
 		height: '310px'
 	};
-	const interactChoices: SegmentButton[] = [{ value: CLICK, title: CLICK }];
 
-	let interactSelected = interactChoices[0].value;
 	let controller = new AbortController();
-	let adminBarValues = [];
-	let pointBarValues = [];
-	let carbonChartData = [];
-	let adminLocation = '';
-	let pointLocation = '';
+	let adminBarValues: number[] = [];
+	let pointBarValues: number[] = [];
+	let carbonChartData = $state([]);
+	let pointLocation = $state('');
 
-	$: interactSelected, loadInteraction();
 	const loadInteraction = () => {
 		if (!$map) return;
-		if (interactSelected === HOVER) adminInteraction();
 		else pointInteraction();
 	};
 
@@ -94,14 +86,6 @@
 		const dataset = $hrea?.find((ds) => ds.year === y);
 		const url: string = dataset?.url ?? '';
 		return getBase64EncodedUrl(url);
-	};
-
-	const adminInteraction = () => {
-		adminBarValues = [];
-		carbonChartData = [];
-		adminLocation = '';
-		$map.off('click', onPointClick);
-		$map.on('mousemove', renderAdminCharts);
 	};
 
 	const pointInteraction = () => {
@@ -163,9 +147,6 @@
 	};
 
 	const renderAdminCharts = () => {
-		adminLocation = [$admin.adm2_name, $admin.adm1_name, $admin.adm0_name]
-			.filter(Boolean)
-			.join(', ');
 		adminBarValues = [];
 		carbonChartData = [];
 		for (let i = maxYear; i >= minYear; i--) {
@@ -202,21 +183,10 @@
 </script>
 
 {#if carbonChartData?.length > 0}
-	{#if interactSelected === HOVER}
-		<br />
-		<div class="title-text">Population fully electrified in</div>
-		<div class="title-text stats-location">{adminLocation}</div>
-		<LineChart data={carbonChartData} options={carbonChartOptions} style="height: 310px;" />
-		<div class="subtitle-text">
-			Population in 2022: {format('.3~s')($admin.pop).replace(/NaN.*/, '').replace('G', 'B')}
-		</div>
-	{/if}
-	{#if interactSelected === CLICK}
-		<br />
-		<div class="title-text">Likelihood of full electrification at</div>
-		<div class="title-text stats-location">{pointLocation}</div>
-		<LineChart data={carbonChartData} options={carbonChartOptions} style="height: 310px;" />
-	{/if}
+	<br />
+	<div class="title-text">Likelihood of full electrification at</div>
+	<div class="title-text stats-location">{pointLocation}</div>
+	<LineChart data={carbonChartData} options={carbonChartOptions} style="height: 310px;" />
 {:else}
 	<div class="mt-2">
 		<Notification type="info" showCloseButton={false}
@@ -233,12 +203,6 @@
 	.title-text {
 		font-size: 14px;
 		color: rgb(1, 1, 1, 0.6);
-		font-weight: normal;
-	}
-
-	.subtitle-text {
-		font-size: 14px;
-		color: #808080;
 		font-weight: normal;
 	}
 </style>

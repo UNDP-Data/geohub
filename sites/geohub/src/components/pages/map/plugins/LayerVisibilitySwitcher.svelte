@@ -114,7 +114,7 @@
 	disabled={isLoading}
 >
 	{#if icon.startsWith('fa')}
-		<i class="{icon} fa-xl align-center {isVisible ? 'has-text-success' : ''}" />
+		<i class="{icon} fa-xl align-center {isVisible ? 'has-text-success' : ''}"></i>
 	{:else}
 		<span
 			class="material-symbols-outlined material-icon align-center {isVisible

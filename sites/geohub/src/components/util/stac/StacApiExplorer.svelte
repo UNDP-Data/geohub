@@ -62,7 +62,7 @@
 	export let center = [0, 0];
 	export let zoom = 0;
 	export let height = 0;
-	export let selectedTool: RasterAlgorithm;
+	export let selectedTool: RasterAlgorithm | string = '';
 	export let dataset: DatasetFeature;
 
 	let innerHeight: number;
@@ -1087,10 +1087,6 @@
 	.assets-explorer {
 		position: relative;
 		width: 100%;
-
-		:global() {
-			--date-input-width: 115px;
-		}
 
 		.map {
 			position: relative;

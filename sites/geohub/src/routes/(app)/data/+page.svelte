@@ -18,15 +18,19 @@
 	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
 
-	let datasets: DatasetFeatureCollection | undefined;
-	let ingestingDatasets: IngestingDataset[] | undefined = data.ingestingDatasets;
+	let { data }: Props = $props();
 
-	let breadcrumbs: BreadcrumbPage[] = [
+	let datasets: DatasetFeatureCollection | undefined = $state();
+	let ingestingDatasets: IngestingDataset[] | undefined = $state();
+
+	let breadcrumbs: BreadcrumbPage[] = $state([
 		{ title: 'home', url: '/' },
 		{ title: 'datasets', url: $page.url.href }
-	];
+	]);
 
 	// setup AzureWebPubSubClient instance and set it in context
 	if (data.session && data.wss.url && data.wss.group) {
@@ -34,31 +38,30 @@
 		setContext(data.wss.group, wpsClient);
 	}
 
+	// svelte-ignore non_reactive_update
 	enum TabNames {
 		DATA = 'Datasets',
 		MYDATA = 'My data',
 		UPLOADED = 'Uploaded data'
 	}
 
-	let tabs: Tab[] = [];
+	let tabs: Tab[] = $state([]);
 
 	const hash = $page.url.hash;
 
-	let activeTab: string;
-	$: showMydata = activeTab === '#mydata';
+	let activeTab: string = $state('');
 
-	let isDialogOpen = false;
-	let externalUrl = '';
+	let isDialogOpen = $state(false);
+	let externalUrl = $state('');
 
-	let isValidExternalUrl = false;
-	$: externalUrl, isValidUrl();
+	let isValidExternalUrl = $state(false);
 
-	let uploadButton: MenuButtonType = {
+	let uploadButton: MenuButtonType = $state({
 		title: 'Data upload',
 		href: '/data/upload',
 		tooltip: 'Please upload your datasets to GeoHub!'
-	};
-	let uploadSubButtons: MenuSubButtonType[];
+	});
+	let uploadSubButtons: MenuSubButtonType[] | undefined = $state();
 
 	const isValidUrl = () => {
 		if (!externalUrl) {
@@ -151,8 +154,12 @@
 		updateCounters();
 	});
 
-	$: datasets, updateCounters();
-	$: ingestingDatasets, updateCounters();
+	let showMydata = $derived(activeTab === '#mydata');
+
+	$effect(() => {
+		isValidUrl();
+		updateCounters();
+	});
 </script>
 
 <HeroHeader title="Datasets" bind:breadcrumbs bind:tabs bind:activeTab />
@@ -161,27 +168,31 @@
 	<div class="pb-2 {data.session ? 'pt-4' : 'pt-6'}">
 		<div hidden={getActiveTabLabel(activeTab) === TabNames.UPLOADED}>
 			{#key showMydata}
-				<PublishedDatasets bind:datasets bind:showMyData={showMydata}>
-					<div slot="button" class="pl-1">
-						<MenuButton
-							color="primary"
-							bind:button={uploadButton}
-							bind:subButtons={uploadSubButtons}
-						/>
-					</div>
+				<PublishedDatasets bind:datasets showMyData={showMydata}>
+					{#snippet button()}
+						<div class="pl-1">
+							<MenuButton
+								color="primary"
+								bind:button={uploadButton}
+								bind:subButtons={uploadSubButtons}
+							/>
+						</div>
+					{/snippet}
 				</PublishedDatasets>
 			{/key}
 		</div>
 		{#if data.session}
 			<div hidden={getActiveTabLabel(activeTab) !== TabNames.UPLOADED}>
 				<IngestingDatasets bind:datasets={ingestingDatasets}>
-					<div slot="button">
-						<MenuButton
-							color="primary"
-							bind:button={uploadButton}
-							bind:subButtons={uploadSubButtons}
-						/>
-					</div>
+					{#snippet button()}
+						<div>
+							<MenuButton
+								color="primary"
+								bind:button={uploadButton}
+								bind:subButtons={uploadSubButtons}
+							/>
+						</div>
+					{/snippet}
 				</IngestingDatasets>
 			</div>
 		{/if}
@@ -189,59 +200,67 @@
 </div>
 
 <ModalTemplate title="Register remote file" bind:show={isDialogOpen} showClose={true}>
-	<div slot="content">
-		<FieldControl
-			title="Remote file URL"
-			isFirstCharCapitalized={false}
-			showHelpPopup={false}
-			showHelp={true}
-		>
-			<div slot="help">
-				<div class="content">
-					<p>
-						Paste a URL of cloud optimized file either COG or PMTiles from a remote data source.
-						Currently, GeoHub supports:
-					</p>
+	{#snippet content()}
+		<div>
+			<FieldControl
+				title="Remote file URL"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+				showHelp={true}
+			>
+				{#snippet help()}
+					<div>
+						<div class="content">
+							<p>
+								Paste a URL of cloud optimized file either COG or PMTiles from a remote data source.
+								Currently, GeoHub supports:
+							</p>
 
-					<ul>
-						<li><b>Cloud Optimized GeoTiff (COG)</b>: Raster dataset</li>
-						<li><b>PMTiles</b>: Vector Tiles dataset</li>
-					</ul>
+							<ul>
+								<li><b>Cloud Optimized GeoTiff (COG)</b>: Raster dataset</li>
+								<li><b>PMTiles</b>: Vector Tiles dataset</li>
+							</ul>
 
-					<p>A remote URL must be a public data source.</p>
+							<p>A remote URL must be a public data source.</p>
 
-					<p>
-						<b>PMTiles</b> must be <b>pbf</b> format and includes <b>vector_layers</b> and
-						<b>tilestats</b>
-						properties in metadata since GeoHub requires statistics to generate GUI. Raster format in
-						PMTiles is not supported.
-					</p>
-				</div>
-			</div>
-			<div slot="control">
-				<input
-					class="input"
-					type="text"
-					placeholder="paste a remote file URL"
-					bind:value={externalUrl}
-				/>
-			</div>
-		</FieldControl>
-	</div>
-	<div class="buttons" slot="buttons">
-		<button
-			class="button is-primary is-uppercase has-text-weight-bold"
-			disabled={!isValidExternalUrl}
-			on:click={() => {
-				let dataUrl = externalUrl;
-				if (dataUrl.indexOf('.pmtiles') !== -1) {
-					dataUrl = `pmtiles://${dataUrl}`;
-				}
-				const editUrl = `/data/edit?url=${dataUrl}`;
-				goto(editUrl);
-			}}
-		>
-			Register
-		</button>
-	</div>
+							<p>
+								<b>PMTiles</b> must be <b>pbf</b> format and includes <b>vector_layers</b> and
+								<b>tilestats</b>
+								properties in metadata since GeoHub requires statistics to generate GUI. Raster format
+								in PMTiles is not supported.
+							</p>
+						</div>
+					</div>
+				{/snippet}
+				{#snippet control()}
+					<div>
+						<input
+							class="input"
+							type="text"
+							placeholder="paste a remote file URL"
+							bind:value={externalUrl}
+						/>
+					</div>
+				{/snippet}
+			</FieldControl>
+		</div>
+	{/snippet}
+	{#snippet buttons()}
+		<div class="buttons">
+			<button
+				class="button is-primary is-uppercase has-text-weight-bold"
+				disabled={!isValidExternalUrl}
+				onclick={() => {
+					let dataUrl = externalUrl;
+					if (dataUrl.indexOf('.pmtiles') !== -1) {
+						dataUrl = `pmtiles://${dataUrl}`;
+					}
+					const editUrl = `/data/edit?url=${dataUrl}`;
+					goto(editUrl);
+				}}
+			>
+				Register
+			</button>
+		</div>
+	{/snippet}
 </ModalTemplate>

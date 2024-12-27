@@ -40,6 +40,13 @@ const config = {
 		if (warningCodeToIgnore.includes(warning.code)) return;
 
 		defaultHandler(warning);
+	},
+
+	// this is required because CEEI code (layerHelper.ts) using svelte 4 component with new syntax
+	compilerOptions: {
+		compatibility: {
+			componentApi: 4
+		}
 	}
 };
 

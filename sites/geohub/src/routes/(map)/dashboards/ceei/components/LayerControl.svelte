@@ -11,37 +11,43 @@
 	import { MAPSTORE_CONTEXT_KEY, Slider, type MapStore } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { getContext } from 'svelte';
-	import type { Layer } from '../stores';
+	import { get } from 'svelte/store';
+	import { layers as layersStore, type Layer } from '../stores';
 	import {
 		applyDataSimulation,
 		deleteLayer,
 		downloadData,
 		duplicateLayer,
 		editLayerName,
-		toggleLayerVisibility,
 		updatePaintOfLayer,
 		uploadData
 	} from '../utils/layerHelper';
 
 	const mapStore: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerDetails: Layer;
-	export let index: number;
-
-	let showCustomizeDataModal = false;
-	let showSimulateModal = false;
-	let showEditLayerNameModal = false;
-	let showEditColorScaleModel = false;
-
-	let editLayerNameValue = layerDetails.name;
-	let groupCount = 10;
-	let colorMapName = 'rdylbu';
-	let colorGroups = chroma.scale(layerDetails.colorMap).colors(groupCount);
-	$: {
-		const isReverse = layerDetails.colorMap.indexOf('_r') !== -1;
-		colorGroups = chroma.scale(layerDetails.colorMap.replace('_r', '')).colors(groupCount);
-		if (isReverse) colorGroups.reverse();
+	interface Props {
+		layerDetails: Layer;
+		index: number;
 	}
+
+	let { layerDetails = $bindable(), index = $bindable() }: Props = $props();
+
+	let showCustomizeDataModal = $state(false);
+	let showSimulateModal = $state(false);
+	let showEditLayerNameModal = $state(false);
+	let showEditColorScaleModel = $state(false);
+
+	let editLayerNameValue = $state(layerDetails.name);
+	let groupCount = 10;
+	let colorMapName = $state('rdylbu');
+
+	const getColorGroups = () => {
+		const isReverse = layerDetails.colorMap.indexOf('_r') !== -1;
+		const colors = chroma.scale(layerDetails.colorMap.replace('_r', '')).colors(groupCount);
+		if (isReverse) colors.reverse();
+		return colors;
+	};
+	let colorGroups = $state(getColorGroups());
 
 	const openSimulateModal = () => {
 		showSimulateModal = true;
@@ -72,7 +78,7 @@
 
 	const tippyTooltip = initTooltipTippy();
 
-	let sliders = [
+	let sliders = $state([
 		{ id: 1, percentage: 7.1429, label: 'Solar Power Potential', locked: false },
 		{ id: 2, percentage: 7.1429, label: 'Wind Speed', locked: false },
 		{ id: 3, percentage: 7.1429, label: 'Geothermal Power Potential', locked: false },
@@ -102,13 +108,13 @@
 			label: 'Fossil Fuel Share on Energy Capacity and Generation',
 			locked: false
 		}
-	];
+	]);
 
-	let pillarSliders = [
+	let pillarSliders = $state([
 		{ id: 1, percentage: 28.57, label: 'Potential', locked: false },
 		{ id: 2, percentage: 50, label: 'Means and Resources', locked: false },
 		{ id: 3, percentage: 21.43, label: 'Urgent', locked: false }
-	];
+	]);
 
 	const pillarTotal = (ids) => {
 		let total = 0;
@@ -326,6 +332,24 @@
 				callback(index);
 			}
 		};
+
+	const toggleLayerVisibility = (index: number) => {
+		if (!$mapStore || !get(layersStore)) return true;
+
+		const layers = get(layersStore);
+
+		const mapVisibility = $mapStore.getLayoutProperty(layers[index].layerId, 'visibility');
+		if (mapVisibility === 'visible') {
+			$mapStore.setLayoutProperty(layers[index].layerId, 'visibility', 'none');
+			layers[index].isVisible = false;
+		} else {
+			$mapStore.setLayoutProperty(layers[index].layerId, 'visibility', 'visible');
+			layers[index].isVisible = true;
+		}
+
+		layersStore.set(layers);
+		layerDetails = layerDetails;
+	};
 </script>
 
 <div class="a-card is-flex is-flex-direction-column is-gap-1">
@@ -334,35 +358,35 @@
 		<div class="is-flex is-align-items-center is-gap-1">
 			<button
 				class="button menu-button px-0 py-0 is-flex is-align-items-center is-justify-content-center"
-				class:disabled={!layerDetails.isDataLoaded}
-				on:click={() => {
-					toggleLayerVisibility($mapStore, index);
+				onclick={() => {
+					toggleLayerVisibility(index);
 				}}
 				use:tippy={{ content: tooltipContent }}
 				use:tippyTooltip={{ content: 'Change the layer visibility' }}
 			>
 				{#if layerDetails.isVisible}
-					<i class="fa fa-eye" />
+					<i class="fa fa-eye"></i>
 				{:else}
-					<i class="fa fa-eye-slash" />
+					<i class="fa fa-eye-slash"></i>
 				{/if}
 			</button>
 			<div class="dropdown is-hoverable is-right">
 				<div class="dropdown-trigger">
 					<button
 						class="button menu-button px-0 py-0 is-flex is-align-items-center is-justify-content-center"
+						aria-label="menu"
 					>
-						<i class="fa fa-ellipsis" />
+						<i class="fa fa-ellipsis"></i>
 					</button>
 				</div>
 				<div class="dropdown-menu">
 					<div class="dropdown-content">
-						<!-- svelte-ignore a11y-missing-attribute -->
+						<!-- svelte-ignore a11y_missing_attribute -->
 						<a
 							role="button"
 							tabindex="0"
-							on:click={openEditLayerNameModal}
-							on:keydown={handleEnterKey}
+							onclick={openEditLayerNameModal}
+							onkeydown={handleEnterKey}
 							class="dropdown-item is-flex is-gap-2 is-align-items-center"
 							class:disabled={!layerDetails.isDataLoaded}
 						>
@@ -372,14 +396,14 @@
 								<p class="is-size-7">Changes the text shown in cards and popups</p>
 							</div>
 						</a>
-						<!-- svelte-ignore a11y-missing-attribute -->
+						<!-- svelte-ignore a11y_missing_attribute -->
 						<a
 							role="button"
 							tabindex="0"
-							on:click={() => {
+							onclick={() => {
 								duplicateLayer($mapStore, index);
 							}}
-							on:keydown={handleEnterKey}
+							onkeydown={handleEnterKey}
 							class="dropdown-item is-flex is-gap-2 is-align-items-center"
 							class:disabled={!layerDetails.isDataLoaded}
 						>
@@ -389,12 +413,12 @@
 								<p class="is-size-7">Create a copy of this layer with seperate data</p>
 							</div>
 						</a>
-						<!-- svelte-ignore a11y-missing-attribute -->
+						<!-- svelte-ignore a11y_missing_attribute -->
 						<a
 							role="button"
 							tabindex="0"
-							on:click={handleClicked(openEditColorScaleModel)}
-							on:keydown={handleKeydown(openEditColorScaleModel)}
+							onclick={handleClicked(openEditColorScaleModel)}
+							onkeydown={handleKeydown(openEditColorScaleModel)}
 							class="dropdown-item is-flex is-gap-2 is-align-items-center"
 							class:disabled={!layerDetails.isDataLoaded}
 						>
@@ -405,15 +429,15 @@
 							</div>
 						</a>
 						{#if index !== 0}
-							<!-- svelte-ignore a11y-missing-attribute -->
+							<!-- svelte-ignore a11y_missing_attribute -->
 							<a
 								role="button"
 								tabindex="0"
 								class="dropdown-item is-flex is-gap-2 is-align-items-center"
-								on:click={() => {
+								onclick={() => {
 									deleteLayer($mapStore, index);
 								}}
-								on:keydown={handleEnterKey}
+								onkeydown={handleEnterKey}
 								class:disabled={!layerDetails.isDataLoaded}
 							>
 								<i class="fa-solid fa-trash"></i>
@@ -459,217 +483,24 @@
 </div>
 
 <ModalTemplate title="Simulate" bind:show={showSimulateModal}>
-	<div slot="content" class="is-flex is-flex-direction-column is-gap-2">
-		<p class="is-flex-grow-1">Adjust indicator weights in the CEEI for automatic recalculation.</p>
-		<div class="is-flex is-flex-direction-row is-gap-2">
-			<div class="is-flex is-flex-direction-column is-gap-2">
-				<div style="background: #ededed; padding: 0 0 0 0;">
-					<div class="pillar-heading">
-						<div
-							class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
-						>
-							<div class="pillar-name">Potential</div>
-							<div class="pillar-value">{pillarSliders[0].percentage.toFixed(2)}%</div>
-						</div>
-						<div class="pillar-slider">
-							<Slider
-								values={[pillarSliders[0].percentage]}
-								min={0}
-								max={100}
-								step={0.01}
-								first="label"
-								last="label"
-								rest={false}
-								pips={false}
-								suffix="%"
-								formatter={(value) => value.toFixed(2)}
-								disabled={pillarSliders[0].locked}
-								on:change={(event) => {
-									let newValue = 0;
-									if (event?.detail?.values[0]) {
-										newValue = event?.detail?.values[0];
-									}
-									handlePillarSlider(1, newValue);
-								}}
-							/>
-						</div>
-					</div>
-					<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
-						{#each sliders as { id, percentage, label, locked }}
-							{#if [1, 2, 3, 4].includes(id)}
-								<div style="margin: auto;">
-									<div class="slider-field-sm">
-										<div class="label">{label}</div>
-										<div class="value">
-											{percentage.toFixed(2)}%
-
-											<button on:click={() => toggleLocked(id)}>
-												<span class="icon is-small">
-													{#if locked}
-														<i class="fa-solid fa-lock"></i>
-													{:else}
-														<i class="fa-solid fa-unlock"></i>
-													{/if}
-												</span>
-											</button>
-										</div>
-									</div>
-									<Slider
-										values={[percentage]}
-										min={0}
-										max={100}
-										step={0.01}
-										first="label"
-										last="label"
-										rest={false}
-										pips={false}
-										suffix="%"
-										formatter={(value) => value.toFixed(2)}
-										disabled={locked}
-										on:change={(event) => {
-											let newValue = 0;
-											if (event?.detail?.values[0]) {
-												newValue = event?.detail?.values[0];
-											}
-											handleSlider(id, newValue);
-										}}
-									/>
-								</div>
-							{/if}
-						{/each}
-					</div>
-				</div>
-
-				<div style="padding: 0 0 0 0;">
-					<div class="pillar-heading">
-						<div
-							class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
-						>
-							<div class="pillar-name">Urgent</div>
-							<div class="pillar-value">{pillarSliders[2].percentage.toFixed(2)}%</div>
-						</div>
-						<div class="pillar-slider">
-							<Slider
-								values={[pillarSliders[2].percentage]}
-								min={0}
-								max={100}
-								step={0.01}
-								first="label"
-								last="label"
-								rest={false}
-								pips={false}
-								suffix="%"
-								formatter={(value) => value.toFixed(2)}
-								disabled={pillarSliders[2].locked}
-								on:change={(event) => {
-									let newValue = 0;
-									if (event?.detail?.values[0]) {
-										newValue = event?.detail?.values[0];
-									}
-									handlePillarSlider(3, newValue);
-								}}
-							/>
-						</div>
-					</div>
-					<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
-						{#each sliders as { id, percentage, label, locked }}
-							{#if [12, 13, 14, 15].includes(id)}
-								<div style="margin: auto;">
-									<div class="slider-field-sm">
-										<div class="label">{label}</div>
-										<div class="value">
-											{percentage.toFixed(2)}%
-
-											<button on:click={() => toggleLocked(id)}>
-												<span class="icon is-small">
-													{#if locked}
-														<i class="fa-solid fa-lock"></i>
-													{:else}
-														<i class="fa-solid fa-unlock"></i>
-													{/if}
-												</span>
-											</button>
-										</div>
-									</div>
-									<Slider
-										values={[percentage]}
-										min={0}
-										max={100}
-										step={0.01}
-										first="label"
-										last="label"
-										rest={false}
-										pips={false}
-										suffix="%"
-										formatter={(value) => value.toFixed(2)}
-										disabled={locked}
-										on:change={(event) => {
-											let newValue = 0;
-											if (event?.detail?.values[0]) {
-												newValue = event?.detail?.values[0];
-											}
-											handleSlider(id, newValue);
-										}}
-									/>
-								</div>
-							{/if}
-						{/each}
-					</div>
-				</div>
-			</div>
-			<div style="background: #ededed; padding: 0 0 0 0;">
-				<div class="pillar-heading">
-					<div
-						class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
-					>
-						<div class="pillar-name">Means and Resources</div>
-						<div class="pillar-value">{pillarSliders[1].percentage.toFixed(2)}%</div>
-					</div>
-					<div class="pillar-slider">
-						<Slider
-							values={[pillarSliders[1].percentage]}
-							min={0}
-							max={100}
-							step={0.01}
-							first="label"
-							last="label"
-							rest={false}
-							pips={false}
-							suffix="%"
-							formatter={(value) => value.toFixed(2)}
-							disabled={pillarSliders[1].locked}
-							on:change={(event) => {
-								let newValue = 0;
-								if (event?.detail?.values[0]) {
-									newValue = event?.detail?.values[0];
-								}
-								handlePillarSlider(2, newValue);
-							}}
-						/>
-					</div>
-				</div>
-				<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
-					{#each sliders as { id, percentage, label, locked }}
-						{#if [5, 6, 7, 8, 9, 10, 11].includes(id)}
-							<div style="margin: auto;">
-								<div class="slider-field-sm">
-									<div class="label">{label}</div>
-									<div class="value">
-										{percentage.toFixed(2)}%
-
-										<button on:click={() => toggleLocked(id)}>
-											<span class="icon is-small">
-												{#if locked}
-													<i class="fa-solid fa-lock"></i>
-												{:else}
-													<i class="fa-solid fa-unlock"></i>
-												{/if}
-											</span>
-										</button>
-									</div>
-								</div>
+	{#snippet content()}
+		<div class="is-flex is-flex-direction-column is-gap-2">
+			<p class="is-flex-grow-1">
+				Adjust indicator weights in the CEEI for automatic recalculation.
+			</p>
+			<div class="is-flex is-flex-direction-row is-gap-2">
+				<div class="is-flex is-flex-direction-column is-gap-2">
+					<div style="background: #ededed; padding: 0 0 0 0;">
+						<div class="pillar-heading">
+							<div
+								class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
+							>
+								<div class="pillar-name">Potential</div>
+								<div class="pillar-value">{pillarSliders[0].percentage.toFixed(2)}%</div>
+							</div>
+							<div class="pillar-slider">
 								<Slider
-									values={[percentage]}
+									values={[pillarSliders[0].percentage]}
 									min={0}
 									max={100}
 									step={0.01}
@@ -679,103 +510,312 @@
 									pips={false}
 									suffix="%"
 									formatter={(value) => value.toFixed(2)}
-									disabled={locked}
+									disabled={pillarSliders[0].locked}
 									on:change={(event) => {
 										let newValue = 0;
 										if (event?.detail?.values[0]) {
 											newValue = event?.detail?.values[0];
 										}
-										handleSlider(id, newValue);
+										handlePillarSlider(1, newValue);
 									}}
 								/>
 							</div>
-						{/if}
-					{/each}
+						</div>
+						<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
+							{#each sliders as { id, percentage, label, locked }}
+								{#if [1, 2, 3, 4].includes(id)}
+									<div style="margin: auto;">
+										<div class="slider-field-sm">
+											<div class="label">{label}</div>
+											<div class="value">
+												{percentage.toFixed(2)}%
+
+												<button onclick={() => toggleLocked(id)}>
+													<span class="icon is-small">
+														{#if locked}
+															<i class="fa-solid fa-lock"></i>
+														{:else}
+															<i class="fa-solid fa-unlock"></i>
+														{/if}
+													</span>
+												</button>
+											</div>
+										</div>
+										<Slider
+											values={[percentage]}
+											min={0}
+											max={100}
+											step={0.01}
+											first="label"
+											last="label"
+											rest={false}
+											pips={false}
+											suffix="%"
+											formatter={(value) => value.toFixed(2)}
+											disabled={locked}
+											on:change={(event) => {
+												let newValue = 0;
+												if (event?.detail?.values[0]) {
+													newValue = event?.detail?.values[0];
+												}
+												handleSlider(id, newValue);
+											}}
+										/>
+									</div>
+								{/if}
+							{/each}
+						</div>
+					</div>
+
+					<div style="padding: 0 0 0 0;">
+						<div class="pillar-heading">
+							<div
+								class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
+							>
+								<div class="pillar-name">Urgent</div>
+								<div class="pillar-value">{pillarSliders[2].percentage.toFixed(2)}%</div>
+							</div>
+							<div class="pillar-slider">
+								<Slider
+									values={[pillarSliders[2].percentage]}
+									min={0}
+									max={100}
+									step={0.01}
+									first="label"
+									last="label"
+									rest={false}
+									pips={false}
+									suffix="%"
+									formatter={(value) => value.toFixed(2)}
+									disabled={pillarSliders[2].locked}
+									on:change={(event) => {
+										let newValue = 0;
+										if (event?.detail?.values[0]) {
+											newValue = event?.detail?.values[0];
+										}
+										handlePillarSlider(3, newValue);
+									}}
+								/>
+							</div>
+						</div>
+						<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
+							{#each sliders as { id, percentage, label, locked }}
+								{#if [12, 13, 14, 15].includes(id)}
+									<div style="margin: auto;">
+										<div class="slider-field-sm">
+											<div class="label">{label}</div>
+											<div class="value">
+												{percentage.toFixed(2)}%
+
+												<button onclick={() => toggleLocked(id)}>
+													<span class="icon is-small">
+														{#if locked}
+															<i class="fa-solid fa-lock"></i>
+														{:else}
+															<i class="fa-solid fa-unlock"></i>
+														{/if}
+													</span>
+												</button>
+											</div>
+										</div>
+										<Slider
+											values={[percentage]}
+											min={0}
+											max={100}
+											step={0.01}
+											first="label"
+											last="label"
+											rest={false}
+											pips={false}
+											suffix="%"
+											formatter={(value) => value.toFixed(2)}
+											disabled={locked}
+											on:change={(event) => {
+												let newValue = 0;
+												if (event?.detail?.values[0]) {
+													newValue = event?.detail?.values[0];
+												}
+												handleSlider(id, newValue);
+											}}
+										/>
+									</div>
+								{/if}
+							{/each}
+						</div>
+					</div>
+				</div>
+				<div style="background: #ededed; padding: 0 0 0 0;">
+					<div class="pillar-heading">
+						<div
+							class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
+						>
+							<div class="pillar-name">Means and Resources</div>
+							<div class="pillar-value">{pillarSliders[1].percentage.toFixed(2)}%</div>
+						</div>
+						<div class="pillar-slider">
+							<Slider
+								values={[pillarSliders[1].percentage]}
+								min={0}
+								max={100}
+								step={0.01}
+								first="label"
+								last="label"
+								rest={false}
+								pips={false}
+								suffix="%"
+								formatter={(value) => value.toFixed(2)}
+								disabled={pillarSliders[1].locked}
+								on:change={(event) => {
+									let newValue = 0;
+									if (event?.detail?.values[0]) {
+										newValue = event?.detail?.values[0];
+									}
+									handlePillarSlider(2, newValue);
+								}}
+							/>
+						</div>
+					</div>
+					<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
+						{#each sliders as { id, percentage, label, locked }}
+							{#if [5, 6, 7, 8, 9, 10, 11].includes(id)}
+								<div style="margin: auto;">
+									<div class="slider-field-sm">
+										<div class="label">{label}</div>
+										<div class="value">
+											{percentage.toFixed(2)}%
+
+											<button onclick={() => toggleLocked(id)}>
+												<span class="icon is-small">
+													{#if locked}
+														<i class="fa-solid fa-lock"></i>
+													{:else}
+														<i class="fa-solid fa-unlock"></i>
+													{/if}
+												</span>
+											</button>
+										</div>
+									</div>
+									<Slider
+										values={[percentage]}
+										min={0}
+										max={100}
+										step={0.01}
+										first="label"
+										last="label"
+										rest={false}
+										pips={false}
+										suffix="%"
+										formatter={(value) => value.toFixed(2)}
+										disabled={locked}
+										on:change={(event) => {
+											let newValue = 0;
+											if (event?.detail?.values[0]) {
+												newValue = event?.detail?.values[0];
+											}
+											handleSlider(id, newValue);
+										}}
+									/>
+								</div>
+							{/if}
+						{/each}
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div slot="buttons" style="display: flex;">
-		<Button
-			title="Reset"
-			isPrimary={true}
-			on:clicked={() => {
-				resetSliders();
-			}}
-		></Button>
-		<Button
-			title="Apply"
-			isPrimary={false}
-			on:clicked={() => {
-				applySimulation();
-				closeSimulateModal();
-			}}
-		></Button>
-	</div>
+	{/snippet}
+	{#snippet buttons()}
+		<div style="display: flex;">
+			<Button
+				title="Reset"
+				isPrimary={true}
+				on:clicked={() => {
+					resetSliders();
+				}}
+			></Button>
+			<Button
+				title="Apply"
+				isPrimary={false}
+				on:clicked={() => {
+					applySimulation();
+					closeSimulateModal();
+				}}
+			></Button>
+		</div>
+	{/snippet}
 </ModalTemplate>
 
 <ModalTemplate title="Customize data for {layerDetails.name}" bind:show={showCustomizeDataModal}>
-	<div slot="content" class="is-flex is-flex-direction-column is-gap-2">
-		<div class="is-background-light p-4 is-flex is-flex-direction-column is-gap-1">
-			<p>Download {layerDetails.name} data as a .csv file to customise it on your device.</p>
-			<Button
-				title={layerDetails.isDataLoaded ? 'Download' : 'NOT READY FOR DOWNLOAD'}
-				isPrimary={false}
-				isDisabled={!layerDetails.isDataLoaded}
-				on:clicked={() => downloadData($mapStore, index)}
-			></Button>
+	{#snippet content()}
+		<div class="is-flex is-flex-direction-column is-gap-2">
+			<div class="is-background-light p-4 is-flex is-flex-direction-column is-gap-1">
+				<p>Download {layerDetails.name} data as a .csv file to customise it on your device.</p>
+				<Button
+					title={layerDetails.isDataLoaded ? 'Download' : 'NOT READY FOR DOWNLOAD'}
+					isPrimary={false}
+					isDisabled={!layerDetails.isDataLoaded}
+					on:clicked={() => downloadData($mapStore, index)}
+				></Button>
+			</div>
+			<div class="is-background-light p-4 is-flex is-flex-direction-column is-gap-1">
+				<p>Upload your adjusted .csv file.</p>
+				<Button
+					title="Upload"
+					isPrimary={false}
+					isDisabled={!layerDetails.isDataLoaded}
+					on:clicked={() => uploadData($mapStore, index)}
+				></Button>
+				{#if !layerDetails.isDataLoaded}
+					<div class="is-flex is-justify-content-center is-align-items-center">
+						<Loader />
+					</div>
+				{/if}
+			</div>
 		</div>
-		<div class="is-background-light p-4 is-flex is-flex-direction-column is-gap-1">
-			<p>Upload your adjusted .csv file.</p>
-			<Button
-				title="Upload"
-				isPrimary={false}
-				isDisabled={!layerDetails.isDataLoaded}
-				on:clicked={() => uploadData($mapStore, index)}
-			></Button>
-			{#if !layerDetails.isDataLoaded}
-				<div class="is-flex is-justify-content-center is-align-items-center">
-					<Loader />
-				</div>
-			{/if}
-		</div>
-	</div>
+	{/snippet}
 </ModalTemplate>
 
 <ModalTemplate title="Edit layer name" bind:show={showEditLayerNameModal}>
-	<div slot="content">
-		<TextInput
-			placeholder="Input new layer name..."
-			label="Layer name"
-			name="Edit layer name"
-			disabled={layerDetails.isDataLoaded}
-			bind:value={editLayerNameValue}
-		/>
-	</div>
-	<div slot="buttons" style="display: flex;">
-		<Button
-			title="Save"
-			isPrimary={false}
-			on:clicked={() => {
-				editLayerName(index, editLayerNameValue);
-				closeEditLayerNameModal();
-			}}
-		></Button>
-	</div>
+	{#snippet content()}
+		<div>
+			<TextInput
+				placeholder="Input new layer name..."
+				label="Layer name"
+				name="Edit layer name"
+				bind:value={editLayerNameValue}
+			/>
+		</div>
+	{/snippet}
+	{#snippet buttons()}
+		<div style="display: flex;">
+			<Button
+				title="Save"
+				isPrimary={false}
+				on:clicked={() => {
+					editLayerName(index, editLayerNameValue);
+					closeEditLayerNameModal();
+				}}
+			></Button>
+		</div>
+	{/snippet}
 </ModalTemplate>
 
 <ModalTemplate title="Customize color scale" bind:show={showEditColorScaleModel}>
-	<div slot="content"><ColorMapPicker bind:colorMapName /></div>
-	<div slot="buttons" style="display: flex;">
-		<Button
-			title="Save"
-			isPrimary={false}
-			on:clicked={() => {
-				updatePaintOfLayer($mapStore, index, colorMapName);
-				closeEditColorScaleModel();
-			}}
-		></Button>
-	</div>
+	{#snippet content()}
+		<div><ColorMapPicker bind:colorMapName /></div>
+	{/snippet}
+	{#snippet buttons()}
+		<div style="display: flex;">
+			<Button
+				title="Save"
+				isPrimary={false}
+				on:clicked={() => {
+					updatePaintOfLayer($mapStore, index, colorMapName);
+					closeEditColorScaleModel();
+					colorGroups = getColorGroups();
+				}}
+			></Button>
+		</div>
+	{/snippet}
 </ModalTemplate>
 
 <style lang="scss">

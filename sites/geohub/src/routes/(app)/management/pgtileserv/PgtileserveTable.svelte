@@ -7,10 +7,14 @@
 		key: string;
 	}
 
-	export let layers: ManagedPgtileservLayer[];
-	export let datasets: DatasetFeatureCollection;
+	interface Props {
+		layers: ManagedPgtileservLayer[];
+		datasets: DatasetFeatureCollection | undefined;
+	}
 
-	let hideRegistered = true;
+	let { layers = $bindable([]), datasets = $bindable(undefined) }: Props = $props();
+
+	let hideRegistered = $state(true);
 	let skipCols = ['type', 'name', 'schema', 'url', 'key'];
 
 	const getPublishLink = (data: ManagedPgtileservLayer) => {

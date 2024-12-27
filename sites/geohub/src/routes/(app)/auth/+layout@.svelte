@@ -3,10 +3,16 @@
 	import MapHero from '$components/pages/map/MapHero.svelte';
 	import { MapStyleId } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
-	import { setContext } from 'svelte';
+	import { setContext, type Snippet } from 'svelte';
 
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
+
+	interface Props {
+		children?: Snippet;
+	}
+
+	let { children }: Props = $props();
 </script>
 
 <svelte:head>
@@ -24,7 +30,7 @@
 <div class="map-hero" style="margin-top: {$headerHeightStore}px">
 	<MapHero styleId={MapStyleId} interactive={false} />
 
-	<slot />
+	{@render children?.()}
 </div>
 
 <style lang="scss">

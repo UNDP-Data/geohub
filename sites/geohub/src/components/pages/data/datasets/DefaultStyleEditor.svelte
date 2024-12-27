@@ -375,6 +375,7 @@
 					on:click={() => {
 						isExpanded = !isExpanded;
 					}}
+					aria-label="expand"
 				>
 					<span class="icon is-small">
 						<i class="fa-solid fa-chevron-down"></i>

@@ -5,7 +5,12 @@
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount, setContext } from 'svelte';
-	let innerWidth = 0;
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
+	let innerWidth = $state(0);
 
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
@@ -21,7 +26,7 @@
 <Header isPositionFixed={false} />
 
 <div style="padding-top: {$headerHeightStore}px">
-	<slot />
+	{@render children?.()}
 </div>
 
 <SvelteToast />

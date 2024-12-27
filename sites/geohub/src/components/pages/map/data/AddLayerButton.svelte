@@ -34,8 +34,8 @@
 			on:click={handleClicked}
 			use:tippyTooltip={{ content: 'Add this dataset to the map' }}
 		>
-			<i class="fa-solid fa-layer-group fa-stack-xl" />
-			<i class="fab fa-plus fa-sm fa-stack-1x" />
+			<i class="fa-solid fa-layer-group fa-stack-xl"></i>
+			<i class="fab fa-plus fa-sm fa-stack-1x"></i>
 		</span>
 	{/if}
 {:else}

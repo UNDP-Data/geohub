@@ -8,7 +8,6 @@
 		ModalTemplate,
 		type VectorLayerTileStatAttribute
 	} from '@undp-data/svelte-undp-components';
-	import { createEventDispatcher } from 'svelte';
 
 	let tippyInstance: { show: () => void; hide: () => void } | undefined;
 	const tippy = initTippy({
@@ -27,25 +26,39 @@
 		}
 	});
 	const tippyTooltip = initTooltipTippy();
-	const dispatch = createEventDispatcher();
 
-	export let name: string;
-	export let order: 'asc' | 'desc' = 'desc';
-	export let width: number | undefined = undefined;
-	export let attribute: VectorLayerTileStatAttribute | undefined = undefined;
-	export let isActive = false;
-	export let isFiltered = false;
-	export let showHistogram = false;
+	interface Props {
+		name: string;
+		order?: 'asc' | 'desc';
+		width?: number | undefined;
+		attribute?: VectorLayerTileStatAttribute | undefined;
+		isActive?: boolean;
+		isFiltered?: boolean;
+		showHistogram?: boolean;
+		change?: (name: string, order: 'asc' | 'desc', isActive: boolean) => void;
+	}
 
-	let tooltipContent: HTMLElement;
-	let histogramAttribute: VectorLayerTileStatAttribute | undefined = undefined;
+	let {
+		name = $bindable(''),
+		order = $bindable('desc'),
+		width = $bindable(undefined),
+		attribute = $bindable(undefined),
+		isActive = $bindable(false),
+		isFiltered = $bindable(false),
+		showHistogram = $bindable(false),
+		change = (name: string, order: 'asc' | 'desc', isActive: boolean) => {
+			console.log(name, order, isActive);
+		}
+	}: Props = $props();
+
+	let tooltipContent: HTMLElement | undefined = $state();
+	let histogramAttribute: VectorLayerTileStatAttribute | undefined = $state(undefined);
 
 	const onSortChanged = () => {
-		dispatch('change', {
-			name: name,
-			order: order,
-			isActive: isActive
-		});
+		if (change) {
+			change(name, order, isActive);
+		}
+
 		if (tippyInstance && 'hide' in tippyInstance) {
 			tippyInstance.hide();
 		}
@@ -62,7 +75,8 @@
 		onSortChanged();
 	};
 
-	const handleContextMenu = () => {
+	const handleContextMenu = (e: { preventDefault: () => void }) => {
+		e.preventDefault();
 		if (tippyInstance && 'show' in tippyInstance) {
 			tippyInstance.show();
 		}
@@ -83,7 +97,7 @@
 	use:tippyTooltip={{
 		content: `${clean(name)}`
 	}}
-	on:contextmenu|preventDefault={handleContextMenu}
+	oncontextmenu={handleContextMenu}
 >
 	<span class="label is-flex" style={width ? `width: ${width}px;` : ''}>
 		{#if isActive}
@@ -109,7 +123,7 @@
 		<ul>
 			{#if isActive}
 				<li>
-					<button class="is-flex is-align-items-center p-2" on:click={handleResetSort}>
+					<button class="is-flex is-align-items-center p-2" onclick={handleResetSort}>
 						<span class="icon is-small material-symbols-outlined mr-2"> clear_all </span>
 						<span> Reset sort </span>
 					</button>
@@ -119,7 +133,7 @@
 				<li>
 					<button
 						class="is-flex is-align-items-center p-2"
-						on:click={() => {
+						onclick={() => {
 							handleSortClick('asc');
 						}}
 					>
@@ -132,7 +146,7 @@
 				<li>
 					<button
 						class="is-flex is-align-items-center p-2"
-						on:click={() => {
+						onclick={() => {
 							handleSortClick('desc');
 						}}
 					>
@@ -143,7 +157,7 @@
 			{/if}
 			{#if attribute && attribute.histogram}
 				<li>
-					<button class="is-flex is-align-items-center p-2" on:click={handleShowHistogram}>
+					<button class="is-flex is-align-items-center p-2" onclick={handleShowHistogram}>
 						<span class="icon is-small material-symbols-outlined mr-2"> bar_chart </span>
 						<span>Show histogram</span>
 					</button>
@@ -155,14 +169,16 @@
 
 {#if histogramAttribute && histogramAttribute.histogram}
 	<ModalTemplate title="Histogram" bind:show={showHistogram} width="450px">
-		<div slot="content">
-			<Histogram
-				bind:counts={histogramAttribute.histogram.count}
-				bind:bins={histogramAttribute.histogram.bins}
-				yLabel="Count"
-				xLabel={clean(name)}
-			/>
-		</div>
+		{#snippet content()}
+			<div>
+				<Histogram
+					bind:counts={histogramAttribute.histogram.count}
+					bind:bins={histogramAttribute.histogram.bins}
+					yLabel="Count"
+					xLabel={clean(name)}
+				/>
+			</div>
+		{/snippet}
 	</ModalTemplate>
 {/if}
 

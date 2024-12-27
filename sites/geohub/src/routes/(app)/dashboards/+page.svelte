@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import DashboardsExplorer from './DashboardsExplorer.svelte';
 
-	let breadcrumbs: BreadcrumbPage[] = [
+	let breadcrumbs: BreadcrumbPage[] = $state([
 		{ title: 'home', url: '/' },
-		{ title: 'dashboards', url: $page.url.href }
-	];
+		{ title: 'dashboards', url: page.url.href }
+	]);
 </script>
 
 <HeroHeader title="Explore dashboards" bind:breadcrumbs />

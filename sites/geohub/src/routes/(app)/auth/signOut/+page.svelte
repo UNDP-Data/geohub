@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import { signOut } from '@auth/sveltekit/client';
 
-	let previousPage: URL = new URL($page.url.origin);
+	let previousPage: URL = $state(new URL($page.url.origin));
 	afterNavigate(({ from }) => {
 		if (from?.url) {
 			previousPage = from?.url;
@@ -23,7 +23,7 @@
 		</p>
 		<button
 			class="button is-link is-normal is-fullwidth"
-			on:click={() => signOut({ callbackUrl: previousPage.href })}
+			onclick={() => signOut({ callbackUrl: previousPage.href })}
 		>
 			Sign out
 		</button>

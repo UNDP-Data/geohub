@@ -23,30 +23,36 @@
 	const REDIRECT_TIME = 2000; // two second
 	const FILE_SIZE_THRESHOLD = 104857600; // 100MB
 
-	export let data: PageData;
-	let config = data.config;
+	interface Props {
+		data: PageData;
+	}
 
-	let breadcrumbs: BreadcrumbPage[] = [
+	let { data }: Props = $props();
+	let config = $state(data.config);
+
+	let breadcrumbs: BreadcrumbPage[] = $state([
 		{ title: 'home', url: '/' },
 		{ title: 'datasets', url: '/data' },
 		{ title: 'upload', url: $page.url.href }
-	];
+	]);
 
 	let selectedFiles: Array<File> = [];
-	let errorMessages: Array<string> = [];
-	let fileSasBlobUrlMapping = {};
-	let isUploading = false;
-	let filesToUpload: Array<File> = [];
+	let errorMessages: Array<string> = $state([]);
+	let fileSasBlobUrlMapping = $state({});
+	let isUploading = $state(false);
+	let filesToUpload: Array<File> = $state([]);
 	let shapefileZips: Array<File> = []; // shapefiles files selected singular-y are zipped and the zips added to this fileList.
-	let shapefileValidityMapping = {};
-	let uploadStatusMapping = {};
+	let shapefileValidityMapping = $state({});
+	let uploadStatusMapping = $state({});
 	let uploadTasks = [];
-	let uploadProgressMapping = {};
+	let uploadProgressMapping = $state({});
 
-	$: showErrorMessages = errorMessages.length > 0;
-	$: uploadDisabled = Object.keys(shapefileValidityMapping).length > 0 || filesToUpload.length < 1;
-	$: selectedFilesList = JSON.stringify(filesToUpload.map((file) => file.name));
-	$: userIsSignedIn = data.session;
+	let showErrorMessages = $derived(errorMessages.length > 0);
+	let uploadDisabled = $derived(
+		Object.keys(shapefileValidityMapping).length > 0 || filesToUpload.length < 1
+	);
+	let selectedFilesList = $derived(JSON.stringify(filesToUpload.map((file) => file.name)));
+	let userIsSignedIn = $derived(data.session);
 
 	onMount(() => {
 		// if user is not signed in, redirect to the sign-in page
@@ -72,17 +78,17 @@
 		// check that the other mandatory files are present
 		const mandatoryShapefileExtensions = AccepedExtensions.find(
 			(ext) => ext.name === 'ESRI Shapefile'
-		).requiredExtensions;
+		)?.requiredExtensions;
 
 		const shapefileExtensions = AccepedExtensions.find(
 			(ext) => ext.name === 'ESRI Shapefile'
-		).extensions;
+		)?.extensions;
 
 		// get all the shapefiles files
 		const shapefileFiles = zipFilesList.map((file) => {
 			// check if the file has a valid shapefile extension
 			const extension = file.path.split('.').at(-1);
-			if (shapefileExtensions.includes(extension.toLowerCase())) {
+			if (shapefileExtensions?.includes(extension.toLowerCase())) {
 				return file.path;
 			}
 		});
@@ -102,10 +108,10 @@
 
 		// check if all mandatory files are present for each group and return the missing files for each group in a mapping
 		return Object.keys(groupedShapefileFiles).reduce((acc, curr) => {
-			const missing = mandatoryShapefileExtensions.filter(
+			const missing = mandatoryShapefileExtensions?.filter(
 				(ext) => !groupedShapefileFiles[curr].includes(`${curr}.${ext}`)
 			);
-			if (missing.length > 0) {
+			if (missing && missing.length > 0) {
 				acc[curr] = missing;
 			}
 			return acc;
@@ -557,7 +563,7 @@
 					<button
 						disabled={!userIsSignedIn || isUploading}
 						class="file-cta is-medium has-background-link has-text-white"
-						on:click={openFilePick}
+						onclick={openFilePick}
 					>
 						<span class="file-label has-text-white is-size-5"> Select files </span>
 					</button>
@@ -568,7 +574,7 @@
 			<div class="column is-flex-mobile">
 				<span>
 					Click
-					<DefaultLink title="here" href="/data/supported-formats" target="_blank" />
+					<DefaultLink title="here" href="/data/supported-formats" target="_blank"></DefaultLink>
 					to read about supported formats
 				</span>
 			</div>
@@ -671,8 +677,9 @@
 										<td>
 											<button
 												disabled={isUploading}
-												on:click={() => removeFileWithIndex(index)}
+												onclick={() => removeFileWithIndex(index)}
 												class="delete"
+												aria-label="delete"
 											></button>
 										</td>
 									{:else}
@@ -704,9 +711,8 @@
 										{#if !uploadStatusMapping[name]}
 											<td>
 												<div style="width: fit-content">
-													<button
-														on:click={() => cancelUpload(name)}
-														class="button is-small is-link">Cancel Upload</button
+													<button onclick={() => cancelUpload(name)} class="button is-small is-link"
+														>Cancel Upload</button
 													>
 												</div>
 											</td>
@@ -724,7 +730,7 @@
 			<form
 				class="column is-flex is-justify-content-start"
 				method="POST"
-				on:submit={() => {
+				onsubmit={() => {
 					isUploading = true;
 					uploadStatusMapping = {};
 				}}
@@ -737,7 +743,7 @@
 					};
 				}}
 			>
-				<input class="input" type="hidden" name="SelectedFiles" bind:value={selectedFilesList} />
+				<input class="input" type="hidden" name="SelectedFiles" value={selectedFilesList} />
 				<button
 					class="button is-primary is-uppercase has-text-weight-bold {isUploading
 						? 'is-loading'
@@ -750,7 +756,7 @@
 			</form>
 			<div class="column is-flex is-justify-content-end">
 				<button
-					on:click={removeAllFiles}
+					onclick={removeAllFiles}
 					disabled={filesToUpload.length < 1 || !userIsSignedIn || isUploading}
 					class="button is-link is-uppercase has-text-weight-bold is-fullwidth-mobile"
 				>
