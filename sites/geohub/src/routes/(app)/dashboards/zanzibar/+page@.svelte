@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Header from '$components/header/Header.svelte';
 	import LayerVisibilitySwitcher from '$components/pages/map/plugins/LayerVisibilitySwitcher.svelte';
 	import MaplibreLocationSwitchControl from '$components/pages/map/plugins/MaplibreLocationSwitchControl.svelte';
@@ -54,45 +54,49 @@
 	import Carousel from 'svelte-carousel';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data = $bindable() }: Props = $props();
 
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
-	let windowHeight = 0;
-	let windowWidth = 0;
-	let crowdmappingHeight = 0;
-	$: mapHeight = windowHeight - $headerHeightStore;
-	$: isMobile = windowWidth < 768;
+	let windowHeight = $state(0);
+	let windowWidth = $state(0);
+	let crowdmappingHeight = $state(0);
+	let mapHeight = $derived(windowHeight - $headerHeightStore);
+	let isMobile = $derived(windowWidth < 768);
 
 	let breadcrumbs: BreadcrumbPage[] = [
 		{ title: 'home', url: '/' },
 		{ title: 'dashboards', url: '/dashboards' },
-		{ title: data.content, url: $page.url.href }
+		{ title: data.content, url: page.url.href }
 	];
 
 	const OAM_LAYERID = 'openaerialmap';
-	let mapContainer: HTMLDivElement;
-	let map: Map;
+	let mapContainer: HTMLDivElement | undefined = $state();
+	let map: Map | undefined = $state();
 	let styleSwitcher: MaplibreStyleSwitcherControl;
-	let scrollSnapParent: HTMLDivElement;
+	let scrollSnapParent: HTMLDivElement | undefined = $state();
 
 	let geocoderData: MaplibreGeocoderFeatureResults;
 
-	let clickedFeatures: MapGeoJSONFeature[] = [];
-	let showDialog = false;
-	let selectedTab: string;
-	let dialogTitle = '';
+	let clickedFeatures: MapGeoJSONFeature[] = $state([]);
+	let showDialog = $state(false);
+	let selectedTab: string = $state('');
+	let dialogTitle = $state('');
 
 	const terrainOptions: TerrainSpecification = {
 		source: 'terrarium',
 		exaggeration: 1
 	};
 
-	let tourControlInstance: TourControl | undefined = undefined;
-	let tourOptions: IntroJsOptions | undefined = undefined;
+	let tourControlInstance: TourControl | undefined = $state(undefined);
+	let tourOptions: IntroJsOptions | undefined = $state(undefined);
 
-	let styleUrl = MapStyles[0].uri;
-	let exportOptions: ControlOptions = {
+	let styleUrl = $state(MapStyles[0].uri);
+	let exportOptions: ControlOptions = $state({
 		width: 300,
 		height: 200,
 		bbox: [-180, -90, 180, 90],
@@ -106,7 +110,7 @@
 		extension: 'png',
 		pageSize: 'A4',
 		orientation: 'landscape'
-	};
+	});
 
 	const getTabs = () => {
 		const tabs = clickedFeatures.map((f) => {
@@ -124,6 +128,7 @@
 	};
 
 	const mapInitializeAfterLoading = async () => {
+		if (!map) return;
 		map.resize();
 		await styleSwitcher.initialise();
 		const sky = new SkyControl();
@@ -134,7 +139,7 @@
 		}
 		if (isTerrain) {
 			setTimeout(() => {
-				map.setTerrain(terrainOptions);
+				map?.setTerrain(terrainOptions);
 			}, 500);
 		}
 
@@ -142,6 +147,7 @@
 			const layerIds = data.style.layers.map((l) => l.id);
 			for (const id of layerIds) {
 				map.on('click', id, (e: MapMouseEvent) => {
+					if (!map) return;
 					const visibleLayers = map.getStyle().layers.filter((l) => {
 						let visibility = 'visible';
 						if (l.layout && l.layout.visibility) {
@@ -168,10 +174,12 @@
 				});
 
 				map.on('mouseenter', id, () => {
+					if (!map) return;
 					map.getCanvas().style.cursor = 'crosshair';
 				});
 
 				map.on('mouseleave', id, () => {
+					if (!map) return;
 					map.getCanvas().style.cursor = '';
 				});
 			}
@@ -193,7 +201,7 @@
 				{
 					title: 'Searching tourism sites',
 					intro: 'Type any keywords here to search siteseeing spots in islands!',
-					element: scrollSnapParent.querySelector('.maplibregl-ctrl-geocoder') as HTMLElement,
+					element: scrollSnapParent?.querySelector('.maplibregl-ctrl-geocoder') as HTMLElement,
 					position: 'bottom',
 					step: 2,
 					scrollTo: 'off'
@@ -201,7 +209,7 @@
 				{
 					title: 'Zoom to a location',
 					intro: 'Select a place to zoom in on the map!',
-					element: scrollSnapParent.querySelector('.location-switch-control') as HTMLElement,
+					element: scrollSnapParent?.querySelector('.location-switch-control') as HTMLElement,
 					position: 'bottom',
 					step: 3,
 					scrollTo: 'off'
@@ -209,7 +217,7 @@
 				{
 					title: 'Find my location',
 					intro: 'Turn GPS on your device to find your location on the map!',
-					element: scrollSnapParent.querySelector('.maplibregl-ctrl-geolocate') as HTMLElement,
+					element: scrollSnapParent?.querySelector('.maplibregl-ctrl-geolocate') as HTMLElement,
 					position: 'left',
 					step: 4,
 					scrollTo: 'off'
@@ -218,7 +226,7 @@
 					title: 'Enable aerial image',
 					intro:
 						'Toggle this button to enable or diable high resolution aerial photos caputered by Zanzibar Mapping Initialitve from OpenAerialMap',
-					element: scrollSnapParent.querySelector(
+					element: scrollSnapParent?.querySelector(
 						'.maplibregl-ctrl-openaerialmap-visibility'
 					) as HTMLElement,
 					position: 'left',
@@ -228,7 +236,7 @@
 				{
 					title: 'Export map image',
 					intro: 'You can export a map image in various formats and sizes by clicking this button',
-					element: scrollSnapParent.querySelector('.legend-button') as HTMLElement,
+					element: scrollSnapParent?.querySelector('.legend-button') as HTMLElement,
 					position: 'left',
 					step: 6,
 					scrollTo: 'off'
@@ -236,7 +244,7 @@
 				{
 					title: 'Switch to other base maps',
 					intro: 'You can switch to different base map from the default one.',
-					element: scrollSnapParent.querySelector(
+					element: scrollSnapParent?.querySelector(
 						'.maplibregl-style-switcher-control'
 					) as HTMLElement,
 					position: 'top',
@@ -372,6 +380,7 @@
 	};
 
 	onMount(() => {
+		if (!mapContainer) return;
 		const protocol = new Protocol();
 		addProtocol('pmtiles', protocol.tile);
 
@@ -480,10 +489,10 @@
 		scrollTo('hero', scrollSnapParent, 'instant');
 	});
 
-	let expanded: { [key: string]: boolean } = {};
+	let expanded: { [key: string]: boolean } = $state({});
 	// to allow only an accordion to be expanded
-	let expandedId: string;
-	$: {
+	let expandedId: string = $state('');
+	$effect(() => {
 		let expandedData = Object.keys(expanded).filter(
 			(key) => expanded[key] === true && key !== expandedId
 		);
@@ -496,7 +505,7 @@
 				});
 			expanded[expandedData[0]] = true;
 		}
-	}
+	});
 
 	const handleExploreClicked = () => {
 		scrollTo('zanzibar-map', scrollSnapParent);
@@ -564,12 +573,12 @@
 		</div>
 
 		<div class="scroll-down-arrow">
-			<!-- svelte-ignore a11y-missing-attribute -->
+			<!-- svelte-ignore a11y_missing_attribute -->
 			<a
 				role="button"
 				tabindex="0"
-				on:click={handleExploreClicked}
-				on:keydown={handleEnterKey}
+				onclick={handleExploreClicked}
+				onkeydown={handleEnterKey}
 				data-sveltekit-preload-data="off"
 				data-sveltekit-preload-code="off"
 				aria-label="move to next"
@@ -598,7 +607,7 @@
 				bind:map
 				show={false}
 				style={styleUrl}
-				apiBase={$page.data.staticApiUrl}
+				apiBase={page.data.staticApiUrl}
 				bind:options={exportOptions}
 				hiddenApiTypes={true}
 				position="bottom-right"
@@ -624,14 +633,14 @@
 		{/if}
 
 		<div class="scroll-down-arrow">
-			<!-- svelte-ignore a11y-missing-attribute -->
+			<!-- svelte-ignore a11y_missing_attribute -->
 			<a
 				role="button"
 				tabindex="0"
-				on:click={() => {
+				onclick={() => {
 					scrollTo('footer-section', scrollSnapParent);
 				}}
-				on:keydown={handleEnterKey}
+				onkeydown={handleEnterKey}
 				data-sveltekit-preload-data="off"
 				data-sveltekit-preload-code="off"
 				aria-label="move to next"
@@ -663,64 +672,70 @@
 </div>
 
 <ModalTemplate bind:title={dialogTitle} bind:show={showDialog}>
-	<div slot="content" class="dialog-contents">
-		{#if clickedFeatures.length > 1}
-			<Tabs
-				tabs={getTabs()}
-				bind:activeTab={selectedTab}
-				fontWeight="bold"
-				isBoxed={false}
-				isFullwidth={false}
-				isCentered={false}
-				isUppercase={true}
-			></Tabs>
-		{/if}
-		{#each clickedFeatures as f}
-			{@const contents = getFeatureData(f)}
-			<div hidden={`${f.id}` !== selectedTab}>
-				<FieldControl title={f.properties.name} showHelp={false} fontWeight="bold">
-					<div slot="control">
-						{#if browser}
-							{@const images = getPhotoUrls(f)}
-							{#if images.length > 0}
-								<Carousel
-									autoplay
-									autoplayDuration={1000 * images.length}
-									autoplayProgressVisible
-									arrows={true}
-								>
-									{#each images as imageSrc}
-										<img src={imageSrc} alt={f.properties.name} class="photo" loading="eager" />
-									{/each}
-								</Carousel>
-							{/if}
-						{/if}
-
-						{#if f.properties['short history']}
-							{f.properties['short history']}
-						{/if}
-					</div>
-				</FieldControl>
-
-				<FieldControl title="Touristic Information" showHelp={false} fontWeight="bold">
-					<div slot="control">
-						<table class="table is-narrow is-hoverable is-fullwidth">
-							<tbody>
-								{#each Object.keys(contents) as key}
-									{#if contents[key] && contents[key].length > 0}
-										<tr>
-											<th><p class="is-capitalized">{key}</p></th>
-											<td><p class="is-capitalized">{contents[key]}</p></td>
-										</tr>
+	{#snippet content()}
+		<div class="dialog-contents">
+			{#if clickedFeatures.length > 1}
+				<Tabs
+					tabs={getTabs()}
+					bind:activeTab={selectedTab}
+					fontWeight="bold"
+					isBoxed={false}
+					isFullwidth={false}
+					isCentered={false}
+					isUppercase={true}
+				></Tabs>
+			{/if}
+			{#each clickedFeatures as f}
+				{@const contents = getFeatureData(f)}
+				<div hidden={`${f.id}` !== selectedTab}>
+					<FieldControl title={f.properties.name} showHelp={false} fontWeight="bold">
+						{#snippet control()}
+							<div>
+								{#if browser}
+									{@const images = getPhotoUrls(f)}
+									{#if images.length > 0}
+										<Carousel
+											autoplay
+											autoplayDuration={1000 * images.length}
+											autoplayProgressVisible
+											arrows={true}
+										>
+											{#each images as imageSrc}
+												<img src={imageSrc} alt={f.properties.name} class="photo" loading="eager" />
+											{/each}
+										</Carousel>
 									{/if}
-								{/each}
-							</tbody>
-						</table>
-					</div>
-				</FieldControl>
-			</div>
-		{/each}
-	</div>
+								{/if}
+
+								{#if f.properties['short history']}
+									{f.properties['short history']}
+								{/if}
+							</div>
+						{/snippet}
+					</FieldControl>
+
+					<FieldControl title="Touristic Information" showHelp={false} fontWeight="bold">
+						{#snippet control()}
+							<div>
+								<table class="table is-narrow is-hoverable is-fullwidth">
+									<tbody>
+										{#each Object.keys(contents) as key}
+											{#if contents[key] && contents[key].length > 0}
+												<tr>
+													<th><p class="is-capitalized">{key}</p></th>
+													<td><p class="is-capitalized">{contents[key]}</p></td>
+												</tr>
+											{/if}
+										{/each}
+									</tbody>
+								</table>
+							</div>
+						{/snippet}
+					</FieldControl>
+				</div>
+			{/each}
+		</div>
+	{/snippet}
 </ModalTemplate>
 
 <style lang="scss">
