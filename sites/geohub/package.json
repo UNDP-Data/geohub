@@ -42,7 +42,7 @@
 		"@auth/core": "^0.37.4",
 		"@auth/sveltekit": "^1.7.4",
 		"@azure/web-pubsub-client": "1.0.1",
-		"@carbon/charts-svelte": "^1.22.8",
+		"@carbon/charts-svelte": "1.22.0",
 		"@maplibre/maplibre-gl-geocoder": "^1.7.0",
 		"@maptiler/geocoding-control": "^1.4.1",
 		"@neodrag/svelte": "^2.2.0",
