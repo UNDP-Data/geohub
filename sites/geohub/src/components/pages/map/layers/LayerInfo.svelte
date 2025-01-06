@@ -93,6 +93,7 @@
 					target="_blank"
 					class="copy-button button ml-auto has-text-link"
 					use:tippyTooltip={{ content: 'Open this dataset page' }}
+					aria-label="copy"
 				>
 					<span class="icon is-small">
 						<i class="fa-solid fa-arrow-up-right-from-square"></i>

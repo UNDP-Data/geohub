@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import LayerVisibilitySwitcher from '$components/pages/map/plugins/LayerVisibilitySwitcher.svelte';
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
 	import SplitControl from '$components/util/SplitControl.svelte';
@@ -55,21 +55,27 @@
 	const tableMenuShownStore: EditingMenuShownStore = getContext(TABLE_MENU_SHOWN_CONTEXT_KEY);
 	const sidebarMenuShownStore: EditingMenuShownStore = getContext(SIDEBAR_MENU_SHOWN_CONTEXT_KEY);
 
-	let windowWidth = 0;
-	let windowHeight = 0;
-	let mapHeight = 0;
-	$: mapWidth = windowWidth - ($sidebarMenuShownStore === true ? $sidebarWidthStore : 0);
-	$: splitHeight = windowHeight - $headerHeightStore;
-	$: tableHeight = windowHeight - $headerHeightStore - mapHeight;
+	let windowWidth = $state(0);
+	let windowHeight = $state(0);
+	let mapHeight = $state(0);
+	let mapWidth = $derived(windowWidth - ($sidebarMenuShownStore === true ? $sidebarWidthStore : 0));
 
-	let container: HTMLDivElement;
+	let splitHeight = $derived(windowHeight - $headerHeightStore);
+
+	let tableHeight = $derived(windowHeight - $headerHeightStore - mapHeight);
+
+	let container: HTMLDivElement | undefined = $state();
 	let styleSwitcher: MaplibreStyleSwitcherControl;
 
-	export let defaultStyle: string = MapStyles[0].title;
+	interface Props {
+		defaultStyle?: string;
+	}
 
-	const layerListStorageKey = storageKeys.layerList($page.url.host);
-	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
-	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+	let { defaultStyle = $bindable(MapStyles[0].title) }: Props = $props();
+
+	const layerListStorageKey = storageKeys.layerList(page.url.host);
+	const mapStyleStorageKey = storageKeys.mapStyle(page.url.host);
+	const mapStyleIdStorageKey = storageKeys.mapStyleId(page.url.host);
 	const initialLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, null);
 	const initiaMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, null);
 	const initiaMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
@@ -87,15 +93,15 @@
 	};
 
 	let mapOptions: MapOptions = {
-		container: undefined,
-		style: $page.data.defaultStyle,
+		container: '',
+		style: page.data.defaultStyle,
 		center: [0, 0],
 		zoom: 3,
 		hash: true,
 		attributionControl: false
 	};
 
-	let tourOptions: IntroJsOptions = {
+	let tourOptions: IntroJsOptions = $state({
 		showAsDefault: true,
 		dontShowAgain: true,
 		dontShowAgainCookie: 'geohub-map-introjs-dontShowAgain',
@@ -247,14 +253,14 @@
 				scrollTo: 'off'
 			}
 		]
-	};
+	});
 
 	onMount(() => {
 		retrieveExistingMapStyle().then(mapInitialise);
 	});
 
 	const retrieveExistingMapStyle = async () => {
-		const style = $page.data.style;
+		const style = page.data.style;
 		if (style) {
 			// /map/{id} page
 
@@ -278,7 +284,7 @@
 							const stacType = l.dataset.properties.tags.find((t) => t.key === 'stacType')?.value;
 							if (['cog', 'mosaicjson'].includes(stacType)) continue;
 							if (!initiaMapStyle.layers.find((l) => l.id === id)) continue;
-							const datasetUrl = `${$page.url.origin}/api/datasets/${id}`;
+							const datasetUrl = `${page.url.origin}/api/datasets/${id}`;
 							const res = await fetch(datasetUrl);
 							if (res.ok) {
 								l.dataset = await res.json();
@@ -343,7 +349,7 @@
 							const id = l.dataset.properties.id;
 							const stacType = l.dataset.properties.tags.find((t) => t.key === 'stacType')?.value;
 							if (['cog', 'mosaicjson', 'collection'].includes(stacType)) continue;
-							const datasetUrl = `${$page.url.origin}/api/datasets/${id}`;
+							const datasetUrl = `${page.url.origin}/api/datasets/${id}`;
 							const res = await fetch(datasetUrl);
 							if (res.ok) {
 								l.dataset = await res.json();
@@ -373,20 +379,21 @@
 						restoreStyle(initiaMapStyle, initialLayerList);
 					} else {
 						toLocalStorage(layerListStorageKey, []);
-						toLocalStorage(mapStyleStorageKey, $page.data.defaultStyle);
+						toLocalStorage(mapStyleStorageKey, page.data.defaultStyle);
 					}
 				} else {
 					toLocalStorage(layerListStorageKey, []);
-					toLocalStorage(mapStyleStorageKey, $page.data.defaultStyle);
+					toLocalStorage(mapStyleStorageKey, page.data.defaultStyle);
 				}
 			} else {
 				toLocalStorage(layerListStorageKey, []);
-				toLocalStorage(mapStyleStorageKey, $page.data.defaultStyle);
+				toLocalStorage(mapStyleStorageKey, page.data.defaultStyle);
 			}
 		}
 	};
 
 	const mapInitialise = () => {
+		if (!container) return;
 		mapOptions.container = container;
 		$map = new Map(mapOptions);
 
@@ -427,7 +434,7 @@
 
 		$map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
 
-		const apiKey = $page.data.maptilerKey;
+		const apiKey = page.data.maptilerKey;
 		if (apiKey) {
 			const gc = new GeocodingControl({
 				apiKey: apiKey,
@@ -522,30 +529,34 @@
 	minMapWidth="30%"
 	minSidebarWidth="10px"
 	initialSidebarWidth={500}
-	bind:height={splitHeight}
-	bind:width={mapWidth}
+	height={splitHeight}
+	width={mapWidth}
 >
-	<div slot="map">
-		<div
-			bind:this={container}
-			class="map"
-			style="width: {mapWidth}px;"
-			bind:clientHeight={mapHeight}
-		>
-			{#if $showProgressBarStore}
-				<progress class="progress is-small is-primary is-link is-radiusless"></progress>
-			{/if}
+	{#snippet map()}
+		<div>
+			<div
+				bind:this={container}
+				class="map"
+				style="width: {mapWidth}px;"
+				bind:clientHeight={mapHeight}
+			>
+				{#if $showProgressBarStore}
+					<progress class="progress is-small is-primary is-link is-radiusless"></progress>
+				{/if}
 
-			{#if $editingMenuShownStore}
-				<LayerEdit />
-			{/if}
+				{#if $editingMenuShownStore}
+					<LayerEdit />
+				{/if}
+			</div>
 		</div>
-	</div>
-	<div slot="sidebar">
-		<div style="width: {mapWidth}px; height: {tableHeight}px;">
-			<VectorTable bind:height={tableHeight} />
+	{/snippet}
+	{#snippet sidebar()}
+		<div>
+			<div style="width: {mapWidth}px; height: {tableHeight}px;">
+				<VectorTable height={tableHeight} />
+			</div>
 		</div>
-	</div>
+	{/snippet}
 </SplitControl>
 
 {#if $map}

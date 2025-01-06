@@ -391,7 +391,7 @@
 				{#if acceptSingleTag}
 					{#if warningSingleTagEqual}
 						<div class="notification has-background-danger-light is-size-6 has-text-danger">
-							<i class="fa-solid fa-circle-info has-text-danger" />
+							<i class="fa-solid fa-circle-info has-text-danger"></i>
 							<span class="subtitle has-text-weight-bold">{badSingleTagValue}</span>
 							does not exist in
 							<span class="has-text-weight-bold message is-primary p-2"
@@ -401,8 +401,8 @@
 						</div>
 					{:else}
 						<div class="notification has-background-danger-light is-size-6 has-text-danger">
-							<i class="fa-solid fa-circle-info has-text-danger" /> Only one value can be accepted when
-							equals = or ≠ operators are used
+							<i class="fa-solid fa-circle-info has-text-danger"></i>
+							Only one value can be accepted when equals = or ≠ operators are used
 						</div>
 					{/if}
 				{/if}

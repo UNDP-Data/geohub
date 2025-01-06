@@ -1,23 +1,16 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	export const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer-{year}';
 	export const UNDP_DASHBOARD_RASTER_SOURCE_ID = 'dashboard-electricity-raster-source-{year}';
 </script>
 
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import type { RasterLayerSpecification, SourceSpecification } from 'maplibre-gl';
 	import { hrea, map } from '../stores';
 	import { reloadAdmin, setAdminUrl, setTargetTear } from '../utils/adminLayer';
 
-	const adminUrl = $page.data.adminUrl;
+	const adminUrl = page.data.adminUrl;
 	setAdminUrl(adminUrl);
-
-	export let scaleColorList = [];
-	export let rasterColorMapName = '';
-	export let electricitySelected: string;
-	export let loadAdminLabels: boolean | undefined = undefined;
-	export let newColorExpression = undefined;
-	export let isActive = false;
 
 	import { getBase64EncodedUrl } from '$lib/helper';
 	import { Slider } from '@undp-data/svelte-undp-components';
@@ -26,20 +19,36 @@
 		ELECTRICITY_DATATYPE_CONTEXT_KEY,
 		type ElectricityDataTypeStore
 	} from '../stores/electricityDataType';
+	interface Props {
+		scaleColorList?: string[];
+		rasterColorMapName?: string;
+		electricitySelected: string;
+		loadAdminLabels?: boolean | undefined;
+		newColorExpression?: string;
+		isActive?: boolean;
+	}
 
-	const titilerUrl = $page.data.titilerUrl;
+	let {
+		scaleColorList = $bindable([]),
+		rasterColorMapName = $bindable(''),
+		electricitySelected = $bindable(),
+		loadAdminLabels = $bindable(),
+		newColorExpression = $bindable(),
+		isActive = $bindable(false)
+	}: Props = $props();
+
+	const titilerUrl = page.data.titilerUrl;
 
 	const electricityDataType: ElectricityDataTypeStore = getContext(
 		ELECTRICITY_DATATYPE_CONTEXT_KEY
 	);
 
-	let minValue = $electricityDataType[0];
-	let maxValue = $electricityDataType[1];
-	let rangeSliderValues = [minValue === 2012 ? maxValue : minValue];
-
-	$: electricitySelected, loadLayer();
-	$: rangeSliderValues, loadLayer();
-	$: rasterColorMapName, loadLayer();
+	let minValue = $state($electricityDataType[0]);
+	let maxValue = $state($electricityDataType[1]);
+	const getDefaultSliderValues = () => {
+		return [minValue === 2012 ? maxValue : minValue];
+	};
+	let rangeSliderValues = $state(getDefaultSliderValues());
 
 	const getHreaUrl = (y: number) => {
 		const dataset = $hrea?.find((ds) => ds.year === y);
@@ -152,6 +161,9 @@
 			rangeSliderValues = [defaultVal];
 			loadLayer();
 		});
+	});
+	$effect(() => {
+		loadLayer();
 	});
 </script>
 

@@ -44,7 +44,8 @@
 				class="delete"
 				use:tippyTooltip={{ content: 'Remove the image from this slide.' }}
 				on:click={handleRemoveFile}
-			/>
+				aria-label="delete"
+			></button>
 		</div>
 	{:else}
 		<div class="dropzone">

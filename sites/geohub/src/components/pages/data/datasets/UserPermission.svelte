@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	/**
 	 * UserPermissionAPIBase interface
 	 * it is a base abstract class to operation permission API. Actually implementation will be done at a class.
@@ -79,9 +79,12 @@
 			return res;
 		};
 
-		public edit = async (target: DatasetPermission, permission: Permission) => {
+		public edit = async (
+			target: DatasetPermission | StylePermission | StorymapPermission,
+			permission: Permission
+		) => {
 			const body = {
-				dataset_id: target.dataset_id,
+				dataset_id: (target as DatasetPermission).dataset_id,
 				user_email: target.user_email,
 				permission: permission,
 				createdat: target.createdat
@@ -94,9 +97,9 @@
 			return res;
 		};
 
-		public delete = async (target: DatasetPermission) => {
+		public delete = async (target: DatasetPermission | StylePermission | StorymapPermission) => {
 			const res = await fetch(
-				`/api/datasets/${target.dataset_id}/permission?user_email=${target.user_email}`,
+				`/api/datasets/${(target as DatasetPermission).dataset_id}/permission?user_email=${target.user_email}`,
 				{
 					method: 'DELETE'
 				}
@@ -121,7 +124,7 @@ ${username}`;
 		};
 
 		public getName = () => {
-			return this.dataset.properties.name;
+			return this.dataset.properties.name as string;
 		};
 	}
 
@@ -152,9 +155,12 @@ ${username}`;
 			return res;
 		};
 
-		public edit = async (target: StylePermission, permission: Permission) => {
+		public edit = async (
+			target: DatasetPermission | StylePermission | StorymapPermission,
+			permission: Permission
+		) => {
 			const body = {
-				style_id: target.style_id,
+				style_id: (target as StylePermission).style_id,
 				user_email: target.user_email,
 				permission: permission,
 				createdat: target.createdat
@@ -167,9 +173,9 @@ ${username}`;
 			return res;
 		};
 
-		public delete = async (target: StylePermission) => {
+		public delete = async (target: DatasetPermission | StylePermission | StorymapPermission) => {
 			const res = await fetch(
-				`/api/style/${target.style_id}/permission?user_email=${target.user_email}`,
+				`/api/style/${(target as StylePermission).style_id}/permission?user_email=${target.user_email}`,
 				{
 					method: 'DELETE'
 				}
@@ -225,9 +231,12 @@ ${username}`;
 			return res;
 		};
 
-		public edit = async (target: StorymapPermission, permission: Permission) => {
+		public edit = async (
+			target: DatasetPermission | StylePermission | StorymapPermission,
+			permission: Permission
+		) => {
 			const body = {
-				storymap_id: target.storymap_id,
+				storymap_id: (target as StorymapPermission).storymap_id,
 				user_email: target.user_email,
 				permission: permission,
 				createdat: target.createdat
@@ -240,9 +249,9 @@ ${username}`;
 			return res;
 		};
 
-		public delete = async (target: StorymapPermission) => {
+		public delete = async (target: DatasetPermission | StylePermission | StorymapPermission) => {
 			const res = await fetch(
-				`/api/storymaps/${target.storymap_id}/permission?user_email=${target.user_email}`,
+				`/api/storymaps/${(target as StorymapPermission).storymap_id}/permission?user_email=${target.user_email}`,
 				{
 					method: 'DELETE'
 				}
@@ -267,7 +276,7 @@ ${username}`;
 		};
 
 		public getName = () => {
-			return this.storymap.title;
+			return this.storymap.title as string;
 		};
 	}
 </script>
@@ -290,31 +299,36 @@ ${username}`;
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time';
 
-	export let api: UserPermissionAPIBase;
+	interface Props {
+		api: UserPermissionAPIBase;
+	}
 
-	let permissions: DatasetPermission[] | StylePermission[] | StorymapPermission[] = [];
+	let { api }: Props = $props();
 
-	let isUpadating = false;
-	let showEditDialog = false;
-	let showAddDialog = false;
-	let showDeleteDialog = false;
-	let targetUserPermission: DatasetPermission | StylePermission | StorymapPermission;
-	let errorMessage = '';
+	let permissions: DatasetPermission[] | StylePermission[] | StorymapPermission[] = $state([]);
 
-	let signedInUser = $page.data.session.user;
+	let isUpadating = $state(false);
+	let showEditDialog = $state(false);
+	let showAddDialog = $state(false);
+	let showDeleteDialog = $state(false);
+	let targetUserPermission: DatasetPermission | StylePermission | StorymapPermission | undefined =
+		$state();
+	let errorMessage = $state('');
 
-	let user_email = '';
-	let user_permission: Permission;
-	let isSendMessage = true;
-	let messageBody = '';
+	let signedInUser = $page.data.session?.user;
+
+	let user_email = $state('');
+	let user_permission: Permission | undefined = $state();
+	let isSendMessage = $state(true);
+	let messageBody = $state('');
 
 	// $: user_email, validateEmail(user_email);
-	let isValidEmail = false;
-	let existUser = false;
+	let isValidEmail = $state(false);
+	let existUser = $state(false);
 
-	let userList: string[] = [];
+	let userList: string[] = $state([]);
 	const minUserSearchLength = 3;
-	let showUserList = false;
+	let showUserList = $state(false);
 
 	const getUserPermissions = async () => {
 		permissions = await api.getAlls();
@@ -341,9 +355,9 @@ ${username}`;
 
 	const getSingedInUserPermission = () => {
 		const currentUserPermission = permissions.find(
-			(p) => p.user_email === signedInUser.email
+			(p) => p.user_email === signedInUser?.email
 		)?.permission;
-		return signedInUser.is_superuser ? Permission.OWNER : currentUserPermission;
+		return signedInUser?.is_superuser ? Permission.OWNER : currentUserPermission;
 	};
 
 	const getPermissionList = () => {
@@ -364,13 +378,13 @@ ${username}`;
 		errorMessage = '';
 
 		user_email = '';
-		user_permission = isAdd ? Permission.READ : targetUserPermission.permission;
+		user_permission = isAdd ? Permission.READ : targetUserPermission?.permission;
 		isSendMessage = true;
 		if (isAdd) {
-			messageBody = api.getAddMessageBody($page.url, signedInUser.name);
+			messageBody = api.getAddMessageBody($page.url, signedInUser?.name as string);
 			showAddDialog = true;
 		} else {
-			messageBody = api.getModifyMessageBody($page.url, signedInUser.name);
+			messageBody = api.getModifyMessageBody($page.url, signedInUser?.name as string);
 			showEditDialog = true;
 		}
 	};
@@ -388,7 +402,7 @@ ${username}`;
 	const handleAddPermission = async () => {
 		try {
 			isUpadating = true;
-
+			if (!user_permission) return;
 			const res = await api.add(user_email.toLowerCase(), user_permission);
 			if (res.ok) {
 				await getUserPermissions();
@@ -405,6 +419,7 @@ ${username}`;
 	const handleEditPermission = async () => {
 		try {
 			isUpadating = true;
+			if (!targetUserPermission || !user_permission) return;
 			const res = await api.edit(targetUserPermission, user_permission);
 			if (res.ok) {
 				await getUserPermissions();
@@ -421,7 +436,7 @@ ${username}`;
 	const handleDeletePermission = async () => {
 		try {
 			isUpadating = true;
-
+			if (!targetUserPermission) return;
 			const res = await api.delete(targetUserPermission);
 			if (res.ok) {
 				await getUserPermissions();
@@ -472,7 +487,7 @@ ${username}`;
 	};
 
 	const handleEmailInput = debounce(() => {
-		isValidEmail = validateEmail(user_email);
+		isValidEmail = validateEmail(user_email) as boolean;
 
 		getUsers().then((result) => {
 			userList = [...result];
@@ -488,7 +503,7 @@ ${username}`;
 
 	const handleClickUseremail = (email: string) => {
 		user_email = email.toLowerCase();
-		isValidEmail = validateEmail(user_email);
+		isValidEmail = validateEmail(user_email) as boolean;
 		userList = [];
 		showUserList = false;
 	};
@@ -517,7 +532,7 @@ ${username}`;
 					<tr class="border-bottom">
 						<td class="email">
 							{permission.user_email}
-							{#if permission.user_email === signedInUser.email}
+							{#if permission.user_email === signedInUser?.email}
 								(you)
 							{/if}
 						</td>
@@ -534,13 +549,13 @@ ${username}`;
 							{/if}
 						</td>
 						<td class="operations py-0">
-							{#if permission.user_email !== signedInUser.email}
+							{#if permission.user_email !== signedInUser?.email}
 								{#if permissions.filter((p) => p.permission === Permission.OWNER && p.user_email !== permission.user_email)?.length > 0}
-									{#if permission.permission <= siginedUserPermission}
+									{#if siginedUserPermission && permission.permission <= siginedUserPermission}
 										<p class="is-flex">
 											<button
 												class="operation-button button"
-												on:click={() => {
+												onclick={() => {
 													targetUserPermission = permission;
 													handleOpenAddOrEditDialog(false);
 												}}
@@ -552,7 +567,7 @@ ${username}`;
 
 											<button
 												class="operation-button button"
-												on:click={() => {
+												onclick={() => {
 													handleOpenDeleteDialog(permission);
 												}}
 											>
@@ -570,7 +585,7 @@ ${username}`;
 
 		<button
 			class="button is-link is-uppercase has-text-weight-bold"
-			on:click={() => {
+			onclick={() => {
 				handleOpenAddOrEditDialog(true);
 			}}>Add user</button
 		>
@@ -579,179 +594,211 @@ ${username}`;
 
 {#if showAddDialog}
 	<ModalTemplate title="Add User" bind:show={showAddDialog}>
-		<div slot="content">
-			<FieldControl title="email address" showHelp={false}>
-				<div slot="control">
-					<div class="dropdown {showUserList ? 'is-active' : ''} user-email-input">
-						<div class="dropdown-trigger user-email-input">
-							<div class="control has-icons-left has-icons-right">
-								<input
-									class="input {!isValidEmail ? 'is-danger' : 'is-success'}"
-									type="email"
-									bind:value={user_email}
-									disabled={isUpadating}
-									aria-haspopup="true"
-									aria-controls="dropdown-menu"
-									on:input={handleEmailInput}
-									on:keydown={handleEmailKeyDown}
-								/>
-								<span class="icon is-small is-left">
-									<i class="fas fa-envelope"></i>
-								</span>
-								{#if isValidEmail}
-									<span class="icon is-small is-right">
-										<i class="fas fa-check"></i>
-									</span>
+		{#snippet content()}
+			<div>
+				<FieldControl title="email address" showHelp={false}>
+					{#snippet control()}
+						<div>
+							<div class="dropdown {showUserList ? 'is-active' : ''} user-email-input">
+								<div class="dropdown-trigger user-email-input">
+									<div class="control has-icons-left has-icons-right">
+										<input
+											class="input {!isValidEmail ? 'is-danger' : 'is-success'}"
+											type="email"
+											bind:value={user_email}
+											disabled={isUpadating}
+											aria-haspopup="true"
+											aria-controls="dropdown-menu"
+											oninput={handleEmailInput}
+											onkeydown={handleEmailKeyDown}
+										/>
+										<span class="icon is-small is-left">
+											<i class="fas fa-envelope"></i>
+										</span>
+										{#if isValidEmail}
+											<span class="icon is-small is-right">
+												<i class="fas fa-check"></i>
+											</span>
+										{/if}
+									</div>
+								</div>
+								<div class="dropdown-menu user-list-menu" id="dropdown-menu" role="menu">
+									<div class="dropdown-content">
+										{#each userList as user}
+											<!-- svelte-ignore a11y_missing_attribute -->
+											<!-- svelte-ignore a11y_interactive_supports_focus -->
+											<a
+												role="menuitem"
+												data-sveltekit-preload-code="off"
+												data-sveltekit-preload-data="off"
+												class="dropdown-item"
+												onclick={() => {
+													handleClickUseremail(user);
+												}}
+												onkeydown={handleEnterKey}
+											>
+												{user}
+											</a>
+										{/each}
+									</div>
+								</div>
+							</div>
+
+							{#key existUser}
+								{#if existUser}
+									<p class="help is-danger">This email was already registered.</p>
 								{/if}
-							</div>
+							{/key}
 						</div>
-						<div class="dropdown-menu user-list-menu" id="dropdown-menu" role="menu">
-							<div class="dropdown-content">
-								{#each userList as user}
-									<!-- svelte-ignore a11y-missing-attribute -->
-									<!-- svelte-ignore a11y-interactive-supports-focus -->
-									<a
-										role="menuitem"
-										data-sveltekit-preload-code="off"
-										data-sveltekit-preload-data="off"
-										class="dropdown-item"
-										on:click={() => {
-											handleClickUseremail(user);
-										}}
-										on:keydown={handleEnterKey}
-									>
-										{user}
-									</a>
+					{/snippet}
+				</FieldControl>
+
+				<FieldControl title="specify role" showHelp={false}>
+					{#snippet control()}
+						<div class="select is-fullwidth">
+							<select class="is-capitalized" bind:value={user_permission} disabled={isUpadating}>
+								{#each getPermissionList() as p}
+									<option value={p}>{getPermissionLabel(p)}</option>
 								{/each}
-							</div>
+							</select>
 						</div>
+					{/snippet}
+				</FieldControl>
+
+				<!-- <div class="mb-2"><Checkbox label="Send a message" bind:checked={isSendMessage} /></div>
+
+			{#if isSendMessage}
+				<FieldControl title="add a message" showHelp={false}>
+					<div slot="control">
+						<textarea
+							class="textarea has-fixed-size"
+							placeholder="Add a message to user"
+							bind:value={messageBody}
+						></textarea>
 					</div>
-
-					{#key existUser}
-						{#if existUser}
-							<p class="help is-danger">This email was already registered.</p>
-						{/if}
-					{/key}
-				</div>
-			</FieldControl>
-
-			<FieldControl title="specify role" showHelp={false}>
-				<div class="select is-fullwidth" slot="control">
-					<select class="is-capitalized" bind:value={user_permission} disabled={isUpadating}>
-						{#each getPermissionList() as p}
-							<option value={p}>{getPermissionLabel(p)}</option>
-						{/each}
-					</select>
-				</div>
-			</FieldControl>
-
-			<!-- <div class="mb-2"><Checkbox label="Send a message" bind:checked={isSendMessage} /></div>
-
-		{#if isSendMessage}
-			<FieldControl title="add a message" showHelp={false}>
-				<div slot="control">
-					<textarea
-						class="textarea has-fixed-size"
-						placeholder="Add a message to user"
-						bind:value={messageBody}
-					></textarea>
-				</div>
-			</FieldControl>
-		{/if}
-		{#if errorMessage}
-			<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
-		{/if} -->
-		</div>
-		<div slot="buttons">
-			<button
-				class="button is-link is-uppercase has-text-weight-bold {isUpadating ? 'is-loading' : ''} "
-				disabled={!(isValidEmail && (!isSendMessage || (isSendMessage && messageBody.length > 0)))}
-				on:click={handleAddPermission}
-			>
-				Add
-			</button>
-		</div>
+				</FieldControl>
+			{/if}
+			{#if errorMessage}
+				<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
+			{/if} -->
+			</div>
+		{/snippet}
+		{#snippet buttons()}
+			<div>
+				<button
+					class="button is-link is-uppercase has-text-weight-bold {isUpadating
+						? 'is-loading'
+						: ''} "
+					disabled={!(
+						isValidEmail &&
+						(!isSendMessage || (isSendMessage && messageBody.length > 0))
+					)}
+					onclick={handleAddPermission}
+				>
+					Add
+				</button>
+			</div>
+		{/snippet}
 	</ModalTemplate>
 {/if}
 
 {#if showEditDialog}
 	<ModalTemplate title="Edit User" bind:show={showEditDialog}>
-		<div slot="content">
-			<FieldControl title="email address" showHelp={false}>
-				<div class="control has-icons-left" slot="control">
-					<input class="input" type="email" bind:value={targetUserPermission.user_email} readonly />
-					<span class="icon is-small is-left">
-						<i class="fas fa-envelope"></i>
-					</span>
-				</div>
-			</FieldControl>
+		{#snippet content()}
+			<div>
+				<FieldControl title="email address" showHelp={false}>
+					{#snippet control()}
+						<div class="control has-icons-left">
+							<input
+								class="input"
+								type="email"
+								bind:value={targetUserPermission.user_email}
+								readonly
+							/>
+							<span class="icon is-small is-left">
+								<i class="fas fa-envelope"></i>
+							</span>
+						</div>
+					{/snippet}
+				</FieldControl>
 
-			<FieldControl title="specify role" showHelp={false}>
-				<div class="select is-fullwidth" slot="control">
-					<select class="is-capitalized" bind:value={user_permission} disabled={isUpadating}>
-						{#each getPermissionList() as p}
-							<option value={p}>{getPermissionLabel(p)}</option>
-						{/each}
-					</select>
-				</div>
-			</FieldControl>
+				<FieldControl title="specify role" showHelp={false}>
+					{#snippet control()}
+						<div class="select is-fullwidth">
+							<select class="is-capitalized" bind:value={user_permission} disabled={isUpadating}>
+								{#each getPermissionList() as p}
+									<option value={p}>{getPermissionLabel(p)}</option>
+								{/each}
+							</select>
+						</div>
+					{/snippet}
+				</FieldControl>
 
-			<!-- <div class="mb-2"><Checkbox label="Send a message" bind:checked={isSendMessage} /></div>
+				<!-- <div class="mb-2"><Checkbox label="Send a message" bind:checked={isSendMessage} /></div>
 
-		{#if isSendMessage}
-			<FieldControl title="add a message" showHelp={false}>
-				<div slot="control">
-					<textarea
-						class="textarea has-fixed-size"
-						placeholder="Add a message to user"
-						bind:value={messageBody}
-					></textarea>
-				</div>
-			</FieldControl>
-		{/if}
-		{#if errorMessage}
-			<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
-		{/if} -->
-		</div>
-		<div slot="buttons">
-			<button
-				class="button is-link is-uppercase has-text-weight-bold {isUpadating ? 'is-loading' : ''} "
-				disabled={!(
-					(!isSendMessage || (isSendMessage && messageBody.length > 0)) &&
-					permissions.find((p) => p.user_email === targetUserPermission.user_email)?.permission !==
-						user_permission
-				)}
-				on:click={handleEditPermission}
-			>
-				Edit
-			</button>
-		</div>
+			{#if isSendMessage}
+				<FieldControl title="add a message" showHelp={false}>
+					<div slot="control">
+						<textarea
+							class="textarea has-fixed-size"
+							placeholder="Add a message to user"
+							bind:value={messageBody}
+						></textarea>
+					</div>
+				</FieldControl>
+			{/if}
+			{#if errorMessage}
+				<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
+			{/if} -->
+			</div>
+		{/snippet}
+		{#snippet buttons()}
+			<div>
+				<button
+					class="button is-link is-uppercase has-text-weight-bold {isUpadating
+						? 'is-loading'
+						: ''} "
+					disabled={!(
+						(!isSendMessage || (isSendMessage && messageBody.length > 0)) &&
+						permissions.find((p) => p.user_email === targetUserPermission.user_email)
+							?.permission !== user_permission
+					)}
+					onclick={handleEditPermission}
+				>
+					Edit
+				</button>
+			</div>
+		{/snippet}
 	</ModalTemplate>
 {/if}
 
 {#if showDeleteDialog}
 	<ModalTemplate title="Are you sure deleting this user's permission?" bind:show={showDeleteDialog}>
-		<div slot="content">
-			<div class="has-text-weight-medium">
-				This action <b>cannot</b> be undone.
-				<br />
-				This will delete
-				<b>{targetUserPermission?.user_email}</b>'s permission from {api.getName()}.
+		{#snippet content()}
+			<div>
+				<div class="has-text-weight-medium">
+					This action <b>cannot</b> be undone.
+					<br />
+					This will delete
+					<b>{targetUserPermission?.user_email}</b>'s permission from {api.getName()}.
+				</div>
+				{#if errorMessage}
+					<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
+				{/if}
 			</div>
-			{#if errorMessage}
-				<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
-			{/if}
-		</div>
-		<div slot="buttons">
-			<button
-				class="button is-primary is-uppercase has-text-weight-bold {isUpadating
-					? 'is-loading'
-					: ''} mt-2"
-				on:click={handleDeletePermission}
-			>
-				delete this user
-			</button>
-		</div>
+		{/snippet}
+		{#snippet buttons()}
+			<div>
+				<button
+					class="button is-primary is-uppercase has-text-weight-bold {isUpadating
+						? 'is-loading'
+						: ''} mt-2"
+					onclick={handleDeletePermission}
+				>
+					delete this user
+				</button>
+			</div>
+		{/snippet}
 	</ModalTemplate>
 {/if}
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import StorymapChapterEdit from '$components/pages/storymap/StorymapChapterEdit.svelte';
 	import StorymapChapterMiniPreview from '$components/pages/storymap/StorymapChapterMiniPreview.svelte';
 	import StorymapEditPreview from '$components/pages/storymap/StorymapEditPreview.svelte';
@@ -42,43 +42,43 @@
 	import { v4 as uuidv4 } from 'uuid';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();
 
 	let configStore: StoryMapConfigStore = createStoryMapConfigStore();
 	setContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY, configStore);
 
-	let breadcrumbs: BreadcrumbPage[] = [
+	let breadcrumbs: BreadcrumbPage[] = $state([
 		{ title: 'home', url: '/' },
 		{ title: 'storymaps', url: '/storymaps' }
-	];
+	]);
 
-	let storymapMetaEditor: StorymapMetaEdit;
+	let storymapMetaEditor: StorymapMetaEdit | undefined = $state();
 
 	const activeStorymapChapterStore = createActiveStorymapChapterStore();
 	setContext(ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY, activeStorymapChapterStore);
 
 	const headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
-	let innerHeight: number;
-	let editorHeaderHeight: number;
-	let newslideButtonHeight: number;
-	$: containerHeight = innerHeight - $headerHeightStore;
-	$: editorContentHeight = containerHeight - editorHeaderHeight;
-	$: slidePreviewHeight = editorContentHeight - newslideButtonHeight;
+	let innerHeight: number = $state(0);
+	let editorHeaderHeight: number = $state(0);
+	let newslideButtonHeight: number = $state(0);
 
-	let innerWidth: number;
-	let sidebarWidth: number;
-	let slideSettingWidth = 360;
-	$: slidePreviewWidth = innerWidth - sidebarWidth - (showSlideSetting ? slideSettingWidth : 0);
+	let innerWidth: number = $state(0);
+	let sidebarWidth: number = $state(0);
+	let slideSettingWidth = $state(360);
 
 	// let activeChapter: StoryMapChapter | undefined;
-	let isHeaderSlideActive = false;
-	let isFooterSlideActive = false;
-	let showSlideSetting = false;
+	let isHeaderSlideActive = $state(false);
+	let isFooterSlideActive = $state(false);
+	let showSlideSetting = $state(false);
 
-	let showPreview = false;
-	let showSaveDialog = false;
+	let showPreview = $state(false);
+	let showSaveDialog = $state(false);
 
 	const handleChapterClicked = (chapter: unknown) => {
 		isHeaderSlideActive = false;
@@ -107,12 +107,12 @@
 		isHeaderSlideActive = false;
 	};
 
-	let isDialogOpen = false;
-	let requireUpdated = false;
-	let requirePreviewUpdated = false;
-	let requireHeaderUpdated = false;
-	let requireEditorUpdated = false;
-	let isProcessing = false;
+	let isDialogOpen = $state(false);
+	let requireUpdated = $state(false);
+	let requirePreviewUpdated = $state(false);
+	let requireHeaderUpdated = $state(false);
+	let requireEditorUpdated = $state(false);
+	let isProcessing = $state(false);
 
 	onMount(() => {
 		$configStore = data.storymap as StoryMapConfig;
@@ -124,7 +124,7 @@
 
 	const setupStorymap = async () => {
 		const now = dayjs();
-		let bylineText = `${$page.data.session?.user.name}, ${now.format('DD/MM/YYYY')}`;
+		let bylineText = `${page.data.session?.user.name}, ${now.format('DD/MM/YYYY')}`;
 
 		const defaultFooter = `<center>${getAttribution(false)}</center>`;
 
@@ -184,12 +184,12 @@
 						$configStore.title && $configStore.title.length > 0 ? $configStore.title : 'untitled',
 					url: storymapUrl
 				},
-				{ title: 'edit', url: $page.url.href }
+				{ title: 'edit', url: page.url.href }
 			];
 		} else {
 			const title =
 				$configStore?.title && $configStore?.title.length > 0 ? $configStore?.title : 'untitled';
-			breadcrumbs = [...breadcrumbs, { title: title, url: $page.url.href }];
+			breadcrumbs = [...breadcrumbs, { title: title, url: page.url.href }];
 		}
 	};
 
@@ -213,7 +213,7 @@
 			let styleUrl = '';
 
 			if (style_id) {
-				const mapUrl = new URL(`/api/style/${style_id}.json`, $page.url.origin);
+				const mapUrl = new URL(`/api/style/${style_id}.json`, page.url.origin);
 				if (base_style_id) {
 					mapUrl.searchParams.set('basemap', base_style_id);
 				}
@@ -224,7 +224,7 @@
 						(m) =>
 							m.id.toLowerCase() === ($configStore as StoryMapConfig).base_style_id?.toLowerCase()
 					) ?? MapStyles[0];
-				styleUrl = new URL(baseMap.uri, $page.url.origin).href;
+				styleUrl = new URL(baseMap.uri, page.url.origin).href;
 			}
 
 			const lastChapter: StoryMapChapter | undefined =
@@ -434,8 +434,8 @@
 		}
 	};
 
-	let hovering: string | undefined = undefined;
-	let draggingUp = false;
+	let hovering: string | undefined = $state(undefined);
+	let draggingUp = $state(false);
 	let draggedId: string | undefined = undefined;
 	const dragstart = (
 		event: DragEvent & { currentTarget: EventTarget & HTMLButtonElement },
@@ -522,6 +522,12 @@
 		config.showProgress = false;
 		return config;
 	};
+	let containerHeight = $derived(innerHeight - $headerHeightStore);
+	let editorContentHeight = $derived(containerHeight - editorHeaderHeight);
+	let slidePreviewHeight = $derived(editorContentHeight - newslideButtonHeight);
+	let slidePreviewWidth = $derived(
+		innerWidth - sidebarWidth - (showSlideSetting ? slideSettingWidth : 0)
+	);
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth />
@@ -555,7 +561,7 @@
 					use:tippyTooltip={{
 						content: 'Edit general settings of this story.'
 					}}
-					on:click={() => {
+					onclick={() => {
 						storymapMetaEditor?.open();
 					}}
 				>
@@ -568,7 +574,7 @@
 						? 'is-loading'
 						: ''}"
 					disabled={isProcessing}
-					on:click={() => {
+					onclick={() => {
 						showPreview = true;
 					}}
 					use:tippyTooltip={{ content: 'Show preview for the current story settings' }}
@@ -580,7 +586,7 @@
 						? 'is-loading'
 						: ''}"
 					disabled={isProcessing || !data.session}
-					on:click={() => {
+					onclick={() => {
 						showSaveDialog = true;
 					}}
 					use:tippyTooltip={{
@@ -603,14 +609,14 @@
 					{#key requireHeaderUpdated}
 						<button
 							class="is-flex chapter-preview no-drag py-3 pr-4"
-							on:click={() => {
+							onclick={() => {
 								handleheaderClicked();
 							}}
 							draggable={false}
-							on:dragstart={(event) => {
+							ondragstart={(event) => {
 								event.preventDefault();
 							}}
-							on:dragenter={(event) => {
+							ondragenter={(event) => {
 								event.preventDefault();
 								hovering = undefined;
 							}}
@@ -633,18 +639,21 @@
 								chapter.id
 									? 'is-dropping'
 									: ``} {draggingUp ? 'drag-up' : 'drag-down'}"
-								on:click={() => {
+								onclick={() => {
 									handleChapterClicked(chapter);
 								}}
 								draggable={true}
-								on:dragstart={(event) => dragstart(event, chapter.id)}
-								on:drop|preventDefault={(event) => drop(event, index)}
-								on:dragover={(event) => dragover(event)}
-								on:dragenter={(event) => dragenter(event, chapter.id)}
+								ondragstart={(event) => dragstart(event, chapter.id)}
+								ondrop={(event) => {
+									event.preventDefault();
+									drop(event, index);
+								}}
+								ondragover={(event) => dragover(event)}
+								ondragenter={(event) => dragenter(event, chapter.id)}
 							>
 								<p class="slide-number px-4 is-size-7">{slideNo}</p>
 								<StorymapChapterMiniPreview
-									bind:chapter
+									bind:chapter={$configStore.chapters[index]}
 									{isActive}
 									on:edit={handleSlideEdit}
 									on:delete={handleSlideDeleted}
@@ -660,14 +669,14 @@
 
 					<button
 						class="is-flex chapter-preview no-drag py-3 pr-4"
-						on:click={() => {
+						onclick={() => {
 							handleFooterClicked();
 						}}
 						draggable={false}
-						on:dragstart={(event) => {
+						ondragstart={(event) => {
 							event.preventDefault();
 						}}
-						on:dragenter={(event) => {
+						ondragenter={(event) => {
 							event.preventDefault();
 							hovering = undefined;
 						}}
@@ -686,7 +695,7 @@
 					class="button is-link is-uppercase has-text-weight-bold is-fullwidth {isProcessing
 						? 'is-loading'
 						: ''}"
-					on:click={handleNewSlide}
+					onclick={handleNewSlide}
 					disabled={isProcessing ||
 						!($configStore?.title && $configStore.title.length > 0 && $configStore?.style)}
 					use:tippyTooltip={{ content: 'Add a new slide to the end.' }}
@@ -701,7 +710,7 @@
 					{#if isHeaderSlideActive}
 						<StorymapHeaderEdit
 							bind:width={slideSettingWidth}
-							bind:height={editorContentHeight}
+							height={editorContentHeight}
 							on:change={handleHeaderChanged}
 							on:textchange={initBreadcrumbs}
 							on:close={handleSlideEditClosed}
@@ -709,7 +718,7 @@
 					{:else if isFooterSlideActive}
 						<StorymapFooterEdit
 							bind:width={slideSettingWidth}
-							bind:height={editorContentHeight}
+							height={editorContentHeight}
 							on:close={handleSlideEditClosed}
 						/>
 					{:else if $activeStorymapChapterStore}
@@ -717,7 +726,7 @@
 							<StorymapChapterEdit
 								bind:chapter={$activeStorymapChapterStore}
 								bind:width={slideSettingWidth}
-								bind:height={editorContentHeight}
+								height={editorContentHeight}
 								on:change={handleSlideChanged}
 								on:close={handleSlideEditClosed}
 							/>
@@ -762,7 +771,7 @@
 	<div
 		class="preview"
 		role="none"
-		on:keydown={(e) => {
+		onkeydown={(e) => {
 			if (e.key === 'Escape') {
 				showPreview = false;
 			}
@@ -776,67 +785,76 @@
 		</div>
 		<button
 			class="delete is-large"
-			on:click={() => {
+			onclick={() => {
 				showPreview = false;
 			}}
+			aria-label="delete"
 		></button>
 	</div>
 {/if}
 
 {#if showSaveDialog}
 	<ModalTemplate title="Save or Publish" bind:show={showSaveDialog} showClose={!isProcessing}>
-		<div slot="content">
-			<FieldControl
-				title="Select access level"
-				fontWeight="bold"
-				isFirstCharCapitalized={false}
-				showHelp={true}
-				showHelpPopup={false}
-			>
-				<div slot="control">
-					<AccessLevelSwitcher
-						bind:accessLevel={$configStore.access_level}
-						size="normal"
-						bind:disabled={isProcessing}
-					/>
-				</div>
-				<div slot="help">
-					{#if $configStore.access_level === AccessLevel.PRIVATE}
-						Your storymap is private and only visible to you. To share it, select your organization
-						for internal access or Public to make it available to everyone.
-					{:else if $configStore.access_level === AccessLevel.ORGANIZATION}
-						Your storymap is visible to everyone within your organization. If you want to restrict
-						access, choose Private or to share it more broadly, select Public.
-					{:else}
-						Your storymap is public and can be viewed by anyone, including those outside your
-						organization. To limit visibility, choose your organization or Private.
-					{/if}
-				</div>
-			</FieldControl>
-		</div>
-		<div slot="buttons">
-			<button
-				class="button is-primary is-uppercase has-text-weight-bold {isProcessing
-					? 'is-loading'
-					: ''}"
-				disabled={isProcessing}
-				on:click={handleSave}
-			>
-				save
-			</button>
+		{#snippet content()}
+			<div>
+				<FieldControl
+					title="Select access level"
+					fontWeight="bold"
+					isFirstCharCapitalized={false}
+					showHelp={true}
+					showHelpPopup={false}
+				>
+					{#snippet control()}
+						<div>
+							<AccessLevelSwitcher
+								bind:accessLevel={$configStore.access_level}
+								size="normal"
+								bind:disabled={isProcessing}
+							/>
+						</div>
+					{/snippet}
+					{#snippet help()}
+						<div>
+							{#if $configStore.access_level === AccessLevel.PRIVATE}
+								Your storymap is private and only visible to you. To share it, select your
+								organization for internal access or Public to make it available to everyone.
+							{:else if $configStore.access_level === AccessLevel.ORGANIZATION}
+								Your storymap is visible to everyone within your organization. If you want to
+								restrict access, choose Private or to share it more broadly, select Public.
+							{:else}
+								Your storymap is public and can be viewed by anyone, including those outside your
+								organization. To limit visibility, choose your organization or Private.
+							{/if}
+						</div>
+					{/snippet}
+				</FieldControl>
+			</div>
+		{/snippet}
+		{#snippet buttons()}
+			<div>
+				<button
+					class="button is-primary is-uppercase has-text-weight-bold {isProcessing
+						? 'is-loading'
+						: ''}"
+					disabled={isProcessing}
+					onclick={handleSave}
+				>
+					save
+				</button>
 
-			<button
-				class="cancel-button button is-light is-uppercase has-text-weight-bold {isProcessing
-					? 'is-loading'
-					: ''}"
-				disabled={isProcessing}
-				on:click={() => {
-					showSaveDialog = false;
-				}}
-			>
-				cancel
-			</button>
-		</div>
+				<button
+					class="cancel-button button is-light is-uppercase has-text-weight-bold {isProcessing
+						? 'is-loading'
+						: ''}"
+					disabled={isProcessing}
+					onclick={() => {
+						showSaveDialog = false;
+					}}
+				>
+					cancel
+				</button>
+			</div>
+		{/snippet}
 	</ModalTemplate>
 {/if}
 

@@ -40,6 +40,8 @@
 	});
 	const excludedMenu = ['Favourite', 'My data'];
 
+	let isInitialized = false;
+
 	let expanded: { [key: string]: boolean } = {};
 	// to allow only an accordion to be expanded
 	let expandedDatasetId: string;
@@ -127,7 +129,9 @@
 	const handleFilterChanged = async (e) => {
 		clearDatasets();
 		const url = new URL(e.detail.url);
-		replaceState(url, '');
+		if (isInitialized) {
+			replaceState(url, '');
+		}
 		if (breadcrumbs.length <= 1 && query?.length === 0) {
 			return;
 		}
@@ -264,6 +268,7 @@
 			const url = new URL(`/api/datasets${$page.url.search}${$page.url.hash}`, $page.url.origin);
 			reload(url);
 		}
+		isInitialized = true;
 	});
 </script>
 

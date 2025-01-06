@@ -4,13 +4,18 @@
 	import type { IngestedDataset } from '$lib/types';
 	import { handleEnterKey, initTippy } from '@undp-data/svelte-undp-components';
 	import { filesize } from 'filesize';
-	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time';
 	import DatasetPreview from '../datasets/DatasetPreview.svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		dataset: IngestedDataset;
+		change: () => void;
+	}
 
-	export let dataset: IngestedDataset;
+	let { dataset = $bindable(), change = () => {} }: Props = $props();
+
+	let datasetId: string = $derived(dataset.id as string);
+	let datasetName: string = $derived(dataset.name as string);
 
 	const tippy = initTippy({
 		placement: 'bottom-end',
@@ -21,14 +26,14 @@
 			strategy: 'fixed'
 		}
 	});
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
 	const getEditMetadataPage = (url: string, isNew: boolean) => {
 		const url4edit = removeSasTokenFromDatasetUrl(url);
 		return isNew ? `/data/edit?url=${url4edit}` : `/data/${dataset.id}/edit?url=${url4edit}`;
 	};
 
-	let isLoadPreviewMap = false;
+	let isLoadPreviewMap = $state(false);
 	const previewTippy = initTippy({
 		placement: 'left',
 		maxWidth: 400,
@@ -39,9 +44,9 @@
 			});
 		}
 	});
-	let previewContent: HTMLElement;
+	let previewContent: HTMLElement | undefined = $state();
 
-	let confirmDeleteDialogVisible = false;
+	let confirmDeleteDialogVisible = $state(false);
 
 	const clickMenuButton = () => {
 		const buttons = document.getElementsByClassName(`menu-button-${dataset.id}`);
@@ -52,7 +57,7 @@
 	};
 
 	const handleDeleteDataset = () => {
-		dispatch('change');
+		change();
 	};
 </script>
 
@@ -70,7 +75,7 @@
 		</span>
 	</td>
 	<td>
-		{filesize(dataset.contentLength, { round: 1 })}
+		{filesize(dataset.contentLength ?? 0, { round: 1 })}
 	</td>
 	<td>
 		<Time timestamp={dataset.createdat} format="HH:mm, MM/DD/YYYY" />
@@ -81,39 +86,41 @@
 				class="button menu-button menu-button-{dataset.id}"
 				use:tippy={{ content: tooltipContent }}
 				aria-expanded="true"
+				aria-label="menu"
 			>
 				<span class="icon is-small">
 					<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
 				</span>
 			</button>
 			<div class="dropdown-content" bind:this={tooltipContent}>
-				<a class="dropdown-item" role="button" href={dataset.url.replace('pmtiles://', '')}>
+				<a class="dropdown-item" role="button" href={dataset.url?.replace('pmtiles://', '')}>
 					<span class="icon">
-						<i class="fa-solid fa-download" />
+						<i class="fa-solid fa-download"></i>
 					</span>
 					<span>Download</span>
 				</a>
 
-				<!-- svelte-ignore a11y-missing-attribute -->
+				<!-- svelte-ignore a11y_missing_attribute -->
 				<a class="dropdown-item" use:previewTippy={{ content: previewContent }}>
 					<span class="icon">
-						<i class="fa-solid fa-map" />
+						<i class="fa-solid fa-map"></i>
 					</span>
 					<span>Preview</span>
 				</a>
 				<div bind:this={previewContent} class="tooltip p-2 preview">
-					{#if isLoadPreviewMap}
-						<DatasetPreview bind:feature={dataset.feature} height="300px" showButtons={false} />
+					{#if isLoadPreviewMap && dataset.feature}
+						<DatasetPreview bind:feature={dataset.feature} height="300px" showButtons={false}
+						></DatasetPreview>
 					{/if}
 				</div>
 
 				<a
 					class="dropdown-item"
 					role="button"
-					href={getEditMetadataPage(dataset.url, dataset.processing)}
+					href={getEditMetadataPage(dataset.url ?? '', dataset.processing ?? false)}
 				>
 					<span class="icon">
-						<i class="fa-solid {dataset.processing ? 'fa-lock-open' : 'fa-pen-to-square'}" />
+						<i class="fa-solid {dataset.processing ? 'fa-lock-open' : 'fa-pen-to-square'}"></i>
 					</span>
 					<span>
 						{#if dataset.processing}
@@ -134,19 +141,19 @@
 				{/if}
 
 				{#if !dataset.processing}
-					<!-- svelte-ignore a11y-missing-attribute -->
+					<!-- svelte-ignore a11y_missing_attribute -->
 					<a
 						class="dropdown-item"
 						role="button"
 						tabindex="0"
-						on:click={() => {
+						onclick={() => {
 							clickMenuButton();
 							confirmDeleteDialogVisible = true;
 						}}
-						on:keydown={handleEnterKey}
+						onkeydown={handleEnterKey}
 					>
 						<span class="icon">
-							<i class="fa-solid fa-trash" />
+							<i class="fa-solid fa-trash"></i>
 						</span>
 						<span>Unpublish</span>
 					</a>
@@ -157,10 +164,10 @@
 </tr>
 
 <PublishedDatasetDeleteDialog
-	bind:id={dataset.id}
-	bind:name={dataset.name}
+	id={datasetId}
+	name={datasetName}
 	bind:dialogShown={confirmDeleteDialogVisible}
-	on:deleted={handleDeleteDataset}
+	ondelete={handleDeleteDataset}
 />
 
 <style lang="scss">

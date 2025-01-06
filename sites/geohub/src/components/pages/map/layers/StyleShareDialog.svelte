@@ -38,7 +38,7 @@
 					class="fa-solid fa-chevron-down toggle-icon {showDevLink
 						? 'active'
 						: ''} has-text-primary"
-				/>
+				></i>
 			</span>
 			<span class="has-text-grey-dark is-uppercase has-text-weight-bold"
 				>Show links for developers</span

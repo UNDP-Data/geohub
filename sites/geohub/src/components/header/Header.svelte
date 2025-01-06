@@ -9,11 +9,15 @@
 
 	let headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 
-	export let isPositionFixed = true;
-	export let showSignin = true;
+	interface Props {
+		isPositionFixed?: boolean;
+		showSignin?: boolean;
+	}
 
-	let showMobileMenu = false;
-	let headerLinks = $page.data.headerLinks;
+	let { isPositionFixed = true, showSignin = true }: Props = $props();
+
+	let showMobileMenu = $state(false);
+	let headerLinks = $state($page.data.headerLinks);
 
 	beforeNavigate(() => {
 		showMobileMenu = false;
@@ -54,11 +58,13 @@
 			]
 		}}
 	>
-		<div class="custom-button" slot="customButton">
-			{#if browser && showSignin}
-				<UserAccount />
-			{/if}
-		</div>
+		{#snippet customButton()}
+			<div class="custom-button">
+				{#if browser && showSignin}
+					<UserAccount />
+				{/if}
+			</div>
+		{/snippet}
 	</Header>
 </div>
 

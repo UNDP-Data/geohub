@@ -4,12 +4,24 @@
 	import { map } from '../stores';
 	import { loadAdmin, reloadAdmin } from '../utils/adminLayer';
 	import { UNDP_DASHBOARD_RASTER_LAYER_ID } from './TimeSlider.svelte';
-	export let loadAdminLabels = true;
-	export let propertyA = `hrea_2020`;
-	export let propertyB = `hrea_2012`;
-	export let selectedRow = null;
-	export let selectedCol = null;
-	export let showLegend = true;
+
+	interface Props {
+		loadAdminLabels?: boolean;
+		propertyA?: string;
+		propertyB?: string;
+		selectedRow?: number | null;
+		selectedCol?: number | null;
+		showLegend?: boolean;
+	}
+
+	let {
+		loadAdminLabels = true,
+		propertyA = `hrea_2020`,
+		propertyB = `hrea_2012`,
+		selectedRow = $bindable(null),
+		selectedCol = $bindable(null),
+		showLegend = $bindable(true)
+	}: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();
 
@@ -23,9 +35,14 @@
 		['#FFFFFF', '#BFEFFF', '#80E0FF', '#40D0FF', '#00C0FF']
 	];
 
-	let colorExpression;
+	let colorExpression = $state();
 
-	const updateColorExpression = (propertyA, propertyB, selectedRow, selectedCol) => {
+	const updateColorExpression = (
+		propertyA: string,
+		propertyB: string,
+		selectedRow: number | null | undefined,
+		selectedCol: number | null | undefined
+	) => {
 		let expression;
 		expression = [];
 		for (let row = 0; row < colorGrid.length; row++) {
@@ -62,7 +79,6 @@
 		reloadAdmin(undefined, loadAdminLabels, colorExpression);
 		return colorExpression;
 	};
-	$: colorExpression = updateColorExpression(propertyA, propertyB, selectedRow, selectedCol);
 
 	const gridSelectHandler = (rowIndex: number, colIndex: number) => {
 		if (selectedRow === rowIndex && selectedCol === colIndex) {
@@ -72,6 +88,7 @@
 			selectedRow = rowIndex;
 			selectedCol = colIndex;
 		}
+		colorExpression = updateColorExpression(propertyA, propertyB, selectedRow, selectedCol);
 	};
 
 	onMount(() => {
@@ -86,6 +103,7 @@
 
 		loadAdmin(true);
 		reloadAdmin(undefined, loadAdminLabels, colorExpression);
+		colorExpression = updateColorExpression(propertyA, propertyB, selectedRow, selectedCol);
 	});
 </script>
 
@@ -95,7 +113,7 @@
 			? 'mb-4 clicked'
 			: ''}"
 		type="button"
-		on:click={() => (showLegend = !showLegend)}>Legend</button
+		onclick={() => (showLegend = !showLegend)}>Legend</button
 	>
 
 	{#if showLegend}
@@ -119,7 +137,8 @@
 										use:tippyTooltip={{
 											content: `Wealth: ${20 * (5 - rowIndex - 1)}-${20 * (5 - rowIndex)}%, E.A.: ${20 * colIndex}-${20 * (colIndex + 1)}%`
 										}}
-										on:click={() => gridSelectHandler(rowIndex, colIndex)}
+										aria-label="legend"
+										onclick={() => gridSelectHandler(rowIndex, colIndex)}
 									></button>
 								{/each}
 							</div>

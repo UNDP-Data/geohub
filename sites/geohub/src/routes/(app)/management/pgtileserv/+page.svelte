@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { generateHashKey } from '$lib/helper';
 	import type { DatasetFeatureCollection, PgtileservLayer } from '$lib/types';
 	import {
@@ -13,22 +13,26 @@
 	import type { PageData } from './$types';
 	import PgtileserveTable from './PgtileserveTable.svelte';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 
 	interface ManagedPgtileservLayer extends PgtileservLayer {
 		url: string;
 		key: string;
 	}
 
-	let isLoading: Promise<void>;
+	let isLoading: Promise<void> | undefined = $state();
 
-	let tableLayers: ManagedPgtileservLayer[] = [];
-	let functionLayers: ManagedPgtileservLayer[] = [];
+	let tableLayers: ManagedPgtileservLayer[] = $state([]);
+	let functionLayers: ManagedPgtileservLayer[] = $state([]);
 
-	let tableDatasets: DatasetFeatureCollection;
-	let functionDatasets: DatasetFeatureCollection;
+	let tableDatasets: DatasetFeatureCollection | undefined = $state();
+	let functionDatasets: DatasetFeatureCollection | undefined = $state();
 
-	let selectedTab: 'table' | 'function' = 'table';
+	let selectedTab: 'table' | 'function' = $state('table');
 
 	onMount(() => {
 		isLoading = initialise();
@@ -70,11 +74,11 @@
 		return json as DatasetFeatureCollection;
 	};
 
-	let breadcrumbs: BreadcrumbPage[] = [
+	let breadcrumbs: BreadcrumbPage[] = $state([
 		{ title: 'home', url: '/' },
 		{ title: 'management', url: '/management' },
-		{ title: 'pg_tileserv layers', url: $page.url.href }
-	];
+		{ title: 'pg_tileserv layers', url: page.url.href }
+	]);
 </script>
 
 <HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
@@ -88,12 +92,12 @@
 		<div class="tabs is-fullwidth">
 			<ul>
 				<li class={selectedTab === 'table' ? 'is-active' : ''}>
-					<!-- svelte-ignore a11y-missing-attribute -->
+					<!-- svelte-ignore a11y_missing_attribute -->
 					<a
 						role="tab"
 						tabindex="0"
-						on:keydown={handleEnterKey}
-						on:click={() => {
+						onkeydown={handleEnterKey}
+						onclick={() => {
 							selectedTab = 'table';
 						}}
 					>
@@ -102,12 +106,12 @@
 					</a>
 				</li>
 				<li class={selectedTab === 'function' ? 'is-active' : ''}>
-					<!-- svelte-ignore a11y-missing-attribute -->
+					<!-- svelte-ignore a11y_missing_attribute -->
 					<a
 						role="tab"
 						tabindex="0"
-						on:keydown={handleEnterKey}
-						on:click={() => {
+						onkeydown={handleEnterKey}
+						onclick={() => {
 							selectedTab = 'function';
 						}}
 					>

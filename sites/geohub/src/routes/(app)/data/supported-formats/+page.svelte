@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 
 	let archiveFormat = AccepedExtensions.find((ext) => ext.name === 'Archive Formats');
 
-	let breadcrumbs: BreadcrumbPage[] = [
+	let breadcrumbs: BreadcrumbPage[] = $state([
 		{ title: 'home', url: '/' },
 		{ title: 'datasets', url: '/data' },
 		{ title: 'upload', url: '/data/upload' },
-		{ title: 'Supported Format', url: $page.url.href }
-	];
+		{ title: 'Supported Format', url: page.url.href }
+	]);
 </script>
 
 <HeroHeader title="Supported Formats" bind:breadcrumbs />
@@ -39,7 +39,7 @@
 				<tbody>
 					{#each AccepedExtensions as item}
 						{#if item.name !== 'Archive Formats'}
-							{#if item.dataTypes.includes(type)}
+							{#if item.dataTypes?.includes(type)}
 								<tr>
 									<td><DefaultLink title={item.name} href={item.href} target="_blank" /></td>
 									<td>
@@ -66,19 +66,21 @@
 		</div>
 	{/each}
 
-	<h2 class="title is-2 is-capitalized">Archived Formats Supported</h2>
+	{#if archiveFormat}
+		<h2 class="title is-2 is-capitalized">Archived Formats Supported</h2>
 
-	<div class="block">
-		<p class="is-size-5">
-			These file formats listed in the above sections can be supplied in their original formats or
-			as archives as
-			{#each archiveFormat.extensions as ext}
-				<span class="is-info is-light tag is-medium ml-1">
-					.{ext}
-				</span>
-			{/each}
-		</p>
-	</div>
+		<div class="block">
+			<p class="is-size-5">
+				These file formats listed in the above sections can be supplied in their original formats or
+				as archives as
+				{#each archiveFormat.extensions as ext}
+					<span class="is-info is-light tag is-medium ml-1">
+						.{ext}
+					</span>
+				{/each}
+			</p>
+		</div>
+	{/if}
 
 	<hr />
 	<div class="block">

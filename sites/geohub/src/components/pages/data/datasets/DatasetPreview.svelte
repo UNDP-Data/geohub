@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
@@ -17,13 +17,21 @@
 	import { onMount } from 'svelte';
 	import RasterBandSelectbox from './RasterBandSelectbox.svelte';
 
-	export let feature: DatasetFeature;
-	export let showButtons = true;
-	export let height = '';
+	interface Props {
+		feature: DatasetFeature;
+		showButtons?: boolean;
+		height?: string;
+	}
 
-	let config: UserConfig = $page.data.config;
-	let layerCreationInfo: LayerCreationInfo;
-	let metadata: RasterTileMetadata | VectorTileMetadata;
+	let {
+		feature = $bindable(),
+		showButtons = $bindable(true),
+		height = $bindable('')
+	}: Props = $props();
+
+	let config: UserConfig = page.data.config;
+	let layerCreationInfo: LayerCreationInfo | undefined = $state();
+	let metadata: RasterTileMetadata | VectorTileMetadata | undefined = $state();
 
 	const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
 		{ key: string; value: string }
@@ -32,13 +40,13 @@
 	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
 	const stacType = tags?.find((tag) => tag.key === 'stac');
 
-	let selectedVectorLayer: VectorLayerTileStatLayer;
-	let selectedBand: string;
-	let bands: string[];
-	let isRgbTile = false;
-	let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
+	let selectedVectorLayer: VectorLayerTileStatLayer | undefined = $state();
+	let selectedBand: string = $state('');
+	let bands: string[] | undefined = $state();
+	let isRgbTile = $state(false);
+	let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | undefined = $state();
 
-	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
+	let tilestatsLayers: VectorLayerTileStatLayer[] = $state([]);
 
 	const isCatalog =
 		feature.properties.tags?.find((t) => t.key === 'stacApiType')?.value === 'catalog';
@@ -66,11 +74,11 @@
 		}
 	};
 
-	let innerWidth = 0;
+	let innerWidth = $state(0);
 
 	const handleShowOnMap = async () => {
 		const mapUrl = await addDataToLocalStorage(
-			$page.url,
+			page.url,
 			(layers: Layer[], style: StyleSpecification, styleId: string) => {
 				// create layer info and add it to style and layerList
 				if (is_raster) {
@@ -131,8 +139,6 @@
 		goto(mapUrl.url, { invalidateAll: true });
 	};
 
-	$: selectedVectorLayer, handleLayerTypeChanged();
-	$: layerType, handleLayerTypeChanged();
 	const handleLayerTypeChanged = () => {
 		layerCreationInfo = undefined;
 	};
@@ -154,15 +160,15 @@
 			<div
 				class="vector-config p-2"
 				hidden={tilestatsLayers?.length === 1 &&
-					selectedVectorLayer.geometry.toLowerCase() === 'linestring'}
+					selectedVectorLayer?.geometry.toLowerCase() === 'linestring'}
 			>
 				{#if tilestatsLayers.length > 1}
 					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
+						<!-- svelte-ignore a11y_label_has_associated_control -->
 						<label class="label">Please select a layer to preview</label>
 						<div class="control">
 							<div class="select is-link is-fullwidth">
-								<select bind:value={selectedVectorLayer}>
+								<select bind:value={selectedVectorLayer} onchange={handleLayerTypeChanged}>
 									{#each tilestatsLayers as layer}
 										<option value={layer}>{layer.layer}</option>
 									{/each}
@@ -172,7 +178,12 @@
 					</div>
 				{/if}
 				<div class="mt-2">
-					<LayerTypeSwitch bind:layer={selectedVectorLayer} bind:layerType size="small" />
+					<LayerTypeSwitch
+						bind:layer={selectedVectorLayer as VectorLayerTileStatLayer}
+						bind:layerType
+						size="small"
+						on:change={handleLayerTypeChanged}
+					/>
 				</div>
 			</div>
 		{/if}
@@ -196,7 +207,7 @@
 		{#if metadata && !isRgbTile && bands.length > 1}
 			<div class="raster-config p-2">
 				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<!-- svelte-ignore a11y_label_has_associated_control -->
 					<label class="label">Please select a raster band</label>
 					<div class="control">
 						<RasterBandSelectbox bind:metadata bind:selectedBand />
@@ -223,7 +234,7 @@
 	{#if !stacType && showButtons}
 		{#if layerCreationInfo}
 			<div class="buttons mt-4">
-				<button class="button is-link is-uppercase has-text-weight-bold" on:click={handleShowOnMap}>
+				<button class="button is-link is-uppercase has-text-weight-bold" onclick={handleShowOnMap}>
 					Add to map
 				</button>
 			</div>

@@ -312,6 +312,11 @@ export const actions = {
 				return fail(400, { type: 'danger', message: 'Dataset description is required' });
 			}
 
+			const accessLevel = data.get('accessLevel') as string;
+			if (!accessLevel) {
+				return fail(400, { type: 'danger', message: 'Dataset accessLevel is required' });
+			}
+
 			const tagsStr = data.get('tags') as string;
 			const tags: Tag[] = tagsStr ? JSON.parse(tagsStr) : '';
 
@@ -325,6 +330,7 @@ export const actions = {
 			dataset.properties.license = license;
 			dataset.properties.description = description;
 			dataset.properties.tags = tags;
+			dataset.properties.access_level = parseInt(accessLevel);
 			const res = await fetch(`/api/datasets`, {
 				method: 'POST',
 				body: JSON.stringify(dataset)
