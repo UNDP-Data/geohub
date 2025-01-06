@@ -1,15 +1,11 @@
 <script lang="ts">
 	import { replaceState } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import DataView from '$components/pages/map/data/DataView.svelte';
 	import LayerList from '$components/pages/map/layers/LayerList.svelte';
 	import { MapStyles, TabNames } from '$lib/config/AppConfig';
-	import {
-		LAYERLISTSTORE_CONTEXT_KEY,
-		PAGE_DATA_LOADING_CONTEXT_KEY,
-		type LayerListStore,
-		type PageDataLoadingStore
-	} from '$stores';
+	import type { Link } from '$lib/types';
+	import { LAYERLISTSTORE_CONTEXT_KEY, type LayerListStore } from '$stores';
 	import {
 		StaticImageControl,
 		type ControlOptions
@@ -20,19 +16,20 @@
 		type MapStore,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
-	import { Loader } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
-	const pageDataLoadingStore: PageDataLoadingStore = getContext(PAGE_DATA_LOADING_CONTEXT_KEY);
 
-	export let splitterHeight: number;
-	let tabsHeight: number;
-	$: contentHeight = splitterHeight - tabsHeight;
+	interface Props {
+		splitterHeight: number;
+	}
 
-	let styleUrl = MapStyles[0].uri;
-	let exportOptions: ControlOptions = {
+	let { splitterHeight = $bindable() }: Props = $props();
+	let tabsHeight: number = $state(0);
+
+	let styleUrl = $state(MapStyles[0].uri);
+	let exportOptions: ControlOptions = $state({
 		width: 300,
 		height: 200,
 		bbox: [-180, -90, 180, 90],
@@ -46,11 +43,11 @@
 		extension: 'png',
 		pageSize: 'A4',
 		orientation: 'landscape'
-	};
-	let staticApiUrl = '';
-	let isExporting = false;
+	});
+	let staticApiUrl = $state('');
+	let isExporting = $state(false);
 
-	let tabs: Tab[] = [
+	let tabs: Tab[] = $state([
 		{
 			id: TabNames.DATA,
 			label: `${TabNames.DATA}`
@@ -59,14 +56,13 @@
 			id: TabNames.LAYERS,
 			label: `${TabNames.LAYERS}`
 		}
-	];
+	]);
 
-	let activeTab: TabNames = TabNames.DATA;
+	let activeTab: TabNames = $state(TabNames.DATA);
 
-	$: $layerListStore, updateLayerLabel();
 	const updateLayerLabel = () => {
 		let defaultTab = $layerListStore.length > 0 ? TabNames.LAYERS : TabNames.DATA;
-		let defaultActiveTab = ($page.url.searchParams.get('activetab') ?? defaultTab) as TabNames;
+		let defaultActiveTab = (page.url.searchParams.get('activetab') ?? defaultTab) as TabNames;
 		if (
 			!(defaultActiveTab && [`${TabNames.DATA}`, `${TabNames.LAYERS}`].includes(defaultActiveTab))
 		) {
@@ -81,7 +77,7 @@
 
 	const handleClickTab = (e) => {
 		activeTab = e.detail;
-		const url = $page.url;
+		const url = page.url;
 		url.searchParams.set('activetab', activeTab);
 		replaceState(url, '');
 	};
@@ -135,11 +131,13 @@
 	};
 
 	onMount(() => {
-		const style = $page.data.style;
+		const style = page.data.style;
 		if (style) {
-			styleUrl = style.links.find((l) => l.rel === 'stylejson').href;
+			styleUrl = style.links.find((l: Link) => l.rel === 'stylejson').href;
 		}
+		layerListStore.subscribe(updateLayerLabel);
 	});
+	let contentHeight = $derived(splitterHeight - tabsHeight);
 </script>
 
 <div class="is-fullwidth" bind:clientHeight={tabsHeight}>
@@ -156,16 +154,10 @@
 </div>
 
 <div hidden={activeTab !== TabNames.DATA} class="mx-4">
-	<DataView bind:contentHeight />
+	<DataView {contentHeight} />
 </div>
 <div hidden={activeTab !== TabNames.LAYERS}>
-	{#if $pageDataLoadingStore === true}
-		<div class="is-flex is-justify-content-center is-align-items-center" style="margin-top: 40%;">
-			<Loader size="medium" />
-		</div>
-	{:else}
-		<LayerList bind:contentHeight bind:activeTab on:export={addExportTab} />
-	{/if}
+	<LayerList {contentHeight} bind:activeTab on:export={addExportTab} />
 </div>
 <div class="mx-4" hidden={activeTab !== TabNames.EXPORT}>
 	{#if $map}
@@ -173,7 +165,7 @@
 			bind:map={$map}
 			show={activeTab === TabNames.EXPORT}
 			bind:style={styleUrl}
-			apiBase={$page.data.staticApiUrl}
+			apiBase={page.data.staticApiUrl}
 			showAdvanced={true}
 			hiddenApiTypes={true}
 			bind:options={exportOptions}
@@ -186,7 +178,7 @@
 					class="button is-link is-uppercase has-text-weight-bold is-fullwidth {isExporting
 						? 'is-loading'
 						: ''}"
-					on:click={handleExport}
+					onclick={handleExport}
 					disabled={isExporting}
 				>
 					Export
@@ -196,7 +188,7 @@
 						? ''
 						: 'is-link is-outlined'} is-uppercase has-text-weight-bold ml-2"
 					disabled={isExporting}
-					on:click={removeExportTab}
+					onclick={removeExportTab}
 				>
 					<span class="icon is-small">
 						<span class="material-symbols-outlined"> close </span>
