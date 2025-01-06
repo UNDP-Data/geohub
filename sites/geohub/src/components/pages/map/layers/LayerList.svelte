@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { replaceState } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import LayerOrderPanelButton from '$components/pages/map/layers/order/LayerOrderPanelButton.svelte';
 	import { Permission, TabNames } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
@@ -10,10 +10,12 @@
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
+		PAGE_DATA_LOADING_CONTEXT_KEY,
 		TABLE_MENU_SHOWN_CONTEXT_KEY,
 		type EditingLayerStore,
 		type EditingMenuShownStore,
-		type LayerListStore
+		type LayerListStore,
+		type PageDataLoadingStore
 	} from '$stores';
 	import {
 		initTooltipTippy,
@@ -22,8 +24,8 @@
 		Notification,
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
-	import LayerLegend from './LayerLegend.svelte';
 	import LayerTemplate from './LayerTemplate.svelte';
 	import StyleSaveDialog from './StyleSaveDialog.svelte';
 	import StyleShareDialog from './StyleShareDialog.svelte';
@@ -35,34 +37,44 @@
 	const editingLayerStore: EditingLayerStore = getContext(EDITING_LAYER_STORE_CONTEXT_KEY);
 	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
 	const tableMenuShownStore: EditingMenuShownStore = getContext(TABLE_MENU_SHOWN_CONTEXT_KEY);
+	const pageDataLoadingStore: PageDataLoadingStore = getContext(PAGE_DATA_LOADING_CONTEXT_KEY);
 
-	export let contentHeight: number;
-	export let activeTab: TabNames;
+	interface Props {
+		contentHeight: number;
+		activeTab: TabNames;
+	}
 
-	let config: UserConfig = $page.data.config;
-	let style: DashboardMapStyle = $page.data.style;
+	let { contentHeight = $bindable(), activeTab = $bindable() }: Props = $props();
 
-	$: isDevMode = $page.url.searchParams.get('dev')?.toLowerCase() === 'true' ? true : false;
+	let config: UserConfig = page.data.config;
+	let style: DashboardMapStyle = $state(page.data.style);
+
+	let isDevMode = $derived(
+		page.url.searchParams.get('dev')?.toLowerCase() === 'true' ? true : false
+	);
 
 	const tippyTooltip = initTooltipTippy();
-	let layerHeaderHeight = 0;
-	let layerFooterHeight = 0;
+	let layerHeaderHeight = $state(0);
+	let layerFooterHeight = $state(0);
 
-	$: totalHeight = contentHeight - layerHeaderHeight - layerFooterHeight - 30;
-	$: saveDisabled = $layerListStore.length === 0 || !$page.data.session;
+	let totalHeight = $derived(contentHeight - layerHeaderHeight - layerFooterHeight - 30);
+	let saveDisabled = $derived($layerListStore.length === 0 || !page.data.session);
 
-	$: isNewMapMode = style ? false : true;
-	let showSaveDialog = false;
-	let showShareDialog = false;
+	let isNewMapMode = $derived(style ? false : true);
+
+	let showSaveDialog = $state(false);
+	let showShareDialog = $state(false);
+
+	let isLayerListChanged = $state(false);
 
 	const handleExploreDatasets = () => {
 		activeTab = TabNames.DATA;
-		const url = $page.url;
+		const url = page.url;
 		url.searchParams.set('activetab', activeTab);
 		replaceState(url, '');
 	};
 
-	let isDeleteDialogVisible = false;
+	let isDeleteDialogVisible = $state(false);
 	const openDeleteDialog = () => {
 		isDeleteDialogVisible = true;
 	};
@@ -101,10 +113,12 @@
 		isDeleteDialogVisible = false;
 	};
 
-	const handleLayerToggled = (e) => {
-		const layerId = e.detail.layerId;
-		const isExpanded = e.detail.isExpanded;
+	const handleLayerToggled = (layerId: string, isExpanded: boolean) => {
 		layerListStore.setIsExpanded(layerId, isExpanded);
+	};
+
+	const handleLayerListChanged = () => {
+		isLayerListChanged = !isLayerListChanged;
 	};
 
 	const expandAllDisabled = () => {
@@ -146,7 +160,6 @@
 
 	const handleMapSaved = async (e: { detail: { style: DashboardMapStyle } }) => {
 		style = e.detail.style;
-		isNewMapMode = style ? false : true;
 		showSaveDialog = false;
 	};
 
@@ -154,8 +167,8 @@
 
 	const isReadOnly = () => {
 		return !(
-			$page.data.session?.user?.email === style?.created_user ||
-			$page.data.session?.user?.is_superuser ||
+			page.data.session?.user?.email === style?.created_user ||
+			page.data.session?.user?.is_superuser ||
 			(style.permission && style.permission > Permission.READ)
 		);
 	};
@@ -169,145 +182,142 @@
 	});
 </script>
 
-<div
-	class="is-flex is-align-items-center layer-header pt-2 px-4"
-	bind:clientHeight={layerHeaderHeight}
->
-	{#if $layerListStore?.length > 0}
-		<div class="layer-header-buttons buttons mb-0">
-			{#key $layerListStore}
-				<button
-					class="button m-0 px-4"
-					disabled={expandAllDisabled()}
-					on:click={handleExpandAll}
-					use:tippyTooltip={{ content: 'Expand all layers' }}
-				>
-					<span class="icon">
-						<span class="material-icons"> expand </span>
-					</span>
-				</button>
+{#if $pageDataLoadingStore === true}
+	<div class="is-flex is-justify-content-center is-align-items-center" style="margin-top: 40%;">
+		<Loader size="medium" />
+	</div>
+{:else}
+	<div
+		class="is-flex is-align-items-center layer-header pt-2 px-4"
+		bind:clientHeight={layerHeaderHeight}
+	>
+		{#if $layerListStore?.length > 0}
+			<div class="layer-header-buttons buttons mb-0">
+				{#key $layerListStore}
+					<button
+						class="button m-0 px-4"
+						disabled={expandAllDisabled()}
+						onclick={handleExpandAll}
+						use:tippyTooltip={{ content: 'Expand all layers' }}
+					>
+						<span class="icon">
+							<span class="material-icons"> expand </span>
+						</span>
+					</button>
 
-				<button
-					class="button m-0 px-4"
-					disabled={collapseAllDisabled()}
-					use:tippyTooltip={{ content: 'Collapse all layers' }}
-					on:click={handleCollapseAll}
-				>
-					<span class="icon">
-						<span class="material-icons"> compress </span>
-					</span>
-				</button>
+					<button
+						class="button m-0 px-4"
+						disabled={collapseAllDisabled()}
+						use:tippyTooltip={{ content: 'Collapse all layers' }}
+						onclick={handleCollapseAll}
+					>
+						<span class="icon">
+							<span class="material-icons"> compress </span>
+						</span>
+					</button>
 
-				{#if $layerListStore?.length > 1}
-					<LayerOrderPanelButton />
-				{/if}
+					{#if $layerListStore?.length > 1}
+						<LayerOrderPanelButton />
+					{/if}
 
+					<button
+						class="button m-0 px-4"
+						disabled={$layerListStore?.length === 0}
+						use:tippyTooltip={{ content: 'Delete all layers' }}
+						onclick={openDeleteDialog}
+					>
+						<span class="icon">
+							<span class="material-icons"> layers_clear </span>
+						</span>
+					</button>
+				{/key}
+			</div>
+		{:else}
+			<div class="p-2">
+				<Notification type="info" showCloseButton={false}>
+					No layers have been selected. Please select a layer from the <strong
+						>{TabNames.DATA}</strong
+					> tab.
+				</Notification>
 				<button
-					class="button m-0 px-4"
-					disabled={$layerListStore?.length === 0}
-					use:tippyTooltip={{ content: 'Delete all layers' }}
-					on:click={openDeleteDialog}
+					class="button is-primary mt-2 has-text-weight-bold is-uppercase is-fullwidth"
+					onclick={handleExploreDatasets}
 				>
-					<span class="icon">
-						<span class="material-icons"> layers_clear </span>
-					</span>
+					<span>Explore datasets</span>
 				</button>
+			</div>
+		{/if}
+	</div>
+	<div class="layer-list">
+		<div class="layer-contents" style="height: {totalHeight}px;">
+			{#key isLayerListChanged}
+				{#each $layerListStore as layer, index}
+					<LayerTemplate
+						bind:layer={$layerListStore[index]}
+						bind:isExpanded={layer.isExpanded}
+						ontoggled={handleLayerToggled}
+						onchange={handleLayerListChanged}
+						showEditButton={true}
+					></LayerTemplate>
+				{/each}
 			{/key}
 		</div>
-	{:else}
-		<div class="p-2">
-			<Notification type="info" showCloseButton={false}>
-				No layers have been selected. Please select a layer from the <strong>{TabNames.DATA}</strong
-				> tab.
-			</Notification>
-			<button
-				class="button is-primary mt-2 has-text-weight-bold is-uppercase is-fullwidth"
-				on:click={handleExploreDatasets}
-			>
-				<span>Explore datasets</span>
-			</button>
-		</div>
-	{/if}
-</div>
-<div class="layer-list">
-	<div class="layer-contents" style="height: {totalHeight}px;">
-		{#each $layerListStore as layer (layer.id)}
-			{@const existLayerInMap = $map?.getStyle()?.layers?.find((l) => l.id === layer.id)
-				? true
-				: false}
-			<LayerTemplate
-				{layer}
-				bind:isExpanded={layer.isExpanded}
-				on:toggled={handleLayerToggled}
-				showEditButton={true}
-			>
-				<div slot="content">
-					{#if existLayerInMap}
-						<LayerLegend bind:layer />
-					{:else}
-						<Notification type="warning" showCloseButton={false}>
-							You have no permission to access this dataset
-						</Notification>
-					{/if}
-				</div>
-			</LayerTemplate>
-		{/each}
-	</div>
 
-	<div class="layer-footer mt-auto px-4 pt-4 is-flex" bind:clientHeight={layerFooterHeight}>
-		{#key isNewMapMode}
-			<div
-				style="width: 100%;"
-				use:tippyTooltip={{
-					content: saveDisabled
-						? 'To save the map, you need to sign in and add at least a layer to the map'
-						: 'Save this map to GeoHub'
-				}}
-			>
-				<button
-					class="button {saveDisabled
-						? ''
-						: 'is-link'} is-uppercase has-text-weight-bold is-fullwidth"
-					disabled={saveDisabled}
-					on:click={handleOpenSaveDialog}
+		<div class="layer-footer mt-auto px-4 pt-4 is-flex" bind:clientHeight={layerFooterHeight}>
+			{#key isNewMapMode}
+				<div
+					style="width: 100%;"
+					use:tippyTooltip={{
+						content: saveDisabled
+							? 'To save the map, you need to sign in and add at least a layer to the map'
+							: 'Save this map to GeoHub'
+					}}
 				>
-					<span> {isNewMapMode || isReadOnly() ? 'Save' : 'Update'} map </span>
-				</button>
-			</div>
+					<button
+						class="button {saveDisabled
+							? ''
+							: 'is-link'} is-uppercase has-text-weight-bold is-fullwidth"
+						disabled={saveDisabled}
+						onclick={handleOpenSaveDialog}
+					>
+						<span> {isNewMapMode || isReadOnly() ? 'Save' : 'Update'} map </span>
+					</button>
+				</div>
 
-			<div
-				class="ml-2"
-				use:tippyTooltip={{
-					content: isNewMapMode
-						? 'You need to save the map first to enable sharing.'
-						: 'Share this map with others!'
-				}}
-			>
+				<div
+					class="ml-2"
+					use:tippyTooltip={{
+						content: isNewMapMode
+							? 'You need to save the map first to enable sharing.'
+							: 'Share this map with others!'
+					}}
+				>
+					<button
+						class="button {isNewMapMode
+							? ''
+							: 'is-link is-outlined'} is-uppercase has-text-weight-bold"
+						disabled={isNewMapMode}
+						onclick={handleOpenShareDialog}
+					>
+						<span class="icon is-small">
+							<span class="material-symbols-outlined"> share </span>
+						</span>
+					</button>
+				</div>
+			{/key}
+			<div class="ml-2" use:tippyTooltip={{ content: 'Export your map as image.' }}>
 				<button
-					class="button {isNewMapMode
-						? ''
-						: 'is-link is-outlined'} is-uppercase has-text-weight-bold"
-					disabled={isNewMapMode}
-					on:click={handleOpenShareDialog}
+					class="export-button button is-link is-outlined is-uppercase has-text-weight-bold"
+					onclick={handleExportClicked}
 				>
 					<span class="icon is-small">
-						<span class="material-symbols-outlined"> share </span>
+						<span class="material-symbols-outlined"> print </span>
 					</span>
 				</button>
 			</div>
-		{/key}
-		<div class="ml-2" use:tippyTooltip={{ content: 'Export your map as image.' }}>
-			<button
-				class="export-button button is-link is-outlined is-uppercase has-text-weight-bold"
-				on:click={handleExportClicked}
-			>
-				<span class="icon is-small">
-					<span class="material-symbols-outlined"> print </span>
-				</span>
-			</button>
 		</div>
 	</div>
-</div>
+{/if}
 
 <ModalNotification
 	bind:dialogOpen={isDeleteDialogVisible}

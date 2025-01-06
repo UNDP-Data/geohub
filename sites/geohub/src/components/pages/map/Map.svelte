@@ -418,20 +418,6 @@
 		);
 		$map.addControl(new TerrainControl(terrainOptions), 'bottom-right');
 
-		$map.on('styledata', () => {
-			const sky = new SkyControl();
-			sky.addTo($map, { timeType: 'solarNoon' });
-			const isTerrain = $map.getTerrain();
-			if (isTerrain) {
-				$map.setTerrain(null);
-			}
-			if (isTerrain) {
-				setTimeout(() => {
-					$map.setTerrain(terrainOptions);
-				}, 500);
-			}
-		});
-
 		$map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
 
 		const apiKey = page.data.maptilerKey;
@@ -455,11 +441,24 @@
 		});
 		$map.addControl(styleSwitcher, 'bottom-left');
 
-		$map.on('load', mapInitializeAfterLoading);
+		$map.once('load', mapInitializeAfterLoading);
 	};
 
 	const mapInitializeAfterLoading = async () => {
 		$map.resize();
+
+		const sky = new SkyControl();
+		sky.addTo($map, { timeType: 'solarNoon' });
+		const isTerrain = $map.getTerrain();
+		if (isTerrain) {
+			$map.setTerrain(null);
+		}
+		if (isTerrain) {
+			setTimeout(() => {
+				$map.setTerrain(terrainOptions);
+			}, 500);
+		}
+
 		await styleSwitcher.initialise();
 
 		layerListStore.subscribe((value) => {
@@ -472,7 +471,9 @@
 			let storageValue = value ? value.getStyle() : null;
 			toLocalStorage(mapStyleStorageKey, storageValue);
 		});
+
 		$pageDataLoadingStore = false;
+
 		$map.on('dataloading', () => {
 			$showProgressBarStore = true;
 		});
@@ -493,7 +494,6 @@
 			let storageValue = $map.getStyle();
 			toLocalStorage(mapStyleStorageKey, storageValue);
 		});
-		$map.off('load', mapInitializeAfterLoading);
 	};
 
 	const restoreStyle = (newStyle: StyleSpecification, newLayerList: Layer[]) => {

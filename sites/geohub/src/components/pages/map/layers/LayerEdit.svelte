@@ -28,12 +28,12 @@
 	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
 	const tableMenuShownStore: EditingMenuShownStore = getContext(TABLE_MENU_SHOWN_CONTEXT_KEY);
 
-	let vectorSourceLayer: string | undefined = undefined;
-	let layerOpacity = 1;
+	let vectorSourceLayer: string | undefined = $state(undefined);
+	let layerOpacity = $state(1);
 
 	const tippy = initTippy({});
 	const tippyTooltip = initTooltipTippy();
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
 	const getLayerOpacity = () => {
 		if (!map) return 0;
@@ -170,7 +170,7 @@
 				<p class="control">
 					<button
 						class="button menu-button"
-						on:click={handleZoomToLayer}
+						onclick={handleZoomToLayer}
 						use:tippyTooltip={{
 							content: `Zoom to layer`
 						}}
@@ -184,7 +184,7 @@
 					<p class="control">
 						<button
 							class="button menu-button"
-							on:click={handleShowTable}
+							onclick={handleShowTable}
 							use:tippyTooltip={{
 								content: `${$tableMenuShownStore === true ? 'Hide' : 'Show'} table`
 							}}
@@ -198,7 +198,7 @@
 				<p class="control">
 					<button
 						class="button menu-button"
-						on:click={handleVisibilityChanged}
+						onclick={handleVisibilityChanged}
 						use:tippyTooltip={{
 							content: `Change layer visibility`
 						}}

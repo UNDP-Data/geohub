@@ -28,20 +28,28 @@
 		properties: { [key: string]: string | number };
 	}
 
-	export let map: Map;
-	export let layerList: LayerListStore;
-	export let position: ControlPosition = 'top-right';
-	let popup: Popup | undefined;
-	let queryButton: HTMLButtonElement;
-	let popupContainer: HTMLDivElement;
-	let isActive = false;
-	let isValuesRounded = true;
-	let showDownloadDropdown = false;
+	interface Props {
+		map: Map;
+		layerList: LayerListStore;
+		position?: ControlPosition;
+	}
 
-	let features: PointFeature[] = [];
-	let coordinates: number[];
-	let showProgress = false;
-	let showPopup = false;
+	let {
+		map = $bindable(),
+		layerList = $bindable(),
+		position = $bindable('top-right')
+	}: Props = $props();
+	let popup: Popup | undefined;
+	let queryButton: HTMLButtonElement | undefined = $state();
+	let popupContainer: HTMLDivElement | undefined = $state();
+	let isActive = $state(false);
+	let isValuesRounded = $state(true);
+	let showDownloadDropdown = $state(false);
+
+	let features: PointFeature[] = $state([]);
+	let coordinates: number[] | undefined = $state();
+	let showProgress = $state(false);
+	let showPopup = $state(false);
 
 	const tippyTooltip = initTooltipTippy();
 
@@ -52,11 +60,11 @@
 		this.container.title = 'Query Layer Information';
 		this.container.classList.add('maplibregl-ctrl', 'maplibregl-ctrl-group');
 
-		queryButton.addEventListener('click', () => {
+		queryButton?.addEventListener('click', () => {
 			this.changeButtonCondition();
 		});
 		this.container.appendChild(queryButton);
-		queryButton.dispatchEvent(new Event('click'));
+		queryButton?.dispatchEvent(new Event('click'));
 		return this.container;
 	};
 
@@ -128,6 +136,7 @@
 			popup = undefined;
 			showPopup = false;
 		}
+		if (!popupContainer) return;
 		popup = new Popup()
 			.setLngLat(e.lngLat)
 			.setDOMContent(popupContainer)
@@ -197,9 +206,9 @@
 		}
 	});
 
-	let expanded: { [key: string]: boolean } = {};
-	let expandedLayerId: string;
-	$: {
+	let expanded: { [key: string]: boolean } = $state({});
+	let expandedLayerId: string = $state('');
+	$effect(() => {
 		let expandedLayers = Object.keys(expanded).filter(
 			(key) => expanded[key] === true && key !== expandedLayerId
 		);
@@ -212,7 +221,7 @@
 				});
 			expanded[expandedLayers[0]] = true;
 		}
-	}
+	});
 
 	const createFeature = (
 		lng: number,
@@ -504,71 +513,75 @@
 			{:else}
 				{#each features as feature}
 					<Accordion title={`${feature.properties.name}`} bind:isExpanded={expanded[feature.id]}>
-						<div slot="content">
-							<table class="attr-table table is-striped is-narrow is-hoverable is-fullwidth">
-								<thead>
-									<tr>
-										<th>Property</th>
-										<th>Value</th>
-									</tr>
-								</thead>
-								<tbody>
-									{#each Object.keys(feature.properties) as property}
-										{@const value = feature.properties[property]}
-										{#if value}
-											<tr>
-												{#if typeof value === 'string' && isValidUrl( value, ['jpeg', 'jpg', 'png', 'webp'] )}
-													<td colspan="2">
-														<a href={value} target="_blank">
-															<figure class="image is-fullwidth">
-																<img src={value} alt={property} />
-															</figure>
-														</a>
-													</td>
-												{:else if typeof value === 'string' && isValidUrl(value)}
-													<td>{clean(property)}</td>
-													<td>
-														<DefaultLink href={value} title="Open link" target="_blank" />
-													</td>
-												{:else if property !== 'name'}
-													<td>{clean(property)}</td>
-													{#key isValuesRounded}
-														<td>{formatValue(value)}</td>
-													{/key}
-												{/if}
-											</tr>
-										{/if}
-									{/each}
-								</tbody>
-							</table>
-						</div>
+						{#snippet content()}
+							<div>
+								<table class="attr-table table is-striped is-narrow is-hoverable is-fullwidth">
+									<thead>
+										<tr>
+											<th>Property</th>
+											<th>Value</th>
+										</tr>
+									</thead>
+									<tbody>
+										{#each Object.keys(feature.properties) as property}
+											{@const value = feature.properties[property]}
+											{#if value}
+												<tr>
+													{#if typeof value === 'string' && isValidUrl( value, ['jpeg', 'jpg', 'png', 'webp'] )}
+														<td colspan="2">
+															<a href={value} target="_blank">
+																<figure class="image is-fullwidth">
+																	<img src={value} alt={property} />
+																</figure>
+															</a>
+														</td>
+													{:else if typeof value === 'string' && isValidUrl(value)}
+														<td>{clean(property)}</td>
+														<td>
+															<DefaultLink href={value} title="Open link" target="_blank" />
+														</td>
+													{:else if property !== 'name'}
+														<td>{clean(property)}</td>
+														{#key isValuesRounded}
+															<td>{formatValue(value)}</td>
+														{/key}
+													{/if}
+												</tr>
+											{/if}
+										{/each}
+									</tbody>
+								</table>
+							</div>
+						{/snippet}
 					</Accordion>
 				{/each}
 				{#if coordinates && coordinates.length === 2}
 					<Accordion title={`Coordinates`} bind:isExpanded={expanded['coordinates']}>
-						<div slot="content">
-							<table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
-								<thead>
-									<tr>
-										<th>Property</th>
-										<th>Value</th>
-									</tr>
-								</thead>
-								<tbody>
-									{#key coordinates}
+						{#snippet content()}
+							<div>
+								<table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
+									<thead>
 										<tr>
-											<td>Longitude</td>
-											<td>{coordinates[0].toFixed(6)}</td>
+											<th>Property</th>
+											<th>Value</th>
 										</tr>
+									</thead>
+									<tbody>
+										{#key coordinates}
+											<tr>
+												<td>Longitude</td>
+												<td>{coordinates[0].toFixed(6)}</td>
+											</tr>
 
-										<tr>
-											<td>Latitude</td>
-											<td>{coordinates[1].toFixed(6)}</td>
-										</tr>
-									{/key}
-								</tbody>
-							</table>
-						</div>
+											<tr>
+												<td>Latitude</td>
+												<td>{coordinates[1].toFixed(6)}</td>
+											</tr>
+										{/key}
+									</tbody>
+								</table>
+							</div>
+						{/snippet}
 					</Accordion>
 				{/if}
 			{/if}
@@ -581,10 +594,10 @@
 				role="button"
 				tabindex="0"
 				class="download-dropdown dropdown is-right {showDownloadDropdown ? 'is-active' : ''}"
-				on:mouseenter={() => {
+				onmouseenter={() => {
 					showDownloadDropdown = true;
 				}}
-				on:mouseleave={() => {
+				onmouseleave={() => {
 					showDownloadDropdown = false;
 				}}
 			>
@@ -593,7 +606,7 @@
 						class="button"
 						aria-haspopup="true"
 						aria-controls="dropdown-menu"
-						on:click={() => {
+						onclick={() => {
 							showDownloadDropdown = !showDownloadDropdown;
 						}}
 					>
@@ -608,11 +621,11 @@
 				</div>
 				<div class="dropdown-menu" id="dropdown-menu" role="menu">
 					<div class="dropdown-content">
-						<!-- svelte-ignore a11y-missing-attribute -->
+						<!-- svelte-ignore a11y_missing_attribute -->
 						<a
 							class="dropdown-item"
-							on:click={() => downloadGeoJson()}
-							on:keydown={handleEnterKey}
+							onclick={() => downloadGeoJson()}
+							onkeydown={handleEnterKey}
 							role="menuitem"
 							tabindex="0"
 							data-sveltekit-preload-code="off"
@@ -620,11 +633,11 @@
 						>
 							GeoJSON
 						</a>
-						<!-- svelte-ignore a11y-missing-attribute -->
+						<!-- svelte-ignore a11y_missing_attribute -->
 						<a
 							class="dropdown-item"
-							on:click={() => downloadCsv()}
-							on:keydown={handleEnterKey}
+							onclick={() => downloadCsv()}
+							onkeydown={handleEnterKey}
 							role="menuitem"
 							tabindex="0"
 							data-sveltekit-preload-code="off"

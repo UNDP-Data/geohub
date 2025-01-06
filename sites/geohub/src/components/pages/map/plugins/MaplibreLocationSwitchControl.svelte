@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	import type { ControlPosition, IControl, LngLatBoundsLike, Map } from 'maplibre-gl';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -48,15 +48,24 @@
 </script>
 
 <script lang="ts">
-	export let map: Map;
-	export let position: ControlPosition = 'top-right';
-	export let places: LocationSwitchPlaces[] = [];
+	interface Props {
+		map: Map;
+		position?: ControlPosition;
+		places?: LocationSwitchPlaces[];
+	}
+
+	let {
+		map = $bindable(),
+		position = $bindable('top-right'),
+		places = $bindable([])
+	}: Props = $props();
 
 	let control: MaplibreLocationSwitchControl | undefined;
-	let contentDiv: HTMLDivElement;
+	let contentDiv: HTMLDivElement | undefined = $state();
 
 	onMount(() => {
 		if (!map) return;
+		if (!contentDiv) return;
 		control = new MaplibreLocationSwitchControl(contentDiv);
 		map.addControl(control, position);
 	});
@@ -79,7 +88,7 @@
 	{#each places as place}
 		<button
 			class="button is-light is-fullwidth p-2"
-			on:click={() => {
+			onclick={() => {
 				zoomTo(place.bounds);
 			}}
 		>

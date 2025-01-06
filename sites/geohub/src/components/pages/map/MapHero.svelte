@@ -5,48 +5,57 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { getContext, onMount } from 'svelte';
 
-	let container: HTMLDivElement;
-	let innerHeight = 1000;
+	let container: HTMLDivElement | undefined = $state();
+	let innerHeight = $state(1000);
 	let map: Map;
-	export let interactive = true;
-	export let excludeHeaderHeight = true;
-	export let styleId: number;
-	export let width = '100%';
-	export let height = 0;
+	interface Props {
+		interactive?: boolean;
+		excludeHeaderHeight?: boolean;
+		styleId: number;
+		width?: string;
+		height?: number;
+	}
+
+	let {
+		interactive = $bindable(true),
+		excludeHeaderHeight = $bindable(true),
+		styleId = $bindable(),
+		width = $bindable('100%'),
+		height = $bindable(0)
+	}: Props = $props();
 
 	let headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 
-	$: mapHeight =
-		height > 0 ? height : excludeHeaderHeight ? innerHeight - $headerHeightStore : innerHeight;
-
-	onMount(async () => {
+	onMount(() => {
 		let styleUrl = `/api/style/${styleId}.json`;
-		const res = await fetch(styleUrl);
-		if (!res.ok) {
-			styleUrl = MapStyles[0].uri;
-		}
-		map = new Map({
-			container,
-			style: styleUrl,
-			center: [0, 0],
-			zoom: 1,
-			interactive: interactive,
-			attributionControl: false,
-			hash: false
-		});
-		map.addControl(new AttributionControl({ compact: false }), 'bottom-right');
+		fetch(styleUrl).then((res) => {
+			if (!container) return;
+			if (!res.ok) {
+				styleUrl = MapStyles[0].uri;
+			}
 
-		setTimeout(() => {
-			playAnimation();
-			setInterval(playAnimation, lastPoint.Pause + lastPoint.Duration);
-		}, 5000);
+			map = new Map({
+				container,
+				style: styleUrl,
+				center: [0, 0],
+				zoom: 1,
+				interactive: interactive,
+				attributionControl: false,
+				hash: false
+			});
+			map.addControl(new AttributionControl({ compact: false }), 'bottom-right');
 
-		map.once('styledata', () => {
-			resizeMap();
+			setTimeout(() => {
+				playAnimation();
+				setInterval(playAnimation, lastPoint.Pause + lastPoint.Duration);
+			}, 5000);
+
+			map.once('styledata', () => {
+				resizeMap();
+			});
 		});
 	});
 
-	$: mapHeight, resizeMap();
 	const resizeMap = () => {
 		map?.triggerRepaint();
 		map?.resize();
@@ -67,6 +76,12 @@
 			}, item.Pause);
 		});
 	};
+	let mapHeight = $derived(
+		height > 0 ? height : excludeHeaderHeight ? innerHeight - $headerHeightStore : innerHeight
+	);
+	$effect(() => {
+		resizeMap();
+	});
 </script>
 
 <svelte:window bind:innerHeight />
