@@ -701,8 +701,8 @@ importers:
         specifier: 1.0.1
         version: 1.0.1
       '@carbon/charts-svelte':
-        specifier: 1.22.0
-        version: 1.22.0(svelte@5.16.0)
+        specifier: 1.22.8
+        version: 1.22.8(svelte@5.16.0)
       '@maplibre/maplibre-gl-geocoder':
         specifier: ^1.7.0
         version: 1.7.0(maplibre-gl@4.7.1)
@@ -1155,20 +1155,16 @@ packages:
     resolution: {integrity: sha512-vN5p+1kl59GVKMvTHt55NzzmYVxprfJD+ql7U9NFIfKCBkYE55LYtS+WtPlaYOyzydrKI8Nezd+aZextrd+FMA==}
     engines: {node: '>=6.9.0'}
 
-  '@carbon/charts-svelte@1.22.0':
-    resolution: {integrity: sha512-sVYoHz9AuA45Sccuo0QGE8U/dLC7IwpiJ0+oNknBMGeF0MxQywL8bYo+H0T03MzsmjWwBNIu3u5JrTt1k1ggLg==}
+  '@carbon/charts-svelte@1.22.8':
+    resolution: {integrity: sha512-rYnMgbhikY7s21sJHWijusV1BfrJm43dnHXDcMyM36ab7wtxDEIONO8dvUqKYxsKzBgQdxjgLK950bsI6D/2ww==}
     peerDependencies:
-      svelte: ^4.0.0
+      svelte: ^4.0.0 || ^5.1.0
 
-  '@carbon/charts@1.22.0':
-    resolution: {integrity: sha512-oH0KIjlgJ+Xoxs+Qq8JjvPk5gIcYDjKHn6j7XVmRoG1waQkQ+zB+x5sYwnf3p2whNX1dBUrJIEDLgebNGqddMw==}
+  '@carbon/charts@1.22.8':
+    resolution: {integrity: sha512-+uf/gX63UN/D69zR2BbPXc8RWAN++SIy+KBknfLNP8ENMeydwTvfgyFEtmhc+7wWg5c666XYK5WdCXioGwcB0A==}
 
   '@carbon/colors@11.28.0':
     resolution: {integrity: sha512-zmNJk5Ec453aL3bk9RRSmM+dkVbyVMvUuKd6szJCOWLoqBFBXbd3PDRZO0AZeHp/Iel9sBRf1gUYej1BJ/5+hw==}
-
-  '@carbon/telemetry@0.1.0':
-    resolution: {integrity: sha512-kNWt0bkgPwGW0i5h7HFuljbKRXPvIhsKbB+1tEURAYLXoJg9iJLF1eGvWN5iVoFCS2zje4GR3OGOsvvKVe7Hlg==}
-    hasBin: true
 
   '@carbon/utils-position@1.3.0':
     resolution: {integrity: sha512-bfar2dV+fQ15syIrH3n9ujY4PXd1Q+AF2VcTLJIC04IDe2f80zOnJlLNPc/RktHcWTZ7WSQm80cQo3abGcsfTA==}
@@ -3174,10 +3170,6 @@ packages:
   caniuse-lite@1.0.30001690:
     resolution: {integrity: sha512-5ExiE3qQN6oF8Clf8ifIDcMRCRE/dMGcETG/XGMD8/XiXm6HXQgQTh1yZYLXXpSOsEUlJm1Xr7kGULZTuGtP/w==}
 
-  carbon-components@10.58.15:
-    resolution: {integrity: sha512-w1ubGzeH+HdJotD+B2UgW8hUeTtp1CcXDcki20Il3er6BfLjEhQL5/XlXnJiDzRmB6NgozxOQEbjLPXbZSfiqA==}
-    deprecated: This package is no longer supported. More info at https://carbondesignsystem.com/deprecations/
-
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
 
@@ -3488,8 +3480,8 @@ packages:
     resolution: {integrity: sha512-ZYP5VBHshaDAiVZxjbRVcFJpc+4xGgT0bK3vzy1HLN8jTO975HEbuYzZJcHoQEY5K1a0z8YayJkyVETa08eNTg==}
     engines: {node: '>=18'}
 
-  date-fns@3.6.0:
-    resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==}
+  date-fns@4.1.0:
+    resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
 
   dayjs@1.11.13:
     resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
@@ -4011,9 +4003,6 @@ packages:
 
   flatgeobuf@3.36.0:
     resolution: {integrity: sha512-vSKhQpClrZdguVLmD6QhVw4aKnqvcpEpeR5yBMTJmnRpBPBD1GLEE1MtGpBlBwdBfh3AzSnlcB3TS2MHelRwlQ==}
-
-  flatpickr@4.6.1:
-    resolution: {integrity: sha512-3ULSxbXmcMIRzer/2jLNweoqHpwDvsjEawO2FUd9UFR8uPwLM+LruZcPDpuZStcEgbQKhuFOfXo4nYdGladSNw==}
 
   flatted@3.3.2:
     resolution: {integrity: sha512-AiwGJM8YcNOaobumgtng+6NHuOqC3A7MixFeDafM3X9cIUM+xUXoS5Vfgf+OihAYe20fxqNM9yPBXJzRtZ/4eA==}
@@ -6007,9 +5996,6 @@ packages:
     resolution: {integrity: sha512-o8qghlI8NZHU1lLPrpi2+Uq7abh4GGPpYANlalzWxyWteJOCsr/P+oPBA49TOLu5FTZO4d3F9MnWJfiMo4BkmA==}
     engines: {node: '>=18'}
 
-  warning@3.0.0:
-    resolution: {integrity: sha512-jMBt6pUrKn5I+OGgtQ4YZLdhIeJmObddh6CsibPxyQ5yPZm1XExSyzC1LCNX7BzhxWgiHmizBWJTHJIjMjTQYQ==}
-
   web-worker@1.3.0:
     resolution: {integrity: sha512-BSR9wyRsy/KOValMgd5kMyr3JzpdeoR9KVId8u5GVlTTAtNChlsE4yTxeY7zMdNSyOmoKBv8NH2qeRY9Tg+IaA==}
 
@@ -6444,24 +6430,23 @@ snapshots:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
 
-  '@carbon/charts-svelte@1.22.0(svelte@5.16.0)':
+  '@carbon/charts-svelte@1.22.8(svelte@5.16.0)':
     dependencies:
-      '@carbon/charts': 1.22.0
+      '@carbon/charts': 1.22.8
       '@ibm/telemetry-js': 1.8.0
       svelte: 5.16.0
 
-  '@carbon/charts@1.22.0':
+  '@carbon/charts@1.22.8':
     dependencies:
       '@carbon/colors': 11.28.0
       '@carbon/utils-position': 1.3.0
       '@ibm/telemetry-js': 1.8.0
       '@types/d3': 7.4.3
       '@types/topojson': 3.2.6
-      carbon-components: 10.58.15
       d3: 7.9.0
       d3-cloud: 1.2.7
       d3-sankey: 0.12.3
-      date-fns: 3.6.0
+      date-fns: 4.1.0
       dompurify: 3.2.3
       html-to-image: 1.11.11
       lodash-es: 4.17.21
@@ -6471,8 +6456,6 @@ snapshots:
   '@carbon/colors@11.28.0':
     dependencies:
       '@ibm/telemetry-js': 1.8.0
-
-  '@carbon/telemetry@0.1.0': {}
 
   '@carbon/utils-position@1.3.0':
     dependencies:
@@ -8595,13 +8578,6 @@ snapshots:
 
   caniuse-lite@1.0.30001690: {}
 
-  carbon-components@10.58.15:
-    dependencies:
-      '@carbon/telemetry': 0.1.0
-      flatpickr: 4.6.1
-      lodash.debounce: 4.0.8
-      warning: 3.0.0
-
   ccount@2.0.1: {}
 
   cfb@1.2.2:
@@ -8937,7 +8913,7 @@ snapshots:
       whatwg-mimetype: 4.0.0
       whatwg-url: 14.1.0
 
-  date-fns@3.6.0: {}
+  date-fns@4.1.0: {}
 
   dayjs@1.11.13: {}
 
@@ -9545,8 +9521,6 @@ snapshots:
       slice-source: 0.4.1
     optionalDependencies:
       ol: 10.3.1
-
-  flatpickr@4.6.1: {}
 
   flatted@3.3.2: {}
 
@@ -11751,10 +11725,6 @@ snapshots:
   w3c-xmlserializer@5.0.0:
     dependencies:
       xml-name-validator: 5.0.0
-
-  warning@3.0.0:
-    dependencies:
-      loose-envify: 1.4.0
 
   web-worker@1.3.0:
     optional: true
