@@ -595,7 +595,7 @@
 		style="height: {mapHeight}px;"
 	>
 		{#if map}
-			<MaplibreLocationSwitchControl bind:map position="top-right" bind:places={data.places} />
+			<MaplibreLocationSwitchControl bind:map position="top-right" places={data.places} />
 			<LayerVisibilitySwitcher
 				bind:map
 				position="bottom-right"
@@ -624,7 +624,7 @@
 			{#if !isMobile}
 				<MaplibreLegendControl
 					bind:map
-					bind:styleId={data.style.id}
+					styleId={data.style.id}
 					position="bottom-left"
 					showInteractive={false}
 					showInvisibleLayers={false}
@@ -663,10 +663,7 @@
 				creating this web map.
 			</HeroLink>
 
-			<Footer
-				logoUrl="/assets/undp-images/undp-logo-white.svg"
-				bind:footerItems={data.footerLinks}
-			/>
+			<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" footerItems={data.footerLinks} />
 		</div>
 	</section>
 </div>
