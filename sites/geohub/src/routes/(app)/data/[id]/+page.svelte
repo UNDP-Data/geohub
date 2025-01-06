@@ -763,7 +763,7 @@
 	bind:id={data.feature.properties.id as string}
 	bind:name={data.feature.properties.name as string}
 	bind:dialogShown={confirmDeleteDialogVisible}
-	on:deleted={handleDeletedDataset}
+	ondelete={handleDeletedDataset}
 />
 
 <style lang="scss">

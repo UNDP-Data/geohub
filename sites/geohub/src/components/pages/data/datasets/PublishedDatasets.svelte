@@ -27,58 +27,49 @@
 	import DatasetMapView from './DatasetMapView.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
 
-	export let datasets: DatasetFeatureCollection | undefined;
-	export let showMyData = false;
-
-	let expanded: { [key: string]: boolean } = {};
-	let expandedDatasetId: string;
-	$: {
-		let expandedDatasets = Object.keys(expanded).filter(
-			(key) => expanded[key] === true && key !== expandedDatasetId
-		);
-		if (expandedDatasets.length > 0) {
-			expandedDatasetId = expandedDatasets[0];
-			Object.keys(expanded)
-				.filter((key) => key !== expandedDatasetId)
-				.forEach((key) => {
-					expanded[key] = false;
-				});
-			expanded[expandedDatasets[0]] = true;
-		}
+	interface Props {
+		datasets: DatasetFeatureCollection | undefined;
+		showMyData?: boolean;
+		button?: import('svelte').Snippet;
 	}
 
-	let isLoading = false;
+	let { datasets = $bindable(), showMyData = $bindable(false), button }: Props = $props();
+
+	let isLoading = $state(false);
 
 	const config: UserConfig = $page.data.config;
 
-	let viewType: TableViewType =
-		($page.url.searchParams.get('viewType') as TableViewType) ?? config.DataPageTableViewType;
+	let viewType: TableViewType = $state(
+		($page.url.searchParams.get('viewType') as TableViewType) ?? config.DataPageTableViewType
+	);
 
-	let limit = $page.url.searchParams.get('limit') ?? `${config.DataPageSearchLimit}`;
+	let limit = $state($page.url.searchParams.get('limit') ?? `${config.DataPageSearchLimit}`);
 	let offset = $page.url.searchParams.get('offset') ?? 0;
-	let sortby = $page.url.searchParams.get('sortby') ?? config.DataPageSortingColumn;
-	let query = $page.url.searchParams.get('query') ?? '';
+	let sortby = $state($page.url.searchParams.get('sortby') ?? config.DataPageSortingColumn);
+	let query = $state($page.url.searchParams.get('query') ?? '');
 	let queryType: 'and' | 'or' =
 		($page.url.searchParams.get('queryoperator') as 'and' | 'or') ??
 		config.DataPageSearchQueryOperator;
 	let operatorType: 'and' | 'or' =
 		($page.url.searchParams.get('operator') as 'and' | 'or') ??
 		$page.data.config.DataPageTagSearchOperator;
-	let isOperatorTypeAnd = operatorType === 'and';
+	let isOperatorTypeAnd = $state(operatorType === 'and');
 
 	const _level = $page.url.searchParams.get('accesslevel');
-	let accessLevel: AccessLevel = _level
-		? (Number(_level) as AccessLevel)
-		: $page.data.session
-			? AccessLevel.ALL
-			: AccessLevel.PUBLIC;
+	let accessLevel: AccessLevel = $state(
+		_level
+			? (Number(_level) as AccessLevel)
+			: $page.data.session
+				? AccessLevel.ALL
+				: AccessLevel.PUBLIC
+	);
 
-	let showFavourite = $page.url.searchParams.get('staronly') === 'true' ? true : false;
-	let showSatellite = $page.url.searchParams.get('type') === 'stac' ? true : false;
-	let hideGlobal: boolean;
+	let showFavourite = $state($page.url.searchParams.get('staronly') === 'true' ? true : false);
+	let showSatellite = $state($page.url.searchParams.get('type') === 'stac' ? true : false);
+	let hideGlobal: boolean = $state(false);
 
-	let searchedApiUrl: string = $page.url.href;
-	let showAdvancedSearch = false;
+	let searchedApiUrl: string = $state($page.url.href);
+	let showAdvancedSearch = $state(false);
 
 	const getTagsFromUrl = (key: 'sdg_goal' | 'country' | 'algorithm') => {
 		const values = $page.url.searchParams.getAll(key);
@@ -99,7 +90,7 @@
 	};
 
 	let selectedSDGs: Tag[] = getTagsFromUrl('sdg_goal');
-	let selectedContinents: string[] = getContinentsFromUrl();
+	let selectedContinents: string[] = $state(getContinentsFromUrl());
 	let selectedCountries: Tag[] = getTagsFromUrl('country');
 
 	const reload = debounce(async (url: URL) => {
@@ -355,7 +346,7 @@
 		reload(apiUrl);
 	};
 
-	let isReseted = false;
+	let isReseted = $state(false);
 	const handleResetFilter = async () => {
 		const apiUrl = new URL(`${$page.url.origin}${$page.url.pathname}${$page.url.hash}`);
 		limit = `${config.DataPageSearchLimit}`;
@@ -367,7 +358,7 @@
 		isOperatorTypeAnd = operatorType === 'and';
 		showFavourite = false;
 		showSatellite = false;
-		accessLevel = $page.data.session ? AccessLevel.PRIVATE : AccessLevel.PUBLIC;
+		accessLevel = AccessLevel.ALL;
 		selectedContinents = [];
 		apiUrl.searchParams.delete('continent');
 
@@ -383,50 +374,56 @@
 
 <section class="header-content columns is-flex is-flex-wrap-wrap">
 	<div class="column is-12-mobile is-2 mt-auto p-0 pl-2">
-		<slot name="button" />
+		{@render button?.()}
 	</div>
 	<div
 		class="column is-12-mobile is-flex is-align-items-center is-justify-content-flex-end is-flex-wrap-wrap p-0"
 	>
 		<div class="mr-2">
 			<FieldControl title="Limits" showHelp={false}>
-				<div slot="control">
-					<div class="select mt-auto">
-						<select bind:value={limit} on:change={handleLimitChanged} disabled={isLoading}>
-							{#each LimitOptions as limit}
-								<option value={`${limit}`}>{limit}</option>
-							{/each}
-						</select>
+				{#snippet control()}
+					<div>
+						<div class="select mt-auto">
+							<select bind:value={limit} onchange={handleLimitChanged} disabled={isLoading}>
+								{#each LimitOptions as limit}
+									<option value={`${limit}`}>{limit}</option>
+								{/each}
+							</select>
+						</div>
 					</div>
-				</div>
+				{/snippet}
 			</FieldControl>
 		</div>
 		<div class="mr-2">
 			<FieldControl title="Sort results" showHelp={false}>
-				<div slot="control">
-					<div class="select mt-auto">
-						<select bind:value={sortby} on:change={handleSortbyChanged} disabled={isLoading}>
-							{#each DatasetSortingColumns as option}
-								<option value={option.value}>{option.label}</option>
-							{/each}
-						</select>
+				{#snippet control()}
+					<div>
+						<div class="select mt-auto">
+							<select bind:value={sortby} onchange={handleSortbyChanged} disabled={isLoading}>
+								{#each DatasetSortingColumns as option}
+									<option value={option.value}>{option.label}</option>
+								{/each}
+							</select>
+						</div>
 					</div>
-				</div>
+				{/snippet}
 			</FieldControl>
 		</div>
 		<div>
 			<FieldControl title="View as" showHelp={false}>
-				<div slot="control">
-					<SegmentButtons
-						buttons={[
-							{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
-							{ title: 'List', icon: 'fa-solid fa-list', value: 'list' },
-							{ title: 'Map', icon: 'fa-solid fa-map', value: 'map' }
-						]}
-						bind:selected={viewType}
-						on:change={handleViewTypeChanged}
-					/>
-				</div>
+				{#snippet control()}
+					<div>
+						<SegmentButtons
+							buttons={[
+								{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
+								{ title: 'List', icon: 'fa-solid fa-list', value: 'list' },
+								{ title: 'Map', icon: 'fa-solid fa-map', value: 'map' }
+							]}
+							bind:selected={viewType}
+							on:change={handleViewTypeChanged}
+						/>
+					</div>
+				{/snippet}
 			</FieldControl>
 		</div>
 	</div>
@@ -436,7 +433,7 @@
 	<div class="column is-3">
 		<button
 			class="button is-light has-text-weight-bold is-uppercase is-fullwidth"
-			on:click={handleResetFilter}
+			onclick={handleResetFilter}
 		>
 			reset filter
 		</button>
@@ -478,42 +475,48 @@
 		{#if $page.data.session}
 			<div class="pt-2 pb-1">
 				<FieldControl title="Access Level" showHelp={false}>
-					<div slot="control">
-						<AccessLevelSwitcher
-							bind:accessLevel
-							on:change={handleAccessLevelChanged}
-							isSegmentButton={false}
-							disabled={isLoading}
-						/>
-					</div>
+					{#snippet control()}
+						<div>
+							<AccessLevelSwitcher
+								bind:accessLevel
+								on:change={handleAccessLevelChanged}
+								isSegmentButton={false}
+								disabled={isLoading}
+							/>
+						</div>
+					{/snippet}
 				</FieldControl>
 			</div>
 		{/if}
 		<div class="py-1">
 			<FieldControl title="SDGs" isFirstCharCapitalized={false} showHelp={false}>
-				<div slot="control">
-					{#if browser}
-						{#key isReseted}
-							<SdgSelector
-								selected={getSdgNumbers()}
-								on:select={handleSDGtagChanged}
-								isFullWidth={true}
-							/>
-						{/key}
-					{/if}
-				</div>
+				{#snippet control()}
+					<div>
+						{#if browser}
+							{#key isReseted}
+								<SdgSelector
+									selected={getSdgNumbers()}
+									on:select={handleSDGtagChanged}
+									isFullWidth={true}
+								/>
+							{/key}
+						{/if}
+					</div>
+				{/snippet}
 			</FieldControl>
 		</div>
 
 		<div class="py-1">
 			<FieldControl title="Countries" isFirstCharCapitalized={false} showHelp={false}>
-				<div slot="control">
-					{#if browser}
-						{#key isReseted}
-							<CountrySelector selected={getCountryCodes()} on:select={handleCountryChanged} />
-						{/key}
-					{/if}
-				</div>
+				{#snippet control()}
+					<div>
+						{#if browser}
+							{#key isReseted}
+								<CountrySelector selected={getCountryCodes()} on:select={handleCountryChanged} />
+							{/key}
+						{/if}
+					</div>
+				{/snippet}
 			</FieldControl>
 		</div>
 
@@ -525,23 +528,25 @@
 					isFirstCharCapitalized={false}
 					showHelp={false}
 				>
-					<div slot="control">
-						<div class="flex is-flex-wrap-wrap pb-2">
-							{#key selectedContinents}
-								{#each selectedContinents as continent}
-									<span class="pl-1">
-										<Chips
-											label={continent}
-											showDelete={true}
-											on:delete={() => {
-												handleContinentDeleted(continent);
-											}}
-										/>
-									</span>
-								{/each}
-							{/key}
+					{#snippet control()}
+						<div>
+							<div class="flex is-flex-wrap-wrap pb-2">
+								{#key selectedContinents}
+									{#each selectedContinents as continent}
+										<span class="pl-1">
+											<Chips
+												label={continent}
+												showDelete={true}
+												on:delete={() => {
+													handleContinentDeleted(continent);
+												}}
+											/>
+										</span>
+									{/each}
+								{/key}
+							</div>
 						</div>
-					</div>
+					{/snippet}
 				</FieldControl>
 			</div>
 		{/if}
@@ -557,19 +562,21 @@
 			{#each [{ key: 'provider', title: 'DataProviders' }, { key: 'year', title: 'Year' }, { key: 'resolution', title: 'Resolution' }, { key: 'theme', title: 'Theme' }, { key: 'granularity', title: 'Admin level' }] as tagKey}
 				<div class="py-1">
 					<FieldControl title={tagKey.title} isFirstCharCapitalized={false} showHelp={false}>
-						<div slot="control">
-							{#if browser}
-								{#key isReseted}
-									<TagSelector
-										key={tagKey.key}
-										selected={getTags(tagKey.key)}
-										bind:apiUrl={searchedApiUrl}
-										on:select={handleTagChanged}
-										placeholder="Type {tagKey.title}..."
-									/>
-								{/key}
-							{/if}
-						</div>
+						{#snippet control()}
+							<div>
+								{#if browser}
+									{#key isReseted}
+										<TagSelector
+											key={tagKey.key}
+											selected={getTags(tagKey.key)}
+											bind:apiUrl={searchedApiUrl}
+											on:select={handleTagChanged}
+											placeholder="Type {tagKey.title}..."
+										/>
+									{/key}
+								{/if}
+							</div>
+						{/snippet}
 					</FieldControl>
 				</div>
 			{/each}
@@ -584,7 +591,7 @@
 			</div>
 			<button
 				class="button is-light has-text-weight-bold is-uppercase is-fullwidth"
-				on:click={handleResetFilter}
+				onclick={handleResetFilter}
 			>
 				reset filter
 			</button>
@@ -611,7 +618,7 @@
 						</thead>
 						<tbody>
 							{#each datasets.features as feature}
-								<PublishedDatasetRow bind:feature />
+								<PublishedDatasetRow {feature} />
 							{/each}
 						</tbody>
 					</table>

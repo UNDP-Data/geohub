@@ -76,8 +76,7 @@
 		}
 	};
 
-	const handleDatasetSelected = async (e) => {
-		const dataset: DatasetFeature = e.detail;
+	const handleDatasetSelected = async (dataset: DatasetFeature) => {
 		const dataType = dataset.properties.tags?.find((t) => t.key === 'type')?.value;
 		const algoBreadcrumb = breadcrumbs[breadcrumbs.length - 1];
 		if (dataType === 'stac') {
@@ -482,7 +481,7 @@
 									<PublishedDatasetRow
 										{feature}
 										dispatchEvent={true}
-										on:selected={handleDatasetSelected}
+										onselect={handleDatasetSelected}
 									/>
 								{/each}
 							</tbody>

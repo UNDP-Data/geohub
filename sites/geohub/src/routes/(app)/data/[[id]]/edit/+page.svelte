@@ -65,12 +65,14 @@
 	let activeTab: Tab = $state(getActiveTab());
 
 	const isNew: boolean = data.isNew ?? true;
+
 	let name = $state(data.feature?.properties.name ?? '');
 	if (isNew) {
-		name = clean(data.feature?.properties.name);
+		name = clean(data.feature?.properties.name as string);
 	}
 	let description = $state(data.feature?.properties.description ?? '');
 	let license = $state(data.feature?.properties.license ?? '');
+	let accessLevel = $state(data.feature.properties.access_level);
 	let tags = $state('');
 	let isRegistering = $state(false);
 	let isRgbTile = $state(false);
@@ -656,7 +658,8 @@
 			>
 				{#snippet control()}
 					<div>
-						<AccessLevelSwitcher bind:accessLevel={data.feature.properties.access_level} />
+						<AccessLevelSwitcher bind:accessLevel />
+						<input type="hidden" bind:value={accessLevel} name="accessLevel" />
 					</div>
 				{/snippet}
 				{#snippet help()}

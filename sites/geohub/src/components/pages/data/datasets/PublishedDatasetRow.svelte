@@ -4,20 +4,26 @@
 	import type { DatasetFeature } from '$lib/types';
 	import { initTippy } from '@undp-data/svelte-undp-components';
 	import { marked } from 'marked';
-	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		feature: DatasetFeature;
+		dispatchEvent?: boolean;
+		onselect?: (feature: DatasetFeature) => void;
+	}
 
-	export let feature: DatasetFeature;
-	export let dispatchEvent = false;
+	let {
+		feature = $bindable(),
+		dispatchEvent = $bindable(false),
+		onselect = (feature) => console.log(feature)
+	}: Props = $props();
 
 	const accessIcon = getAccessLevelIcon(feature.properties.access_level, true);
 
-	const datasetLink = feature.properties.links.find((l) => l.rel === 'dataset').href;
+	const datasetLink = feature.properties.links?.find((l) => l.rel === 'dataset')?.href;
 
-	let isHovered = false;
-	let innerWidth = 0;
+	let isHovered = $state(false);
+	let innerWidth = $state(0);
 
 	const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
 		{ key: string; value: string }
@@ -45,21 +51,23 @@
 			});
 		}
 	});
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
 	const handleClicked = () => {
 		if (!dispatchEvent) return;
-		dispatch('selected', feature);
+		if (onselect) {
+			onselect(feature);
+		}
 	};
 </script>
 
 <svelte:window bind:innerWidth />
 
 <tr
-	on:mouseenter={() => {
+	onmouseenter={() => {
 		isHovered = true;
 	}}
-	on:mouseleave={() => {
+	onmouseleave={() => {
 		isHovered = false;
 	}}
 >
@@ -67,7 +75,7 @@
 		<a
 			class="col {isHovered ? 'has-text-link' : 'has-text-black'}"
 			href={dispatchEvent ? undefined : datasetLink}
-			on:click={dispatchEvent ? handleClicked : undefined}
+			onclick={dispatchEvent ? handleClicked : undefined}
 		>
 			<div class="dataset_name is-flex">
 				<span class="mr-2">
@@ -86,11 +94,11 @@
 		<a
 			class="col {isHovered ? 'has-text-link' : 'has-text-black'}"
 			href={dispatchEvent ? undefined : datasetLink}
-			on:click={dispatchEvent ? handleClicked : undefined}
+			onclick={dispatchEvent ? handleClicked : undefined}
 		>
 			<span class="description is-size-7">
 				<!-- eslint-disable svelte/no-at-html-tags -->
-				{@html marked(feature.properties.description)}
+				{@html marked(feature.properties.description as string)}
 			</span>
 		</a>
 	</td>
@@ -99,7 +107,7 @@
 		<a
 			class="col {isHovered ? 'has-text-link' : 'has-text-black'}"
 			href={dispatchEvent ? undefined : datasetLink}
-			on:click={dispatchEvent ? handleClicked : undefined}
+			onclick={dispatchEvent ? handleClicked : undefined}
 		>
 			{#if sdgs.length > 0}
 				<div class="sdg-grid">
@@ -137,16 +145,18 @@
 		<a
 			class="col {isHovered ? 'has-text-link' : 'has-text-black'}"
 			href={dispatchEvent ? undefined : datasetLink}
-			on:click={dispatchEvent ? handleClicked : undefined}
+			onclick={dispatchEvent ? handleClicked : undefined}
 		>
-			{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
+			{feature.properties.license && feature.properties.license.length > 0
+				? feature.properties.license
+				: 'No license'}
 		</a>
 	</td>
 	<td>
 		<a
 			class="col {isHovered ? 'has-text-link' : 'has-text-black'}"
 			href={dispatchEvent ? undefined : datasetLink}
-			on:click={dispatchEvent ? handleClicked : undefined}
+			onclick={dispatchEvent ? handleClicked : undefined}
 		>
 			<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
 		</a>
@@ -154,8 +164,8 @@
 	<td>
 		<Star
 			isCompact={true}
-			bind:id={feature.properties.id}
-			bind:isStar={feature.properties.is_star}
+			bind:id={feature.properties.id as string}
+			bind:isStar={feature.properties.is_star as boolean}
 			bind:no_stars={feature.properties.no_stars}
 			table="datasets"
 		/>

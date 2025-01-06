@@ -167,7 +167,7 @@
 	id={datasetId}
 	name={datasetName}
 	bind:dialogShown={confirmDeleteDialogVisible}
-	on:deleted={handleDeleteDataset}
+	ondelete={handleDeleteDataset}
 />
 
 <style lang="scss">
