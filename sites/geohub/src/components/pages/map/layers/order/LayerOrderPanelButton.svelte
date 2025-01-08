@@ -10,34 +10,15 @@
 	} from '@undp-data/svelte-undp-components';
 	import { Checkbox } from '@undp-data/svelte-undp-design';
 	import type { StyleSpecification } from 'maplibre-gl';
-	import { getContext } from 'svelte';
+	import { getContext, untrack } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
-	let onlyRendered = false;
-	let onlyRelative = true;
-	let relativeLayers: { [key: string]: string } = {};
-	let style: StyleSpecification;
-
-	$: if ($map) {
-		$map.on('styledata', function () {
-			style = $map.getStyle();
-			updateLayerOrderList();
-		});
-		$map.on('sourcedata', function (e) {
-			if (e.isSourceLoaded) {
-				style = $map.getStyle();
-				updateLayerOrderList();
-			}
-		});
-	}
-
-	$: if ($map) {
-		updateLayerOrderList();
-	}
-
-	$: $layerListStore, updateLayerOrderList();
+	let onlyRendered = $state(false);
+	let onlyRelative = $state(true);
+	let relativeLayers: { [key: string]: string } = $state({});
+	let style: StyleSpecification = $state();
 
 	const updateLayerOrderList = () => {
 		if ($map && $layerListStore) {
@@ -66,9 +47,33 @@
 			});
 		}
 	});
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
 	const tippyTooltip = initTooltipTippy();
+	$effect(() => {
+		if ($map) {
+			$map.on('styledata', function () {
+				style = $map.getStyle();
+				updateLayerOrderList();
+			});
+			$map.on('sourcedata', function (e) {
+				if (e.isSourceLoaded) {
+					style = $map.getStyle();
+					updateLayerOrderList();
+				}
+			});
+			untrack(() => {
+				updateLayerOrderList();
+			});
+		}
+	});
+	$effect(() => {
+		if ($layerListStore) {
+			untrack(() => {
+				updateLayerOrderList();
+			});
+		}
+	});
 </script>
 
 <button

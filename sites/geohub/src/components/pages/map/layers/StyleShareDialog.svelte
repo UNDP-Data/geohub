@@ -2,62 +2,78 @@
 	import type { DashboardMapStyle } from '$lib/types';
 	import { CopyToClipboard, FieldControl, ModalTemplate } from '@undp-data/svelte-undp-components';
 
-	export let style: DashboardMapStyle;
-	export let isModalVisible = false;
-
-	$: if (isModalVisible) {
-		open();
+	interface Props {
+		style: DashboardMapStyle;
+		isModalVisible?: boolean;
 	}
 
-	let showDevLink = false;
-	let mapUrl = '';
-	let mapStyleUrl = '';
+	let { style = $bindable(), isModalVisible = $bindable(false) }: Props = $props();
+
+	let showDevLink = $state(false);
+	let mapUrl = $state('');
+	let mapStyleUrl = $state('');
 
 	const open = () => {
 		mapUrl = style?.links?.find((l) => l.rel === 'map')?.href as string;
 		mapStyleUrl = style?.links?.find((l) => l.rel === 'stylejson')?.href as string;
 	};
+	$effect(() => {
+		if (isModalVisible) {
+			open();
+		}
+	});
 </script>
 
 <ModalTemplate title="Share map" bind:show={isModalVisible}>
-	<div slot="content">
-		<FieldControl title="Map URL" fontWeight="bold" showHelp={false} isFirstCharCapitalized={false}>
-			<div slot="control">
-				<CopyToClipboard value={mapUrl} />
-			</div>
-		</FieldControl>
-
-		<button
-			class="show-dev-link mt-4 mb-5"
-			on:click={() => {
-				showDevLink = !showDevLink;
-			}}
-		>
-			<span class="mr-2">
-				<i
-					class="fa-solid fa-chevron-down toggle-icon {showDevLink
-						? 'active'
-						: ''} has-text-primary"
-				></i>
-			</span>
-			<span class="has-text-grey-dark is-uppercase has-text-weight-bold"
-				>Show links for developers</span
-			>
-		</button>
-
-		{#if showDevLink}
+	{#snippet content()}
+		<div>
 			<FieldControl
-				title="Map Style URL"
+				title="Map URL"
 				fontWeight="bold"
 				showHelp={false}
 				isFirstCharCapitalized={false}
 			>
-				<div slot="control">
-					<CopyToClipboard value={mapStyleUrl} />
-				</div>
+				{#snippet control()}
+					<div>
+						<CopyToClipboard value={mapUrl} />
+					</div>
+				{/snippet}
 			</FieldControl>
-		{/if}
-	</div>
+
+			<button
+				class="show-dev-link mt-4 mb-5"
+				onclick={() => {
+					showDevLink = !showDevLink;
+				}}
+			>
+				<span class="mr-2">
+					<i
+						class="fa-solid fa-chevron-down toggle-icon {showDevLink
+							? 'active'
+							: ''} has-text-primary"
+					></i>
+				</span>
+				<span class="has-text-grey-dark is-uppercase has-text-weight-bold"
+					>Show links for developers</span
+				>
+			</button>
+
+			{#if showDevLink}
+				<FieldControl
+					title="Map Style URL"
+					fontWeight="bold"
+					showHelp={false}
+					isFirstCharCapitalized={false}
+				>
+					{#snippet control()}
+						<div>
+							<CopyToClipboard value={mapStyleUrl} />
+						</div>
+					{/snippet}
+				</FieldControl>
+			{/if}
+		</div>
+	{/snippet}
 </ModalTemplate>
 
 <style lang="scss">

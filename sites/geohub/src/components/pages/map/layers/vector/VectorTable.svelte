@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { SearchDebounceTime, SupportedTableFormats } from '$lib/config/AppConfig';
 	import { expression2cql, expression2fields, getLayerStyle, type Expression } from '$lib/helper';
 	import type { Link, Pages } from '$lib/types';
@@ -162,7 +162,7 @@
 		const bounds = $map.getBounds();
 		const bbox = [...bounds.toArray()[0], bounds.toArray()[1]].join(',');
 
-		const apiUrl = `${$page.url.origin}/api/datasets/${dataset.properties.id}/table/layers/${vectorSourceLayer}.geojson`;
+		const apiUrl = `${page.url.origin}/api/datasets/${dataset.properties.id}/table/layers/${vectorSourceLayer}.geojson`;
 
 		const params: { [key: string]: string } = {};
 		params.bbox = bbox;

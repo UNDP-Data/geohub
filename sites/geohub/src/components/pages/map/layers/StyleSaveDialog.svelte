@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { invalidateAll, replaceState } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import { AccessLevel, Permission } from '$lib/config/AppConfig';
 	import { storageKeys, toLocalStorage } from '$lib/helper';
@@ -8,69 +8,87 @@
 	import type { LayerListStore } from '$stores';
 	import { ModalTemplate, Notification } from '@undp-data/svelte-undp-components';
 	import type { Map, StyleSpecification } from 'maplibre-gl';
-	import { createEventDispatcher } from 'svelte';
+	import { untrack } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	let savedStyle: DashboardMapStyle = $state(page.data.style);
+	const getDefaultAccessLevel = () => {
+		return savedStyle?.access_level ?? AccessLevel.PRIVATE;
+	};
+	let accessLevel: AccessLevel = $state(getDefaultAccessLevel());
 
-	let savedStyle: DashboardMapStyle = $page.data.style;
-	let accessLevel: AccessLevel = savedStyle?.access_level ?? AccessLevel.PRIVATE;
-
-	let styleId = savedStyle?.id;
-
-	export let map: Map;
-	export let layerList: LayerListStore;
-	export let isModalVisible = false;
-
-	let styleName: string;
-	let exportedStyleJSON: StyleSpecification;
-	let isLoading = false;
-
-	const layerListStorageKey = storageKeys.layerList($page.url.host);
-	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
-	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
-
-	$: if (isModalVisible) {
-		open();
+	interface Props {
+		map: Map;
+		layerList: LayerListStore;
+		isModalVisible?: boolean;
+		onchange?: (style: DashboardMapStyle) => void;
 	}
 
-	let countPrivateLayers = 0;
-	let countOrganisationLayers = 0;
+	let {
+		map = $bindable(),
+		layerList = $bindable(),
+		isModalVisible = $bindable(false),
+		onchange = (style) => {
+			console.log(style);
+		}
+	}: Props = $props();
+
+	const getStyleName = () => {
+		const names: string[] = [];
+		if ($layerList.length > 0) {
+			$layerList.forEach((layer) => {
+				names.push(layer.name);
+			});
+		}
+
+		let styleName = '';
+		if (savedStyle?.name) {
+			styleName = savedStyle?.name;
+		} else {
+			if (names.length > 0) {
+				styleName = `${names[0]}${names.length > 1 ? ', etc.' : ''}`;
+			} else {
+				styleName = 'UNDP GeoHub style';
+			}
+		}
+		return styleName;
+	};
+
+	let styleName: string = $state(getStyleName());
+	let exportedStyleJSON: StyleSpecification | undefined = $state();
+	let isLoading = $state(false);
+
+	const layerListStorageKey = storageKeys.layerList(page.url.host);
+	const mapStyleStorageKey = storageKeys.mapStyle(page.url.host);
+	const mapStyleIdStorageKey = storageKeys.mapStyleId(page.url.host);
+
+	let countPrivateLayers = $state(0);
+	let countOrganisationLayers = $state(0);
 
 	const isReadOnly = () => {
 		return !(
-			$page.data.session?.user?.email === savedStyle?.created_user ||
-			$page.data.session?.user?.is_superuser ||
+			page.data.session?.user?.email === savedStyle?.created_user ||
+			page.data.session?.user?.is_superuser ||
 			(savedStyle.permission && savedStyle.permission > Permission.READ)
 		);
 	};
 
 	const open = () => {
-		countPrivateLayers = 0;
-		countOrganisationLayers = 0;
-		const names: string[] = [];
-		if ($layerList.length > 0) {
-			$layerList.forEach((layer) => {
-				names.push(layer.name);
-
-				const dataAccessLevel = layer.dataset.properties.access_level ?? AccessLevel.PUBLIC;
-				if (dataAccessLevel === AccessLevel.PRIVATE) {
-					countPrivateLayers += 1;
-				} else if (dataAccessLevel === AccessLevel.ORGANIZATION) {
-					countOrganisationLayers += 1;
-				}
-			});
-
-			if (savedStyle?.name) {
-				styleName = savedStyle?.name;
-			} else {
-				if (names.length > 0) {
-					styleName = `${names[0]}${names.length > 1 ? ', etc.' : ''}`;
-				} else {
-					styleName = 'UNDP GeoHub style';
-				}
+		untrack(() => {
+			countPrivateLayers = 0;
+			countOrganisationLayers = 0;
+			if ($layerList.length > 0) {
+				$layerList.forEach((layer) => {
+					const dataAccessLevel = layer.dataset?.properties.access_level ?? AccessLevel.PUBLIC;
+					if (dataAccessLevel === AccessLevel.PRIVATE) {
+						countPrivateLayers += 1;
+					} else if (dataAccessLevel === AccessLevel.ORGANIZATION) {
+						countOrganisationLayers += 1;
+					}
+				});
 			}
-		}
-		createStyleJSON2Generate();
+			styleName = getStyleName();
+			createStyleJSON2Generate();
+		});
 	};
 
 	export const save = async () => {
@@ -78,17 +96,15 @@
 		const savedLayerList = JSON.parse(JSON.stringify($layerList));
 
 		const data = {
-			name: exportedStyleJSON.name,
+			name: exportedStyleJSON?.name,
 			style: exportedStyleJSON,
 			layers: savedLayerList,
 			access_level: accessLevel
 		};
 
-		styleId = savedStyle?.id;
-
 		let method = 'POST';
-		if (styleId && !isReadOnly()) {
-			data['id'] = styleId;
+		if (savedStyle?.id && !isReadOnly()) {
+			data['id'] = savedStyle.id;
 			method = 'PUT';
 		}
 
@@ -103,17 +119,16 @@
 
 		toLocalStorage(layerListStorageKey, savedStyle.layers);
 		toLocalStorage(mapStyleStorageKey, savedStyle.style);
-		styleId = savedStyle.id;
-		toLocalStorage(mapStyleIdStorageKey, styleId);
+		toLocalStorage(mapStyleIdStorageKey, savedStyle.id);
 
-		const apiUrl = `${styleURL}${$page.url.search}${$page.url.hash}`;
+		const apiUrl = `${styleURL}${page.url.search}${page.url.hash}`;
 		replaceState(apiUrl, '');
 		invalidateAll().then(() => {
 			isLoading = false;
 
-			dispatch('change', {
-				style: savedStyle
-			});
+			if (onchange) {
+				onchange(savedStyle);
+			}
 		});
 	};
 
@@ -141,97 +156,108 @@
 	const handleShare = async () => {
 		await save();
 	};
+
+	$effect(() => {
+		if (isModalVisible) {
+			open();
+		}
+	});
 </script>
 
 <ModalTemplate
 	title="{savedStyle && !isReadOnly() ? 'Update' : 'Save'} map"
 	bind:show={isModalVisible}
 >
-	<div slot="content">
-		{#if savedStyle}
-			{#if isReadOnly()}
-				<div class="mt-2">
-					<Notification type="warning" showCloseButton={false}>
-						This map was created by other user. It will be saved as new map.
-					</Notification>
-				</div>
-			{:else if $page.data.session?.user?.is_superuser}
-				<div class="mt-2">
-					<Notification type="warning" showCloseButton={false}>
-						You are signed in as a super user, and you are going to update the map created by <b
-							>{savedStyle.created_user}</b
-						>
-					</Notification>
-				</div>
+	{#snippet content()}
+		<div>
+			{#if savedStyle}
+				{#if isReadOnly()}
+					<div class="mt-2">
+						<Notification type="warning" showCloseButton={false}>
+							This map was created by other user. It will be saved as new map.
+						</Notification>
+					</div>
+				{:else if page.data.session?.user?.is_superuser}
+					<div class="mt-2">
+						<Notification type="warning" showCloseButton={false}>
+							You are signed in as a super user, and you are going to update the map created by <b
+								>{savedStyle.created_user}</b
+							>
+						</Notification>
+					</div>
+				{/if}
 			{/if}
-		{/if}
 
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Map title:</label>
-			<div class="control">
-				<input
-					class="input text-stylename"
-					type="text"
-					placeholder="Style name"
-					bind:value={styleName}
-					disabled={isLoading}
-					on:change={updateStyleName}
-				/>
+			<div class="field">
+				<!-- svelte-ignore a11y_label_has_associated_control -->
+				<label class="label">Map title:</label>
+				<div class="control">
+					<input
+						class="input text-stylename"
+						type="text"
+						placeholder="Style name"
+						bind:value={styleName}
+						disabled={isLoading}
+						onchange={updateStyleName}
+					/>
+				</div>
 			</div>
-		</div>
 
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Access level </label>
-			<div class="control">
-				<AccessLevelSwitcher
-					bind:accessLevel
-					disableOrganisation={countPrivateLayers > 0}
-					disablePublic={countPrivateLayers + countOrganisationLayers > 0}
-				/>
+			<div class="field">
+				<!-- svelte-ignore a11y_label_has_associated_control -->
+				<label class="label">Access level </label>
+				<div class="control">
+					<AccessLevelSwitcher
+						bind:accessLevel
+						disableOrganisation={countPrivateLayers > 0}
+						disablePublic={countPrivateLayers + countOrganisationLayers > 0}
+					/>
+				</div>
+				{#if countPrivateLayers + countOrganisationLayers > 0}
+					<p class="help is-danger">
+						{#if countPrivateLayers > 0 && countOrganisationLayers > 0}
+							{@const counts = countPrivateLayers + countOrganisationLayers}
+							It contains <b>{countPrivateLayers} private layer{counts > 1 ? 's' : ''}</b> and
+							<b>{countOrganisationLayers} organization layer{counts > 1 ? 's' : ''}</b>,
+						{:else if countPrivateLayers === 0 && countOrganisationLayers > 0}
+							It contains <b
+								>{countOrganisationLayers} organization layer{countOrganisationLayers > 1
+									? 's'
+									: ''}</b
+							>,
+						{:else if countPrivateLayers > 0 && countOrganisationLayers === 0}
+							It contains <b
+								>{countPrivateLayers} private layer{countPrivateLayers > 1 ? 's' : ''}</b
+							>,
+						{/if}
+						you only can save a <b>private</b> map. This map will not be accessed by other users. To
+						make a publicly or organisationally shared map, please change dataset accessibility before
+						publishing a community map.
+					</p>
+				{/if}
 			</div>
-			{#if countPrivateLayers + countOrganisationLayers > 0}
-				<p class="help is-danger">
-					{#if countPrivateLayers > 0 && countOrganisationLayers > 0}
-						{@const counts = countPrivateLayers + countOrganisationLayers}
-						It contains <b>{countPrivateLayers} private layer{counts > 1 ? 's' : ''}</b> and
-						<b>{countOrganisationLayers} organization layer{counts > 1 ? 's' : ''}</b>,
-					{:else if countPrivateLayers === 0 && countOrganisationLayers > 0}
-						It contains <b
-							>{countOrganisationLayers} organization layer{countOrganisationLayers > 1
-								? 's'
-								: ''}</b
-						>,
-					{:else if countPrivateLayers > 0 && countOrganisationLayers === 0}
-						It contains <b>{countPrivateLayers} private layer{countPrivateLayers > 1 ? 's' : ''}</b
-						>,
-					{/if}
-					you only can save a <b>private</b> map. This map will not be accessed by other users. To make
-					a publicly or organisationally shared map, please change dataset accessibility before publishing
-					a community map.
-				</p>
+
+			{#if exportedStyleJSON && exportedStyleJSON.layers.length === 0}
+				<article class="message is-warning">
+					<div class="message-header">
+						<p>Warning</p>
+					</div>
+					<div class="message-body">
+						<p>No layer to be saved</p>
+					</div>
+				</article>
 			{/if}
 		</div>
-
-		{#if exportedStyleJSON && exportedStyleJSON.layers.length === 0}
-			<article class="message is-warning">
-				<div class="message-header">
-					<p>Warning</p>
-				</div>
-				<div class="message-body">
-					<p>No layer to be saved</p>
-				</div>
-			</article>
-		{/if}
-	</div>
-	<div class="buttons" slot="buttons">
-		<button
-			class="button is-primary is-uppercase has-text-weight-bold {isLoading ? 'is-loading' : ''}"
-			on:click={handleShare}
-			disabled={!(exportedStyleJSON && exportedStyleJSON.layers.length > 0)}
-		>
-			{savedStyle && !isReadOnly() ? 'Update' : 'Save'}
-		</button>
-	</div>
+	{/snippet}
+	{#snippet buttons()}
+		<div class="buttons">
+			<button
+				class="button is-primary is-uppercase has-text-weight-bold {isLoading ? 'is-loading' : ''}"
+				onclick={handleShare}
+				disabled={!(exportedStyleJSON && exportedStyleJSON.layers.length > 0)}
+			>
+				{savedStyle && !isReadOnly() ? 'Update' : 'Save'}
+			</button>
+		</div>
+	{/snippet}
 </ModalTemplate>

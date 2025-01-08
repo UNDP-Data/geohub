@@ -3,7 +3,12 @@
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 
-	export let num: number;
+	interface Props {
+		num: number;
+		children?: import('svelte').Snippet;
+	}
+
+	let { num = $bindable(), children }: Props = $props();
 
 	// Local interface for context
 	interface WizardContext {
@@ -27,5 +32,5 @@
 </script>
 
 {#if $step === num}
-	<slot {nextStep} {prevStep} {resetStep} {setStep} />
+	{@render children?.({ nextStep, prevStep, resetStep, setStep })}
 {/if}

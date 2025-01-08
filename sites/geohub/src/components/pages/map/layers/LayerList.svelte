@@ -158,8 +158,8 @@
 		showSaveDialog = true;
 	};
 
-	const handleMapSaved = async (e: { detail: { style: DashboardMapStyle } }) => {
-		style = e.detail.style;
+	const handleMapSaved = (newStyle: DashboardMapStyle) => {
+		style = newStyle;
 		showSaveDialog = false;
 	};
 
@@ -254,7 +254,7 @@
 				{#each $layerListStore as layer, index}
 					<LayerTemplate
 						bind:layer={$layerListStore[index]}
-						bind:isExpanded={layer.isExpanded}
+						isExpanded={layer.isExpanded as boolean}
 						ontoggled={handleLayerToggled}
 						onchange={handleLayerListChanged}
 						showEditButton={true}
@@ -335,7 +335,7 @@
 		bind:map={$map}
 		bind:isModalVisible={showSaveDialog}
 		layerList={layerListStore}
-		on:change={handleMapSaved}
+		onchange={handleMapSaved}
 	/>
 
 	<StyleShareDialog bind:style bind:isModalVisible={showShareDialog} />
