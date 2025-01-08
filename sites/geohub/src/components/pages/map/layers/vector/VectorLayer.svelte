@@ -163,11 +163,7 @@
 
 <div class="editor-contents" style="max-height: {mapHeight}px; overflow-y: auto;">
 	<div hidden={activeTab !== TabNames.STYLE}>
-		<VectorLegend
-			bind:layerId={layer.id}
-			bind:metadata
-			bind:tags={layer.dataset.properties.tags as Tag[]}
-		/>
+		<VectorLegend layerId={layer?.id} {metadata} tags={layer?.dataset?.properties.tags as Tag[]} />
 	</div>
 	<div hidden={activeTab !== TabNames.FILTER}>
 		<VectorFilter {layer} />

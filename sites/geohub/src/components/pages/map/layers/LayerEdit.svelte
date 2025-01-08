@@ -241,7 +241,7 @@
 
 			{#if $editingLayerStore.dataset?.properties.is_raster === true}
 				<RasterLayer bind:layer={$editingLayerStore} />
-			{:else}
+			{:else if $editingLayerStore.dataset?.properties.is_raster === false}
 				<VectorLayer bind:layer={$editingLayerStore} />
 			{/if}
 		</FloatingPanel>
