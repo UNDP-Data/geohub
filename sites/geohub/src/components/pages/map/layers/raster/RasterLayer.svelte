@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import LayerInfo from '$components/pages/map/layers/LayerInfo.svelte';
 	import RasterLegend from '$components/pages/map/layers/raster/RasterLegend.svelte';
 	import RasterTransformSimple from '$components/pages/map/layers/raster/RasterTransformSimple.svelte';
@@ -28,7 +28,11 @@
 	} from '@undp-data/svelte-undp-components';
 	import { getContext, onMount, setContext } from 'svelte';
 
-	export let layer: Layer;
+	interface Props {
+		layer: Layer;
+	}
+
+	let { layer = $bindable() }: Props = $props();
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
@@ -37,7 +41,7 @@
 	setContext(RASTERRESCALE_CONTEXT_KEY, rescaleStore);
 
 	const numberOfClassesStore = createNumberOfClassesStore();
-	$numberOfClassesStore = $page.data.config.NumberOfClasses;
+	$numberOfClassesStore = page.data.config.NumberOfClasses;
 	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY, numberOfClassesStore);
 
 	const colorMapNameStore = createColorMapNameStore();
@@ -48,20 +52,20 @@
 	});
 
 	const classificationMethod = createClassificationMethodStore();
-	$classificationMethod = layer.classificationMethod ?? $page.data.config.ClassificationMethod;
+	$classificationMethod = layer.classificationMethod ?? page.data.config.ClassificationMethod;
 	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY, classificationMethod);
 	classificationMethod.subscribe((value) => {
 		layerListStore.setClassificationMethod(layer.id, value);
 	});
 
-	const rasterInfo: RasterTileMetadata = layer.info;
-	const isRgbTile = isRgbRaster(rasterInfo.colorinterp);
+	const rasterInfo: RasterTileMetadata = layer.info as RasterTileMetadata;
+	const isRgbTile = isRgbRaster(rasterInfo.colorinterp as string[]);
 
-	let tabs: Tab[] = [
+	let tabs: Tab[] = $state([
 		{ label: TabNames.STYLE, id: TabNames.STYLE },
 		{ label: TabNames.TRANSFORM, id: TabNames.TRANSFORM },
 		{ label: TabNames.INFO, id: TabNames.INFO }
-	];
+	]);
 
 	const getDefaultTab = () => {
 		if (layer.activeTab) {
@@ -73,7 +77,7 @@
 		return TabNames.STYLE;
 	};
 
-	let activeTab: TabNames = getDefaultTab();
+	let activeTab: TabNames = $state(getDefaultTab());
 
 	if (isRgbTile || (rasterInfo?.isMosaicJson === true && rasterInfo?.band_metadata?.length > 1)) {
 		tabs = [
@@ -82,16 +86,15 @@
 		];
 	}
 
-	const layerListStorageKey = storageKeys.layerList($page.url.host);
+	const layerListStorageKey = storageKeys.layerList(page.url.host);
 
-	$: activeTab, setActiveTab2store();
 	const setActiveTab2store = () => {
 		if (!($layerListStore?.length > 0)) return;
 		layerListStore.setActiveTab(layer.id, activeTab);
 		toLocalStorage(layerListStorageKey, $layerListStore);
 	};
 
-	let mapHeight = 0;
+	let mapHeight = $state(0);
 	const updateMapHeight = () => {
 		mapHeight = $map.getContainer().clientHeight - 160;
 	};
@@ -106,7 +109,10 @@
 <Tabs
 	bind:tabs
 	bind:activeTab
-	on:tabChange={(e) => (activeTab = e.detail)}
+	on:tabChange={(e) => {
+		activeTab = e.detail;
+		setActiveTab2store();
+	}}
 	size="is-normal"
 	fontWeight="bold"
 	isUppercase={true}
@@ -117,7 +123,7 @@
 	<div hidden={activeTab !== TabNames.STYLE}>
 		<RasterLegend
 			bind:layerId={layer.id}
-			bind:metadata={layer.info}
+			bind:metadata={layer.info as RasterTileMetadata}
 			bind:tags={layer.dataset.properties.tags}
 			bind:links={layer.dataset.properties.links}
 		/>

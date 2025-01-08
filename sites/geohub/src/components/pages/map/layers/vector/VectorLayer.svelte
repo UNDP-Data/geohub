@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
 	import VectorLegend from '$components/pages/map/layers/vector/VectorLegend.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { storageKeys, toLocalStorage } from '$lib/helper';
-	import type { Layer } from '$lib/types';
+	import type { Layer, Tag } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
@@ -38,9 +38,13 @@
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
-	export let layer: Layer;
+	interface Props {
+		layer: Layer;
+	}
 
-	let metadata = layer.info as VectorTileMetadata;
+	let { layer = $bindable() }: Props = $props();
+
+	let metadata = $state(layer.info as VectorTileMetadata);
 
 	// colormap for geometry
 	const colorMapNameStore = createColorMapNameStore();
@@ -60,7 +64,7 @@
 
 	// for color classification
 	const classificationMethod = createClassificationMethodStore();
-	$classificationMethod = layer.classificationMethod ?? $page.data.config.ClassificationMethod;
+	$classificationMethod = layer.classificationMethod ?? page.data.config.ClassificationMethod;
 	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY, classificationMethod);
 	classificationMethod.subscribe((value) => {
 		layerListStore.setClassificationMethod(layer.id, value);
@@ -68,7 +72,7 @@
 
 	// value (icon size/line width) classification
 	const classificationMethod2 = createClassificationMethodStore();
-	$classificationMethod2 = layer.classificationMethod_2 ?? $page.data.config.ClassificationMethod;
+	$classificationMethod2 = layer.classificationMethod_2 ?? page.data.config.ClassificationMethod;
 	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY_2, classificationMethod2);
 	classificationMethod2.subscribe((value) => {
 		layerListStore.setClassificationMethod(layer.id, value, 'value');
@@ -77,7 +81,7 @@
 	// for label color classification
 	const classificationMethodLabel = createClassificationMethodStore();
 	$classificationMethodLabel =
-		layer.classificationMethodLabel ?? $page.data.config.ClassificationMethod;
+		layer.classificationMethodLabel ?? page.data.config.ClassificationMethod;
 	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY_LABEL, classificationMethodLabel);
 	classificationMethodLabel.subscribe((value) => {
 		layerListStore.setClassificationMethod(layer.id, value, 'label');
@@ -85,17 +89,17 @@
 
 	// for color
 	const numberOfClassesStore = createNumberOfClassesStore();
-	$numberOfClassesStore = $page.data.config.NumberOfClasses;
+	$numberOfClassesStore = page.data.config.NumberOfClasses;
 	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY, numberOfClassesStore);
 
 	// for size/width
 	const numberOfClassesStore2 = createNumberOfClassesStore();
-	$numberOfClassesStore2 = $page.data.config.NumberOfClasses;
+	$numberOfClassesStore2 = page.data.config.NumberOfClasses;
 	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY_2, numberOfClassesStore2);
 
 	// for label
 	const numberOfClassesStoreLabel = createNumberOfClassesStore();
-	$numberOfClassesStoreLabel = $page.data.config.NumberOfClasses;
+	$numberOfClassesStoreLabel = page.data.config.NumberOfClasses;
 	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL, numberOfClassesStoreLabel);
 
 	// for style color
@@ -106,12 +110,12 @@
 	const defaultColorStoreLabel = createDefaultColorStore();
 	setContext(DEFAULTCOLOR_CONTEXT_KEY_LABEL, defaultColorStoreLabel);
 
-	let tabs: Tab[] = [
+	let tabs: Tab[] = $state([
 		{ label: TabNames.STYLE, id: TabNames.STYLE },
 		{ label: TabNames.FILTER, id: TabNames.FILTER },
 		{ label: TabNames.LABEL, id: TabNames.LABEL },
 		{ label: TabNames.INFO, id: TabNames.INFO }
-	];
+	]);
 
 	const getDefaultTab = () => {
 		if (layer.activeTab) {
@@ -122,18 +126,17 @@
 		}
 		return TabNames.STYLE;
 	};
-	let activeTab: TabNames = getDefaultTab();
+	let activeTab: TabNames = $state(getDefaultTab());
 
-	const layerListStorageKey = storageKeys.layerList($page.url.host);
+	const layerListStorageKey = storageKeys.layerList(page.url.host);
 
-	$: activeTab, setActiveTab2store();
 	const setActiveTab2store = () => {
 		if (!($layerListStore?.length > 0)) return;
 		layerListStore.setActiveTab(layer.id, activeTab);
 		toLocalStorage(layerListStorageKey, $layerListStore);
 	};
 
-	let mapHeight = 0;
+	let mapHeight = $state(0);
 	const updateMapHeight = () => {
 		mapHeight = $map.getContainer().clientHeight - 160;
 	};
@@ -148,7 +151,10 @@
 <Tabs
 	bind:tabs
 	bind:activeTab
-	on:tabChange={(e) => (activeTab = e.detail)}
+	on:tabChange={(e) => {
+		activeTab = e.detail;
+		setActiveTab2store();
+	}}
 	size="is-normal"
 	fontWeight="bold"
 	isUppercase={true}
@@ -157,7 +163,11 @@
 
 <div class="editor-contents" style="max-height: {mapHeight}px; overflow-y: auto;">
 	<div hidden={activeTab !== TabNames.STYLE}>
-		<VectorLegend bind:layerId={layer.id} bind:metadata bind:tags={layer.dataset.properties.tags} />
+		<VectorLegend
+			bind:layerId={layer.id}
+			bind:metadata
+			bind:tags={layer.dataset.properties.tags as Tag[]}
+		/>
 	</div>
 	<div hidden={activeTab !== TabNames.FILTER}>
 		<VectorFilter {layer} />
@@ -169,10 +179,3 @@
 		<LayerInfo {layer} />
 	</div>
 </div>
-
-<style lang="scss">
-	.editor-contents {
-		// overflow-y: auto;
-		// max-height: 60vh;
-	}
-</style>

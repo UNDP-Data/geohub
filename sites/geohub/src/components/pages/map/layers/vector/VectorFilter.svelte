@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	export const FILTER_INPUTTAGS_CONTEXT_KEY = 'vector-filter-input-tags';
 	export type FilterInputTags = Writable<unknown[]>;
 	const createFilterInputTagsStore = () => {
@@ -96,13 +96,17 @@
 	const filterInputTags = createFilterInputTagsStore();
 	setContext(FILTER_INPUTTAGS_CONTEXT_KEY, filterInputTags);
 
-	export let layer: Layer;
+	interface Props {
+		layer: Layer;
+	}
+
+	let { layer = $bindable() }: Props = $props();
 
 	const layerId = layer.id;
 	const metadata = layer.info as VectorTileMetadata;
 
 	// vars
-	let currentExpressionIndex = 0;
+	let currentExpressionIndex = $state(0);
 	// let exprText
 	let singleExpression = {
 		index: 0,
@@ -111,15 +115,15 @@
 		operator: ''
 	};
 
-	let expressionsArray: FilterExpression[] = [singleExpression];
+	let expressionsArray: FilterExpression[] = $state([singleExpression]);
 
-	let selectedCombiningOperator: 'all' | 'any' = 'all';
+	let selectedCombiningOperator: 'all' | 'any' = $state('all');
 	let propertySelectValue: string;
 	let initialStep = 1;
-	let stringProperty = false;
-	let numberProperty = false;
-	let acceptSingleTag = true;
-	let expressionApplied = false;
+	let stringProperty = $state(false);
+	let numberProperty = $state(false);
+	let acceptSingleTag = $state(true);
+	let expressionApplied = $state(false);
 	let customTagsAvailable = false;
 
 	const tippy = initTooltipTippy({
@@ -129,7 +133,7 @@
 		// @ts-ignore
 		trigger: 'mouseenter focus click'
 	});
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
 	onMount(() => {
 		// restore filter expression from layer style
@@ -320,8 +324,8 @@
 		}
 	};
 
-	const handleCurrentOperation = (e) => {
-		expressionsArray[currentExpressionIndex]['operator'] = e.detail.operation;
+	const handleCurrentOperation = (operation: string) => {
+		expressionsArray[currentExpressionIndex]['operator'] = operation;
 	};
 
 	const handleAddExpression = () => {
@@ -340,7 +344,7 @@
 		acceptSingleTag = false;
 	};
 
-	let combineOperator = true;
+	let combineOperator = $state(true);
 
 	const handleCombineOperatorChanged = () => {
 		if (combineOperator) {
@@ -351,9 +355,9 @@
 		handleApplyExpression();
 	};
 
-	const handleCustomTags = (e) => {
+	const handleCustomTags = (tagsList: unknown) => {
 		customTagsAvailable = true;
-		expressionsArray[currentExpressionIndex]['value'] = e.detail;
+		expressionsArray[currentExpressionIndex]['value'] = tagsList as string[];
 	};
 </script>
 
@@ -371,172 +375,180 @@
 
 <div style="margin:10px" class="is-divider"></div>
 <Wizard {initialStep}>
-	<Step num={1} let:nextStep>
-		<div class="wizard-button-container">
-			<button
-				on:click={() => {
-					if (expressionsArray[0].value) {
-						handleAddExpression();
-					}
-					nextStep();
-				}}
-				class="button is-small is-link has-text-weight-bold is-uppercase"
-			>
-				{expressionsArray[0].value ? 'Add' : 'New rule'}
-			</button>
-			{#if expressionApplied || expressionsArray[0].value !== ''}
+	<Step num={1}>
+		{#snippet children({ nextStep })}
+			<div class="wizard-button-container">
 				<button
-					class="button is-small is-link has-text-weight-bold is-uppercase"
-					aria-haspopup="true"
-					aria-controls="dropdown-menu1"
-					use:tippy={{ content: tooltipContent }}
-				>
-					<span>View</span>
-					<span class="icon is-small">
-						<i class="fas fa-angle-down" aria-hidden="true"></i>
-					</span>
-				</button>
-				<div class="dropdown-content" bind:this={tooltipContent}>
-					{#each expressionsArray as expr, i}
-						{@const op = VectorFilterOperators.filter((i) => i.value == expr.operator)}
-
-						{#if op && op.length > 0}
-							<div class="menu-item">
-								<div class="tags has-addons is-centered">
-									<div class="tag is-info is-dark is-small">{clean(expr.property)}</div>
-									<div class="tag is-danger is-dark is-small">{op[0].text}</div>
-									<div class="tag is-success is-dark is-small">{expr.value}</div>
-								</div>
-							</div>
-							{#if i < expressionsArray.length - 1}
-								<div
-									class="is-divider is-danger m-4"
-									data-content={selectedCombiningOperator == 'all' ? 'AND' : 'OR'}
-								></div>
-							{/if}
-						{/if}
-					{/each}
-				</div>
-
-				<button
-					on:click={handleClearExpression}
-					class="button is-small is-primary has-text-weight-bold is-uppercase"
-				>
-					Clear filter{expressionsArray.length > 1 ? '(s)' : ''}
-				</button>
-			{/if}
-		</div>
-	</Step>
-	<Step num={2} let:nextStep let:setStep>
-		<div class="wizard-button-container">
-			{#if expressionsArray[currentExpressionIndex]['property']}
-				<button
-					title="move back to properties"
-					on:click={() => {
+					onclick={() => {
+						if (expressionsArray[0].value) {
+							handleAddExpression();
+						}
 						nextStep();
 					}}
 					class="button is-small is-link has-text-weight-bold is-uppercase"
 				>
-					<span>&nbsp;Operator</span>
-					<span class="icon is-small">
-						<i class="fa fa-angles-right"></i>
-					</span>
+					{expressionsArray[0].value ? 'Add' : 'New rule'}
 				</button>
-			{/if}
-			<button
-				on:click={() => {
-					handleCancelExpression();
-					setStep(1);
-				}}
-				class="ml-auto button is-small is-primary has-text-weight-bold is-uppercase"
-			>
-				Cancel
-			</button>
-		</div>
-		<div class="pb-3 px-3">
-			<PropertySelect
-				onlyNumberFields={false}
-				showEmptyFields={true}
-				emptyFieldLabel="Select a property..."
-				bind:propertySelectValue={expressionsArray[currentExpressionIndex].property}
-				{layerId}
-				parentId={layer.parentId}
-				{metadata}
-				on:select={(e) => {
-					handlePropertySelect(e.detail.prop, nextStep);
-				}}
-			/>
-		</div>
-	</Step>
-	<Step num={3} let:prevStep let:nextStep let:setStep>
-		<!--      Pick one operation from the selected-->
-		<div class="wizard-button-container">
-			<button
-				title="move back to properties"
-				on:click={prevStep}
-				class="button is-small is-link has-text-weight-bold is-uppercase"
-			>
-				<i class="fa fa-angles-left"></i>&nbsp;Properties
-			</button>
-			<button
-				on:click={() => {
-					handleCancelExpression();
-					setStep(1);
-				}}
-				class="button is-small is-primary has-text-weight-bold is-uppercase"
-			>
-				Cancel
-			</button>
-		</div>
-		<div class="is-divider separator is-danger" data-content="Select an operator..."></div>
-		<div class="pb-3 px-3">
-			<OperationButtons
-				on:enableTags={handleEnableTags}
-				on:disableTags={handleDisableTags}
-				bind:numberProperty
-				bind:stringProperty
-				bind:currentSelectedOperation={expressionsArray[currentExpressionIndex].operator}
-				on:change={handleCurrentOperation}
-				on:click={nextStep}
-			/>
-		</div>
-	</Step>
-	<Step num={4} let:prevStep let:setStep>
-		<!--      Pick one operation from the selected-->
-		<div class="wizard-button-container">
-			<button
-				on:click={prevStep}
-				title="move back to operators"
-				class="button is-small is-link has-text-weight-bold is-uppercase"
-			>
-				<i class="fa fa-angles-left"></i> &nbsp;Operators
-			</button>
-			<button
-				on:click={() => {
-					handleCancelExpression();
-					setStep(1);
-				}}
-				class="button is-small is-primary has-text-weight-bold is-uppercase"
-			>
-				Cancel
-			</button>
-		</div>
+				{#if expressionApplied || expressionsArray[0].value !== ''}
+					<button
+						class="button is-small is-link has-text-weight-bold is-uppercase"
+						aria-haspopup="true"
+						aria-controls="dropdown-menu1"
+						use:tippy={{ content: tooltipContent }}
+					>
+						<span>View</span>
+						<span class="icon is-small">
+							<i class="fas fa-angle-down" aria-hidden="true"></i>
+						</span>
+					</button>
+					<div class="dropdown-content" bind:this={tooltipContent}>
+						{#each expressionsArray as expr, i}
+							{@const op = VectorFilterOperators.filter((i) => i.value == expr.operator)}
 
-		<div class="is-divider separator is-danger" data-content="Select/input a value..."></div>
-		<div class="pb-3 px-3">
-			<ValueInput
-				on:apply={() => {
-					handleApplyExpression();
-					setStep(1);
-				}}
-				on:customTags={handleCustomTags}
-				bind:layer
-				bind:acceptSingleTag
-				bind:propertySelectedValue={expressionsArray[currentExpressionIndex]['property']}
-				bind:expressionValue={expressionsArray[currentExpressionIndex]['value']}
-				bind:operator={expressionsArray[currentExpressionIndex]['operator']}
-			/>
-		</div>
+							{#if op && op.length > 0}
+								<div class="menu-item">
+									<div class="tags has-addons is-centered">
+										<div class="tag is-info is-dark is-small">{clean(expr.property)}</div>
+										<div class="tag is-danger is-dark is-small">{op[0].text}</div>
+										<div class="tag is-success is-dark is-small">{expr.value}</div>
+									</div>
+								</div>
+								{#if i < expressionsArray.length - 1}
+									<div
+										class="is-divider is-danger m-4"
+										data-content={selectedCombiningOperator == 'all' ? 'AND' : 'OR'}
+									></div>
+								{/if}
+							{/if}
+						{/each}
+					</div>
+
+					<button
+						onclick={handleClearExpression}
+						class="button is-small is-primary has-text-weight-bold is-uppercase"
+					>
+						Clear filter{expressionsArray.length > 1 ? '(s)' : ''}
+					</button>
+				{/if}
+			</div>
+		{/snippet}
+	</Step>
+	<Step num={2}>
+		{#snippet children({ nextStep, setStep })}
+			<div class="wizard-button-container">
+				{#if expressionsArray[currentExpressionIndex]['property']}
+					<button
+						title="move back to properties"
+						onclick={() => {
+							nextStep();
+						}}
+						class="button is-small is-link has-text-weight-bold is-uppercase"
+					>
+						<span>&nbsp;Operator</span>
+						<span class="icon is-small">
+							<i class="fa fa-angles-right"></i>
+						</span>
+					</button>
+				{/if}
+				<button
+					onclick={() => {
+						handleCancelExpression();
+						setStep(1);
+					}}
+					class="ml-auto button is-small is-primary has-text-weight-bold is-uppercase"
+				>
+					Cancel
+				</button>
+			</div>
+			<div class="pb-3 px-3">
+				<PropertySelect
+					onlyNumberFields={false}
+					showEmptyFields={true}
+					emptyFieldLabel="Select a property..."
+					bind:propertySelectValue={expressionsArray[currentExpressionIndex].property}
+					{layerId}
+					parentId={layer.parentId}
+					{metadata}
+					on:select={(e) => {
+						handlePropertySelect(e.detail.prop, nextStep);
+					}}
+				/>
+			</div>
+		{/snippet}
+	</Step>
+	<Step num={3}>
+		{#snippet children({ prevStep, nextStep, setStep })}
+			<!--      Pick one operation from the selected-->
+			<div class="wizard-button-container">
+				<button
+					title="move back to properties"
+					onclick={prevStep}
+					class="button is-small is-link has-text-weight-bold is-uppercase"
+				>
+					<i class="fa fa-angles-left"></i>&nbsp;Properties
+				</button>
+				<button
+					onclick={() => {
+						handleCancelExpression();
+						setStep(1);
+					}}
+					class="button is-small is-primary has-text-weight-bold is-uppercase"
+				>
+					Cancel
+				</button>
+			</div>
+			<div class="is-divider separator is-danger" data-content="Select an operator..."></div>
+			<div class="pb-3 px-3">
+				<OperationButtons
+					onenableTags={handleEnableTags}
+					ondisableTags={handleDisableTags}
+					bind:numberProperty
+					bind:stringProperty
+					bind:currentSelectedOperation={expressionsArray[currentExpressionIndex].operator}
+					onchange={handleCurrentOperation}
+					onclick={nextStep}
+				/>
+			</div>
+		{/snippet}
+	</Step>
+	<Step num={4}>
+		{#snippet children({ prevStep, setStep })}
+			<!--      Pick one operation from the selected-->
+			<div class="wizard-button-container">
+				<button
+					onclick={prevStep}
+					title="move back to operators"
+					class="button is-small is-link has-text-weight-bold is-uppercase"
+				>
+					<i class="fa fa-angles-left"></i> &nbsp;Operators
+				</button>
+				<button
+					onclick={() => {
+						handleCancelExpression();
+						setStep(1);
+					}}
+					class="button is-small is-primary has-text-weight-bold is-uppercase"
+				>
+					Cancel
+				</button>
+			</div>
+
+			<div class="is-divider separator is-danger" data-content="Select/input a value..."></div>
+			<div class="pb-3 px-3">
+				<ValueInput
+					onapply={() => {
+						handleApplyExpression();
+						setStep(1);
+					}}
+					oncustomTags={handleCustomTags}
+					bind:layer
+					bind:acceptSingleTag
+					bind:propertySelectedValue={expressionsArray[currentExpressionIndex]['property']}
+					bind:expressionValue={expressionsArray[currentExpressionIndex]['value']}
+					bind:operator={expressionsArray[currentExpressionIndex]['operator']}
+				/>
+			</div>
+		{/snippet}
 	</Step>
 </Wizard>
 

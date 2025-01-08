@@ -18,24 +18,40 @@
 
 	const filterInputTags: FilterInputTags = getContext(FILTER_INPUTTAGS_CONTEXT_KEY);
 
-	export let propertySelectedValue: string;
-	export let expressionValue: number[];
-	export let acceptSingleTag = true;
-	export let layer: Layer;
-	export let operator:
-		| '>'
-		| '<'
-		| '>='
-		| '<='
-		| '=='
-		| '!='
-		| 'in'
-		| '!in'
-		| 'has'
-		| '!has'
-		| 'all'
-		| 'none'
-		| 'any';
+	interface Props {
+		propertySelectedValue: string;
+		expressionValue: number[];
+		acceptSingleTag?: boolean;
+		layer: Layer;
+		operator:
+			| '>'
+			| '<'
+			| '>='
+			| '<='
+			| '=='
+			| '!='
+			| 'in'
+			| '!in'
+			| 'has'
+			| '!has'
+			| 'all'
+			| 'none'
+			| 'any';
+		onapply?: () => void;
+		oncustomTags?: (tagsList: unknown) => void;
+	}
+
+	let {
+		propertySelectedValue = $bindable(),
+		expressionValue = $bindable(),
+		acceptSingleTag = $bindable(true),
+		layer = $bindable(),
+		operator = $bindable(),
+		onapply = () => {},
+		oncustomTags = (tagsList) => {
+			console.log(tagsList);
+		}
+	}: Props = $props();
 
 	const layerStyle = getLayerStyle($map, layer.id);
 	const metadata = layer.info as VectorTileMetadata;
@@ -46,8 +62,8 @@
 		(e) => e['attribute'] === propertySelectedValue
 	);
 	const dataType = propertyProps['type'];
-	let warningSingleTagEqual = false;
-	let badSingleTagValue;
+	let warningSingleTagEqual = $state(false);
+	let badSingleTagValue = $state();
 
 	const layerId = layer.id;
 
@@ -65,24 +81,22 @@
 	const dispatch = createEventDispatcher();
 
 	let hideOptions = true;
-	let uv: string[] = undefined;
+	let uv: string[] = $state(undefined);
 	let clickFuncs: Listener[] = [];
 	let cursor: string;
-	let mapClickButtonDisabled = false;
-	let sv: Array<number> = [];
-	let calculatedStep: number;
-	let min: number;
-	let max: number;
-	let vals: Array<number> = [];
-	let svals: Array<number> = [];
+	let mapClickButtonDisabled = $state(false);
+	let sv: Array<number> = $state([]);
+	let calculatedStep: number = $state();
+	let min: number = $state();
+	let max: number = $state();
+	let svals: Array<number> = $state([]);
 
-	let sindex: number;
-	let eindex: number;
-	let closest: number;
-	let index: number;
-	let sol: [];
+	let sol: number[] = $state([]);
 	const nn = 5;
-	$: tagsList = $filterInputTags;
+	let tagsList: unknown[] = $state([]);
+	$effect(() => {
+		tagsList = $filterInputTags;
+	});
 
 	const fclosest = (array, goal) =>
 		array.reduce((prev, curr) => (Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev));
@@ -90,15 +104,17 @@
 	if (hasManyFeatures) {
 		const values = attrstats.values?.map((v) => (typeof v === 'string' ? Number(v) : v));
 		const stats = values ? arraystat(values) : undefined;
-		min = attrstats?.min ? Number(attrstats.min) : stats.min;
-		max = attrstats?.max ? Number(attrstats.max) : stats.max;
-		const range = max - min;
+		const _min = attrstats?.min ? Number(attrstats.min) : stats.min;
+		const _max = attrstats?.max ? Number(attrstats.max) : stats.max;
+		const range = _max - _min;
 		calculatedStep =
-			Number.isInteger(attrstats.median) && Number.isInteger(min)
+			Number.isInteger(attrstats.median) && Number.isInteger(_min)
 				? ~~(range * 1e-4) || 1
 				: range * 1e-4;
 
 		sv = attrstats?.median ? [attrstats.median] : [stats.median];
+		min = _min;
+		max = _max;
 	} else {
 		let features = $map.querySourceFeatures({ layers: [layerId] });
 
@@ -116,35 +132,38 @@
 			.map((feature) => feature.properties[propertySelectedValue]);
 
 		let optionsList: number[] = [...new Set(values.flat())];
-		sol = Array.from(optionsList).sort((a, b) => a - b);
-
+		const _sol = Array.from(optionsList).sort((a, b) => a - b);
+		sol = _sol;
 		if (!['string', 'mixed'].includes(dataType)) {
-			const astats = arraystat(sol);
-			min = astats.min;
-			max = astats.max;
+			const astats = arraystat(_sol);
+			const _min = astats.min;
+			const _max = astats.max;
 			//                                        negative               0->1
-			calculatedStep = Number.isInteger(min) ? ~~(astats.range * 1e-2) || 1 : astats.range * 1e-2;
-			let closest = fclosest(sol, astats.median);
+			calculatedStep = Number.isInteger(_min) ? ~~(astats.range * 1e-2) || 1 : astats.range * 1e-2;
+			let closest = fclosest(_sol, astats.median);
 			sv = [closest];
 
-			index = sol.indexOf(closest);
-			sindex = index - nn < 0 ? 0 : index - nn;
-			eindex = index + nn > sol.length - 1 ? sol.length : index + nn;
-			vals = sol.slice(sindex, eindex);
+			const index = _sol.indexOf(closest);
+			const sindex = index - nn < 0 ? 0 : index - nn;
+			const eindex = index + nn > _sol.length - 1 ? _sol.length : index + nn;
+			const vals = _sol.slice(sindex, eindex);
 			svals = vals.sort();
+
+			min = _min;
+			max = _max;
 		}
 	}
 
-	$: {
+	$effect(() => {
 		if (!hasManyFeatures && !['string', 'mixed'].includes(dataType)) {
-			closest = fclosest(sol, sv[0]);
-			index = sol.indexOf(closest);
-			sindex = index - nn < 0 ? 0 : index - nn;
-			eindex = index + nn > sol.length - 1 ? sol.length : index + nn;
-			vals = sol.slice(sindex, eindex);
+			const closest = fclosest(sol, sv[0]);
+			const index = sol.indexOf(closest);
+			const sindex = index - nn < 0 ? 0 : index - nn;
+			const eindex = index + nn > sol.length - 1 ? sol.length : index + nn;
+			const vals = sol.slice(sindex, eindex);
 			svals = vals.sort();
 		}
-	}
+	});
 
 	const onSliderStop = (event: CustomEvent) => {
 		expressionValue = event.detail.values;
@@ -180,19 +199,25 @@
 		const filteredTags = tagsList.filter((tag) => !sol.includes(tag));
 		$filterInputTags = [...$filterInputTags, ...filteredTags];
 		if (filteredTags.length > 0) {
-			dispatch('customTags', tagsList);
+			if (oncustomTags) {
+				oncustomTags(tagsList);
+			}
 		} else {
 			expressionValue = tagsList;
 		}
 
-		dispatch('apply');
+		if (onapply) {
+			onapply();
+		}
 	};
 
 	const apply = () => {
 		if (!expressionValue) expressionValue = sv[0];
 		tagsList = [];
 		clearClickLayer();
-		dispatch('apply');
+		if (onapply) {
+			onapply();
+		}
 	};
 
 	const clearClickLayer = () => {
@@ -296,7 +321,7 @@
 			<div class="columns is-centered pb-2">
 				<button
 					class="button is-small is-uppercase has-text-weight-bold is-link"
-					on:click={getFromMap}
+					onclick={getFromMap}
 					disabled={mapClickButtonDisabled}
 				>
 					Select from map
@@ -310,7 +335,7 @@
 					<div class=" ">
 						<button
 							class="button is-small is-uppercase has-text-weight-bold is-link"
-							on:click={() => {
+							onclick={() => {
 								expressionValue = Array.isArray(uv) ? uv : [uv];
 								apply();
 								restoreQ();
@@ -337,10 +362,7 @@
 					on:change={onSliderStop}
 				/>
 				<div class="columns is-centered pb-2">
-					<button
-						class="button is-small is-uppercase has-text-weight-bold is-link"
-						on:click={apply}
-					>
+					<button class="button is-small is-uppercase has-text-weight-bold is-link" onclick={apply}>
 						Apply</button
 					>
 				</div>
@@ -348,7 +370,7 @@
 				<div class="columns is-centered pb-2">
 					<button
 						class="button is-small is-uppercase has-text-weight-bold is-link"
-						on:click={getFromMap}
+						onclick={getFromMap}
 						disabled={mapClickButtonDisabled}
 					>
 						Select from map
@@ -370,7 +392,7 @@
 						<div class=" ">
 							<button
 								class="button is-small is-uppercase has-text-weight-bold is-link"
-								on:click={() => {
+								onclick={() => {
 									expressionValue = uv;
 									apply();
 									restoreQ();
@@ -431,7 +453,7 @@
 						<button
 							disabled={tagsList.length === 0}
 							class="button is-small is-uppercase has-text-weight-bold is-link"
-							on:click={applyTags}
+							onclick={applyTags}
 						>
 							Apply
 						</button>
@@ -457,7 +479,7 @@
 				<div class="buttons">
 					{#each svals as v}
 						<button
-							on:click={(e) => {
+							onclick={(e) => {
 								expressionValue = v;
 								apply(e);
 							}}
@@ -480,10 +502,7 @@
 					on:change={onSliderStop}
 				/>
 				<div class="columns is-centered pb-2">
-					<button
-						class="button is-small is-uppercase has-text-weight-bold is-link"
-						on:click={apply}
-					>
+					<button class="button is-small is-uppercase has-text-weight-bold is-link" onclick={apply}>
 						Apply
 					</button>
 				</div>
