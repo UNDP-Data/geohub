@@ -211,6 +211,7 @@
 
 	const getLayerOpacity = () => {
 		if (!map) return 0;
+		if (!layer) return 0;
 		const style = $map.getStyle();
 		const l = style?.layers?.find((l) => l.id === layer.id);
 		if (!l) return 0;
