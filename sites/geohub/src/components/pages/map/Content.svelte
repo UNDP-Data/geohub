@@ -16,7 +16,7 @@
 		type MapStore,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
-	import { getContext, onMount } from 'svelte';
+	import { getContext, onMount, untrack } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
@@ -135,9 +135,16 @@
 		if (style) {
 			styleUrl = style.links.find((l: Link) => l.rel === 'stylejson').href;
 		}
-		layerListStore.subscribe(updateLayerLabel);
 	});
 	let contentHeight = $derived(splitterHeight - tabsHeight);
+
+	$effect(() => {
+		if ($layerListStore) {
+			untrack(() => {
+				updateLayerLabel();
+			});
+		}
+	});
 </script>
 
 <div class="is-fullwidth" bind:clientHeight={tabsHeight}>

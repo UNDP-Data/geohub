@@ -175,38 +175,38 @@
 	};
 
 	const handleDeleted = () => {
+		$map.off('styledata', handleLayerStyleChanged);
 		const layerId = layer.id;
 		isDeleteDialogVisible = false;
+		// setTimeout(() => {
+		// const layer = $layerListStore.filter((item) => item.id === layerId)[0];
+		const delSourceId = getLayerStyle($map, layer.id).source;
+		if (layer.children && layer.children.length > 0) {
+			layer.children.forEach((child) => {
+				if ($map.getLayer(child.id)) {
+					$map.removeLayer(child.id);
+				}
+			});
+			layer.children = [];
+		}
+		$layerListStore = $layerListStore.filter((item) => item.id !== layerId);
+		if ($map.getLayer(layerId)) {
+			$map.removeLayer(layerId);
+		}
+		const layerListforDelSource = $layerListStore.filter(
+			(item) => getLayerStyle($map, item.id).source === delSourceId
+		);
+		if (layerListforDelSource.length === 0) {
+			$map.removeSource(delSourceId);
+		}
 
-		setTimeout(() => {
-			const layer = $layerListStore.filter((item) => item.id === layerId)[0];
-			const delSourceId = getLayerStyle($map, layer.id).source;
-			if (layer.children && layer.children.length > 0) {
-				layer.children.forEach((child) => {
-					if ($map.getLayer(child.id)) {
-						$map.removeLayer(child.id);
-					}
-				});
-				layer.children = [];
-			}
-			$layerListStore = $layerListStore.filter((item) => item.id !== layerId);
-			if ($map.getLayer(layerId)) {
-				$map.removeLayer(layerId);
-			}
-			const layerListforDelSource = $layerListStore.filter(
-				(item) => getLayerStyle($map, item.id).source === delSourceId
-			);
-			if (layerListforDelSource.length === 0) {
-				$map.removeSource(delSourceId);
-			}
-
-			$tableMenuShownStore = false;
-			$editingMenuShownStore = false;
-			editingLayerStore.set(undefined);
-			if (onchange) {
-				onchange();
-			}
-		}, 200);
+		$tableMenuShownStore = false;
+		$editingMenuShownStore = false;
+		editingLayerStore.set(undefined);
+		if (onchange) {
+			onchange();
+		}
+		// }, 200);
 	};
 
 	const getLayerOpacity = () => {
@@ -293,10 +293,10 @@
 	};
 
 	const handleDuplicateLayer = () => {
+		$map.off('styledata', handleLayerStyleChanged);
 		$tableMenuShownStore = false;
 		$editingMenuShownStore = false;
 		editingLayerStore.set(undefined);
-
 		const newStyle = $map.getStyle();
 
 		// copied Layer object
