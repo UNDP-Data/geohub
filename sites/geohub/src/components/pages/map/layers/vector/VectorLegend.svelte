@@ -268,7 +268,7 @@
 					<IconSize
 						{layerId}
 						{metadata}
-						bind:defaultIconSize={page.data.config.IconSize}
+						defaultIconSize={page.data.config.IconSize}
 						bind:defaultColor={$defaultColorStore}
 						bind:numberOfClasses={$numberOfClassesValueStore}
 						numberOfClassesMinimum={NumberOfClassesMinimum}
