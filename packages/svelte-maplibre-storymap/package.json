@@ -70,7 +70,7 @@
 		"@undp-data/svelte-undp-design": "workspace:^",
 		"intersection-observer": "^0.12.2",
 		"lodash-es": "^4.17.21",
-		"maplibre-gl": "^4.7.1",
+		"maplibre-gl": "^5.0.0",
 		"marked": "^15.0.0",
 		"scrollama": "^3.2.0"
 	}

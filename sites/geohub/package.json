@@ -101,7 +101,7 @@
 		"jsdom": "^25.0.1",
 		"jszip": "^3.10.1",
 		"lodash-es": "^4.17.21",
-		"maplibre-gl": "^4.7.1",
+		"maplibre-gl": "^5.0.0",
 		"marked": "^15.0.4",
 		"mathjs": "^14.0.1",
 		"millify": "^6.1.0",

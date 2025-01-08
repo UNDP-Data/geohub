@@ -64,6 +64,6 @@
 	"types": "./dist/index.d.ts",
 	"type": "module",
 	"dependencies": {
-		"maplibre-gl": "^4.7.1"
+		"maplibre-gl": "^5.0.0"
 	}
 }
