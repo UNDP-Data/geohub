@@ -46,7 +46,7 @@
 	"type": "module",
 	"dependencies": {
 		"json-stable-stringify": "^1.1.1",
-		"maplibre-gl": "^4.7.1",
+		"maplibre-gl": "^5.0.0",
 		"tippy.js": "^6.3.7"
 	},
 	"files": [
