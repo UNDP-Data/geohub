@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { invalidateAll, replaceState } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import { AccessLevel, Permission } from '$lib/config/AppConfig';
 	import { storageKeys, toLocalStorage } from '$lib/helper';
@@ -10,7 +10,7 @@
 	import type { Map, StyleSpecification } from 'maplibre-gl';
 	import { untrack } from 'svelte';
 
-	let savedStyle: DashboardMapStyle = $state($page.data.style);
+	let savedStyle: DashboardMapStyle = $state(page.data.style);
 	const getDefaultAccessLevel = () => {
 		return savedStyle?.access_level ?? AccessLevel.PRIVATE;
 	};
@@ -57,17 +57,17 @@
 	let exportedStyleJSON: StyleSpecification | undefined = $state();
 	let isLoading = $state(false);
 
-	const layerListStorageKey = storageKeys.layerList($page.url.host);
-	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
-	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+	const layerListStorageKey = storageKeys.layerList(page.url.host);
+	const mapStyleStorageKey = storageKeys.mapStyle(page.url.host);
+	const mapStyleIdStorageKey = storageKeys.mapStyleId(page.url.host);
 
 	let countPrivateLayers = $state(0);
 	let countOrganisationLayers = $state(0);
 
 	const isReadOnly = () => {
 		return !(
-			$page.data.session?.user?.email === savedStyle?.created_user ||
-			$page.data.session?.user?.is_superuser ||
+			page.data.session?.user?.email === savedStyle?.created_user ||
+			page.data.session?.user?.is_superuser ||
 			(savedStyle.permission && savedStyle.permission > Permission.READ)
 		);
 	};
@@ -121,7 +121,7 @@
 		toLocalStorage(mapStyleStorageKey, savedStyle.style);
 		toLocalStorage(mapStyleIdStorageKey, savedStyle.id);
 
-		const apiUrl = `${styleURL}${$page.url.search}${$page.url.hash}`;
+		const apiUrl = `${styleURL}${page.url.search}${page.url.hash}`;
 		replaceState(apiUrl, '');
 		invalidateAll().then(() => {
 			isLoading = false;
@@ -177,7 +177,7 @@
 							This map was created by other user. It will be saved as new map.
 						</Notification>
 					</div>
-				{:else if $page.data.session?.user?.is_superuser}
+				{:else if page.data.session?.user?.is_superuser}
 					<div class="mt-2">
 						<Notification type="warning" showCloseButton={false}>
 							You are signed in as a super user, and you are going to update the map created by <b
