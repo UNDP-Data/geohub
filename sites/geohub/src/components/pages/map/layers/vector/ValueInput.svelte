@@ -91,9 +91,9 @@
 	let max: number = $state();
 	let svals: Array<number> = $state([]);
 
-	let sol: number[] = $state([]);
+	let sol: string[] = $state([]);
 	const nn = 5;
-	let tagsList: unknown[] = $state([]);
+	let tagsList: string[] = $state([]);
 	$effect(() => {
 		tagsList = $filterInputTags;
 	});
@@ -133,7 +133,7 @@
 
 		let optionsList: number[] = [...new Set(values.flat())];
 		const _sol = Array.from(optionsList).sort((a, b) => a - b);
-		sol = _sol;
+		sol = _sol as unknown as string[];
 		if (!['string', 'mixed'].includes(dataType)) {
 			const astats = arraystat(_sol);
 			const _min = astats.min;
@@ -161,7 +161,7 @@
 			const sindex = index - nn < 0 ? 0 : index - nn;
 			const eindex = index + nn > sol.length - 1 ? sol.length : index + nn;
 			const vals = sol.slice(sindex, eindex);
-			svals = vals.sort();
+			svals = vals.sort() as unknown as number[];
 		}
 	});
 
@@ -174,7 +174,7 @@
 		restoreQ();
 	});
 
-	const handleTags = (event: CustomEvent) => {
+	const handleTags = (tags: string[]) => {
 		//console.log('CE')
 		if (warningSingleTagEqual) {
 			warningSingleTagEqual = !warningSingleTagEqual; //reset
@@ -183,15 +183,16 @@
 		}
 
 		if (acceptSingleTag) {
-			if (sol.includes(event.detail.tags[0])) {
-				tagsList = event.detail.tags;
+			const firstTag = tags[0];
+			if (sol.includes(firstTag)) {
+				tagsList = tags;
 			} else {
 				tagsList = [];
-				badSingleTagValue = event.detail.tags[0];
+				badSingleTagValue = tags[0];
 				warningSingleTagEqual = !warningSingleTagEqual; //set
 			}
 		} else {
-			tagsList = event.detail.tags;
+			tagsList = tags;
 		}
 	};
 
@@ -430,9 +431,8 @@
 				{/if}
 
 				<Tags
-					on:tags={handleTags}
+					ontags={handleTags}
 					maxTags={acceptSingleTag ? 1 : 100}
-					addKeys={[9, 13]}
 					splitWith={'/'}
 					onlyUnique={true}
 					removeKeys={[27]}

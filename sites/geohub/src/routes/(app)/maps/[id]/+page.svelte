@@ -57,6 +57,8 @@
 
 	let { data }: Props = $props();
 
+	let style = $state(data.style);
+
 	const tippyTooltip = initTooltipTippy();
 
 	let tabs: Tab[] = $state([
@@ -113,17 +115,17 @@
 	});
 
 	const initializeLinks = () => {
-		mapLink = data.style.links.find((l) => l.rel === 'map')?.href as string;
-		mapEditLink = data.style.links.find((l) => l.rel === 'mapedit')?.href as string;
-		apiLink = data.style.links.find((l) => l.rel === 'self')?.href as string;
-		stylejsonLink = data.style.links.find((l) => l.rel === 'stylejson')?.href as string;
-		staticAutoLink = data.style.links.find((l) => l.rel === 'static-auto')?.href as string;
-		staticBBOXLink = data.style.links.find((l) => l.rel === 'static-bbox')?.href as string;
-		staticCenterLink = data.style.links.find((l) => l.rel === 'static-center')?.href as string;
+		mapLink = style.links.find((l) => l.rel === 'map')?.href as string;
+		mapEditLink = style.links.find((l) => l.rel === 'mapedit')?.href as string;
+		apiLink = style.links.find((l) => l.rel === 'self')?.href as string;
+		stylejsonLink = style.links.find((l) => l.rel === 'stylejson')?.href as string;
+		staticAutoLink = style.links.find((l) => l.rel === 'static-auto')?.href as string;
+		staticBBOXLink = style.links.find((l) => l.rel === 'static-bbox')?.href as string;
+		staticCenterLink = style.links.find((l) => l.rel === 'static-center')?.href as string;
 	};
 
 	const initializeTabs = () => {
-		if (data.style.permission && data.style.permission >= Permission.READ) {
+		if (style.permission && style.permission >= Permission.READ) {
 			if (!tabs.find((t) => t.label === TabNames.PERMISSIONS)) {
 				tabs = [
 					...(tabs.filter((t) => t.id !== `#${TabNames.LINKS}`) as Tab[]),
@@ -144,7 +146,7 @@
 		if (!mapContainer) return;
 		const map = new Map({
 			container: mapContainer,
-			style: data.style.style,
+			style: style.style,
 			attributionControl: false
 		});
 
@@ -193,17 +195,17 @@
 		map.once('load', async () => {
 			map.resize();
 			await styleSwitcher.initialise();
-			layerListStore.set(data.style.layers as Layer[]);
+			layerListStore.set(style.layers as Layer[]);
 		});
 		mapStore.set(map);
 	};
 
 	const openEditDialog = () => {
-		editMapTitle = data.style.name;
-		editAccessLevel = data.style.access_level;
+		editMapTitle = style.name;
+		editAccessLevel = style.access_level;
 
-		if (data.style.layers && data.style.layers.length > 0) {
-			data.style.layers.forEach((layer) => {
+		if (style.layers && style.layers.length > 0) {
+			style.layers.forEach((layer) => {
 				const dataAccessLevel = layer.dataset?.properties.access_level ?? AccessLevel.PUBLIC;
 				if (dataAccessLevel === AccessLevel.PRIVATE) {
 					countPrivateLayers += 1;
@@ -217,7 +219,7 @@
 	};
 
 	const handleUpdateStyle = async () => {
-		const styleData: DashboardMapStyle = JSON.parse(JSON.stringify(data.style));
+		const styleData: DashboardMapStyle = JSON.parse(JSON.stringify(style));
 		styleData.name = editMapTitle;
 		styleData.access_level = editAccessLevel as AccessLevel;
 
@@ -230,7 +232,8 @@
 			if (!res.ok) {
 				toast.push(`Failed to update. ${res.status}: ${res.statusText}`);
 			}
-			data.style = await res.json();
+			style = await res.json();
+			data.style = style;
 			await invalidateAll();
 			isEditDialogVisible = false;
 		} finally {
@@ -239,8 +242,8 @@
 	};
 
 	const handleResetStyle = () => {
-		editMapTitle = data.style.name;
-		editAccessLevel = data.style.access_level;
+		editMapTitle = style.name;
+		editAccessLevel = style.access_level;
 	};
 
 	const handleDeleteStyle = async () => {
@@ -266,7 +269,7 @@
 	const handleDuplicate = async () => {
 		isUpdating = true;
 		try {
-			const copied: DashboardMapStyle = JSON.parse(JSON.stringify(data.style));
+			const copied: DashboardMapStyle = JSON.parse(JSON.stringify(style));
 
 			const body = {
 				name: copied.name,
@@ -282,9 +285,9 @@
 			if (!res.ok) {
 				toast.push(`Failed to duplicate this map: ${res.statusText} (${res.status}0`);
 			}
-			data.style = await res.json();
-
-			goto(`/maps/${data.style?.id as string}`, {
+			style = await res.json();
+			data.style = style;
+			goto(`/maps/${style?.id as string}`, {
 				invalidateAll: true,
 				replaceState: false,
 				keepFocus: false,
@@ -300,10 +303,8 @@
 </script>
 
 <HeroHeader
-	title={data.style.name}
-	icon={data.style.access_level < AccessLevel.PUBLIC
-		? getAccessLevelIcon(data.style.access_level)
-		: ''}
+	title={style.name}
+	icon={style.access_level < AccessLevel.PUBLIC ? getAccessLevelIcon(style.access_level) : ''}
 	bind:breadcrumbs
 	bind:tabs
 	bind:activeTab
@@ -313,7 +314,7 @@
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<div class="p-2">
 			<div class="buttons mb-2">
-				{#if data.style.layers && data.style.layers.length > 0}
+				{#if style.layers && style.layers.length > 0}
 					<a
 						class="button is-link has-text-weight-bold is-uppercase {isUpdating
 							? 'is-loading'
@@ -325,7 +326,7 @@
 					</a>
 				{/if}
 
-				{#if page.data.session && ((data.style.permission && data.style.permission > Permission.READ) || page.data.session.user.is_superuser)}
+				{#if page.data.session && ((style.permission && style.permission > Permission.READ) || page.data.session.user.is_superuser)}
 					<button
 						class="button is-link is-outlined is-uppercase has-text-weight-bold {isUpdating
 							? 'is-loading'
@@ -343,14 +344,14 @@
 						class="button is-link is-outlined is-uppercase has-text-weight-bold {isUpdating
 							? 'is-loading'
 							: ''}"
-						href="/storymaps/edit?style={data.style.id}"
+						href="/storymaps/edit?style={style.id}"
 						use:tippyTooltip={{ content: 'Create a storymap from this map' }}
 					>
 						create storymap
 					</a>
 				{/if}
 
-				{#if page.data.session && data.style.layers && data.style.layers.length > 0}
+				{#if page.data.session && style.layers && style.layers.length > 0}
 					<button
 						class="button is-link is-outlined is-uppercase has-text-weight-bold {isUpdating
 							? 'is-loading'
@@ -363,7 +364,7 @@
 					</button>
 				{/if}
 
-				{#if page.data.session && ((data.style.permission && data.style.permission === Permission.OWNER) || page.data.session.user.is_superuser)}
+				{#if page.data.session && ((style.permission && style.permission === Permission.OWNER) || page.data.session.user.is_superuser)}
 					<button
 						class="button is-link is-outlined is-uppercase has-text-weight-bold {isUpdating
 							? 'is-loading'
@@ -376,11 +377,11 @@
 					</button>
 				{/if}
 
-				{#key data.style}
+				{#key style}
 					<Star
-						bind:id={data.style.id}
-						bind:isStar={data.style.is_star}
-						bind:no_stars={data.style.no_stars}
+						bind:id={style.id}
+						bind:isStar={style.is_star}
+						bind:no_stars={style.no_stars}
 						table="style"
 						size="normal"
 					/>
@@ -392,7 +393,7 @@
 					<FieldControl title="Title" fontWeight="bold" showHelp={false}>
 						{#snippet control()}
 							<div>
-								{data.style.name}
+								{style.name}
 							</div>
 						{/snippet}
 					</FieldControl>
@@ -400,7 +401,7 @@
 					<FieldControl title="Preview" fontWeight="bold" showHelp={false}>
 						{#snippet control()}
 							<div>
-								{#if data.style.layers?.length === 0}
+								{#if style.layers?.length === 0}
 									<div class="pb-4">
 										<Notification type="warning" showCloseButton={false}>
 											The datasets used in this map seem having beed deleted from the database.
@@ -413,7 +414,7 @@
 										<MapQueryInfoControl bind:map={$mapStore} layerList={layerListStore} />
 										<MaplibreLegendControl
 											bind:map={$mapStore}
-											bind:styleId={data.style.id}
+											bind:styleId={style.id}
 											position="bottom-left"
 										/>
 									{/if}
@@ -427,12 +428,12 @@
 					<FieldControl title="Access level" fontWeight="bold" showHelp={false}>
 						{#snippet control()}
 							<div>
-								{#if data.style.access_level === AccessLevel.PUBLIC}
+								{#if style.access_level === AccessLevel.PUBLIC}
 									Public
-								{:else if data.style.access_level === AccessLevel.PRIVATE}
+								{:else if style.access_level === AccessLevel.PRIVATE}
 									Private
 								{:else}
-									{@const domain = getDomainFromEmail(data.style.created_user)}
+									{@const domain = getDomainFromEmail(style.created_user)}
 									{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain)?.name}
 									{org?.toUpperCase()}
 								{/if}
@@ -443,7 +444,7 @@
 					<FieldControl title="Created by" fontWeight="bold" showHelp={false}>
 						{#snippet control()}
 							<div class="wordwrap">
-								{data.style.created_user}
+								{style.created_user}
 							</div>
 						{/snippet}
 					</FieldControl>
@@ -451,26 +452,26 @@
 					<FieldControl title="Created at" fontWeight="bold" showHelp={false}>
 						{#snippet control()}
 							<div>
-								<Time timestamp={data.style.createdat} format="HH:mm, MM/DD/YYYY" />
+								<Time timestamp={style.createdat} format="HH:mm, MM/DD/YYYY" />
 							</div>
 						{/snippet}
 					</FieldControl>
 
-					{#if data.style.updated_user}
+					{#if style.updated_user}
 						<FieldControl title="Updated by" fontWeight="bold" showHelp={false}>
 							{#snippet control()}
 								<div class="wordwrap">
-									{data.style.updated_user}
+									{style.updated_user}
 								</div>
 							{/snippet}
 						</FieldControl>
 					{/if}
 
-					{#if data.style.updatedat}
+					{#if style.updatedat}
 						<FieldControl title="Updated at" fontWeight="bold" showHelp={false}>
 							{#snippet control()}
 								<div>
-									<Time timestamp={data.style.updatedat} format="HH:mm, MM/DD/YYYY" />
+									<Time timestamp={style.updatedat} format="HH:mm, MM/DD/YYYY" />
 								</div>
 							{/snippet}
 						</FieldControl>
@@ -482,8 +483,8 @@
 
 	{#if page.data.session}
 		<div hidden={activeTab !== `#${TabNames.PERMISSIONS}`}>
-			{#key data.style}
-				<UserPermission api={new StylePermissionAPI(data.style)} />
+			{#key style}
+				<UserPermission api={new StylePermissionAPI(style)} />
 			{/key}
 		</div>
 	{/if}
@@ -598,7 +599,7 @@
 					class="button is-link {isUpdating ? 'is-loading' : ''} is-uppercase"
 					onclick={handleUpdateStyle}
 					disabled={isUpdating ||
-						(editMapTitle === data.style.name && editAccessLevel === data.style.access_level)}
+						(editMapTitle === style.name && editAccessLevel === style.access_level)}
 				>
 					update
 				</button>
@@ -606,7 +607,7 @@
 					class="button {isUpdating ? 'is-loading' : ''} is-uppercase"
 					onclick={handleResetStyle}
 					disabled={isUpdating ||
-						(editMapTitle === data.style.name && editAccessLevel === data.style.access_level)}
+						(editMapTitle === style.name && editAccessLevel === style.access_level)}
 				>
 					reset
 				</button>
@@ -624,10 +625,10 @@
 				</Notification>
 				<div class="mt-2">
 					This action <b>cannot</b> be undone. This will delete
-					<b>{data.style.name}</b>
+					<b>{style.name}</b>
 					from GeoHub database. It will not be shared again with community.
 					<br />
-					Please type <b>{data.style.name}</b> to confirm.
+					Please type <b>{style.name}</b> to confirm.
 				</div>
 				<br />
 				<input class="input" type="text" bind:value={deletedStyleName} />
@@ -640,7 +641,7 @@
 						? 'is-loading'
 						: ''} has-text-weight-bold is-uppercase"
 					onclick={handleDeleteStyle}
-					disabled={deletedStyleName !== data.style.name}
+					disabled={deletedStyleName !== style.name}
 				>
 					delete this map
 				</button>

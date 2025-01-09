@@ -52,9 +52,6 @@ export const getStyleById = async (
 ) => {
 	const data = await db.execute(
 		sql.raw(`
-			with no_stars as (
-				SELECT style_id, count(*) as no_stars FROM geohub.style_favourite WHERE style_id = ${id} GROUP BY style_id
-			)
 			SELECT 
 			x.id, 
 			x.name, 
@@ -65,7 +62,7 @@ export const getStyleById = async (
 			x.created_user, 
 			x.updatedat, 
 			x.updated_user,
-			CASE WHEN z.no_stars is not null THEN cast(z.no_stars as integer) ELSE 0 END as no_stars,
+			CAST((SELECT count(*) as no_stars FROM geohub.style_favourite WHERE style_id = ${id}) as integer) as no_stars,
 			${
 				email
 					? `
@@ -91,8 +88,6 @@ export const getStyleById = async (
 			FROM geohub.style x
 			LEFT JOIN geohub.style_permission p
 			ON x.id = p.style_id
-			LEFT JOIN no_stars z
-          	ON x.id = z.style_id
 			AND p.user_email = '${email}'
 			where x.id = ${id}
 			`)

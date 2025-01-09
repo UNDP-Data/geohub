@@ -1,72 +1,67 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { clean, handleEnterKey } from '@undp-data/svelte-undp-components';
-	import { createEventDispatcher } from 'svelte';
 	import { clickOutside } from 'svelte-use-click-outside';
 
-	const dispatch = createEventDispatcher();
-
-	let tag = '';
-	let arrelementsmatch = [];
+	let tag = $state('');
+	let arrelementsmatch: string[] = $state([]);
 	let regExpEscape = (s) => {
 		return s.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&');
 	};
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	export let tags: Array<any>;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	export let addKeys: Array<any>;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	export let maxTags: any;
-	export let onlyUnique: boolean;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	export let removeKeys: Array<any>;
-	export let placeholder: string;
-	export let allowPaste: boolean;
-	export let allowDrop: boolean;
-	export let splitWith: string;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	export let autoComplete: any;
-	export let autoCompleteFilter: boolean;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	export let autoCompleteKey: any;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	export let autoCompleteMarkupKey: any;
-	export let name: string;
-	export let id: string;
-	export let allowBlur: boolean;
-	export let disable: boolean;
-	export let minChars: number;
-	export let onlyAutocomplete: boolean;
-	export let labelText: string;
-	export let labelShow: boolean;
-	export let hideOptions = false;
+	interface Props {
+		tags?: string[];
+		maxTags?: boolean | number;
+		onlyUnique?: boolean;
+		removeKeys?: number[];
+		placeholder?: string;
+		allowPaste?: boolean;
+		allowDrop?: boolean;
+		splitWith?: string;
+		autoComplete?: string[];
+		autoCompleteKey?: boolean;
+		autoCompleteMarkupKey?: boolean;
+		name?: string;
+		id?: string;
+		allowBlur?: boolean;
+		disable?: boolean;
+		minChars?: number;
+		onlyAutocomplete?: boolean;
+		labelText?: string;
+		labelShow?: boolean;
+		hideOptions?: boolean;
+		ontags?: (tags: string[]) => void;
+	}
 
-	let layoutElement;
+	let {
+		tags = $bindable([]),
+		maxTags = false,
+		onlyUnique = false,
+		removeKeys = [8],
+		placeholder = $bindable(''),
+		allowPaste = false,
+		allowDrop = false,
+		splitWith = ',',
+		autoComplete = [],
+		autoCompleteKey = false,
+		autoCompleteMarkupKey = false,
+		name = 'svelte-tags-input',
+		id = uniqueID(),
+		allowBlur = false,
+		disable = false,
+		minChars = 0,
+		onlyAutocomplete = false,
+		labelText = 'svelte-tags-input',
+		labelShow = false,
+		hideOptions = $bindable(false),
+		ontags = (tags) => {
+			console.log(tags);
+		}
+	}: Props = $props();
 
-	$: tags = tags || [];
-	$: addKeys = addKeys || [13];
-	$: maxTags = maxTags || false;
-	$: onlyUnique = onlyUnique || false;
-	$: removeKeys = removeKeys || [8];
-	$: placeholder = placeholder || '';
-	$: allowPaste = allowPaste || false;
-	$: allowDrop = allowDrop || false;
-	$: splitWith = splitWith || ',';
-	$: autoComplete = autoComplete || false;
-	$: autoCompleteFilter = typeof autoCompleteFilter == 'undefined' ? true : false;
-	$: autoCompleteKey = autoCompleteKey || false;
-	$: autoCompleteMarkupKey = autoCompleteMarkupKey || false;
-	$: name = name || 'svelte-tags-input';
-	$: id = id || uniqueID();
-	$: allowBlur = allowBlur || false;
-	$: disable = disable || false;
-	$: minChars = minChars || 0;
-	$: onlyAutocomplete = onlyAutocomplete || false;
-	$: labelText = labelText || name;
-	$: labelShow = labelShow || false;
+	let layoutElement: HTMLElement | undefined = $state();
 
-	$: matchsID = id + '_matchs';
+	const matchsID = id + '_matchs';
 
 	let storePlaceholder = placeholder;
 
@@ -75,9 +70,7 @@
 		// if key is enter, add tag
 		if (e.key === 'Enter' && currentTag !== '' && !onlyAutocomplete) {
 			tags = [...tags, currentTag];
-			dispatch('tags', {
-				tags: tags
-			});
+			if (ontags) ontags(tags);
 			e.target.value = '';
 		}
 
@@ -87,9 +80,7 @@
 					tags.pop();
 					tags = tags;
 
-					dispatch('tags', {
-						tags: tags
-					});
+					if (ontags) ontags(tags);
 
 					arrelementsmatch = [];
 					document.getElementById(id).readOnly = false;
@@ -133,9 +124,7 @@
 		tags = tags;
 		tag = '';
 
-		dispatch('tags', {
-			tags: tags
-		});
+		if (ontags) ontags(tags);
 
 		// Hide autocomplete list
 		// Focus on svelte tags input
@@ -152,9 +141,7 @@
 		tags.splice(i, 1);
 		tags = tags;
 
-		dispatch('tags', {
-			tags: tags
-		});
+		if (ontags) ontags(tags);
 
 		// Hide autocomplete list
 		// Focus on svelte tags input
@@ -240,23 +227,7 @@
 		if (!autoComplete) return;
 
 		let value = input ? input.target.value : '';
-		let autoCompleteValues = [];
-
-		if (Array.isArray(autoComplete)) {
-			autoCompleteValues = autoComplete;
-		}
-
-		if (typeof autoComplete === 'function') {
-			if (autoComplete.constructor.name === 'AsyncFunction') {
-				autoCompleteValues = await autoComplete(value);
-			} else {
-				autoCompleteValues = autoComplete(value);
-			}
-		}
-
-		if (autoCompleteValues.constructor.name === 'Promise') {
-			autoCompleteValues = await autoCompleteValues;
-		}
+		let autoCompleteValues = JSON.parse(JSON.stringify(autoComplete));
 
 		// Escape
 		if (
@@ -277,11 +248,9 @@
 				);
 			}
 
-			if (autoCompleteFilter !== false) {
-				matchs = autoCompleteValues.filter((e) =>
-					e[autoCompleteKey].toLowerCase().includes(value.toLowerCase())
-				);
-			}
+			matchs = autoCompleteValues.filter((e) =>
+				e[autoCompleteKey].toLowerCase().includes(value.toLowerCase())
+			);
 			matchs = matchs.map((matchTag) => {
 				return {
 					label: matchTag,
@@ -291,9 +260,8 @@
 				};
 			});
 		} else {
-			if (autoCompleteFilter !== false) {
-				matchs = autoCompleteValues.filter((e) => e.toLowerCase().includes(value.toLowerCase()));
-			}
+			matchs = autoCompleteValues.filter((e) => e.toLowerCase().includes(value.toLowerCase()));
+
 			matchs = matchs.map((matchTag) => {
 				return {
 					label: matchTag,
@@ -376,8 +344,8 @@
 						class="tag is-delete mb-0"
 						data-sveltekit-preload-code="off"
 						data-sveltekit-preload-data="off"
-						on:click={() => removeTag(i)}
-						on:keydown={handleEnterKey}
+						onclick={() => removeTag(i)}
+						onkeydown={handleEnterKey}
 					></a>
 				{/if}
 			</div>
@@ -388,14 +356,14 @@
 		{id}
 		{name}
 		bind:value={tag}
-		on:keydown={setTag}
-		on:keyup={getMatchElements}
-		on:paste={onPaste}
-		on:drop={onDrop}
-		on:focus={onFocus}
-		on:focusin={onFocusIn}
-		on:blur={(e) => onBlur(e, tag)}
-		on:click={onClick}
+		onkeydown={setTag}
+		onkeyup={getMatchElements}
+		onpaste={onPaste}
+		ondrop={onDrop}
+		onfocus={onFocus}
+		onfocusin={onFocusIn}
+		onblur={(e) => onBlur(e, tag)}
+		onclick={onClick}
 		class="svelte-tags-input"
 		{placeholder}
 		disabled={disable}
@@ -406,13 +374,13 @@
 	<div style="z-index: 99" class="svelte-tags-input-matchs-parent" hidden={hideOptions}>
 		<ul id="{id}_matchs" class="svelte-tags-input-matchs">
 			{#each arrelementsmatch as element, index}
-				<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 				<li
 					aria-label={element.label}
 					title={element.label}
 					tabindex="-1"
-					on:keydown={(e) => navigateAutoComplete(e, index, arrelementsmatch.length, element.label)}
-					on:click={() => addTag(element.label)}
+					onkeydown={(e) => navigateAutoComplete(e, index, arrelementsmatch.length, element.label)}
+					onclick={() => addTag(element.label)}
 				>
 					<!-- eslint-disable svelte/no-at-html-tags -->
 					{@html clean(element.search)}

@@ -1,6 +1,6 @@
 <script module lang="ts">
 	export const FILTER_INPUTTAGS_CONTEXT_KEY = 'vector-filter-input-tags';
-	export type FilterInputTags = Writable<unknown[]>;
+	export type FilterInputTags = Writable<string[]>;
 	const createFilterInputTagsStore = () => {
 		return writable([]);
 	};

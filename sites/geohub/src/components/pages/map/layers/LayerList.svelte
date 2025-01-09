@@ -25,12 +25,10 @@
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import LayerTemplate from './LayerTemplate.svelte';
 	import StyleSaveDialog from './StyleSaveDialog.svelte';
 	import StyleShareDialog from './StyleShareDialog.svelte';
-
-	const dispatch = createEventDispatcher();
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
@@ -42,9 +40,14 @@
 	interface Props {
 		contentHeight: number;
 		activeTab: TabNames;
+		onexport?: () => void;
 	}
 
-	let { contentHeight = $bindable(), activeTab = $bindable() }: Props = $props();
+	let {
+		contentHeight = $bindable(),
+		activeTab = $bindable(),
+		onexport = () => {}
+	}: Props = $props();
 
 	let config: UserConfig = page.data.config;
 	let style: DashboardMapStyle = $state(page.data.style);
@@ -174,7 +177,7 @@
 	};
 
 	const handleExportClicked = () => {
-		dispatch('export');
+		if (onexport) onexport();
 	};
 
 	onMount(() => {
@@ -251,15 +254,17 @@
 	<div class="layer-list">
 		<div class="layer-contents" style="height: {totalHeight}px;">
 			{#key isLayerListChanged}
-				{#each $layerListStore as layer, index}
-					<LayerTemplate
-						bind:layer={$layerListStore[index]}
-						isExpanded={layer.isExpanded as boolean}
-						ontoggled={handleLayerToggled}
-						onchange={handleLayerListChanged}
-						showEditButton={true}
-					></LayerTemplate>
-				{/each}
+				{#key $layerListStore}
+					{#each $layerListStore as layer, index}
+						<LayerTemplate
+							bind:layer={$layerListStore[index]}
+							isExpanded={layer.isExpanded as boolean}
+							ontoggled={handleLayerToggled}
+							onchange={handleLayerListChanged}
+							showEditButton={true}
+						></LayerTemplate>
+					{/each}
+				{/key}
 			{/key}
 		</div>
 

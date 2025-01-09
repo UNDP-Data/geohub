@@ -2,36 +2,31 @@
 	import { distinct } from '$lib/helper';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
 	import type { LayerSpecification, StyleSpecification } from 'maplibre-gl';
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import SortLayer from './SortLayer.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let onlyRendered = true;
-	export let onlyRelative = true;
-	export let style: StyleSpecification;
-
-	let hovering: boolean | number | undefined = false;
-	$: isShowLastDropArea = hovering === getLastVisibleIndex();
-
-	$: allLayers = style ? style.layers : [];
-	let visibleLayerMap: { [key: string]: LayerSpecification } = {};
-	export let relativeLayers: { [key: string]: string } = {};
-
-	$: {
-		if ($map) {
-			$map.on('moveend', updateLayers);
-			$map.on('styledata', updateLayers);
-		}
+	interface Props {
+		onlyRendered?: boolean;
+		onlyRelative?: boolean;
+		relativeLayers?: { [key: string]: string };
 	}
 
-	$: onlyRendered, updateLayers();
-	$: onlyRelative, updateLayers();
-	$: style, handleStyleChanged();
+	let {
+		onlyRendered = true,
+		onlyRelative = true,
+		relativeLayers = $bindable({})
+	}: Props = $props();
+
+	let style: StyleSpecification | undefined = $state();
+	let hovering: boolean | number | undefined = $state(false);
+	let visibleLayerMap: { [key: string]: LayerSpecification } = $state({});
 
 	const handleStyleChanged = () => {
 		if (!$map) return;
-		if (!style) return;
+		style = $map.getStyle();
+
 		if ($map.isStyleLoaded()) {
 			updateLayers();
 		} else {
@@ -73,9 +68,15 @@
 	};
 
 	const drop = (event, target: number, layer?: LayerSpecification) => {
+		event.preventDefault();
 		event.dataTransfer.dropEffect = 'move';
-		const start = parseInt(event.dataTransfer.getData('text/plain'));
-		const newTracklist = allLayers;
+
+		const start = parseInt(event.dataTransfer.getData('text/plain'), 10);
+		if (isNaN(start) || start < 0 || start >= allLayers.length) {
+			return;
+		}
+
+		const newTracklist = [...allLayers];
 
 		if (start <= target) {
 			newTracklist.splice(target + 1, 0, newTracklist[start]);
@@ -166,6 +167,23 @@
 		}
 		return isShow;
 	};
+	let allLayers: LayerSpecification[] = $state([]);
+
+	$effect(() => {
+		if ($map) {
+			$map.on('moveend', updateLayers);
+			$map.on('styledata', handleStyleChanged);
+
+			style = $map.getStyle();
+		}
+	});
+
+	onMount(() => {
+		if (style) {
+			allLayers = style.layers;
+		}
+		updateLayers();
+	});
 </script>
 
 <ul class="legend-panel">
@@ -176,16 +194,16 @@
 					role="list"
 					class="list-item"
 					draggable={true}
-					on:dragstart={(event) => dragstart(event, index)}
-					on:drop|preventDefault={(event) => drop(event, index, layer)}
-					on:dragover={(event) => dragover(event)}
-					on:dragenter={() => {
+					ondragstart={(event) => dragstart(event, index)}
+					ondrop={(event) => drop(event, index, layer)}
+					ondragover={(event) => dragover(event)}
+					ondragenter={() => {
 						hovering = index;
 					}}
 					class:is-active={hovering === index}
 				>
 					<li class="legend-panel-block">
-						<SortLayer {layer} {relativeLayers} on:layerOrderChanged={layerOrderChanged} />
+						<SortLayer {layer} {relativeLayers} onchange={layerOrderChanged} />
 					</li>
 				</div>
 			{/if}
@@ -195,14 +213,14 @@
 			class="list-item"
 			style="height: 40px;"
 			draggable={false}
-			on:drop|preventDefault={(event) => drop(event, getLastVisibleIndex())}
-			on:dragover={(event) => dragover(event)}
-			on:dragenter={() => {
+			ondrop={(event) => drop(event, getLastVisibleIndex())}
+			ondragover={(event) => dragover(event)}
+			ondragenter={() => {
 				hovering = getLastVisibleIndex();
 			}}
 			class:is-active={hovering === getLastVisibleIndex()}
 		>
-			{#if isShowLastDropArea}
+			{#if hovering === getLastVisibleIndex()}
 				<div class="last-drop-area">Drag to the last</div>
 			{/if}
 		</div>

@@ -59,13 +59,32 @@
 	let style: LayerSpecification = getLayerStyle($map, layer.id);
 	let textFieldValue = $state('');
 	let onlyNumberFields = $state(false);
-	let targetLayer: Layer | undefined = $state(style.type === 'symbol' ? layer : undefined);
+	let targetLayer: Layer | undefined = $state(undefined);
 
-	onMount(() => {
-		initialiseTextLabel();
+	const fireLabelChanged = (value: string) => {
+		textFieldValue = value;
+	};
+
+	let expanded: { [key: string]: boolean } = $state({});
+	// to allow only an accordion to be expanded
+	let expandedId: string = $state('');
+	$effect(() => {
+		let expandedData = Object.keys(expanded).filter(
+			(key) => expanded[key] === true && key !== expandedId
+		);
+		if (expandedData.length > 0) {
+			expandedId = expandedData[0];
+			Object.keys(expanded)
+				.filter((key) => key !== expandedId)
+				.forEach((key) => {
+					expanded[key] = false;
+				});
+			expanded[expandedData[0]] = true;
+		}
 	});
 
-	const initialiseTextLabel = () => {
+	onMount(() => {
+		targetLayer = style.type === 'symbol' ? layer : undefined;
 		let targetLayerId = targetLayer ? layer.id : `${parentLayerId}-label`;
 		if (!targetLayer) {
 			layer.children?.forEach((child) => {
@@ -88,37 +107,21 @@
 		if (targetStyle) {
 			textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout');
 		}
-	};
 
-	const fireLabelChanged = (value: string) => {
-		textFieldValue = value;
-	};
-
-	let expanded: { [key: string]: boolean } = $state({ 'text-field': true });
-	// to allow only an accordion to be expanded
-	let expandedDatasetId: string = $state('');
-	$effect(() => {
-		let expandedDatasets = Object.keys(expanded).filter(
-			(key) => expanded[key] === true && key !== expandedDatasetId
-		);
-		if (expandedDatasets.length > 0) {
-			expandedDatasetId = expandedDatasets[0];
-			Object.keys(expanded)
-				.filter((key) => key !== expandedDatasetId)
-				.forEach((key) => {
-					expanded[key] = false;
-				});
-			expanded[expandedDatasets[0]] = true;
-		}
+		expanded['text-field'] = true;
 	});
 </script>
 
-{#if targetLayer}
+{#if expanded && targetLayer}
 	<div class="label-container">
 		<Accordion title="Property" bind:isExpanded={expanded['text-field']}>
 			{#snippet content()}
 				<div class="pb-2">
-					<TextField bind:onlyNumberFields onchange={fireLabelChanged} bind:layer={targetLayer} />
+					<TextField
+						bind:onlyNumberFields
+						onchange={fireLabelChanged}
+						bind:layer={targetLayer as Layer}
+					/>
 				</div>
 			{/snippet}
 			{#snippet buttons()}
