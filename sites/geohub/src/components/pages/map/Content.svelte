@@ -164,7 +164,7 @@
 	<DataView {contentHeight} />
 </div>
 <div hidden={activeTab !== TabNames.LAYERS}>
-	<LayerList {contentHeight} bind:activeTab on:export={addExportTab} />
+	<LayerList {contentHeight} bind:activeTab onexport={addExportTab} />
 </div>
 <div class="mx-4" hidden={activeTab !== TabNames.EXPORT}>
 	{#if $map}
