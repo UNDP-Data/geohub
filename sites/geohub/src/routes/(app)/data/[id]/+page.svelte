@@ -29,7 +29,7 @@
 		isRgbRaster,
 		removeSasTokenFromDatasetUrl
 	} from '$lib/helper';
-	import type { Layer } from '$lib/types';
+	import type { DatasetFeature, Layer } from '$lib/types';
 	import {
 		CopyToClipboard,
 		FieldControl,
@@ -56,6 +56,8 @@
 	}
 
 	let { data }: Props = $props();
+
+	let feature: DatasetFeature = $state(data.feature);
 
 	let breadcrumbs: BreadcrumbPage[] = $state([
 		{ title: 'home', url: '/' },
@@ -152,16 +154,13 @@
 	};
 
 	const checkRgbTile = async () => {
-		const rasterTile = new RasterTileData(data.feature);
+		const rasterTile = new RasterTileData(feature);
 		const rasterInfo = await rasterTile.getMetadata();
 		isRgbTile = isRgbRaster(rasterInfo.colorinterp as string[]);
 	};
 
 	onMount(async () => {
-		if (
-			data.feature.properties.permission &&
-			data.feature.properties.permission >= Permission.READ
-		) {
+		if (feature.properties.permission && feature.properties.permission >= Permission.READ) {
 			tabs = [
 				...tabs.filter((t) => t.id !== `#${TabNames.LINKS}`),
 				{
@@ -172,7 +171,7 @@
 			];
 		}
 
-		if (data.feature.properties.is_raster && !isStac) {
+		if (feature.properties.is_raster && !isStac) {
 			await checkRgbTile();
 			if (!isRgbTile) {
 				const tabIndex = tabs.findIndex((t) => t.id === `#${TabNames.INFO}`);
@@ -190,12 +189,12 @@
 	const handleAlgorithmSelected = async (e) => {
 		let layerSpec: AlgorithmLayerSpec = e.detail;
 
-		const rasterTile = new RasterTileData(data.feature);
+		const rasterTile = new RasterTileData(feature);
 		const rasterInfo = await rasterTile.getMetadata(layerSpec.algorithmId);
 		const metadata = rasterInfo;
 
 		if (layerSpec.algorithm.outputs.unit) {
-			data.feature.properties.tags?.push({
+			feature.properties.tags?.push({
 				key: 'unit',
 				value: layerSpec.algorithm.outputs.unit
 			});
@@ -212,9 +211,9 @@
 				layers = [
 					{
 						id: layerSpec.layerId,
-						name: data.feature.properties.name as string,
+						name: feature.properties.name as string,
 						info: metadata,
-						dataset: data.feature,
+						dataset: feature,
 						colorMapName: layerSpec.colormap_name
 					},
 					...layers
@@ -242,7 +241,7 @@
 
 	const getEditMetadataPage = (url: string) => {
 		const url4edit = removeSasTokenFromDatasetUrl(url);
-		return `/data/${data.feature.properties.id}/edit?url=${url4edit}`;
+		return `/data/${feature.properties.id}/edit?url=${url4edit}`;
 	};
 
 	const handleDeletedDataset = () => {
@@ -265,7 +264,7 @@
 </script>
 
 <HeroHeader
-	title={data.feature.properties.name as string}
+	title={feature.properties.name as string}
 	icon={accessIcon}
 	bind:breadcrumbs
 	bind:tabs
@@ -276,23 +275,23 @@
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<div>
 			<div class="buttons my-2">
-				{#if data.feature.properties.permission}
-					{#if !isStac && data.feature.properties.permission > Permission.READ}
+				{#if feature.properties.permission}
+					{#if !isStac && feature.properties.permission > Permission.READ}
 						<a
 							class="button is-link is-outlined is-uppercase has-text-weight-bold"
-							href={getEditMetadataPage(data.feature.properties.url)}
+							href={getEditMetadataPage(feature.properties.url)}
 						>
 							Edit
 						</a>
 
 						<a
 							class="button is-link is-outlined is-uppercase has-text-weight-bold"
-							href="/data/{data.feature.properties.id}/style/edit"
+							href="/data/{feature.properties.id}/style/edit"
 						>
 							Change default appearance
 						</a>
 					{/if}
-					{#if data.feature.properties.permission > Permission.WRITE}
+					{#if feature.properties.permission > Permission.WRITE}
 						<button
 							class="button is-link is-outlined is-uppercase has-text-weight-bold"
 							onclick={() => {
@@ -306,9 +305,9 @@
 				{/if}
 
 				<Star
-					bind:id={data.feature.properties.id as string}
-					bind:isStar={data.feature.properties.is_star as boolean}
-					bind:no_stars={data.feature.properties.no_stars as number}
+					bind:id={feature.properties.id as string}
+					bind:isStar={feature.properties.is_star as boolean}
+					bind:no_stars={feature.properties.no_stars as number}
 					table="datasets"
 					size="normal"
 				/>
@@ -320,7 +319,7 @@
 				<FieldControl title="Title" fontWeight="bold" showHelp={false}>
 					{#snippet control()}
 						<div>
-							<p>{data.feature.properties.name}</p>
+							<p>{feature.properties.name}</p>
 						</div>
 					{/snippet}
 				</FieldControl>
@@ -328,7 +327,7 @@
 					{#snippet control()}
 						<div>
 							<!-- eslint-disable svelte/no-at-html-tags -->
-							{@html marked(data.feature.properties.description as string)}
+							{@html marked(feature.properties.description as string)}
 						</div>
 					{/snippet}
 				</FieldControl>
@@ -337,29 +336,29 @@
 					{#snippet control()}
 						<div>
 							{#if isStac}
-								{@const stacId = data.feature.properties.tags?.find((t) => t.key === 'stac')?.value}
-								{@const urlparts = data.feature.properties.url.split('/')}
+								{@const stacId = feature.properties.tags?.find((t) => t.key === 'stac')?.value}
+								{@const urlparts = feature.properties.url.split('/')}
 								{@const collection = urlparts[urlparts.length - 2]}
 								{@const isCatalog =
-									data.feature.properties.tags?.find((t) => t.key === 'stacApiType')?.value ===
+									feature.properties.tags?.find((t) => t.key === 'stacApiType')?.value ===
 									'catalog'}
 
 								{#if isCatalog}
 									<StacCatalogExplorer
 										stacId={stacId as string}
-										bind:dataset={data.feature}
+										bind:dataset={feature}
 										on:dataAdded={dataAddedToMap}
 									/>
 								{:else}
 									<StacApiExplorer
-										bind:dataset={data.feature}
+										bind:dataset={feature}
 										stacId={stacId as string}
 										{collection}
 										on:dataAdded={dataAddedToMap}
 									/>
 								{/if}
 							{:else}
-								<DatasetPreview bind:feature={data.feature} />
+								<DatasetPreview bind:feature />
 							{/if}
 						</div>
 					{/snippet}
@@ -390,8 +389,8 @@
 				<FieldControl title="License" fontWeight="bold" showHelp={false}>
 					{#snippet control()}
 						<div>
-							{data.feature.properties.license && data.feature.properties.license?.length > 0
-								? data.feature.properties.license
+							{feature.properties.license && feature.properties.license?.length > 0
+								? feature.properties.license
 								: 'No license'}
 						</div>
 					{/snippet}
@@ -400,12 +399,12 @@
 				<FieldControl title="Access level" fontWeight="bold" showHelp={false}>
 					{#snippet control()}
 						<div>
-							{#if data.feature.properties.access_level === AccessLevel.PUBLIC}
+							{#if feature.properties.access_level === AccessLevel.PUBLIC}
 								Public
-							{:else if data.feature.properties.access_level === AccessLevel.PRIVATE}
+							{:else if feature.properties.access_level === AccessLevel.PRIVATE}
 								Private
 							{:else}
-								{@const domain = getDomainFromEmail(data.feature.properties.created_user as string)}
+								{@const domain = getDomainFromEmail(feature.properties.created_user as string)}
 								{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain)?.name}
 								{org?.toUpperCase()}
 							{/if}
@@ -465,7 +464,7 @@
 				<FieldControl title="Created by" fontWeight="bold" showHelp={false}>
 					{#snippet control()}
 						<div class="wordwrap">
-							{data.feature.properties.created_user}
+							{feature.properties.created_user}
 						</div>
 					{/snippet}
 				</FieldControl>
@@ -473,7 +472,7 @@
 				<FieldControl title="Created at" fontWeight="bold" showHelp={false}>
 					{#snippet control()}
 						<div>
-							<Time timestamp={data.feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
+							<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
 						</div>
 					{/snippet}
 				</FieldControl>
@@ -481,7 +480,7 @@
 				<FieldControl title="Updated by" fontWeight="bold" showHelp={false}>
 					{#snippet control()}
 						<div class="wordwrap">
-							{data.feature.properties.updated_user}
+							{feature.properties.updated_user}
 						</div>
 					{/snippet}
 				</FieldControl>
@@ -489,7 +488,7 @@
 				<FieldControl title="Updated at" fontWeight="bold" showHelp={false}>
 					{#snippet control()}
 						<div>
-							<Time timestamp={data.feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
+							<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
 						</div>
 					{/snippet}
 				</FieldControl>
@@ -564,15 +563,15 @@
 		</div>
 	</div>
 
-	{#if data.feature.properties.is_raster && !isStac}
+	{#if feature.properties.is_raster && !isStac}
 		<div hidden={activeTab !== `#${TabNames.TOOLS}`}>
-			<RasterAlgorithmExplorer bind:feature={data.feature} on:added={handleAlgorithmSelected} />
+			<RasterAlgorithmExplorer bind:feature on:added={handleAlgorithmSelected} />
 		</div>
 	{/if}
 
 	{#if page.data.session}
 		<div hidden={activeTab !== `#${TabNames.PERMISSIONS}`}>
-			<UserPermission api={new DatasetPermissionAPI(data.feature)} />
+			<UserPermission api={new DatasetPermissionAPI(feature)} />
 		</div>
 	{/if}
 
@@ -638,7 +637,7 @@
 					title="File URL"
 					isFirstCharCapitalized={false}
 					fontWeight="bold"
-					showHelp={!data.feature.properties.is_raster}
+					showHelp={!feature.properties.is_raster}
 					showHelpPopup={false}
 				>
 					{#snippet control()}
@@ -760,8 +759,8 @@
 </div>
 
 <PublishedDatasetDeleteDialog
-	bind:id={data.feature.properties.id as string}
-	bind:name={data.feature.properties.name as string}
+	bind:id={feature.properties.id as string}
+	bind:name={feature.properties.name as string}
 	bind:dialogShown={confirmDeleteDialogVisible}
 	ondelete={handleDeletedDataset}
 />
