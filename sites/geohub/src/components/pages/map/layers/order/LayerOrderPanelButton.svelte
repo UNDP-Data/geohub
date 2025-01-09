@@ -9,7 +9,6 @@
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
 	import { Checkbox } from '@undp-data/svelte-undp-design';
-	import type { StyleSpecification } from 'maplibre-gl';
 	import { getContext, untrack } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -18,7 +17,6 @@
 	let onlyRendered = $state(false);
 	let onlyRelative = $state(true);
 	let relativeLayers: { [key: string]: string } = $state({});
-	let style: StyleSpecification = $state();
 
 	const updateLayerOrderList = () => {
 		if ($map && $layerListStore) {
@@ -30,7 +28,6 @@
 					relativeLayers[child.id] = `${clean(layer.name)} label`;
 				});
 			});
-			style = $map.getStyle();
 		}
 	};
 
@@ -53,12 +50,10 @@
 	$effect(() => {
 		if ($map) {
 			$map.on('styledata', function () {
-				style = $map.getStyle();
 				updateLayerOrderList();
 			});
 			$map.on('sourcedata', function (e) {
 				if (e.isSourceLoaded) {
-					style = $map.getStyle();
 					updateLayerOrderList();
 				}
 			});
@@ -96,7 +91,7 @@
 	</div>
 
 	<div class="layer-order">
-		<LayerOrderPanel bind:style bind:onlyRendered bind:onlyRelative bind:relativeLayers />
+		<LayerOrderPanel {onlyRendered} {onlyRelative} bind:relativeLayers />
 	</div>
 </div>
 
