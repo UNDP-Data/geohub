@@ -23,28 +23,36 @@
 		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
-	import { getContext } from 'svelte';
+	import { getContext, untrack } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 	import RasterAlgorithmExplorerButton from './RasterAlgorithmExplorerButton.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
-	export let feature: DatasetFeature;
-	export let isExpanded: boolean;
-	export let isStarOnly = false;
+	interface Props {
+		feature: DatasetFeature;
+		isExpanded: boolean;
+		isStarOnly?: boolean;
+	}
+
+	let {
+		feature = $bindable(),
+		isExpanded = $bindable(),
+		isStarOnly = $bindable(false)
+	}: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();
 
-	let nodeRef: HTMLElement;
-	let clientWidth: number;
-	let layerLoading = false;
-	$: width = `${clientWidth * 0.95}px`;
+	let nodeRef: HTMLElement | undefined = $state();
+	let clientWidth: number = $state(0);
+	let layerLoading = $state(false);
+	let width: string = $derived(`${clientWidth * 0.95}px`);
 
-	let metadata: RasterTileMetadata | VectorTileMetadata;
-	let selectedBand: string;
-	let bands: string[];
-	let isRgbTile = false;
+	let metadata: RasterTileMetadata | VectorTileMetadata | undefined = $state();
+	let selectedBand: string = $state('');
+	let bands: string[] | undefined = $state();
+	let isRgbTile = $state(false);
 
 	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
 	const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
@@ -52,14 +60,11 @@
 	];
 	const stacType = tags?.find((tag) => tag.key === 'stac');
 
-	let expanded: { [key: string]: boolean } = {};
-	let expandedDatasetAssetId: string;
+	let tilestatsLayers: VectorLayerTileStatLayer[] = $state([]);
+	let showSTACDialog = $state(false);
+	let showAlgoDialog = $state(false);
 
-	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
-	let showSTACDialog = false;
-	let showAlgoDialog = false;
-
-	let layerCreationInfo: LayerCreationInfo;
+	let layerCreationInfo: LayerCreationInfo | undefined = $state();
 
 	const isCatalog = tags?.find((t) => t.key === 'stacApiType')?.value === 'catalog';
 
@@ -84,7 +89,10 @@
 		}
 	};
 
-	$: {
+	let expanded: { [key: string]: boolean } = $state({});
+	let expandedDatasetAssetId: string = $state('');
+
+	$effect(() => {
 		let expandedDatasets = Object.keys(expanded).filter(
 			(key) => expanded[key] === true && key !== expandedDatasetAssetId
 		);
@@ -97,7 +105,7 @@
 				});
 			expanded[expandedDatasets[0]] = true;
 		}
-	}
+	});
 
 	const addLayer = async () => {
 		try {
@@ -238,7 +246,7 @@
 
 	const handleStarDeleted = () => {
 		if (isStarOnly === true) {
-			nodeRef.parentNode.removeChild(nodeRef);
+			nodeRef?.parentNode?.removeChild(nodeRef);
 		}
 	};
 
@@ -246,11 +254,15 @@
 		layerCreationInfo = e.detail;
 	};
 
-	$: if (isExpanded === true) {
-		if (is_raster && !stacType) {
-			getMetadata();
+	$effect(() => {
+		if (isExpanded === true) {
+			if (is_raster && !stacType) {
+				untrack(() => {
+					getMetadata();
+				});
+			}
 		}
-	}
+	});
 </script>
 
 <div bind:this={nodeRef}>
@@ -259,130 +271,134 @@
 			bind:layer={tilestatsLayers[0]}
 			bind:feature
 			bind:isExpanded
-			bind:metadata
-			on:starDeleted={handleStarDeleted}
+			bind:metadata={metadata as VectorTileMetadata}
+			onStarDeleted={handleStarDeleted}
 			isShowInfo={true}
 		/>
 	{:else}
 		{@const accessLevel = feature.properties.access_level ?? AccessLevel.PUBLIC}
 		<Accordion title={feature.properties.name} bind:isExpanded>
-			<div class="is-flex is-align-items-center" slot="buttons">
-				{#if accessLevel !== AccessLevel.PUBLIC}
-					<div
-						class="action-button mr-2"
-						use:tippyTooltip={{
-							content: `This dataset has limited data accesibility. It only has ${
-								accessLevel === AccessLevel.PRIVATE ? 'private' : 'organisation'
-							} access.`
-						}}
-					>
-						<span class="icon is-small">
-							<i class="fa-solid fa-circle-exclamation has-text-grey-dark"></i>
-						</span>
-					</div>
-				{/if}
+			{#snippet buttons()}
+				<div class="is-flex is-align-items-center">
+					{#if accessLevel !== AccessLevel.PUBLIC}
+						<div
+							class="action-button mr-2"
+							use:tippyTooltip={{
+								content: `This dataset has limited data accesibility. It only has ${
+									accessLevel === AccessLevel.PRIVATE ? 'private' : 'organisation'
+								} access.`
+							}}
+						>
+							<span class="icon is-small">
+								<i class="fa-solid fa-circle-exclamation has-text-grey-dark"></i>
+							</span>
+						</div>
+					{/if}
 
-				{#await getMetadata() then}
-					{#if tilestatsLayers?.length < 2}
-						{#if !isExpanded}
-							{#if is_raster && !stacType && !isRgbTile}
-								<RasterAlgorithmExplorerButton
-									bind:feature
-									isIconButton={true}
-									on:added={addAlgoLayer}
-									bind:showDialog={showAlgoDialog}
-								/>
+					{#await getMetadata() then}
+						{#if tilestatsLayers?.length < 2}
+							{#if !isExpanded}
+								{#if is_raster && !stacType && !isRgbTile}
+									<RasterAlgorithmExplorerButton
+										bind:feature
+										isIconButton={true}
+										on:added={addAlgoLayer}
+										bind:showDialog={showAlgoDialog}
+									/>
+								{/if}
+								{#if stacType}
+									<StacExplorerButton
+										bind:feature
+										isIconButton={true}
+										on:clicked={addStacLayer}
+										bind:showDialog={showSTACDialog}
+									/>
+								{:else}
+									<AddLayerButton
+										bind:isLoading={layerLoading}
+										title="Add layer"
+										isIconButton={true}
+										onclick={addLayer}
+									/>
+								{/if}
 							{/if}
+						{/if}
+					{/await}
+				</div>
+			{/snippet}
+			{#snippet content()}
+				<div class="card-container px-1" bind:clientWidth>
+					{#if isExpanded === true}
+						{#if !is_raster && tilestatsLayers?.length > 1}
+							<DataCardInfo bind:feature bind:metadata onStarDeleted={handleStarDeleted} />
+
+							{#each tilestatsLayers as layer, index}
+								<DataVectorCard
+									bind:layer={tilestatsLayers[index]}
+									bind:feature
+									bind:isExpanded={expanded[`${feature.properties.id}-${layer.layer}`]}
+									bind:metadata={metadata as VectorTileMetadata}
+									isShowInfo={false}
+								/>
+							{/each}
+						{:else}
+							<DataCardInfo bind:feature bind:metadata onStarDeleted={handleStarDeleted}>
+								{#if isRgbTile || selectedBand}
+									{#key selectedBand}
+										<div class="map">
+											<MiniMap
+												bind:feature
+												{width}
+												height={'150px'}
+												bind:isLoadMap={isExpanded}
+												bind:metadata
+												band={isRgbTile ? undefined : selectedBand}
+												on:layerAdded={handleLayerAdded}
+											/>
+										</div>
+									{/key}
+								{/if}
+							</DataCardInfo>
+
+							{#if is_raster && !isCatalog && metadata && !isRgbTile && bands && bands.length > 1}
+								<div class="field">
+									<!-- svelte-ignore a11y_label_has_associated_control -->
+									<label class="label">Please select a raster band</label>
+									<div class="control">
+										<RasterBandSelectbox bind:metadata bind:selectedBand />
+									</div>
+								</div>
+							{/if}
+
 							{#if stacType}
 								<StacExplorerButton
 									bind:feature
-									isIconButton={true}
+									isIconButton={false}
 									on:clicked={addStacLayer}
 									bind:showDialog={showSTACDialog}
 								/>
-							{:else}
+							{:else if layerCreationInfo}
 								<AddLayerButton
 									bind:isLoading={layerLoading}
 									title="Add layer"
-									isIconButton={true}
-									on:clicked={addLayer}
+									onclick={addLayer}
 								/>
 							{/if}
-						{/if}
-					{/if}
-				{/await}
-			</div>
-			<div slot="content" class="card-container px-1" bind:clientWidth>
-				{#if isExpanded === true}
-					{#if !is_raster && tilestatsLayers?.length > 1}
-						<DataCardInfo bind:feature bind:metadata on:starDeleted={handleStarDeleted} />
 
-						{#each tilestatsLayers as layer}
-							<DataVectorCard
-								bind:layer
-								bind:feature
-								bind:isExpanded={expanded[`${feature.properties.id}-${layer.layer}`]}
-								bind:metadata
-								isShowInfo={false}
-							/>
-						{/each}
-					{:else}
-						<DataCardInfo bind:feature bind:metadata on:starDeleted={handleStarDeleted}>
-							{#if isRgbTile || selectedBand}
-								{#key selectedBand}
-									<div class="map">
-										<MiniMap
-											bind:feature
-											bind:width
-											height={'150px'}
-											bind:isLoadMap={isExpanded}
-											bind:metadata
-											band={isRgbTile ? undefined : selectedBand}
-											on:layerAdded={handleLayerAdded}
-										/>
-									</div>
-								{/key}
-							{/if}
-						</DataCardInfo>
-
-						{#if is_raster && !isCatalog && metadata && !isRgbTile && bands.length > 1}
-							<div class="field">
-								<!-- svelte-ignore a11y-label-has-associated-control -->
-								<label class="label">Please select a raster band</label>
-								<div class="control">
-									<RasterBandSelectbox bind:metadata bind:selectedBand />
+							{#if is_raster && !stacType && !isRgbTile}
+								<div class="mt-2">
+									<RasterAlgorithmExplorerButton
+										bind:feature
+										isIconButton={false}
+										on:added={addAlgoLayer}
+										bind:showDialog={showAlgoDialog}
+									/>
 								</div>
-							</div>
-						{/if}
-
-						{#if stacType}
-							<StacExplorerButton
-								bind:feature
-								isIconButton={false}
-								on:clicked={addStacLayer}
-								bind:showDialog={showSTACDialog}
-							/>
-						{:else if layerCreationInfo}
-							<AddLayerButton
-								bind:isLoading={layerLoading}
-								title="Add layer"
-								on:clicked={addLayer}
-							/>
-						{/if}
-
-						{#if is_raster && !stacType && !isRgbTile}
-							<div class="mt-2">
-								<RasterAlgorithmExplorerButton
-									bind:feature
-									isIconButton={false}
-									on:added={addAlgoLayer}
-									bind:showDialog={showAlgoDialog}
-								/>
-							</div>
+							{/if}
 						{/if}
 					{/if}
-				{/if}
-			</div>
+				</div>
+			{/snippet}
 		</Accordion>
 	{/if}
 </div>
