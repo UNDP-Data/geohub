@@ -1,14 +1,23 @@
 <script lang="ts">
 	import DataCategoryCard from '$components/pages/map/data/DataCategoryCard.svelte';
 	import type { Breadcrumb } from '@undp-data/svelte-undp-design';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		categories: Breadcrumb[];
+		breadcrumbs: Breadcrumb[];
+		onselect?: (category: Breadcrumb) => void;
+	}
 
-	export let categories: Breadcrumb[];
-	export let breadcrumbs: Breadcrumb[];
+	let {
+		categories = $bindable(),
+		breadcrumbs = $bindable(),
+		onselect = (category) => {
+			console.log(category);
+		}
+	}: Props = $props();
 
-	onMount(async () => {
+	onMount(() => {
 		if (!(breadcrumbs && breadcrumbs.length > 0)) return;
 		const breadcrumbCount = breadcrumbs.length;
 		if (breadcrumbCount > 1) {
@@ -29,7 +38,9 @@
 				breadcrumbs = [...breadcrumbs, category];
 			}
 		}
-		dispatch('selected', { category });
+		if (onselect) {
+			onselect(category);
+		}
 	};
 </script>
 
@@ -39,8 +50,8 @@
 >
 	{#each categories as category}
 		<DataCategoryCard
-			bind:category
-			on:clicked={() => {
+			{category}
+			onclick={() => {
 				getSelectedCategory(category);
 			}}
 		/>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import AddLayerButton from '$components/pages/map/data/AddLayerButton.svelte';
 	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
 	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
@@ -19,31 +19,46 @@
 	} from '@undp-data/svelte-undp-components';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { LngLatBounds } from 'maplibre-gl';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { getContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		layer: VectorLayerTileStatLayer;
+		feature: DatasetFeature;
+		isExpanded?: boolean;
+		metadata: RasterTileMetadata | VectorTileMetadata;
+		isShowInfo?: boolean;
+		onStarDeleted?: () => void;
+	}
 
-	export let layer: VectorLayerTileStatLayer;
-	export let feature: DatasetFeature;
-	export let isExpanded = false;
-	export let metadata: RasterTileMetadata | VectorTileMetadata;
-	export let isShowInfo = false;
+	let {
+		layer = $bindable(),
+		feature = $bindable(),
+		isExpanded = $bindable(),
+		metadata = $bindable(),
+		isShowInfo = $bindable(false),
+		onStarDeleted = () => {}
+	}: Props = $props();
 
-	let config: UserConfig = $page.data.config;
+	let config: UserConfig = page.data.config;
 
 	let vectorInfo = metadata as VectorTileMetadata;
-	let clientWidth: number;
-	$: width = `${clientWidth * 0.95}px`;
+	let clientWidth: number = $state(0);
+	let width = $derived(`${clientWidth * 0.95}px`);
+	let accordionTitle = $derived(
+		vectorInfo.json?.vector_layers && vectorInfo.json.vector_layers.length > 1
+			? layer.layer
+			: (feature.properties.name as string)
+	);
 
-	let layerLoading = false;
+	let layerLoading = $state(false);
 
-	let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle';
+	let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle' = $state();
 
-	let layerCreationInfo: LayerCreationInfo;
+	let layerCreationInfo: LayerCreationInfo | undefined = $state();
 
 	const addLayer = async () => {
 		try {
@@ -97,11 +112,10 @@
 		}
 	};
 
-	const handleStarDeleted = (e) => {
-		dispatch('starDeleted', e.detail);
+	const handleStarDeleted = () => {
+		if (onStarDeleted) onStarDeleted();
 	};
 
-	$: layerType, handleLayerTypeChanged();
 	const handleLayerTypeChanged = () => {
 		layerCreationInfo = undefined;
 	};
@@ -111,28 +125,42 @@
 	};
 </script>
 
-<Accordion
-	title={vectorInfo.json.vector_layers.length > 1 ? layer.layer : feature.properties.name}
-	bind:isExpanded
->
-	<div slot="buttons">
-		{#if !isExpanded}
-			<AddLayerButton
-				bind:isLoading={layerLoading}
-				title="Add layer"
-				isIconButton={true}
-				on:clicked={addLayer}
-			/>
-		{/if}
-	</div>
-	<div class="container pb-2" slot="content" bind:clientWidth>
-		{#if isExpanded === true}
-			{#if isShowInfo}
-				<DataCardInfo bind:feature bind:metadata on:starDeleted={handleStarDeleted}>
+<Accordion title={accordionTitle} bind:isExpanded={isExpanded as boolean}>
+	{#snippet buttons()}
+		<div>
+			{#if !isExpanded}
+				<AddLayerButton
+					bind:isLoading={layerLoading}
+					title="Add layer"
+					isIconButton={true}
+					onclick={addLayer}
+				/>
+			{/if}
+		</div>
+	{/snippet}
+	{#snippet content()}
+		<div class="container pb-2" bind:clientWidth>
+			{#if isExpanded === true}
+				{#if isShowInfo}
+					<DataCardInfo bind:feature bind:metadata onStarDeleted={handleStarDeleted}>
+						<div class="map">
+							<MiniMap
+								bind:feature
+								{width}
+								height={'200px'}
+								bind:isLoadMap={isExpanded}
+								bind:metadata
+								bind:layer
+								bind:layerType
+								on:layerAdded={handleLayerAdded}
+							/>
+						</div>
+					</DataCardInfo>
+				{:else}
 					<div class="map">
 						<MiniMap
 							bind:feature
-							bind:width
+							{width}
 							height={'200px'}
 							bind:isLoadMap={isExpanded}
 							bind:metadata
@@ -141,28 +169,20 @@
 							on:layerAdded={handleLayerAdded}
 						/>
 					</div>
-				</DataCardInfo>
-			{:else}
-				<div class="map">
-					<MiniMap
-						bind:feature
-						bind:width
-						height={'200px'}
-						bind:isLoadMap={isExpanded}
-						bind:metadata
-						bind:layer
-						bind:layerType
-						on:layerAdded={handleLayerAdded}
-					/>
-				</div>
-			{/if}
+				{/if}
 
-			<LayerTypeSwitch bind:layer bind:layerType size="small" />
-			{#if layerCreationInfo}
-				<AddLayerButton bind:isLoading={layerLoading} title="Add layer" on:clicked={addLayer} />
+				<LayerTypeSwitch
+					bind:layer
+					bind:layerType
+					size="small"
+					on:change={handleLayerTypeChanged}
+				/>
+				{#if layerCreationInfo}
+					<AddLayerButton bind:isLoading={layerLoading} title="Add layer" onclick={addLayer} />
+				{/if}
 			{/if}
-		{/if}
-	</div>
+		</div>
+	{/snippet}
 </Accordion>
 
 <style>
