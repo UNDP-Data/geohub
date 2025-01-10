@@ -1,7 +1,7 @@
 <script lang="ts">
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
-	import type { DatasetFeature } from '$lib/types';
+	import type { DatasetFeature, Layer, LayerCreationInfo } from '$lib/types';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import {
 		handleEnterKey,
@@ -9,32 +9,42 @@
 		MAPSTORE_CONTEXT_KEY,
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { getContext } from 'svelte';
+
+	type Layers = LayerCreationInfo & { geohubLayer?: Layer }[];
+
+	interface Props {
+		feature: DatasetFeature;
+		isIconButton?: boolean;
+		title?: string;
+		showDialog?: boolean;
+		onclick?: (layers: Layers) => void;
+	}
+
+	let {
+		feature = $bindable(),
+		isIconButton = false,
+		title = 'Explore satellite data',
+		showDialog = $bindable(false),
+		onclick = (layers) => {
+			console.log(layers);
+		}
+	}: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();
-
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-
-	const dispatch = createEventDispatcher();
-
 	let headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
-	let innerHeight: number;
+	let innerHeight: number = $state(0);
+	let mapHeight = $derived(innerHeight - $headerHeightStore);
 
-	$: mapHeight = innerHeight - $headerHeightStore;
-
-	export let feature: DatasetFeature;
-
-	const stacId = feature.properties.tags.find((t) => t.key === 'stac')?.value;
-	const collectionId = feature.properties.tags.find((t) => t.key === 'collection')?.value;
+	const stacId = feature.properties.tags?.find((t) => t.key === 'stac')?.value as string;
+	const collectionId = feature.properties.tags?.find((t) => t.key === 'collection')
+		?.value as string;
 	const isCatalog =
-		feature.properties.tags.find((t) => t.key === 'stacApiType')?.value === 'catalog';
+		feature.properties.tags?.find((t) => t.key === 'stacApiType')?.value === 'catalog';
 
-	export let isIconButton = false;
-	export let title = 'Explore satellite data';
-	export let showDialog = false;
-
-	let center = [0, 0];
-	let zoom = 0;
+	let center = $state([0, 0]);
+	let zoom = $state(0);
 
 	const handleClicked = () => {
 		const { lng, lat } = $map.getCenter();
@@ -48,10 +58,8 @@
 		showDialog = false;
 	};
 
-	const handleDataAdded = (e) => {
-		dispatch('clicked', {
-			layers: e.detail.layers
-		});
+	const handleDataAdded = (e: { detail: { layers: Layers } }) => {
+		if (onclick) onclick(e.detail.layers);
 	};
 </script>
 
@@ -62,8 +70,8 @@
 		class="button-icon has-text-grey-dark fa-stack"
 		role="button"
 		tabindex="0"
-		on:keydown={handleEnterKey}
-		on:click={handleClicked}
+		onkeydown={handleEnterKey}
+		onclick={handleClicked}
 		use:tippyTooltip={{ content: 'Explore satellite data' }}
 	>
 		<i class="fa-solid fa-globe fa-stack-xl"></i>
@@ -72,18 +80,18 @@
 {:else}
 	<button
 		class="button is-primary has-text-weight-bold is-uppercase is-fullwidth"
-		on:click={handleClicked}
+		onclick={handleClicked}
 	>
 		{title}
 	</button>
 {/if}
 
 <div class="modal {showDialog ? 'is-active' : ''}">
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-	<div class="modal-background" role="dialog" on:click={handleCloseDialog}></div>
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+	<div class="modal-background" role="dialog" onclick={handleCloseDialog}></div>
 	<div class="modal-content p-2">
-		<button class="delete is-large" aria-label="close" on:click={handleCloseDialog}></button>
+		<button class="delete is-large" aria-label="close" onclick={handleCloseDialog}></button>
 
 		{#if showDialog}
 			<div class="explorer">
@@ -97,7 +105,7 @@
 						on:dataAdded={handleDataAdded}
 						bind:center
 						bind:zoom
-						bind:height={mapHeight}
+						height={mapHeight}
 					/>
 				{/if}
 			</div>

@@ -22,7 +22,6 @@
 		type VectorLayerTileStatLayer,
 		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
-	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 	import { getContext, untrack } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 	import RasterAlgorithmExplorerButton from './RasterAlgorithmExplorerButton.svelte';
@@ -156,23 +155,10 @@
 		}
 	};
 
-	const addStacLayer = async (e: {
-		detail: {
-			layers: [
-				{
-					geohubLayer: Layer;
-					layer: RasterLayerSpecification;
-					source: RasterSourceSpecification;
-					sourceId: string;
-					metadata: RasterTileMetadata;
-					colormap: string;
-				}
-			];
-		};
-	}) => {
+	const addStacLayer = async (layers: LayerCreationInfo & { geohubLayer?: Layer }[]) => {
 		try {
-			if (!e.detail) return;
-			let dataArray = e.detail.layers;
+			if (!layers) return;
+			let dataArray = layers;
 
 			const rasterInfo = dataArray[0].metadata;
 			for (const data of dataArray) {
@@ -198,10 +184,8 @@
 		await loadMap($map);
 	};
 
-	const addAlgoLayer = async (e) => {
+	const addAlgoLayer = async (layerSpec: AlgorithmLayerSpec) => {
 		try {
-			let layerSpec: AlgorithmLayerSpec = e.detail;
-
 			if (!$map.getSource(layerSpec.sourceId)) {
 				$map.addSource(layerSpec.sourceId, layerSpec.source);
 			}
@@ -302,7 +286,7 @@
 									<RasterAlgorithmExplorerButton
 										bind:feature
 										isIconButton={true}
-										on:added={addAlgoLayer}
+										onadd={addAlgoLayer}
 										bind:showDialog={showAlgoDialog}
 									/>
 								{/if}
@@ -310,7 +294,7 @@
 									<StacExplorerButton
 										bind:feature
 										isIconButton={true}
-										on:clicked={addStacLayer}
+										onclick={addStacLayer}
 										bind:showDialog={showSTACDialog}
 									/>
 								{:else}
@@ -374,7 +358,7 @@
 								<StacExplorerButton
 									bind:feature
 									isIconButton={false}
-									on:clicked={addStacLayer}
+									onclick={addStacLayer}
 									bind:showDialog={showSTACDialog}
 								/>
 							{:else if layerCreationInfo}
@@ -390,7 +374,7 @@
 									<RasterAlgorithmExplorerButton
 										bind:feature
 										isIconButton={false}
-										on:added={addAlgoLayer}
+										onadd={addAlgoLayer}
 										bind:showDialog={showAlgoDialog}
 									/>
 								</div>
