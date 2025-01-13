@@ -22,7 +22,7 @@ spec:
         type: "auto"
       containers:
         - name: pgtileserv
-          image: pramsey/pg_tileserv:20240614
+          image: pramsey/pg_tileserv:20250105
           resources:
             limits:
               memory: "2048Mi"
