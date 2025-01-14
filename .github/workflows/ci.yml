@@ -197,10 +197,10 @@ jobs:
         with:
           inlineScript: |
             az storage blob sync \
-              --connection-string ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }} \
-              --auth-mode key \
+              --container "${{ env.INPUT_CONTAINER_NAME }}" \
               --source "${{ env.INPUT_SOURCE_DIR }}" \
-              --container "${{ env.INPUT_CONTAINER_NAME }}"
+              --connection-string ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }} \
+              --auth-mode key
 
   build-and-deploy-undp-components:
     name: Build and deploy svelte UNDP components storybook
@@ -244,10 +244,10 @@ jobs:
         with:
           inlineScript: |
             az storage blob sync \
-              --connection-string ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }} \
-              --auth-mode key \
+              --container "${{ env.INPUT_CONTAINER_NAME }}" \
               --source "${{ env.INPUT_SOURCE_DIR }}" \
-              --container "${{ env.INPUT_CONTAINER_NAME }}"
+              --connection-string ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }} \
+              --auth-mode key
 
   build-and-deploy-userguide:
     name: Build and deploy GeoHub userguide
@@ -304,20 +304,20 @@ jobs:
         with:
           inlineScript: |
             az storage blob sync \
-              --connection-string ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }} \
-              --auth-mode key \
+              --container "${{ env.INPUT_CONTAINER_NAME }}" \
               --source "${{ env.INPUT_SOURCE_DIR }}" \
-              --container "${{ env.INPUT_CONTAINER_NAME }}"
+              --connection-string ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }} \
+              --auth-mode key
       - name: deploy userguide to Blob container Dev
         # if: ${{ github.ref == 'refs/heads/develop' }}
         uses: azure/CLI@v2
         with:
           inlineScript: |
             az storage blob sync \
-              --connection-string ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE_DEV }} \
-              --auth-mode key \
+              --container "${{ env.INPUT_CONTAINER_NAME }}" \
               --source "${{ env.INPUT_SOURCE_DIR }}" \
-              --container "${{ env.INPUT_CONTAINER_NAME }}"
+              --connection-string ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE_DEV }} \
+              --auth-mode key
 
   build_static_api_acr:
     name: Build and deploy Static Image API to ACR
