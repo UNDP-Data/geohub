@@ -734,8 +734,8 @@ importers:
         specifier: ^7.2.0
         version: 7.2.0
       '@types/chroma-js':
-        specifier: ^2.4.5
-        version: 2.4.5
+        specifier: ^3.0.0
+        version: 3.1.0
       '@types/colormap':
         specifier: ^2.3.4
         version: 2.3.4
@@ -2713,8 +2713,8 @@ packages:
   '@types/aria-query@5.0.4':
     resolution: {integrity: sha512-rfT93uj5s0PRL7EzccGMs3brplhcrghnDoV26NqKhCAS1hVo+WdNsPvE/yb6ilfr5hi2MEk6d5EWJTKdxg8jVw==}
 
-  '@types/chroma-js@2.4.5':
-    resolution: {integrity: sha512-6ISjhzJViaPCy2q2e6PgK+8HcHQDQ0V2LDiKmYAh+jJlLqDa6HbwDh0wOevHY0kHHUx0iZwjSRbVD47WOUx5EQ==}
+  '@types/chroma-js@3.1.0':
+    resolution: {integrity: sha512-Uwl3SOtUkbQ6Ye6ZYu4q4xdLGBzmY839sEHYtOT7i691neeyd+7fXWT5VIkcUSfNwIFrIjQutNYQn9h4q5HFvg==}
 
   '@types/codemirror@5.60.15':
     resolution: {integrity: sha512-dTOvwEQ+ouKJ/rE9LT1Ue2hmP6H1mZv5+CCnNWu2qtiOe2LQa9lCprEY20HxiDmV/Bxh+dXjywmy5aKvoGjULA==}
@@ -8248,7 +8248,7 @@ snapshots:
 
   '@types/aria-query@5.0.4': {}
 
-  '@types/chroma-js@2.4.5': {}
+  '@types/chroma-js@3.1.0': {}
 
   '@types/codemirror@5.60.15':
     dependencies:
