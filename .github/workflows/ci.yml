@@ -297,7 +297,7 @@ jobs:
           inlineScript: |
             az storage blob sync --connection-string ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}  --source ${{ env.INPUT_SOURCE_DIR }} --container ${{ env.INPUT_CONTAINER_NAME }}
       - name: deploy userguide to Blob container Dev
-        if: ${{ github.ref == 'refs/heads/develop' }}
+        # if: ${{ github.ref == 'refs/heads/develop' }}
         uses: azure/CLI@v2
         with:
           inlineScript: |
