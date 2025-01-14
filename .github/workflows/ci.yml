@@ -167,9 +167,6 @@ jobs:
     environment:
       name: Svelte UNDP Design
       url: https://svelte-undp-design.undpgeohub.org/
-    env:
-      INPUT_SOURCE_DIR: packages/svelte-undp-design/storybook-static
-      INPUT_CONTAINER_NAME: $web
     steps:
       - name: checkout code repository
         uses: actions/checkout@v4
@@ -193,10 +190,13 @@ jobs:
 
       - name: deploy storybook to Blob container
         if: ${{ (github.ref == 'refs/heads/develop') }}
-        uses: azure/CLI@v2
+        uses: bacongobbler/azure-blob-storage-upload@v3.0.0
         with:
-          inlineScript: |
-            az storage blob sync --connection-string ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}  --source ${{ env.INPUT_SOURCE_DIR }} --destination ${{ env.INPUT_CONTAINER_NAME }}
+          source_dir: packages/svelte-undp-design/storybook-static
+          container_name: $web
+          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}
+          # WARNING: this will overwrite existing blobs in your blob storage
+          sync: "true"
 
   build-and-deploy-undp-components:
     name: Build and deploy svelte UNDP components storybook
@@ -209,9 +209,6 @@ jobs:
     environment:
       name: Svelte UNDP Components
       url: https://svelte-undp-components.undpgeohub.org/
-    env:
-      INPUT_SOURCE_DIR: packages/svelte-undp-components/storybook-static
-      INPUT_CONTAINER_NAME: $web
     steps:
       - name: checkout code repository
         uses: actions/checkout@v4
@@ -236,10 +233,13 @@ jobs:
 
       - name: deploy storybook to Blob container
         if: ${{ (github.ref == 'refs/heads/develop') }}
-        uses: azure/CLI@v2
+        uses: bacongobbler/azure-blob-storage-upload@v3.0.0
         with:
-          inlineScript: |
-            az storage blob sync --connection-string ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}  --source ${{ env.INPUT_SOURCE_DIR }} --destination ${{ env.INPUT_CONTAINER_NAME }}
+          source_dir: packages/svelte-undp-components/storybook-static
+          container_name: $web
+          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}
+          # WARNING: this will overwrite existing blobs in your blob storage
+          sync: "true"
 
   build-and-deploy-userguide:
     name: Build and deploy GeoHub userguide
@@ -248,9 +248,6 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: GeoHub UserGuide
-    env:
-      INPUT_SOURCE_DIR: documentation/site
-      INPUT_CONTAINER_NAME: $web
 
     steps:
       - name: checkout code repository
@@ -292,16 +289,22 @@ jobs:
 
       - name: deploy userguide to Blob container Prod
         if: ${{ (github.ref == 'refs/heads/main') }}
-        uses: azure/CLI@v2
+        uses: bacongobbler/azure-blob-storage-upload@v3.0.0
         with:
-          inlineScript: |
-            az storage blob sync --connection-string ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}  --source ${{ env.INPUT_SOURCE_DIR }} --destination ${{ env.INPUT_CONTAINER_NAME }}
+          source_dir: documentation/site
+          container_name: $web
+          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}
+          # WARNING: this will overwrite existing blobs in your blob storage
+          sync: "true"
       - name: deploy userguide to Blob container Dev
         if: ${{ github.ref == 'refs/heads/develop' }}
-        uses: azure/CLI@v2
+        uses: bacongobbler/azure-blob-storage-upload@v3.0.0
         with:
-          inlineScript: |
-            az storage blob sync --connection-string ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE_DEV }}  --source ${{ env.INPUT_SOURCE_DIR }} --destination ${{ env.INPUT_CONTAINER_NAME }}
+          source_dir: documentation/site
+          container_name: $web
+          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE_DEV }}
+          # WARNING: this will overwrite existing blobs in your blob storage
+          sync: "true"
 
   build_static_api_acr:
     name: Build and deploy Static Image API to ACR
