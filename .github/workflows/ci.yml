@@ -316,8 +316,10 @@ jobs:
         uses: azure/CLI@v2
         with:
           azcliversion: 2.67.0
+          # azcopy workadound https://github.com/Azure/azure-cli/issues/30635
           inlineScript: |
-            curl https://azcopyvnext-awgzd8g7aagqhzhe.b02.azurefd.net/release20211027/azcopy_linux_amd64_10.13.0.tar.gz -o downloadazcopy-v10-linux && \
+            tdnf install tar-1.34-3.cm2.x86_64 -y;
+            curl -L https://azcopyvnext-awgzd8g7aagqhzhe.b02.azurefd.net/release20211027/azcopy_linux_amd64_10.13.0.tar.gz -o downloadazcopy-v10-linux && \
               tar -xvf downloadazcopy-v10-linux && \
               cp ./azcopy_linux_amd64_*/azcopy /github/home/.azure/bin/ && \
               chmod 755 /github/home/.azure/bin/azcopy && \
