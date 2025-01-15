@@ -196,6 +196,7 @@ jobs:
         uses: azure/CLI@v2
         with:
           inlineScript: |
+            tdnf install -y azcopy;
             az storage blob sync \
               --container "${{ env.INPUT_CONTAINER_NAME }}" \
               --source "${{ env.INPUT_SOURCE_DIR }}" \
@@ -242,6 +243,7 @@ jobs:
         uses: azure/CLI@v2
         with:
           inlineScript: |
+            tdnf install -y azcopy;
             az storage blob sync \
               --container "${{ env.INPUT_CONTAINER_NAME }}" \
               --source "${{ env.INPUT_SOURCE_DIR }}" \
@@ -301,6 +303,7 @@ jobs:
         uses: azure/CLI@v2
         with:
           inlineScript: |
+            tdnf install -y azcopy;
             az storage blob sync \
               --container "${{ env.INPUT_CONTAINER_NAME }}" \
               --source "${{ env.INPUT_SOURCE_DIR }}" \
@@ -310,6 +313,7 @@ jobs:
         uses: azure/CLI@v2
         with:
           inlineScript: |
+            tdnf install -y azcopy;
             az storage blob sync \
               --container "${{ env.INPUT_CONTAINER_NAME }}" \
               --source "${{ env.INPUT_SOURCE_DIR }}" \
