@@ -218,7 +218,7 @@ jobs:
       INPUT_CONTAINER_NAME: $web
     steps:
       - name: checkout code repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v1
         with:
           fetch-depth: 0
       - uses: pnpm/action-setup@v4.0.0
@@ -240,7 +240,7 @@ jobs:
 
       - name: deploy storybook to Blob container
         if: ${{ (github.ref == 'refs/heads/develop') }}
-        uses: azure/CLI@v2
+        uses: azure/CLI@v1
         with:
           inlineScript: |
             tdnf install -y azcopy;
@@ -300,7 +300,7 @@ jobs:
 
       - name: deploy userguide to Blob container Prod
         if: ${{ (github.ref == 'refs/heads/main') }}
-        uses: azure/CLI@v2
+        uses: azure/CLI@v1
         with:
           inlineScript: |
             tdnf install -y azcopy;
@@ -310,7 +310,7 @@ jobs:
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}"
       - name: deploy userguide to Blob container Dev
         # if: ${{ github.ref == 'refs/heads/develop' }}
-        uses: azure/CLI@v2
+        uses: azure/CLI@v1
         with:
           inlineScript: |
             tdnf install -y azcopy;
