@@ -195,8 +195,9 @@ jobs:
         if: ${{ (github.ref == 'refs/heads/develop') }}
         uses: azure/CLI@v2
         with:
+          azcliversion: 2.67.0
           inlineScript: |
-            tdnf install -y azcopy;
+            tdnf install -y azcopy-10.15.0;
             az storage blob sync \
               --container "${{ env.INPUT_CONTAINER_NAME }}" \
               --source "${{ env.INPUT_SOURCE_DIR }}" \
@@ -240,10 +241,11 @@ jobs:
 
       - name: deploy storybook to Blob container
         if: ${{ (github.ref == 'refs/heads/develop') }}
-        uses: azure/CLI@v1
+        uses: azure/CLI@v2
         with:
+          azcliversion: 2.67.0
           inlineScript: |
-            tdnf install -y azcopy;
+            tdnf install -y azcopy-10.15.0;
             az storage blob sync \
               --container "${{ env.INPUT_CONTAINER_NAME }}" \
               --source "${{ env.INPUT_SOURCE_DIR }}" \
@@ -300,20 +302,22 @@ jobs:
 
       - name: deploy userguide to Blob container Prod
         if: ${{ (github.ref == 'refs/heads/main') }}
-        uses: azure/CLI@v1
+        uses: azure/CLI@v2
         with:
+          azcliversion: 2.67.0
           inlineScript: |
-            tdnf install -y azcopy;
+            tdnf install -y azcopy-10.15.0;
             az storage blob sync \
               --container "${{ env.INPUT_CONTAINER_NAME }}" \
               --source "${{ env.INPUT_SOURCE_DIR }}" \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}"
       - name: deploy userguide to Blob container Dev
         # if: ${{ github.ref == 'refs/heads/develop' }}
-        uses: azure/CLI@v1
+        uses: azure/CLI@v2
         with:
+          azcliversion: 2.67.0
           inlineScript: |
-            tdnf install -y azcopy;
+            tdnf install -y azcopy-10.15.0;
             az storage blob sync \
               --container "${{ env.INPUT_CONTAINER_NAME }}" \
               --source "${{ env.INPUT_SOURCE_DIR }}" \
