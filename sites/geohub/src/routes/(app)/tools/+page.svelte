@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import type { StacCollection } from '$lib/types';
+	import type { StacCollection, StacDataLayer } from '$lib/types';
 
 	export interface ToolsBreadcrumb extends BreadcrumbPage {
 		type?: 'Tools' | 'Tool' | 'Dataset';
@@ -25,8 +25,7 @@
 		Notification,
 		getRandomColormap,
 		type BreadcrumbPage,
-		type RasterAlgorithm,
-		type RasterTileMetadata
+		type RasterAlgorithm
 	} from '@undp-data/svelte-undp-components';
 	import { Card, Loader, Pagination } from '@undp-data/svelte-undp-design';
 	import type {
@@ -275,25 +274,10 @@
 		goto(mapUrl.url, { invalidateAll: true });
 	};
 
-	const stacDataAddedToMap = async (e: {
-		detail: {
-			layers: [
-				{
-					geohubLayer: Layer;
-					layer: RasterLayerSpecification;
-					source: RasterSourceSpecification;
-					sourceId: string;
-					metadata: RasterTileMetadata;
-					colormap: string;
-				}
-			];
-		};
-	}) => {
+	const stacDataAddedToMap = async (dataArray: StacDataLayer[]) => {
 		const mapUrl = await addDataToLocalStorage(
 			page.url,
 			(layers: Layer[], style: StyleSpecification, styleId: string) => {
-				let dataArray = e.detail.layers;
-
 				for (const data of dataArray) {
 					layers = [data.geohubLayer, ...layers];
 
@@ -523,7 +507,7 @@
 						collection={page.dataset?.properties.tags?.find((t) => t.key === 'collection')
 							?.value as string}
 						stacId={page.dataset?.properties.tags?.find((t) => t.key === 'stac')?.value as string}
-						on:dataAdded={stacDataAddedToMap}
+						onDataAdded={stacDataAddedToMap}
 						bind:dataset={page.dataset as DatasetFeature}
 					/>
 				{/if}

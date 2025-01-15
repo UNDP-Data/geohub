@@ -12,6 +12,7 @@
 		StacCatalog,
 		StacCatalogBreadcrumb,
 		StacCollection,
+		StacDataLayer,
 		Tag
 	} from '$lib/types';
 	import {
@@ -19,15 +20,10 @@
 		HeroHeader,
 		ModalTemplate,
 		type BreadcrumbPage,
-		type RasterAlgorithm,
-		type RasterTileMetadata
+		type RasterAlgorithm
 	} from '@undp-data/svelte-undp-components';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
-	import type {
-		RasterLayerSpecification,
-		RasterSourceSpecification,
-		StyleSpecification
-	} from 'maplibre-gl';
+	import type { StyleSpecification } from 'maplibre-gl';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
@@ -193,25 +189,10 @@
 		}
 	};
 
-	const dataAddedToMap = async (e: {
-		detail: {
-			layers: [
-				{
-					geohubLayer: Layer;
-					layer: RasterLayerSpecification;
-					source: RasterSourceSpecification;
-					sourceId: string;
-					metadata: RasterTileMetadata;
-					colormap: string;
-				}
-			];
-		};
-	}) => {
+	const dataAddedToMap = async (dataArray: StacDataLayer[]) => {
 		const mapUrl = await addDataToLocalStorage(
 			page.url,
 			(layers: Layer[], style: StyleSpecification, styleId: string) => {
-				let dataArray = e.detail.layers;
-
 				for (const data of dataArray) {
 					layers = [data.geohubLayer, ...layers];
 
@@ -242,8 +223,7 @@
 		{ title: stac.name, url: page.url.href }
 	]);
 
-	const handleBreadcrumbSelected = async (e) => {
-		const bc: StacCatalogBreadcrumb = e.detail;
+	const handleBreadcrumbSelected = async (bc: StacCatalogBreadcrumb) => {
 		if (bc.type === 'Catalog') {
 			breadcrumbSelected = bc;
 			datasetId = data.datasetId;
@@ -322,8 +302,8 @@
 
 		<StacCatalogExplorer
 			bind:stacId={stac.id}
-			on:dataAdded={dataAddedToMap}
-			on:breadcrumbSelected={handleBreadcrumbSelected}
+			onDataAdded={dataAddedToMap}
+			onBreadcrumbSelected={handleBreadcrumbSelected}
 		/>
 	{/if}
 </section>

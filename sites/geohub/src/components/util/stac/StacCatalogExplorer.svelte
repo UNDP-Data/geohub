@@ -2,18 +2,27 @@
 	import StacCatalogCollections from '$components/util/stac/StacCatalogCollections.svelte';
 	import StacCatalogItem from '$components/util/stac/StacCatalogItem.svelte';
 	import StacCatalogMap from '$components/util/stac/StacCatalogMap.svelte';
-	import type { DatasetFeature, Stac, StacCatalogBreadcrumb } from '$lib/types';
+	import type { DatasetFeature, Stac, StacCatalogBreadcrumb, StacDataLayer } from '$lib/types';
 	import { Breadcrumbs, clean } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		stacId: string;
+		dataset?: DatasetFeature;
+		onDataAdded?: (layers: StacDataLayer[]) => void;
+		onBreadcrumbSelected?: (data: StacCatalogBreadcrumb) => void;
+	}
 
-	export let stacId: string;
-	export let dataset: DatasetFeature = undefined;
-	let stac: Stac;
+	let {
+		stacId = $bindable(),
+		dataset = $bindable(undefined),
+		onDataAdded = () => {},
+		onBreadcrumbSelected = () => {}
+	}: Props = $props();
+	let stac: Stac | undefined = $state();
 
-	let StacBreadcrumbs: StacCatalogBreadcrumb[];
+	let StacBreadcrumbs: StacCatalogBreadcrumb[] | undefined = $state();
 
 	onMount(() => {
 		initialise();
@@ -31,7 +40,7 @@
 				type: 'Collection'
 			};
 			StacBreadcrumbs = [page];
-		} else {
+		} else if (stac) {
 			const page: StacCatalogBreadcrumb = {
 				title: clean(stac.id),
 				dataUrl: stac.url,
@@ -39,33 +48,32 @@
 			};
 			StacBreadcrumbs = [page];
 		}
-
-		dispatch('breadcrumbSelected', StacBreadcrumbs[0]);
+		if (onBreadcrumbSelected && StacBreadcrumbs) onBreadcrumbSelected(StacBreadcrumbs[0]);
 	};
 
 	const handleSelectCollection = (e: { detail: StacCatalogBreadcrumb }) => {
 		const data = e.detail as StacCatalogBreadcrumb;
-		StacBreadcrumbs = [...StacBreadcrumbs, data];
-		dispatch('breadcrumbSelected', data);
+		StacBreadcrumbs = StacBreadcrumbs ? [...StacBreadcrumbs, data] : [data];
+		if (onBreadcrumbSelected) onBreadcrumbSelected(data);
 	};
 
 	const handleSelectChild = (e: { detail: StacCatalogBreadcrumb }) => {
 		const data = e.detail as StacCatalogBreadcrumb;
-		StacBreadcrumbs = [...StacBreadcrumbs, data];
-		dispatch('breadcrumbSelected', data);
+		StacBreadcrumbs = StacBreadcrumbs ? [...StacBreadcrumbs, data] : [data];
+		if (onBreadcrumbSelected) onBreadcrumbSelected(data);
 	};
 
-	const handleBreadcrumbClicked = (e) => {
+	const handleBreadcrumbClicked = (e: { detail: StacCatalogBreadcrumb }) => {
 		const page: StacCatalogBreadcrumb = e.detail;
-		if (StacBreadcrumbs?.length > 0) {
+		if (StacBreadcrumbs && StacBreadcrumbs?.length > 0) {
 			const pageIndex = StacBreadcrumbs.findIndex((p) => p.title === page.title);
 			StacBreadcrumbs = [...StacBreadcrumbs.slice(0, pageIndex + 1)];
-			dispatch('breadcrumbSelected', page);
+			if (onBreadcrumbSelected) onBreadcrumbSelected(page);
 		}
 	};
 
-	const dataAddedToMap = async (e) => {
-		dispatch('dataAdded', e.detail);
+	const dataAddedToMap = async (e: { detail: { layers: StacDataLayer[] } }) => {
+		if (onDataAdded) onDataAdded(e.detail.layers);
 	};
 </script>
 

@@ -30,6 +30,7 @@ export * from './StacCatalog';
 export * from './StacCatalogBreadcrumb';
 export * from './StacCollection';
 export * from './StacCollections';
+export * from './StacDataLayer';
 export * from './StacItemFeature';
 export * from './StacItemFeatureCollection';
 export * from './StacProduct';

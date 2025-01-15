@@ -17,6 +17,7 @@
 		Layer,
 		LayerCreationInfo,
 		Stac,
+		StacDataLayer,
 		StacItemFeatureCollection,
 		StacProduct,
 		Tag
@@ -45,10 +46,8 @@
 		type MapMouseEvent,
 		NavigationControl
 	} from 'maplibre-gl';
-	import { createEventDispatcher, onMount, untrack } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import Time from 'svelte-time';
-
-	const dispatch = createEventDispatcher();
 
 	const NOTIFICATION_MESSAGE_TIME = 5000;
 	const MAX_ZOOM = 8;
@@ -65,6 +64,7 @@
 		height?: number;
 		selectedTool?: RasterAlgorithm | string;
 		dataset: DatasetFeature;
+		onDataAdded?: (layers: StacDataLayer[]) => void;
 	}
 
 	let {
@@ -74,7 +74,8 @@
 		zoom = $bindable(0),
 		height = $bindable(0),
 		selectedTool = $bindable(''),
-		dataset = $bindable()
+		dataset = $bindable(),
+		onDataAdded = () => {}
 	}: Props = $props();
 
 	let innerHeight: number = $state(0);
@@ -568,9 +569,8 @@
 
 					dataArray.push(data);
 				}
-				dispatch('dataAdded', {
-					layers: dataArray
-				});
+				if (onDataAdded) onDataAdded(dataArray);
+
 				return;
 			} else {
 				if (selectedAlgorithmName) {
@@ -589,9 +589,7 @@
 						colorMapName: data.colormap_name
 					};
 
-					dispatch('dataAdded', {
-						layers: [data]
-					});
+					if (onDataAdded) onDataAdded([data]);
 				} else {
 					const data: LayerCreationInfo & { geohubLayer?: Layer } = layerCreationInfo;
 					if (data && data.layer) {
@@ -602,9 +600,7 @@
 							dataset: stacDatasetFeature,
 							colorMapName: data.colormap_name
 						};
-						dispatch('dataAdded', {
-							layers: [data]
-						});
+						if (onDataAdded) onDataAdded([data]);
 					}
 				}
 			}
