@@ -196,18 +196,13 @@ jobs:
         uses: azure/CLI@v2
         with:
           azcliversion: 2.67.0
-          # azcopy workadound https://github.com/Azure/azure-cli/issues/30635#issuecomment-2582813428
+          # azcopy workadound https://github.com/Azure/azure-cli/issues/30635
           inlineScript: |
-            tdnf install -y tar;
-            curl -O https://azcopyvnext-awgzd8g7aagqhzhe.b02.azurefd.net/release20211027/azcopy_linux_amd64_10.13.0.tar.gz && \
-              mkdir -p ~/.azure/bin && \
-              tar -xf azcopy_linux_amd64_10.13.0.tar.gz --strip-components=1 -C ~/.azure/bin;
-
+            tdnf install -y azcopy;
             az storage blob sync \
               --container "${{ env.INPUT_CONTAINER_NAME }}" \
               --source "${{ env.INPUT_SOURCE_DIR }}" \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}"
-              --overwrite true
 
   build-and-deploy-undp-components:
     name: Build and deploy svelte UNDP components storybook
@@ -250,18 +245,13 @@ jobs:
         uses: azure/CLI@v2
         with:
           azcliversion: 2.67.0
-          # azcopy workadound https://github.com/Azure/azure-cli/issues/30635#issuecomment-2582813428
+          # azcopy workadound https://github.com/Azure/azure-cli/issues/30635
           inlineScript: |
-            tdnf install -y tar;
-            curl -O https://azcopyvnext-awgzd8g7aagqhzhe.b02.azurefd.net/release20211027/azcopy_linux_amd64_10.13.0.tar.gz && \
-              mkdir -p ~/.azure/bin && \
-              tar -xf azcopy_linux_amd64_10.13.0.tar.gz --strip-components=1 -C ~/.azure/bin;
-
+            tdnf install -y azcopy;
             az storage blob sync \
               --container "${{ env.INPUT_CONTAINER_NAME }}" \
               --source "${{ env.INPUT_SOURCE_DIR }}" \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}"
-              --overwrite true
 
   build-and-deploy-userguide:
     name: Build and deploy GeoHub userguide
@@ -317,36 +307,26 @@ jobs:
         uses: azure/CLI@v2
         with:
           azcliversion: 2.67.0
-          # azcopy workadound https://github.com/Azure/azure-cli/issues/30635#issuecomment-2582813428
+          # azcopy workadound https://github.com/Azure/azure-cli/issues/30635
           inlineScript: |
-            tdnf install -y tar;
-            curl -O https://azcopyvnext-awgzd8g7aagqhzhe.b02.azurefd.net/release20211027/azcopy_linux_amd64_10.13.0.tar.gz && \
-              mkdir -p ~/.azure/bin && \
-              tar -xf azcopy_linux_amd64_10.13.0.tar.gz --strip-components=1 -C ~/.azure/bin;
-
+            tdnf install -y azcopy;
             az storage blob sync \
               --container "${{ env.INPUT_CONTAINER_NAME }}" \
               --source "${{ env.INPUT_SOURCE_DIR }}" \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}"
-              --overwrite true
 
       - name: deploy userguide to Blob container Dev
         # if: ${{ github.ref == 'refs/heads/develop' }}
         uses: azure/CLI@v2
         with:
           azcliversion: 2.67.0
-          # azcopy workadound https://github.com/Azure/azure-cli/issues/30635#issuecomment-2582813428
+          # azcopy workadound https://github.com/Azure/azure-cli/issues/30635
           inlineScript: |
-            tdnf install -y tar;
-            curl -O https://azcopyvnext-awgzd8g7aagqhzhe.b02.azurefd.net/release20211027/azcopy_linux_amd64_10.13.0.tar.gz && \
-              mkdir -p ~/.azure/bin && \
-              tar -xf azcopy_linux_amd64_10.13.0.tar.gz --strip-components=1 -C ~/.azure/bin;
-
+            tdnf install -y azcopy;
             az storage blob sync \
               --container "${{ env.INPUT_CONTAINER_NAME }}" \
               --source "${{ env.INPUT_SOURCE_DIR }}" \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE_DEV }}"
-              --overwrite true
 
   build_static_api_acr:
     name: Build and deploy Static Image API to ACR
