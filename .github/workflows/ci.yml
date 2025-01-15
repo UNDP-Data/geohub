@@ -199,7 +199,7 @@ jobs:
             tdnf install -y azcopy;
             az storage blob sync \
               --container $web \
-              --source packages/svelte-undp-design/storybook-static \
+              --source "packages/svelte-undp-design/storybook-static" \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}"
 
   build-and-deploy-undp-components:
@@ -246,7 +246,7 @@ jobs:
             tdnf install -y azcopy;
             az storage blob sync \
               --container $web \
-              --source packages/svelte-undp-components/storybook-static \
+              --source "packages/svelte-undp-components/storybook-static" \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}"
 
   build-and-deploy-userguide:
@@ -305,7 +305,7 @@ jobs:
             tdnf install -y azcopy;
             az storage blob sync \
               --container $web \
-              --source documentation/site \
+              --source "documentation/site" \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}"
 
       - name: deploy userguide to Blob container Dev
@@ -318,7 +318,7 @@ jobs:
             tdnf install -y azcopy;
             az storage blob sync \
               --container $web \
-              --source documentation/site \
+              --source "documentation/site" \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE_DEV }}"
 
   build_static_api_acr:
