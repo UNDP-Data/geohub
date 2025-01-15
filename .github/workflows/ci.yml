@@ -198,7 +198,7 @@ jobs:
           inlineScript: |
             tdnf install -y azcopy;
             az storage blob sync \
-              --container $web \
+              --container "$web" \
               --source "packages/svelte-undp-design/storybook-static" \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}"
 
@@ -245,7 +245,7 @@ jobs:
           inlineScript: |
             tdnf install -y azcopy;
             az storage blob sync \
-              --container $web \
+              --container "$web" \
               --source "packages/svelte-undp-components/storybook-static" \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}"
 
@@ -304,7 +304,7 @@ jobs:
           inlineScript: |
             tdnf install -y azcopy;
             az storage blob sync \
-              --container $web \
+              --container "$web" \
               --source "documentation/site" \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}"
 
@@ -317,7 +317,7 @@ jobs:
           inlineScript: |
             tdnf install -y azcopy;
             az storage blob sync \
-              --container $web \
+              --container "$web" \
               --source "documentation/site" \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE_DEV }}"
 
