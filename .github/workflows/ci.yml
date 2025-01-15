@@ -167,6 +167,7 @@ jobs:
     environment:
       name: Svelte UNDP Design
       url: https://svelte-undp-design.undpgeohub.org/
+
     steps:
       - name: checkout code repository
         uses: actions/checkout@v4
@@ -190,13 +191,17 @@ jobs:
 
       - name: deploy storybook to Blob container
         if: ${{ (github.ref == 'refs/heads/develop') }}
-        uses: bacongobbler/azure-blob-storage-upload@main
+        uses: azure/CLI@v2
         with:
-          source_dir: packages/svelte-undp-design/storybook-static
-          container_name: $web
-          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}
-          # WARNING: this will overwrite existing blobs in your blob storage
-          sync: "true"
+          azcliversion: 2.67.0
+          # azcopy workadound https://github.com/Azure/azure-cli/issues/30635
+          inlineScript: |
+            tdnf install -y azcopy;
+            az storage blob sync \
+              --container '$web' \
+              --source "packages/svelte-undp-design/storybook-static" \
+              --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}" \
+              --delete-destination true
 
   build-and-deploy-undp-components:
     name: Build and deploy svelte UNDP components storybook
@@ -209,6 +214,7 @@ jobs:
     environment:
       name: Svelte UNDP Components
       url: https://svelte-undp-components.undpgeohub.org/
+
     steps:
       - name: checkout code repository
         uses: actions/checkout@v4
@@ -233,13 +239,17 @@ jobs:
 
       - name: deploy storybook to Blob container
         if: ${{ (github.ref == 'refs/heads/develop') }}
-        uses: bacongobbler/azure-blob-storage-upload@main
+        uses: azure/CLI@v2
         with:
-          source_dir: packages/svelte-undp-components/storybook-static
-          container_name: $web
-          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}
-          # WARNING: this will overwrite existing blobs in your blob storage
-          sync: "true"
+          azcliversion: 2.67.0
+          # azcopy workadound https://github.com/Azure/azure-cli/issues/30635
+          inlineScript: |
+            tdnf install -y azcopy;
+            az storage blob sync \
+              --container '$web' \
+              --source "packages/svelte-undp-components/storybook-static" \
+              --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}" \
+              --delete-destination true
 
   build-and-deploy-userguide:
     name: Build and deploy GeoHub userguide
@@ -289,22 +299,31 @@ jobs:
 
       - name: deploy userguide to Blob container Prod
         if: ${{ (github.ref == 'refs/heads/main') }}
-        uses: bacongobbler/azure-blob-storage-upload@main
+        uses: azure/CLI@v2
         with:
-          source_dir: documentation/site
-          container_name: $web
-          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}
-          # WARNING: this will overwrite existing blobs in your blob storage
-          sync: "true"
+          azcliversion: 2.67.0
+          # azcopy workadound https://github.com/Azure/azure-cli/issues/30635
+          inlineScript: |
+            tdnf install -y azcopy;
+            az storage blob sync \
+              --container '$web' \
+              --source "documentation/site" \
+              --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}" \
+              --delete-destination true
+
       - name: deploy userguide to Blob container Dev
         if: ${{ github.ref == 'refs/heads/develop' }}
-        uses: bacongobbler/azure-blob-storage-upload@main
+        uses: azure/CLI@v2
         with:
-          source_dir: documentation/site
-          container_name: $web
-          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE_DEV }}
-          # WARNING: this will overwrite existing blobs in your blob storage
-          sync: "true"
+          azcliversion: 2.67.0
+          # azcopy workadound https://github.com/Azure/azure-cli/issues/30635
+          inlineScript: |
+            tdnf install -y azcopy;
+            az storage blob sync \
+              --container '$web' \
+              --source "documentation/site" \
+              --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE_DEV }}" \
+              --delete-destination true
 
   build_static_api_acr:
     name: Build and deploy Static Image API to ACR
@@ -494,7 +513,7 @@ jobs:
       - name: Create Secrets
         uses: actions-hub/kubectl@v1.32.0
         with:
-          args: create secret generic stac-secrets --from-literal=AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }} --from-literal=AZURE_SERVICE_BUS_CONNECTION_STRING=${{ secrets.AZURE_SERVICE_BUS_CONNECTION_STRING }}  --from-literal=AZURE_SERVICE_BUS_QUEUE_NAME=${{ env.AZURE_SERVICE_BUS_QUEUE_NAME }} -n ${{ env.DEPLOYMENT_NAMESPACE }}
+          args: create secret generic stac-secrets --from-literal=AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }} --from-literal=AZURE_SERVICE_BUS_CONNECTION_STRING=${{ secrets.AZURE_SERVICE_BUS_CONNECTION_STRING }}  --from-literal=AZURE_SERVICE_BUS_QUEUE_NAME=${{ env.AZURE_SERVICE_BUS_QUEUE_NAME }} --from-literal=EOG_USER=${{ secrets.EOG_USER }} --from-literal=EOG_PASSWORD=${{ secrets.EOG_PASSWORD }} -n ${{ env.DEPLOYMENT_NAMESPACE }}
       - name: Deploy ingest to kubernetes
         uses: actions-hub/kubectl@v1.32.0
         env:
