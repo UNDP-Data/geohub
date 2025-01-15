@@ -167,9 +167,7 @@ jobs:
     environment:
       name: Svelte UNDP Design
       url: https://svelte-undp-design.undpgeohub.org/
-    env:
-      INPUT_SOURCE_DIR: packages/svelte-undp-design/storybook-static
-      INPUT_CONTAINER_NAME: $web
+
     steps:
       - name: checkout code repository
         uses: actions/checkout@v4
@@ -200,8 +198,8 @@ jobs:
           inlineScript: |
             tdnf install -y azcopy;
             az storage blob sync \
-              --container "${{ env.INPUT_CONTAINER_NAME }}" \
-              --source "${{ env.INPUT_SOURCE_DIR }}" \
+              --container $web \
+              --source packages/svelte-undp-design/storybook-static \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}"
 
   build-and-deploy-undp-components:
@@ -215,9 +213,7 @@ jobs:
     environment:
       name: Svelte UNDP Components
       url: https://svelte-undp-components.undpgeohub.org/
-    env:
-      INPUT_SOURCE_DIR: packages/svelte-undp-components/storybook-static
-      INPUT_CONTAINER_NAME: $web
+
     steps:
       - name: checkout code repository
         uses: actions/checkout@v1
@@ -249,8 +245,8 @@ jobs:
           inlineScript: |
             tdnf install -y azcopy;
             az storage blob sync \
-              --container "${{ env.INPUT_CONTAINER_NAME }}" \
-              --source "${{ env.INPUT_SOURCE_DIR }}" \
+              --container $web \
+              --source packages/svelte-undp-components/storybook-static \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}"
 
   build-and-deploy-userguide:
@@ -260,9 +256,6 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: GeoHub UserGuide
-    env:
-      INPUT_SOURCE_DIR: documentation/site
-      INPUT_CONTAINER_NAME: $web
 
     steps:
       - name: checkout code repository
@@ -311,8 +304,8 @@ jobs:
           inlineScript: |
             tdnf install -y azcopy;
             az storage blob sync \
-              --container "${{ env.INPUT_CONTAINER_NAME }}" \
-              --source "${{ env.INPUT_SOURCE_DIR }}" \
+              --container $web \
+              --source documentation/site \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}"
 
       - name: deploy userguide to Blob container Dev
@@ -324,8 +317,8 @@ jobs:
           inlineScript: |
             tdnf install -y azcopy;
             az storage blob sync \
-              --container "${{ env.INPUT_CONTAINER_NAME }}" \
-              --source "${{ env.INPUT_SOURCE_DIR }}" \
+              --container $web \
+              --source documentation/site \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE_DEV }}"
 
   build_static_api_acr:
