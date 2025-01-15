@@ -198,9 +198,10 @@ jobs:
           inlineScript: |
             tdnf install -y azcopy;
             az storage blob sync \
-              --container "$web" \
+              --container '$web' \
               --source "packages/svelte-undp-design/storybook-static" \
-              --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}"
+              --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}" \
+              --delete-destination true
 
   build-and-deploy-undp-components:
     name: Build and deploy svelte UNDP components storybook
@@ -245,9 +246,10 @@ jobs:
           inlineScript: |
             tdnf install -y azcopy;
             az storage blob sync \
-              --container "$web" \
+              --container '$web' \
               --source "packages/svelte-undp-components/storybook-static" \
-              --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}"
+              --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}" \
+              --delete-destination true
 
   build-and-deploy-userguide:
     name: Build and deploy GeoHub userguide
@@ -304,9 +306,10 @@ jobs:
           inlineScript: |
             tdnf install -y azcopy;
             az storage blob sync \
-              --container "$web" \
+              --container '$web' \
               --source "documentation/site" \
-              --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}"
+              --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}" \
+              --delete-destination true
 
       - name: deploy userguide to Blob container Dev
         # if: ${{ github.ref == 'refs/heads/develop' }}
@@ -317,9 +320,10 @@ jobs:
           inlineScript: |
             tdnf install -y azcopy;
             az storage blob sync \
-              --container "$web" \
+              --container '$web' \
               --source "documentation/site" \
-              --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE_DEV }}"
+              --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE_DEV }}" \
+              --delete-destination true
 
   build_static_api_acr:
     name: Build and deploy Static Image API to ACR
