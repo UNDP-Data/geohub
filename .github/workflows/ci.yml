@@ -312,7 +312,7 @@ jobs:
               --delete-destination true
 
       - name: deploy userguide to Blob container Dev
-        # if: ${{ github.ref == 'refs/heads/develop' }}
+        if: ${{ github.ref == 'refs/heads/develop' }}
         uses: azure/CLI@v2
         with:
           azcliversion: 2.67.0
