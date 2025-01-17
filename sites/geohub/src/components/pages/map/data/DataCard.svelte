@@ -233,8 +233,8 @@
 		}
 	};
 
-	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
-		layerCreationInfo = e.detail;
+	const handleLayerAdded = (data: LayerCreationInfo) => {
+		layerCreationInfo = data;
 	};
 
 	$effect(() => {
@@ -336,7 +336,7 @@
 												bind:isLoadMap={isExpanded}
 												bind:metadata
 												band={isRgbTile ? undefined : selectedBand}
-												on:layerAdded={handleLayerAdded}
+												onLayerAdded={handleLayerAdded}
 											/>
 										</div>
 									{/key}

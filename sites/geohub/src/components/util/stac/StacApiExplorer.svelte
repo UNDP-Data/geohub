@@ -609,8 +609,8 @@
 		}
 	};
 
-	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
-		layerCreationInfo = e.detail;
+	const handleLayerAdded = (data: LayerCreationInfo) => {
+		layerCreationInfo = data;
 	};
 
 	const handleTabChange = () => {
@@ -1064,7 +1064,7 @@
 									width="100%"
 									height="200px"
 									bind:metadata
-									on:layerAdded={handleLayerAdded}
+									onLayerAdded={handleLayerAdded}
 								/>
 							{/if}
 							<div class="mt-2">

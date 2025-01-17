@@ -143,8 +143,8 @@
 		layerCreationInfo = undefined;
 	};
 
-	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
-		layerCreationInfo = e.detail;
+	const handleLayerAdded = (data: LayerCreationInfo) => {
+		layerCreationInfo = data;
 	};
 
 	onMount(() => {
@@ -198,7 +198,7 @@
 						layer={selectedVectorLayer}
 						bind:metadata
 						bind:layerType
-						on:layerAdded={handleLayerAdded}
+						onLayerAdded={handleLayerAdded}
 					/>
 				{/key}
 			{/key}
@@ -225,7 +225,7 @@
 					height={height?.length > 0 ? height : innerWidth < 768 ? '200px' : '50vh'}
 					bind:metadata
 					band={isRgbTile ? undefined : selectedBand}
-					on:layerAdded={handleLayerAdded}
+					onLayerAdded={handleLayerAdded}
 				/>
 			{/key}
 		{/if}
