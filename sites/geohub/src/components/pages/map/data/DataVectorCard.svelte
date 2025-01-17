@@ -171,12 +171,7 @@
 					</div>
 				{/if}
 
-				<LayerTypeSwitch
-					bind:layer
-					bind:layerType
-					size="small"
-					on:change={handleLayerTypeChanged}
-				/>
+				<LayerTypeSwitch bind:layer bind:layerType size="small" onchange={handleLayerTypeChanged} />
 				{#if layerCreationInfo}
 					<AddLayerButton bind:isLoading={layerLoading} title="Add layer" onclick={addLayer} />
 				{/if}

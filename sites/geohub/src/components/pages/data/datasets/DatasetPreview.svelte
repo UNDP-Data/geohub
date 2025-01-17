@@ -180,9 +180,9 @@
 				<div class="mt-2">
 					<LayerTypeSwitch
 						bind:layer={selectedVectorLayer as VectorLayerTileStatLayer}
-						bind:layerType
+						bind:layerType={layerType as 'point' | 'heatmap' | 'polygon' | 'linestring'}
 						size="small"
-						on:change={handleLayerTypeChanged}
+						onchange={handleLayerTypeChanged}
 					/>
 				</div>
 			</div>
