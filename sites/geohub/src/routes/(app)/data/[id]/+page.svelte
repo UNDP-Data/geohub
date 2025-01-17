@@ -29,23 +29,18 @@
 		isRgbRaster,
 		removeSasTokenFromDatasetUrl
 	} from '$lib/helper';
-	import type { DatasetFeature, Layer } from '$lib/types';
+	import type { DatasetFeature, Layer, StacDataLayer } from '$lib/types';
 	import {
 		CopyToClipboard,
 		FieldControl,
 		handleEnterKey,
 		HeroHeader,
 		type BreadcrumbPage,
-		type RasterTileMetadata,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { filesize } from 'filesize';
-	import type {
-		RasterLayerSpecification,
-		RasterSourceSpecification,
-		StyleSpecification
-	} from 'maplibre-gl';
+	import type { StyleSpecification } from 'maplibre-gl';
 	import { marked } from 'marked';
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time/Time.svelte';
@@ -111,25 +106,10 @@
 	const granularity = tags?.filter((t) => t.key === 'granularity')?.map((t) => t.value);
 	const resolution = tags?.filter((t) => t.key === 'resolution')?.map((t) => t.value);
 
-	const dataAddedToMap = async (e: {
-		detail: {
-			layers: [
-				{
-					geohubLayer: Layer;
-					layer: RasterLayerSpecification;
-					source: RasterSourceSpecification;
-					sourceId: string;
-					metadata: RasterTileMetadata;
-					colormap: string;
-				}
-			];
-		};
-	}) => {
+	const dataAddedToMap = async (dataArray: StacDataLayer[]) => {
 		const mapUrl = await addDataToLocalStorage(
 			page.url,
 			(layers: Layer[], style: StyleSpecification, styleId: string) => {
-				let dataArray = e.detail.layers;
-
 				for (const data of dataArray) {
 					layers = [data.geohubLayer, ...layers];
 
@@ -186,9 +166,7 @@
 		activeTab = hash.length > 0 && tabs.find((t) => t.id === hash) ? hash : `#${TabNames.INFO}`;
 	});
 
-	const handleAlgorithmSelected = async (e) => {
-		let layerSpec: AlgorithmLayerSpec = e.detail;
-
+	const handleAlgorithmSelected = async (layerSpec: AlgorithmLayerSpec) => {
 		const rasterTile = new RasterTileData(feature);
 		const rasterInfo = await rasterTile.getMetadata(layerSpec.algorithmId);
 		const metadata = rasterInfo;
@@ -347,14 +325,14 @@
 									<StacCatalogExplorer
 										stacId={stacId as string}
 										bind:dataset={feature}
-										on:dataAdded={dataAddedToMap}
+										onDataAdded={dataAddedToMap}
 									/>
 								{:else}
 									<StacApiExplorer
 										bind:dataset={feature}
 										stacId={stacId as string}
 										{collection}
-										on:dataAdded={dataAddedToMap}
+										onDataAdded={dataAddedToMap}
 									/>
 								{/if}
 							{:else}
@@ -565,7 +543,7 @@
 
 	{#if feature.properties.is_raster && !isStac}
 		<div hidden={activeTab !== `#${TabNames.TOOLS}`}>
-			<RasterAlgorithmExplorer bind:feature on:added={handleAlgorithmSelected} />
+			<RasterAlgorithmExplorer bind:feature onAdded={handleAlgorithmSelected} />
 		</div>
 	{/if}
 

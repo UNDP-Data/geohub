@@ -1,7 +1,7 @@
 <script lang="ts">
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
-	import type { DatasetFeature, Layer, LayerCreationInfo } from '$lib/types';
+	import type { DatasetFeature, StacDataLayer } from '$lib/types';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import {
 		handleEnterKey,
@@ -11,14 +11,12 @@
 	} from '@undp-data/svelte-undp-components';
 	import { getContext } from 'svelte';
 
-	type Layers = LayerCreationInfo & { geohubLayer?: Layer }[];
-
 	interface Props {
 		feature: DatasetFeature;
 		isIconButton?: boolean;
 		title?: string;
 		showDialog?: boolean;
-		onclick?: (layers: Layers) => void;
+		onclick?: (layers: StacDataLayer[]) => void;
 	}
 
 	let {
@@ -26,9 +24,7 @@
 		isIconButton = false,
 		title = 'Explore satellite data',
 		showDialog = $bindable(false),
-		onclick = (layers) => {
-			console.log(layers);
-		}
+		onclick = () => {}
 	}: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();
@@ -58,8 +54,8 @@
 		showDialog = false;
 	};
 
-	const handleDataAdded = (e: { detail: { layers: Layers } }) => {
-		if (onclick) onclick(e.detail.layers);
+	const handleDataAdded = (layers: StacDataLayer[]) => {
+		if (onclick) onclick(layers);
 	};
 </script>
 
@@ -96,13 +92,13 @@
 		{#if showDialog}
 			<div class="explorer">
 				{#if isCatalog}
-					<StacCatalogExplorer {stacId} bind:dataset={feature} on:dataAdded={handleDataAdded} />
+					<StacCatalogExplorer {stacId} bind:dataset={feature} onDataAdded={handleDataAdded} />
 				{:else}
 					<StacApiExplorer
 						{stacId}
 						bind:dataset={feature}
 						collection={collectionId}
-						on:dataAdded={handleDataAdded}
+						onDataAdded={handleDataAdded}
 						bind:center
 						bind:zoom
 						height={mapHeight}

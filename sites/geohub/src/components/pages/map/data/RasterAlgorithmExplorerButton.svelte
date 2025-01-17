@@ -34,11 +34,6 @@
 	const handleCloseDialog = () => {
 		showDialog = false;
 	};
-
-	const handleAlgorithmSelected = (e: { detail: AlgorithmLayerSpec }) => {
-		let layerSpec: AlgorithmLayerSpec = e.detail;
-		onadd(layerSpec);
-	};
 </script>
 
 <svelte:window bind:innerHeight />
@@ -72,7 +67,7 @@
 
 		{#if showDialog}
 			<div class="p-4">
-				<RasterAlgorithmExplorer bind:feature on:added={handleAlgorithmSelected} />
+				<RasterAlgorithmExplorer bind:feature onAdded={onadd} />
 			</div>
 		{/if}
 	</div>

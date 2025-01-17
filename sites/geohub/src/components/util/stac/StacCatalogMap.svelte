@@ -1,16 +1,26 @@
 <script lang="ts">
 	import StacCollectionMap from '$components/util/stac/StacCollectionMap.svelte';
-	import type { StacCatalog, StacCatalogBreadcrumb } from '$lib/types';
+	import type { StacCatalog, StacCatalogBreadcrumb, StacDataLayer } from '$lib/types';
 	import { Accordion } from '@undp-data/svelte-undp-components';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		stacId: string;
+		url: string;
+		collectionUrl?: string;
+		onDataAdded?: (layers: StacDataLayer[]) => void;
+		onSelected?: (breadcrumb: StacCatalogBreadcrumb) => void;
+	}
 
-	export let stacId: string;
-	export let url: string;
-	export let collectionUrl = '';
+	let {
+		stacId = $bindable(),
+		url = $bindable(),
+		collectionUrl = $bindable(''),
+		onDataAdded = () => {},
+		onSelected = () => {}
+	}: Props = $props();
 
-	let stacCatalog: StacCatalog;
+	let stacCatalog: StacCatalog | undefined = $state();
 	let isMetadataExpanded = true;
 
 	const initialiseCatalog = async () => {
@@ -19,35 +29,32 @@
 		stacCatalog = await res.json();
 	};
 
-	const handleCollectionSelected = (e: { detail: StacCatalogBreadcrumb }) => {
-		const data: StacCatalogBreadcrumb = e.detail;
-		dispatch('selected', data);
-	};
-
-	const dataAddedToMap = (e) => {
-		dispatch('dataAdded', e.detail);
-	};
-
 	onMount(() => {
 		initialiseCatalog();
 	});
 
-	$: url, initialiseCatalog();
+	$effect(() => {
+		if (url !== undefined) {
+			initialiseCatalog();
+		}
+	});
 </script>
 
 {#if stacCatalog}
 	<Accordion title="metadata" isExpanded={isMetadataExpanded}>
-		<div slot="content">
-			<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-				<tbody>
-					<tr><th>STAC version</th><td>{stacCatalog.stac_version}</td></tr>
-					<tr><th>Description</th><td>{stacCatalog.description}</td></tr>
-					{#if stacCatalog.license}
-						<tr><th>License</th><td>{stacCatalog.license}</td></tr>
-					{/if}
-				</tbody>
-			</table>
-		</div>
+		{#snippet content()}
+			<div>
+				<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+					<tbody>
+						<tr><th>STAC version</th><td>{stacCatalog.stac_version}</td></tr>
+						<tr><th>Description</th><td>{stacCatalog.description}</td></tr>
+						{#if stacCatalog.license}
+							<tr><th>License</th><td>{stacCatalog.license}</td></tr>
+						{/if}
+					</tbody>
+				</table>
+			</div>
+		{/snippet}
 	</Accordion>
 
 	<StacCollectionMap
@@ -55,7 +62,7 @@
 		bind:url
 		bind:links={stacCatalog.links}
 		bind:collectionUrl
-		on:selected={handleCollectionSelected}
-		on:dataAdded={dataAddedToMap}
+		{onSelected}
+		{onDataAdded}
 	/>
 {/if}

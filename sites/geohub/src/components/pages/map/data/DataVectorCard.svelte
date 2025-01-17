@@ -120,8 +120,8 @@
 		layerCreationInfo = undefined;
 	};
 
-	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
-		layerCreationInfo = e.detail;
+	const handleLayerAdded = (data: LayerCreationInfo) => {
+		layerCreationInfo = data;
 	};
 </script>
 
@@ -152,7 +152,7 @@
 								bind:metadata
 								bind:layer
 								bind:layerType
-								on:layerAdded={handleLayerAdded}
+								onLayerAdded={handleLayerAdded}
 							/>
 						</div>
 					</DataCardInfo>
@@ -166,17 +166,12 @@
 							bind:metadata
 							bind:layer
 							bind:layerType
-							on:layerAdded={handleLayerAdded}
+							onLayerAdded={handleLayerAdded}
 						/>
 					</div>
 				{/if}
 
-				<LayerTypeSwitch
-					bind:layer
-					bind:layerType
-					size="small"
-					on:change={handleLayerTypeChanged}
-				/>
+				<LayerTypeSwitch bind:layer bind:layerType size="small" onchange={handleLayerTypeChanged} />
 				{#if layerCreationInfo}
 					<AddLayerButton bind:isLoading={layerLoading} title="Add layer" onclick={addLayer} />
 				{/if}

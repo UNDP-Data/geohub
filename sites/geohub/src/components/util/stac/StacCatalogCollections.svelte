@@ -1,34 +1,58 @@
 <script lang="ts">
 	import { ALGORITHM_TAG_KEY } from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 	import StacCollectionMap from '$components/util/stac/StacCollectionMap.svelte';
-	import type { DatasetFeature, StacCatalogBreadcrumb, StacCollection } from '$lib/types';
+	import type {
+		DatasetFeature,
+		StacCatalogBreadcrumb,
+		StacCollection,
+		StacDataLayer
+	} from '$lib/types';
 	import { Tabs, type Tab } from '@undp-data/svelte-undp-components';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import StacCatalogTools from './StacCatalogTools.svelte';
 
-	const dispatch = createEventDispatcher();
-
-	export let stacId: string;
-	export let collectionUrl: string;
-	export let url: string;
-	export let dataset: DatasetFeature = undefined;
-
-	let collection: StacCollection;
-
-	let tabs: Tab[] = [{ id: 'catalog', label: 'Explore from catalog' }];
-
-	const algorithmTags = dataset?.properties.tags?.filter((t) => t.key === ALGORITHM_TAG_KEY) ?? [];
-	if (algorithmTags.length > 0) {
-		tabs.push({ id: 'tools', label: 'Tools' });
+	interface Props {
+		stacId: string;
+		collectionUrl: string;
+		url: string;
+		dataset?: DatasetFeature;
+		onDataAdded?: (layers: StacDataLayer[]) => void;
+		onSelected?: (breadcrumb: StacCatalogBreadcrumb) => void;
 	}
 
-	let activeTab = tabs[0].id;
+	let {
+		stacId = $bindable(),
+		collectionUrl = $bindable(),
+		url = $bindable(),
+		dataset = $bindable(undefined),
+		onDataAdded = () => {},
+		onSelected = () => {}
+	}: Props = $props();
+
+	let collection: StacCollection | undefined = $state();
+
+	let tabs: Tab[] = $state([
+		{ id: 'catalog', label: 'Explore from catalog' },
+		{ id: 'tools', label: 'Tools' }
+	]);
+
+	const algorithmTags = dataset?.properties.tags?.filter((t) => t.key === ALGORITHM_TAG_KEY) ?? [];
+	if (!(algorithmTags.length > 0)) {
+		const getTabsWithoutTool = () => {
+			return tabs.filter((t) => t.id !== 'tools');
+		};
+		tabs = getTabsWithoutTool();
+	}
+
+	const getDefaultTab = () => {
+		return tabs[0].id;
+	};
+
+	let activeTab = $state(getDefaultTab());
 
 	onMount(() => {
 		initialise();
 	});
-
-	$: url, initialise();
 
 	const initialise = async () => {
 		collection = undefined;
@@ -40,14 +64,11 @@
 		return (await res.json()) as StacCollection;
 	};
 
-	const handleChildSelected = (e: { detail: StacCatalogBreadcrumb }) => {
-		const data: StacCatalogBreadcrumb = e.detail;
-		dispatch('selected', data);
-	};
-
-	const dataAddedToMap = (e) => {
-		dispatch('dataAdded', e.detail);
-	};
+	$effect(() => {
+		if (url !== undefined) {
+			initialise();
+		}
+	});
 </script>
 
 {#if collection}
@@ -70,17 +91,12 @@
 			bind:collectionUrl
 			bind:url
 			bind:links={collection.links}
-			on:selected={handleChildSelected}
-			on:dataAdded={dataAddedToMap}
+			{onSelected}
+			{onDataAdded}
 		/>
 	</div>
 
 	<div hidden={activeTab !== 'tools'}>
-		<StacCatalogTools
-			bind:collectionUrl
-			bind:collection
-			bind:dataset
-			on:dataAdded={dataAddedToMap}
-		/>
+		<StacCatalogTools bind:collectionUrl bind:collection bind:dataset {onDataAdded} />
 	</div>
 {/if}

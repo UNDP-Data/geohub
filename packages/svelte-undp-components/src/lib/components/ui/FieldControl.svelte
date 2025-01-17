@@ -25,9 +25,9 @@
 	<div class="control">
 		<slot name="control" />
 		{#if !showHelpPopup && showHelp}
-			<p class="help font-size has-text-grey-darker is-size-7 has-text-weight-normal mt-2">
+			<div class="help font-size has-text-grey-darker is-size-7 has-text-weight-normal mt-2">
 				<slot name="help" />
-			</p>
+			</div>
 		{/if}
 	</div>
 </div>

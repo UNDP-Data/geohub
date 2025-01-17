@@ -811,7 +811,7 @@
 			<div hidden={activeTab !== 'tools'}>
 				<RasterAlgorithmExplorer
 					bind:feature={data.feature}
-					on:selected={updateTags}
+					onSelected={updateTags}
 					title="Register tools to the dataset"
 					cardDescription="Register this tool"
 					mode="select"

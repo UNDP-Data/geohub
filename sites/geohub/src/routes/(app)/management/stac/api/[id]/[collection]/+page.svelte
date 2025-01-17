@@ -3,17 +3,9 @@
 	import { page } from '$app/state';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import { addDataToLocalStorage, getFirstSymbolLayerId } from '$lib/helper';
-	import type { Layer, StacCollection } from '$lib/types';
-	import {
-		HeroHeader,
-		type BreadcrumbPage,
-		type RasterTileMetadata
-	} from '@undp-data/svelte-undp-components';
-	import type {
-		RasterLayerSpecification,
-		RasterSourceSpecification,
-		StyleSpecification
-	} from 'maplibre-gl';
+	import type { Layer, StacCollection, StacDataLayer } from '$lib/types';
+	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
+	import type { StyleSpecification } from 'maplibre-gl';
 	import { marked } from 'marked';
 	import type { PageData } from './$types';
 
@@ -29,24 +21,10 @@
 
 	let thumbnail = collection.assets?.thumbnail;
 
-	const dataAddedToMap = async (e: {
-		detail: {
-			layers: [
-				{
-					geohubLayer: Layer;
-					layer: RasterLayerSpecification;
-					source: RasterSourceSpecification;
-					sourceId: string;
-					metadata: RasterTileMetadata;
-					colormap: string;
-				}
-			];
-		};
-	}) => {
+	const dataAddedToMap = async (dataArray: StacDataLayer[]) => {
 		const mapUrl = await addDataToLocalStorage(
 			page.url,
 			(layers: Layer[], style: StyleSpecification, styleId: string) => {
-				let dataArray = e.detail.layers;
 				for (const data of dataArray) {
 					layers = [data.geohubLayer, ...layers];
 					let idx = style.layers.length - 1;
@@ -148,7 +126,7 @@
 			bind:dataset
 			stacId={data.stac.id}
 			collection={collection.id}
-			on:dataAdded={dataAddedToMap}
+			onDataAdded={dataAddedToMap}
 		/>
 	</div>
 </section>

@@ -2,18 +2,27 @@
 	import StacCatalogCollections from '$components/util/stac/StacCatalogCollections.svelte';
 	import StacCatalogItem from '$components/util/stac/StacCatalogItem.svelte';
 	import StacCatalogMap from '$components/util/stac/StacCatalogMap.svelte';
-	import type { DatasetFeature, Stac, StacCatalogBreadcrumb } from '$lib/types';
+	import type { DatasetFeature, Stac, StacCatalogBreadcrumb, StacDataLayer } from '$lib/types';
 	import { Breadcrumbs, clean } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		stacId: string;
+		dataset?: DatasetFeature;
+		onDataAdded?: (layers: StacDataLayer[]) => void;
+		onBreadcrumbSelected?: (data: StacCatalogBreadcrumb) => void;
+	}
 
-	export let stacId: string;
-	export let dataset: DatasetFeature = undefined;
-	let stac: Stac;
+	let {
+		stacId = $bindable(),
+		dataset = $bindable(undefined),
+		onDataAdded = () => {},
+		onBreadcrumbSelected = () => {}
+	}: Props = $props();
+	let stac: Stac | undefined = $state();
 
-	let StacBreadcrumbs: StacCatalogBreadcrumb[];
+	let StacBreadcrumbs: StacCatalogBreadcrumb[] | undefined = $state();
 
 	onMount(() => {
 		initialise();
@@ -31,7 +40,7 @@
 				type: 'Collection'
 			};
 			StacBreadcrumbs = [page];
-		} else {
+		} else if (stac) {
 			const page: StacCatalogBreadcrumb = {
 				title: clean(stac.id),
 				dataUrl: stac.url,
@@ -39,33 +48,26 @@
 			};
 			StacBreadcrumbs = [page];
 		}
-
-		dispatch('breadcrumbSelected', StacBreadcrumbs[0]);
+		if (onBreadcrumbSelected && StacBreadcrumbs) onBreadcrumbSelected(StacBreadcrumbs[0]);
 	};
 
-	const handleSelectCollection = (e: { detail: StacCatalogBreadcrumb }) => {
-		const data = e.detail as StacCatalogBreadcrumb;
-		StacBreadcrumbs = [...StacBreadcrumbs, data];
-		dispatch('breadcrumbSelected', data);
+	const handleSelectCollection = (breadcrumb: StacCatalogBreadcrumb) => {
+		StacBreadcrumbs = StacBreadcrumbs ? [...StacBreadcrumbs, breadcrumb] : [breadcrumb];
+		if (onBreadcrumbSelected) onBreadcrumbSelected(breadcrumb);
 	};
 
-	const handleSelectChild = (e: { detail: StacCatalogBreadcrumb }) => {
-		const data = e.detail as StacCatalogBreadcrumb;
-		StacBreadcrumbs = [...StacBreadcrumbs, data];
-		dispatch('breadcrumbSelected', data);
+	const handleSelectChild = (breadcrumb: StacCatalogBreadcrumb) => {
+		StacBreadcrumbs = StacBreadcrumbs ? [...StacBreadcrumbs, breadcrumb] : [breadcrumb];
+		if (onBreadcrumbSelected) onBreadcrumbSelected(breadcrumb);
 	};
 
-	const handleBreadcrumbClicked = (e) => {
+	const handleBreadcrumbClicked = (e: { detail: StacCatalogBreadcrumb }) => {
 		const page: StacCatalogBreadcrumb = e.detail;
-		if (StacBreadcrumbs?.length > 0) {
+		if (StacBreadcrumbs && StacBreadcrumbs?.length > 0) {
 			const pageIndex = StacBreadcrumbs.findIndex((p) => p.title === page.title);
 			StacBreadcrumbs = [...StacBreadcrumbs.slice(0, pageIndex + 1)];
-			dispatch('breadcrumbSelected', page);
+			if (onBreadcrumbSelected) onBreadcrumbSelected(page);
 		}
-	};
-
-	const dataAddedToMap = async (e) => {
-		dispatch('dataAdded', e.detail);
 	};
 </script>
 
@@ -80,21 +82,21 @@
 					{@const collectionUrls = StacBreadcrumbs.filter((x) => x.type === 'Collection')}
 					{@const fistColleciton = collectionUrls.length > 0 ? collectionUrls[0]?.dataUrl : ''}
 					<StacCatalogMap
-						bind:stacId={stac.id}
+						stacId={stac?.id as string}
 						bind:url={page.dataUrl}
 						collectionUrl={fistColleciton}
-						on:selected={handleSelectCollection}
-						on:dataAdded={dataAddedToMap}
+						onSelected={handleSelectCollection}
+						{onDataAdded}
 					/>
 				{:else if page.type === 'Collection'}
 					{@const collectionUrls = StacBreadcrumbs.filter((x) => x.type === 'Collection')}
 					{@const fistColleciton = collectionUrls[0].dataUrl}
 					<StacCatalogCollections
-						bind:stacId={stac.id}
+						stacId={stac?.id as string}
 						collectionUrl={fistColleciton}
 						bind:url={page.dataUrl}
-						on:selected={handleSelectChild}
-						on:dataAdded={dataAddedToMap}
+						onSelected={handleSelectChild}
+						{onDataAdded}
 						bind:dataset
 					/>
 				{:else if page.type === 'Item'}
@@ -103,10 +105,10 @@
 					)}
 					{@const fistColleciton = collectionUrls[0].dataUrl}
 					<StacCatalogItem
-						bind:stacId={stac.id}
+						stacId={stac?.id as string}
 						bind:url={page.dataUrl}
 						collectionUrl={fistColleciton}
-						on:dataAdded={dataAddedToMap}
+						{onDataAdded}
 					/>
 				{:else}
 					error

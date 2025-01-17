@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import {
@@ -17,6 +17,7 @@
 		Layer,
 		LayerCreationInfo,
 		Stac,
+		StacDataLayer,
 		StacItemFeatureCollection,
 		StacProduct,
 		Tag
@@ -45,60 +46,70 @@
 		type MapMouseEvent,
 		NavigationControl
 	} from 'maplibre-gl';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import Time from 'svelte-time';
-
-	const dispatch = createEventDispatcher();
 
 	const NOTIFICATION_MESSAGE_TIME = 5000;
 	const MAX_ZOOM = 8;
 
 	const tooltipTippy = initTooltipTippy();
 
-	let config: UserConfig = $page.data.config;
+	let config: UserConfig = page.data.config;
 
-	export let stacId: string;
-	export let collection: string;
-	export let center = [0, 0];
-	export let zoom = 0;
-	export let height = 0;
-	export let selectedTool: RasterAlgorithm | string = '';
-	export let dataset: DatasetFeature;
+	interface Props {
+		stacId: string;
+		collection: string;
+		center?: number[];
+		zoom?: number;
+		height?: number;
+		selectedTool?: RasterAlgorithm | string;
+		dataset: DatasetFeature;
+		onDataAdded?: (layers: StacDataLayer[]) => void;
+	}
 
-	let innerHeight: number;
-	$: mapHeight = height > 0 ? height : innerHeight * 0.6;
+	let {
+		stacId = $bindable(),
+		collection = $bindable(),
+		center = $bindable([0, 0]),
+		zoom = $bindable(0),
+		height = $bindable(0),
+		selectedTool = $bindable(''),
+		dataset = $bindable(),
+		onDataAdded = () => {}
+	}: Props = $props();
 
-	let stacInstance: StacTemplate;
-	let searchLimit = config.StacSearchLimit;
-	let cloudCoverRate = [config.StacMaxCloudCover];
-	let sceneType: string = 'scene';
-	let AvailableProducts: StacProduct[];
+	let innerHeight: number = $state(0);
+
+	let stacInstance: StacTemplate = $state();
+	let searchLimit = $state(config.StacSearchLimit);
+	let cloudCoverRate = $state([config.StacMaxCloudCover]);
+	let sceneType: string = $state('scene');
+	let AvailableProducts: StacProduct[] = $state();
 	let Product: StacProduct;
-	let isInitialising: Promise<void>;
-	let isLoading = false;
-	$: isLoading, setMapInteractive();
-	let stacItemFeatureCollection: StacItemFeatureCollection;
-	let selectedAsset: string;
-	let selectedProduct: string;
-	let selectedAlgorithmName: string;
-	let mapContainer: HTMLDivElement;
+	let isInitialising: Promise<void> = $state();
+	let isLoading = $state(false);
+	let stacItemFeatureCollection: StacItemFeatureCollection = $state();
+	let selectedAsset: string = $state();
+	let selectedProduct: string = $state();
+	let selectedAlgorithmName: string = $state();
+	let mapContainer: HTMLDivElement = $state();
 	let map: Map;
-	let currentZoom = zoom;
-	let showZoomNotification = false;
-	let showDetails = false;
-	let registeredTools: Tag[] = [];
-	let clickedFeatures: MapGeoJSONFeature[] = [];
-	let stacDatasetFeature: DatasetFeature | undefined;
-	let metadata: RasterTileMetadata;
-	let selectedToolAssets: { [key: number]: string } = {};
-	let temporalIntervalFrom: Date;
-	let temporalIntervalTo: Date;
-	let searchDateFrom: Date;
-	let searchDateTo: Date;
-	let selectedDateFilterOption = config.StacDateFilterOption;
-	let assetSelectionDone: boolean = false;
-	let layerCreationInfo: LayerCreationInfo;
-	let toolSelectionComplete: boolean = false;
+	let currentZoom = $state(zoom);
+	let showZoomNotification = $state(false);
+	let showDetails = $state(false);
+	let registeredTools: Tag[] = $state([]);
+	let clickedFeatures: MapGeoJSONFeature[] = $state([]);
+	let stacDatasetFeature: DatasetFeature | undefined = $state();
+	let metadata: RasterTileMetadata = $state();
+	let selectedToolAssets: { [key: number]: string } = $state({});
+	let temporalIntervalFrom: Date = $state();
+	let temporalIntervalTo: Date = $state();
+	let searchDateFrom: Date = $state();
+	let searchDateTo: Date = $state();
+	let selectedDateFilterOption = $state(config.StacDateFilterOption);
+	let assetSelectionDone: boolean = $state(false);
+	let layerCreationInfo: LayerCreationInfo = $state();
+	let toolSelectionComplete: boolean = $state(false);
 
 	onMount(async () => {
 		const res = await fetch(`/api/stac/${stacId}`);
@@ -110,7 +121,7 @@
 		initialiseMap();
 		isInitialising = initialise();
 	});
-	let activeTab: string = 'Assets';
+	let activeTab: string = $state('Assets');
 	let tabs = [
 		{ id: 'Assets', label: 'Assets' },
 		{ id: 'Products', label: 'Products' }
@@ -179,14 +190,13 @@
 		return stacDatasetFeature;
 	};
 
-	$: mapHeight, mapResize();
 	const mapResize = () => {
 		if (!map) return;
 		map.redraw();
 		map.resize();
 	};
 
-	let assetList: string[] = [];
+	let assetList: string[] = $state([]);
 
 	const initialise = async () => {
 		const feature = await stacInstance.getFirstAsset();
@@ -363,11 +373,6 @@
 		}
 	};
 
-	$: searchLimit, handleMapExtentChanged();
-	$: cloudCoverRate, handleSearchParameterChanged();
-	$: searchDateFrom, handleSearchParameterChanged();
-	$: searchDateTo, handleSearchParameterChanged();
-
 	const handleMapExtentChanged = debounce(async () => {
 		if (!map) return;
 		currentZoom = map.getZoom();
@@ -536,11 +541,11 @@
 					let url: string;
 					let feature: DatasetFeature;
 					if (selectedProduct) {
-						url = `${$page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/products/${selectedProduct}`;
+						url = `${page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/products/${selectedProduct}`;
 						const res = await fetch(url);
 						feature = await res.json();
 					} else {
-						url = `${$page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/${asset.value}`;
+						url = `${page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/${asset.value}`;
 						const res = await fetch(url);
 						feature = await res.json();
 					}
@@ -564,9 +569,8 @@
 
 					dataArray.push(data);
 				}
-				dispatch('dataAdded', {
-					layers: dataArray
-				});
+				if (onDataAdded) onDataAdded(dataArray);
+
 				return;
 			} else {
 				if (selectedAlgorithmName) {
@@ -585,9 +589,7 @@
 						colorMapName: data.colormap_name
 					};
 
-					dispatch('dataAdded', {
-						layers: [data]
-					});
+					if (onDataAdded) onDataAdded([data]);
 				} else {
 					const data: LayerCreationInfo & { geohubLayer?: Layer } = layerCreationInfo;
 					if (data && data.layer) {
@@ -598,9 +600,7 @@
 							dataset: stacDatasetFeature,
 							colorMapName: data.colormap_name
 						};
-						dispatch('dataAdded', {
-							layers: [data]
-						});
+						if (onDataAdded) onDataAdded([data]);
 					}
 				}
 			}
@@ -609,8 +609,8 @@
 		}
 	};
 
-	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
-		layerCreationInfo = e.detail;
+	const handleLayerAdded = (data: LayerCreationInfo) => {
+		layerCreationInfo = data;
 	};
 
 	const handleTabChange = () => {
@@ -727,14 +727,30 @@
 		return clickedFeatures.length > 0 && bandsInToolAssets.length === numberOfBands;
 	};
 
-	$: {
+	let mapHeight = $derived(height > 0 ? height : innerHeight * 0.6);
+	$effect(() => {
+		if (isLoading !== undefined) {
+			untrack(() => {
+				setMapInteractive();
+			});
+		}
+	});
+	$effect(() => {
+		if (mapHeight !== undefined) {
+			untrack(() => {
+				mapResize();
+			});
+		}
+	});
+
+	$effect(() => {
 		if (clickedFeatures.length > 0 && toolSelectionComplete) {
 			const ids = clickedFeatures.map((f) => f.properties.id);
 			getToolsFeature(ids).then((feature) => {
 				stacDatasetFeature = feature;
 			});
 		}
-	}
+	});
 </script>
 
 <svelte:window bind:innerHeight />
@@ -755,47 +771,59 @@
 				</p>
 
 				<FieldControl title="Search limit" showHelp={false} fontWeight="bold">
-					<div slot="control">
-						<div class="select is-small is-fullwidth">
-							<select bind:value={searchLimit} disabled={isLoading}>
-								{#each StacSearchLimitOptions as limit}
-									<option value={limit}>{limit}</option>
-								{/each}
-							</select>
+					{#snippet control()}
+						<div>
+							<div class="select is-small is-fullwidth">
+								<select
+									bind:value={searchLimit}
+									disabled={isLoading}
+									onchange={handleMapExtentChanged}
+								>
+									{#each StacSearchLimitOptions as limit}
+										<option value={limit}>{limit}</option>
+									{/each}
+								</select>
+							</div>
 						</div>
-					</div>
+					{/snippet}
 				</FieldControl>
 
 				{#if temporalIntervalFrom && temporalIntervalTo && temporalIntervalFrom.toString() !== temporalIntervalTo.toString()}
 					<div class="is-flex">
 						<FieldControl title="Search from" showHelp={false} fontWeight="bold">
-							<div class="mr-1" slot="control">
-								<DatePicker
-									bind:value={searchDateFrom}
-									bind:min={temporalIntervalFrom}
-									bind:max={temporalIntervalTo}
-									format="MM/DD/YYYY"
-									size="small"
-									width={85}
-								/>
-							</div>
+							{#snippet control()}
+								<div class="mr-1">
+									<DatePicker
+										bind:value={searchDateFrom}
+										bind:min={temporalIntervalFrom}
+										bind:max={temporalIntervalTo}
+										format="MM/DD/YYYY"
+										size="small"
+										width={85}
+										on:select={handleSearchParameterChanged}
+									/>
+								</div>
+							{/snippet}
 						</FieldControl>
 						<FieldControl title="Search to" showHelp={false} fontWeight="bold">
-							<div slot="control">
-								<DatePicker
-									bind:value={searchDateTo}
-									bind:min={temporalIntervalFrom}
-									bind:max={temporalIntervalTo}
-									format="MM/DD/YYYY"
-									size="small"
-									width={85}
-								/>
-							</div>
+							{#snippet control()}
+								<div>
+									<DatePicker
+										bind:value={searchDateTo}
+										bind:min={temporalIntervalFrom}
+										bind:max={temporalIntervalTo}
+										format="MM/DD/YYYY"
+										size="small"
+										width={85}
+										on:select={handleSearchParameterChanged}
+									/>
+								</div>
+							{/snippet}
 						</FieldControl>
 					</div>
 
 					<div class="select is-fullwidth">
-						<select bind:value={selectedDateFilterOption} on:change={handleDateFilterOptionChanged}>
+						<select bind:value={selectedDateFilterOption} onchange={handleDateFilterOptionChanged}>
 							{#each StacDateFilterOptions as option}
 								<option value={option.value}>{option.label}</option>
 							{/each}
@@ -810,21 +838,24 @@
 							showHelp={false}
 							fontWeight="bold"
 						>
-							<div slot="control">
-								<Slider
-									bind:values={cloudCoverRate}
-									disabled={isLoading}
-									min={0}
-									max={100}
-									step={1}
-									pips
-									first="label"
-									last="label"
-									rest={false}
-									suffix="%"
-									range="min"
-								/>
-							</div>
+							{#snippet control()}
+								<div>
+									<Slider
+										bind:values={cloudCoverRate}
+										disabled={isLoading}
+										min={0}
+										max={100}
+										step={1}
+										pips
+										first="label"
+										last="label"
+										rest={false}
+										suffix="%"
+										range="min"
+										on:change={handleSearchParameterChanged}
+									/>
+								</div>
+							{/snippet}
 						</FieldControl>
 					</div>
 				{/if}
@@ -859,61 +890,67 @@
 					{@const feature = stacItemFeatureCollection.features[0]}
 					{#if activeTab === 'Assets'}
 						<FieldControl title="Please select an asset" showHelp={false}>
-							<div slot="control">
-								<div class="select is-link is-fullwidth">
-									<select
-										bind:value={selectedAsset}
-										on:change={handleSelectedAssets}
-										disabled={isLoading}
-									>
-										{#if assetList.length > 1}
-											<option value="">Select an asset</option>
-										{/if}
-										{#each assetList as assetName}
-											{@const asset = feature.assets[assetName]}
-											<option value={assetName}>{asset?.title ? asset.title : assetName}</option>
-										{/each}
-									</select>
+							{#snippet control()}
+								<div>
+									<div class="select is-link is-fullwidth">
+										<select
+											bind:value={selectedAsset}
+											onchange={handleSelectedAssets}
+											disabled={isLoading}
+										>
+											{#if assetList.length > 1}
+												<option value="">Select an asset</option>
+											{/if}
+											{#each assetList as assetName}
+												{@const asset = feature.assets[assetName]}
+												<option value={assetName}>{asset?.title ? asset.title : assetName}</option>
+											{/each}
+										</select>
+									</div>
 								</div>
-							</div>
+							{/snippet}
 						</FieldControl>
 					{:else if activeTab === 'Products'}
 						<FieldControl title="Please select a product" showHelp={false}>
-							<div slot="control">
-								<div class="select is-link is-fullwidth">
-									<select
-										bind:value={selectedProduct}
-										on:change={handleSelectedProducts}
-										disabled={isLoading}
-									>
-										{#if AvailableProducts.find((p) => p.collection_id === collection)}
-											<option value="">Select a product</option>
-											{#each AvailableProducts as product}
-												<option value={product.product_id}>{product.description}</option>
-											{/each}
-										{:else}
-											<option value="">No product available</option>
-										{/if}
-									</select>
+							{#snippet control()}
+								<div>
+									<div class="select is-link is-fullwidth">
+										<select
+											bind:value={selectedProduct}
+											onchange={handleSelectedProducts}
+											disabled={isLoading}
+										>
+											{#if AvailableProducts.find((p) => p.collection_id === collection)}
+												<option value="">Select a product</option>
+												{#each AvailableProducts as product}
+													<option value={product.product_id}>{product.description}</option>
+												{/each}
+											{:else}
+												<option value="">No product available</option>
+											{/if}
+										</select>
+									</div>
 								</div>
-							</div>
+							{/snippet}
 						</FieldControl>
 					{:else if activeTab === 'Tools'}
 						<FieldControl title="Please select a tool" showHelp={false}>
-							<div slot="control">
-								<div class="select is-link is-fullwidth">
-									<select
-										bind:value={selectedAlgorithmName}
-										on:change={handleSelectedTool}
-										disabled={isLoading}
-									>
-										<option value="">Select a tool</option>
-										{#each registeredTools as tool}
-											<option value={tool.value}>{clean(tool.value)}</option>
-										{/each}
-									</select>
+							{#snippet control()}
+								<div>
+									<div class="select is-link is-fullwidth">
+										<select
+											bind:value={selectedAlgorithmName}
+											onchange={handleSelectedTool}
+											disabled={isLoading}
+										>
+											<option value="">Select a tool</option>
+											{#each registeredTools as tool}
+												<option value={tool.value}>{clean(tool.value)}</option>
+											{/each}
+										</select>
+									</div>
 								</div>
-							</div>
+							{/snippet}
 						</FieldControl>
 						{#if selectedAlgorithmName && selectedTool}
 							<!-- eslint-disable-next-line no-unused-vars -->
@@ -921,25 +958,33 @@
 								{@const index = selectedTool.inputs.bands.indexOf(band)}
 								{@const bandTitle = selectedTool.inputs.bands[index].title}
 								<FieldControl title={`Please select the ${bandTitle}`} showHelp={true}>
-									<div slot="control">
-										<div class="select is-link is-fullwidth">
-											<select
-												bind:value={selectedToolAssets[index]}
-												on:change={async () => await handleSelectedToolAsset()}
-												disabled={isLoading}
-											>
-												{#if assetList.length > 1}
-													<option value="">Select an asset</option>
-												{/if}
-												{#each assetList as assetName}
-													{@const asset = feature.assets[assetName]}
-													<option value={assetName}>{asset.title ? asset.title : assetName}</option>
-													<option value={assetName}>{asset.title ? asset.title : assetName}</option>
-												{/each}
-											</select>
+									{#snippet control()}
+										<div>
+											<div class="select is-link is-fullwidth">
+												<select
+													bind:value={selectedToolAssets[index]}
+													onchange={async () => await handleSelectedToolAsset()}
+													disabled={isLoading}
+												>
+													{#if assetList.length > 1}
+														<option value="">Select an asset</option>
+													{/if}
+													{#each assetList as assetName}
+														{@const asset = feature.assets[assetName]}
+														<option value={assetName}
+															>{asset.title ? asset.title : assetName}</option
+														>
+														<option value={assetName}
+															>{asset.title ? asset.title : assetName}</option
+														>
+													{/each}
+												</select>
+											</div>
 										</div>
-									</div>
-									<div slot="help">{selectedTool.inputs.bands[index].description}</div>
+									{/snippet}
+									{#snippet help()}
+										<div>{selectedTool.inputs.bands[index].description}</div>
+									{/snippet}
 								</FieldControl>
 							{/each}
 						{/if}
@@ -965,7 +1010,7 @@
 									<th>
 										<button
 											class="delete-button"
-											on:click={() => {
+											onclick={() => {
 												removeClickedFeature();
 											}}
 											use:tooltipTippy={{ content: 'Clear all selected features' }}
@@ -991,7 +1036,7 @@
 										<td>
 											<button
 												class="delete-button"
-												on:click={() => {
+												onclick={() => {
 													removeClickedFeature(feature);
 												}}
 												use:tooltipTippy={{ content: `Deselect No. ${index + 1} feature` }}
@@ -1019,12 +1064,12 @@
 									width="100%"
 									height="200px"
 									bind:metadata
-									on:layerAdded={handleLayerAdded}
+									onLayerAdded={handleLayerAdded}
 								/>
 							{/if}
 							<div class="mt-2">
 								{#if clickedFeatures.length > 1}
-									<!-- svelte-ignore a11y-label-has-associated-control -->
+									<!-- svelte-ignore a11y_label_has_associated_control -->
 									<label class="label">Selected items are added by: </label>
 									<div class="control">
 										<SegmentButtons
@@ -1047,7 +1092,7 @@
 										class="mt-2 button is-primary is-fullwidth has-text-weight-bold is-uppercase {isLoading
 											? 'is-loading'
 											: ''}"
-										on:click={handleShowOnMap}
+										onclick={handleShowOnMap}
 										disabled={isLoading}
 										><p class="has-text-weight-semibold">Show it on map</p></button
 									>

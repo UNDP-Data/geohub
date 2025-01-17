@@ -2,34 +2,43 @@
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
 	import { Split } from '@watergis/svelte-splitter';
 	import { debounce } from 'lodash-es';
-	import { createEventDispatcher, getContext } from 'svelte';
-
-	const dispatch = createEventDispatcher();
+	import { getContext, untrack } from 'svelte';
 
 	const mapStore: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let isMenuShown = false;
-	export let initialSidebarWidth = 380;
-	export let minSidebarWidth = '300px';
-	export let minMapWidth = '50%';
-	export let height = 0;
-	export let width = 0;
-	export let sidebarOnLeft = true;
-	export let isHorizontal = false;
+	interface Props {
+		isMenuShown?: boolean;
+		initialSidebarWidth?: number;
+		minSidebarWidth?: string;
+		minMapWidth?: string;
+		height?: number;
+		width?: number;
+		sidebarOnLeft?: boolean;
+		isHorizontal?: boolean;
+		sidebar?: import('svelte').Snippet;
+		map?: import('svelte').Snippet;
+	}
 
-	let innerWidth = 0;
-	let innerHeight = 0;
-	$: isMobile = innerWidth < 768 ? true : false;
-	let splitControl: Split;
-	let splitterSize = '0px';
-	$: isMobile, setSplitControl();
-	$: menuHeight = height > 0 ? height : innerHeight;
-	$: menuWidth = width > 0 ? width : innerWidth;
-	$: innerHeight, () => (menuHeight = innerHeight);
-	$: innerWidth, () => (menuWidth = innerWidth);
+	let {
+		isMenuShown = $bindable(false),
+		initialSidebarWidth = 380,
+		minSidebarWidth = '300px',
+		minMapWidth = '50%',
+		height = 0,
+		width = 0,
+		sidebarOnLeft = true,
+		isHorizontal = false,
+		sidebar,
+		map
+	}: Props = $props();
 
-	let minPrimaryWidth = sidebarOnLeft ? minSidebarWidth : minMapWidth;
-	let minSecondaryWidth = sidebarOnLeft ? minMapWidth : minSidebarWidth;
+	let innerWidth = $state(0);
+	let innerHeight = $state(0);
+	let splitControl: Split | undefined = $state();
+	let splitterSize = $state('0px');
+
+	let minPrimaryWidth = $state(sidebarOnLeft ? minSidebarWidth : minMapWidth);
+	let minSecondaryWidth = $state(sidebarOnLeft ? minMapWidth : minSidebarWidth);
 
 	const resizeMap = () => {
 		if (!$mapStore) return;
@@ -79,28 +88,39 @@
 		resizeMap();
 	};
 
-	$: isMenuShown, opened();
 	const opened = () => {
 		setSplitControl();
 	};
 
-	$: if (splitControl) {
-		opened();
-	}
-
-	const splitterChanged = debounce((event) => {
+	const splitterChanged = debounce(() => {
 		resizeMap();
-
-		const { percent, primarySize, splitterSize, secondarySize, dragging } = event.detail;
-
-		dispatch('changed', {
-			percent,
-			primarySize,
-			splitterSize,
-			secondarySize,
-			dragging
-		});
 	}, 300);
+	let isMobile = $derived(innerWidth < 768 ? true : false);
+	$effect(() => {
+		if (isMobile !== undefined) {
+			untrack(() => {
+				setSplitControl();
+			});
+		}
+	});
+	let menuHeight = $derived(height > 0 ? height : innerHeight);
+
+	let menuWidth = $derived(width > 0 ? width : innerWidth);
+
+	$effect(() => {
+		if (isMenuShown !== undefined) {
+			untrack(() => {
+				opened();
+			});
+		}
+	});
+	$effect(() => {
+		if (splitControl) {
+			untrack(() => {
+				opened();
+			});
+		}
+	});
 </script>
 
 <svelte:window bind:innerWidth bind:innerHeight />
@@ -115,21 +135,25 @@
 		on:changed={splitterChanged}
 		bind:this={splitControl}
 	>
-		<div slot="primary" class="primary-content">
-			{#if sidebarOnLeft}
-				<slot name="sidebar" />
-			{:else}
-				<slot name="map" />
-			{/if}
-		</div>
+		{#snippet primary()}
+			<div class="primary-content">
+				{#if sidebarOnLeft}
+					{@render sidebar?.()}
+				{:else}
+					{@render map?.()}
+				{/if}
+			</div>
+		{/snippet}
 
-		<div slot="secondary" class="secondary-content">
-			{#if sidebarOnLeft}
-				<slot name="map" />
-			{:else}
-				<slot name="sidebar" />
-			{/if}
-		</div>
+		{#snippet secondary()}
+			<div class="secondary-content">
+				{#if sidebarOnLeft}
+					{@render map?.()}
+				{:else}
+					{@render sidebar?.()}
+				{/if}
+			</div>
+		{/snippet}
 	</Split>
 </div>
 

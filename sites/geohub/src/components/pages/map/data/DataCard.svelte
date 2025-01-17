@@ -10,7 +10,7 @@
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { getFirstSymbolLayerId, isRgbRaster } from '$lib/helper';
-	import type { DatasetFeature, Layer, LayerCreationInfo } from '$lib/types';
+	import type { DatasetFeature, LayerCreationInfo, StacDataLayer } from '$lib/types';
 	import { LAYERLISTSTORE_CONTEXT_KEY, type LayerListStore } from '$stores';
 	import {
 		Accordion,
@@ -155,11 +155,10 @@
 		}
 	};
 
-	const addStacLayer = async (layers: LayerCreationInfo & { geohubLayer?: Layer }[]) => {
+	const addStacLayer = async (layers: StacDataLayer[]) => {
 		try {
 			if (!layers) return;
 			let dataArray = layers;
-
 			const rasterInfo = dataArray[0].metadata;
 			for (const data of dataArray) {
 				if (!$map.getSource(data.sourceId)) {
@@ -234,8 +233,8 @@
 		}
 	};
 
-	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
-		layerCreationInfo = e.detail;
+	const handleLayerAdded = (data: LayerCreationInfo) => {
+		layerCreationInfo = data;
 	};
 
 	$effect(() => {
@@ -337,7 +336,7 @@
 												bind:isLoadMap={isExpanded}
 												bind:metadata
 												band={isRgbTile ? undefined : selectedBand}
-												on:layerAdded={handleLayerAdded}
+												onLayerAdded={handleLayerAdded}
 											/>
 										</div>
 									{/key}
