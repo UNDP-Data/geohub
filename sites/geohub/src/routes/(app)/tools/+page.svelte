@@ -499,7 +499,7 @@
 							algorithm: page.algorithm as RasterAlgorithm,
 							algorithmId: page.algorithmId as string
 						}}
-						on:dataAdded={stacDataAddedToMap}
+						onDataAdded={stacDataAddedToMap}
 					/>
 				{:else}
 					<StacApiExplorer

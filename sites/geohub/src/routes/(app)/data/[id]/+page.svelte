@@ -166,9 +166,7 @@
 		activeTab = hash.length > 0 && tabs.find((t) => t.id === hash) ? hash : `#${TabNames.INFO}`;
 	});
 
-	const handleAlgorithmSelected = async (e) => {
-		let layerSpec: AlgorithmLayerSpec = e.detail;
-
+	const handleAlgorithmSelected = async (layerSpec: AlgorithmLayerSpec) => {
 		const rasterTile = new RasterTileData(feature);
 		const rasterInfo = await rasterTile.getMetadata(layerSpec.algorithmId);
 		const metadata = rasterInfo;
@@ -545,7 +543,7 @@
 
 	{#if feature.properties.is_raster && !isStac}
 		<div hidden={activeTab !== `#${TabNames.TOOLS}`}>
-			<RasterAlgorithmExplorer bind:feature on:added={handleAlgorithmSelected} />
+			<RasterAlgorithmExplorer bind:feature onAdded={handleAlgorithmSelected} />
 		</div>
 	{/if}
 

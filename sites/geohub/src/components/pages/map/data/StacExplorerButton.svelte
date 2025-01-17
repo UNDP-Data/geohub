@@ -24,9 +24,7 @@
 		isIconButton = false,
 		title = 'Explore satellite data',
 		showDialog = $bindable(false),
-		onclick = (layers) => {
-			console.log(layers);
-		}
+		onclick = () => {}
 	}: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();

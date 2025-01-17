@@ -51,16 +51,14 @@
 		if (onBreadcrumbSelected && StacBreadcrumbs) onBreadcrumbSelected(StacBreadcrumbs[0]);
 	};
 
-	const handleSelectCollection = (e: { detail: StacCatalogBreadcrumb }) => {
-		const data = e.detail as StacCatalogBreadcrumb;
-		StacBreadcrumbs = StacBreadcrumbs ? [...StacBreadcrumbs, data] : [data];
-		if (onBreadcrumbSelected) onBreadcrumbSelected(data);
+	const handleSelectCollection = (breadcrumb: StacCatalogBreadcrumb) => {
+		StacBreadcrumbs = StacBreadcrumbs ? [...StacBreadcrumbs, breadcrumb] : [breadcrumb];
+		if (onBreadcrumbSelected) onBreadcrumbSelected(breadcrumb);
 	};
 
-	const handleSelectChild = (e: { detail: StacCatalogBreadcrumb }) => {
-		const data = e.detail as StacCatalogBreadcrumb;
-		StacBreadcrumbs = StacBreadcrumbs ? [...StacBreadcrumbs, data] : [data];
-		if (onBreadcrumbSelected) onBreadcrumbSelected(data);
+	const handleSelectChild = (breadcrumb: StacCatalogBreadcrumb) => {
+		StacBreadcrumbs = StacBreadcrumbs ? [...StacBreadcrumbs, breadcrumb] : [breadcrumb];
+		if (onBreadcrumbSelected) onBreadcrumbSelected(breadcrumb);
 	};
 
 	const handleBreadcrumbClicked = (e: { detail: StacCatalogBreadcrumb }) => {
@@ -70,10 +68,6 @@
 			StacBreadcrumbs = [...StacBreadcrumbs.slice(0, pageIndex + 1)];
 			if (onBreadcrumbSelected) onBreadcrumbSelected(page);
 		}
-	};
-
-	const dataAddedToMap = async (e: { detail: { layers: StacDataLayer[] } }) => {
-		if (onDataAdded) onDataAdded(e.detail.layers);
 	};
 </script>
 
@@ -88,21 +82,21 @@
 					{@const collectionUrls = StacBreadcrumbs.filter((x) => x.type === 'Collection')}
 					{@const fistColleciton = collectionUrls.length > 0 ? collectionUrls[0]?.dataUrl : ''}
 					<StacCatalogMap
-						bind:stacId={stac.id}
+						stacId={stac?.id as string}
 						bind:url={page.dataUrl}
 						collectionUrl={fistColleciton}
-						on:selected={handleSelectCollection}
-						on:dataAdded={dataAddedToMap}
+						onSelected={handleSelectCollection}
+						{onDataAdded}
 					/>
 				{:else if page.type === 'Collection'}
 					{@const collectionUrls = StacBreadcrumbs.filter((x) => x.type === 'Collection')}
 					{@const fistColleciton = collectionUrls[0].dataUrl}
 					<StacCatalogCollections
-						bind:stacId={stac.id}
+						stacId={stac?.id as string}
 						collectionUrl={fistColleciton}
 						bind:url={page.dataUrl}
-						on:selected={handleSelectChild}
-						on:dataAdded={dataAddedToMap}
+						onSelected={handleSelectChild}
+						{onDataAdded}
 						bind:dataset
 					/>
 				{:else if page.type === 'Item'}
@@ -111,10 +105,10 @@
 					)}
 					{@const fistColleciton = collectionUrls[0].dataUrl}
 					<StacCatalogItem
-						bind:stacId={stac.id}
+						stacId={stac?.id as string}
 						bind:url={page.dataUrl}
 						collectionUrl={fistColleciton}
-						on:dataAdded={dataAddedToMap}
+						{onDataAdded}
 					/>
 				{:else}
 					error

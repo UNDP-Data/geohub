@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	interface ToolBreadcrumb extends BreadcrumbPage {
 		type: 'index' | 'tool';
 	}
@@ -6,56 +6,57 @@
 
 <script lang="ts">
 	import RasterAlgorithmExplorer from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
-	import type { DatasetFeature, StacCollection, Tag } from '$lib/types';
+	import type { DatasetFeature, StacCollection, StacDataLayer, Tag } from '$lib/types';
 	import {
 		Breadcrumbs,
 		type BreadcrumbPage,
 		type RasterAlgorithm
 	} from '@undp-data/svelte-undp-components';
-	import { createEventDispatcher } from 'svelte';
 	import StacCatalogTool from './StacCatalogTool.svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		collectionUrl: string;
+		collection: StacCollection;
+		dataset?: DatasetFeature;
+		onDataAdded?: (layers: StacDataLayer[]) => void;
+	}
 
-	export let collectionUrl: string;
-	export let collection: StacCollection;
-	export let dataset: DatasetFeature = undefined;
+	let {
+		collectionUrl = $bindable(),
+		collection = $bindable(),
+		dataset = $bindable(undefined),
+		onDataAdded = () => {}
+	}: Props = $props();
 
-	let selectedTool: { algorithmId: string; algorithm: RasterAlgorithm };
+	let selectedTool: { algorithmId: string; algorithm: RasterAlgorithm } | undefined = $state();
 
-	let breadcrumbs: ToolBreadcrumb[] = [
+	let breadcrumbs: ToolBreadcrumb[] = $state([
 		{
 			title: 'Tool Menu',
 			type: 'index'
 		}
-	];
+	]);
 
-	const handleToolSelected = (e) => {
-		const tag: Tag = e.detail.tag;
-		const algorithm: RasterAlgorithm = e.detail.algorithm;
+	const handleToolSelected = (tag: Tag, algorithm: RasterAlgorithm) => {
 		selectedTool = {
-			algorithmId: tag.value,
+			algorithmId: tag.value as string,
 			algorithm
 		};
 		breadcrumbs = [
 			...breadcrumbs,
 			{
-				title: algorithm.title ?? selectedTool.algorithmId,
+				title: algorithm.title ?? (selectedTool?.algorithmId as string),
 				type: 'tool'
 			}
 		];
 	};
 
-	const handleBreadcrumbClicked = (e) => {
+	const handleBreadcrumbClicked = (e: { detail: ToolBreadcrumb }) => {
 		const page: ToolBreadcrumb = e.detail;
 		if (breadcrumbs?.length > 0) {
 			const pageIndex = breadcrumbs.findIndex((p) => p.title === page.title);
 			breadcrumbs = [...breadcrumbs.slice(0, pageIndex + 1)];
 		}
-	};
-
-	const handleClickAdd = (e) => {
-		dispatch('dataAdded', e.detail);
 	};
 </script>
 
@@ -72,15 +73,15 @@
 					bind:feature={dataset}
 					mode="select"
 					toggleTool={false}
-					on:selected={handleToolSelected}
+					onSelected={handleToolSelected}
 				/>
 			{:else if page.type === 'tool'}
 				<StacCatalogTool
 					bind:collection
 					bind:collectionUrl
 					bind:dataset
-					bind:selectedTool
-					on:dataAdded={handleClickAdd}
+					bind:selectedTool={selectedTool as { algorithmId: string; algorithm: RasterAlgorithm }}
+					{onDataAdded}
 				/>
 			{/if}
 		</div>
