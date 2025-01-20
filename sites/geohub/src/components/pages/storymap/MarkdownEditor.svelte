@@ -1,13 +1,21 @@
 <script lang="ts">
 	import type EasyMDE from 'easymde';
 	import { debounce } from 'lodash-es';
-	import { onDestroy, onMount } from 'svelte';
-	export let value = '';
-	export let placeholder = 'Input contents in markdown...';
+	import { onMount } from 'svelte';
 
-	export let maxHeight = '200px';
+	interface Props {
+		value?: string;
+		placeholder?: string;
+		maxHeight?: string;
+	}
 
-	let textareaElement: HTMLTextAreaElement;
+	let {
+		value = $bindable(''),
+		placeholder = 'Input contents in markdown...',
+		maxHeight = '200px'
+	}: Props = $props();
+
+	let textareaElement: HTMLTextAreaElement | undefined = $state();
 	let easyMDE: EasyMDE | null;
 	onMount(async () => {
 		// https://github.com/Ionaru/easy-markdown-editor
@@ -32,13 +40,6 @@
 				value = easyMDE.value().trim();
 			}, 300)
 		);
-	});
-
-	onDestroy(() => {
-		if (easyMDE) {
-			easyMDE.toTextArea();
-			easyMDE = null;
-		}
 	});
 </script>
 

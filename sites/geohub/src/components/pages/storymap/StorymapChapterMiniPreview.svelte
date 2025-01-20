@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { getMapImageFromStyle } from '$lib/helper';
 	import type { StoryMapChapter as StoryMapChapterType, StoryMapConfig } from '$lib/types';
 	import { ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY, type ActiveStorymapChapterStore } from '$stores';
@@ -14,28 +14,42 @@
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce, isEqual } from 'lodash-es';
 	import { type StyleSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		chapter: StoryMapChapterType;
+		isActive?: boolean;
+		disabled?: boolean;
+		onedit?: (chapter: StoryMapChapterType) => void;
+		onchange?: () => void;
+		onduplicate?: (chapter: StoryMapChapterType) => void;
+		ondelete?: (chapter: StoryMapChapterType) => void;
+	}
 
-	export let chapter: StoryMapChapterType;
-	export let isActive = false;
-	export let disabled = false;
+	let {
+		chapter = $bindable(),
+		isActive = $bindable(false),
+		disabled = $bindable(false),
+		onedit = () => {},
+		onchange = () => {},
+		onduplicate = () => {},
+		ondelete = () => {}
+	}: Props = $props();
 
-	let isHovered = false;
+	let isHovered = $state(false);
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 	const activeChapterStore: ActiveStorymapChapterStore = getContext(
 		ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY
 	);
 
-	let template_id: StoryMapTemplate;
+	let template_id: StoryMapTemplate = $state('light');
 
 	const tippyTooltip = initTooltipTippy();
 
-	let showDeleteDialog = false;
+	let showDeleteDialog = $state(false);
 
-	let requireUpdate = false;
+	let requireUpdate = $state(false);
 
 	let previousChapter: StoryMapChapter;
 
@@ -43,7 +57,7 @@
 		updateMapStyle();
 
 		activeChapterStore.subscribe(() => {
-			if ($activeChapterStore?.id === chapter.id) {
+			if ($activeChapterStore?.id === chapter?.id) {
 				updateMapStyle();
 			}
 		});
@@ -99,25 +113,25 @@
 
 	const getMapImage = async () => {
 		const newStyle = await applyLayerEvent();
-		const mapImageData = await getMapImageFromStyle(newStyle, 212, 124, $page.data.staticApiUrl);
+		const mapImageData = await getMapImageFromStyle(newStyle, 212, 124, page.data.staticApiUrl);
 		return mapImageData;
 	};
 
 	const handleSettingClicked = () => {
-		dispatch('edit', { chapter });
+		if (onedit) onedit(chapter);
 	};
 
 	const handleDuplicateClicked = () => {
-		dispatch('duplicate', { chapter });
+		if (onduplicate) onduplicate(chapter);
 	};
 
 	const handleDeleteClicked = () => {
-		dispatch('delete', { chapter });
+		if (ondelete) ondelete(chapter);
 	};
 
 	const handleHiddenClicked = () => {
 		chapter.hidden = !chapter.hidden;
-		dispatch('change', { chapter });
+		if (onchange) onchange();
 	};
 </script>
 
@@ -125,10 +139,10 @@
 	class="preview {isActive ? 'is-active' : ''} {!isActive && isHovered ? 'is-hover' : ''}"
 	role="menuitem"
 	tabindex="-1"
-	on:mouseenter={() => {
+	onmouseenter={() => {
 		isHovered = true;
 	}}
-	on:mouseleave={() => {
+	onmouseleave={() => {
 		isHovered = false;
 	}}
 >
@@ -161,7 +175,7 @@
 		<div class="is-flex ope-buttons">
 			<button
 				class="ope-button mr-1 is-flex is-align-items-center is-justify-content-center"
-				on:click={handleSettingClicked}
+				onclick={handleSettingClicked}
 				{disabled}
 				use:tippyTooltip={{ content: 'Change the setting of this slide' }}
 			>
@@ -169,7 +183,7 @@
 			</button>
 			<button
 				class="ope-button mr-1 is-flex is-align-items-center is-justify-content-center"
-				on:click={handleDuplicateClicked}
+				onclick={handleDuplicateClicked}
 				{disabled}
 				use:tippyTooltip={{ content: 'Duplicate this slide' }}
 			>
@@ -177,7 +191,7 @@
 			</button>
 			<button
 				class="ope-button mr-1 is-flex is-align-items-center is-justify-content-center"
-				on:click={handleHiddenClicked}
+				onclick={handleHiddenClicked}
 				{disabled}
 				use:tippyTooltip={{ content: `${chapter.hidden ? 'Show this slide' : 'Hide this slide.'}` }}
 			>
@@ -192,7 +206,7 @@
 		</div>
 		<button
 			class="delete-button ope-button is-flex is-align-items-center is-justify-content-center"
-			on:click={() => {
+			onclick={() => {
 				showDeleteDialog = true;
 			}}
 			{disabled}

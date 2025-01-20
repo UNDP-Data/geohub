@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import type { StoryMapChapter } from '$lib/types';
 	import { createMapLibreGlMapController } from '@maptiler/geocoding-control/maplibregl';
 	import GeocodingControl from '@maptiler/geocoding-control/svelte/GeocodingControl.svelte';
@@ -19,25 +19,29 @@
 		Popup,
 		type StyleSpecification
 	} from 'maplibre-gl';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
-
-	const dispatch = createEventDispatcher();
+	import { getContext, onMount } from 'svelte';
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 
-	export let chapter: StoryMapChapter | undefined = undefined;
+	interface Props {
+		chapter?: StoryMapChapter | undefined;
+		onchange?: () => void;
+	}
 
-	let locationMapContainer: HTMLDivElement;
-	let locationMap: Map;
-	let locationMarker: Marker;
-	let tempLocation: { center: [number, number]; zoom: number; bearing: number; pitch: number };
+	let { chapter = $bindable(undefined), onchange = () => {} }: Props = $props();
 
-	let mapBearing = [0];
-	let mapPitch = [0];
+	let locationMapContainer: HTMLDivElement | undefined = $state();
+	let locationMap: Map | undefined = $state();
+	let locationMarker: Marker | undefined = $state();
+	let tempLocation: { center: [number, number]; zoom: number; bearing: number; pitch: number } =
+		$state();
 
-	let apiKey = $page.data.maptilerKey;
-	let mapController: MapController;
-	let popupContainer: HTMLDivElement;
+	let mapBearing = $state([0]);
+	let mapPitch = $state([0]);
+
+	let apiKey = page.data.maptilerKey;
+	let mapController: MapController | undefined = $state();
+	let popupContainer: HTMLDivElement | undefined = $state();
 
 	export const updateMapStyle = debounce(() => {
 		if (!locationMap) return;
@@ -62,7 +66,7 @@
 					tempLocation.zoom = $configStore.location.zoom;
 				}
 			}
-			locationMap.setStyle(style);
+			locationMap?.setStyle(style);
 		});
 	});
 
@@ -103,7 +107,7 @@
 		} else {
 			chapter.location = tempLocation;
 		}
-		dispatch('change');
+		if (onchange) onchange();
 	};
 
 	const resetMarkerPosition = async () => {
@@ -132,18 +136,18 @@
 
 	const handleBearingChanged = debounce(() => {
 		tempLocation.bearing = parseInt(`${mapBearing[0]}`);
-		locationMap.setBearing(tempLocation.bearing);
+		locationMap?.setBearing(tempLocation.bearing);
 	}, 300);
 
 	const handlePitchChanged = debounce(() => {
 		tempLocation.pitch = parseInt(`${mapPitch[0]}`);
-		locationMap.setPitch(tempLocation.pitch);
+		locationMap?.setPitch(tempLocation.pitch);
 	}, 300);
 
 	const handleGeocodingSelected = (e) => {
 		const feature = e.detail;
 		if (feature) {
-			locationMap.flyTo({ center: feature.center, zoom: 12 });
+			locationMap?.flyTo({ center: feature.center, zoom: 12 });
 		}
 	};
 
@@ -219,31 +223,35 @@
 </script>
 
 <FieldControl title="Search location by name." showHelp={true} showHelpPopup={false}>
-	<div slot="control">
-		<div class="geocoding">
+	{#snippet control()}
+		<div>
+			<div class="geocoding">
+				{#if locationMap && mapController}
+					<GeocodingControl
+						{mapController}
+						{apiKey}
+						{maplibregl}
+						showResultsWhileTyping={false}
+						flyTo={false}
+						flyToSelected={false}
+						limit={5}
+						on:pick={handleGeocodingSelected}
+					/>
+				{:else}
+					<div class="is-flex is-justify-content-center">
+						<Loader size="small" />
+					</div>
+				{/if}
+			</div>
+		</div>
+	{/snippet}
+	{#snippet help()}
+		<div>
 			{#if locationMap && mapController}
-				<GeocodingControl
-					{mapController}
-					{apiKey}
-					{maplibregl}
-					showResultsWhileTyping={false}
-					flyTo={false}
-					flyToSelected={false}
-					limit={5}
-					on:pick={handleGeocodingSelected}
-				/>
-			{:else}
-				<div class="is-flex is-justify-content-center">
-					<Loader size="small" />
-				</div>
+				Type <b>Enter</b> key to search locations.
 			{/if}
 		</div>
-	</div>
-	<div slot="help">
-		{#if locationMap && mapController}
-			Type <b>Enter</b> key to search locations.
-		{/if}
-	</div>
+	{/snippet}
 </FieldControl>
 
 <FieldControl
@@ -251,9 +259,11 @@
 	isFirstCharCapitalized={false}
 	showHelp={false}
 >
-	<div slot="control">
-		<div class="map" bind:this={locationMapContainer}></div>
-	</div>
+	{#snippet control()}
+		<div>
+			<div class="map" bind:this={locationMapContainer}></div>
+		</div>
+	{/snippet}
 </FieldControl>
 
 <div bind:this={popupContainer}>
@@ -283,43 +293,51 @@
 		(!chapter && JSON.stringify(tempLocation) === JSON.stringify($configStore.location))}
 	<div class="is-flex is-flex-direction-column mt-2">
 		<FieldControl title="Bearing" showHelp={true}>
-			<div slot="control">
-				<Slider
-					min={-179}
-					max={180}
-					bind:values={mapBearing}
-					floatLabel
-					pips
-					pipstep={1}
-					rest={false}
-					suffix="°"
-					on:change={handleBearingChanged}
-				/>
-			</div>
-			<div slot="help">
-				Default bearing, in degrees. The bearing is the compass direction that is "up"; for example,
-				a bearing of 90° orients the map so that east is up.
-			</div>
+			{#snippet control()}
+				<div>
+					<Slider
+						min={-179}
+						max={180}
+						bind:values={mapBearing}
+						floatLabel
+						pips
+						pipstep={1}
+						rest={false}
+						suffix="°"
+						on:change={handleBearingChanged}
+					/>
+				</div>
+			{/snippet}
+			{#snippet help()}
+				<div>
+					Default bearing, in degrees. The bearing is the compass direction that is "up"; for
+					example, a bearing of 90° orients the map so that east is up.
+				</div>
+			{/snippet}
 		</FieldControl>
 
 		<FieldControl title="Pitch" showHelp={true}>
-			<div slot="control">
-				<Slider
-					min={0}
-					max={85}
-					bind:values={mapPitch}
-					floatLabel
-					pips
-					pipstep={1}
-					rest={false}
-					suffix="°"
-					on:change={handlePitchChanged}
-				/>
-			</div>
-			<div slot="help">
-				Default pitch, in degrees. Zero is perpendicular to the surface, for a look straight down at
-				the map, while a greater value like 60 looks ahead towards the horizon.
-			</div>
+			{#snippet control()}
+				<div>
+					<Slider
+						min={0}
+						max={85}
+						bind:values={mapPitch}
+						floatLabel
+						pips
+						pipstep={1}
+						rest={false}
+						suffix="°"
+						on:change={handlePitchChanged}
+					/>
+				</div>
+			{/snippet}
+			{#snippet help()}
+				<div>
+					Default pitch, in degrees. Zero is perpendicular to the surface, for a look straight down
+					at the map, while a greater value like 60 looks ahead towards the horizon.
+				</div>
+			{/snippet}
 		</FieldControl>
 	</div>
 
@@ -327,14 +345,14 @@
 		<button
 			class="button is-link is-uppercase has-text-weight-bold"
 			disabled={resetDisabled}
-			on:click={applyMarkerPosition}
+			onclick={applyMarkerPosition}
 		>
 			Apply to slide
 		</button>
 		<button
 			class="reset-button button is-light is-uppercase has-text-weight-bold"
 			disabled={resetDisabled}
-			on:click={resetMarkerPosition}
+			onclick={resetMarkerPosition}
 		>
 			Reset
 		</button>

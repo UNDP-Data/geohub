@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import MapStyleCardList from '$components/pages/map/MapStyleCardList.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import { AccessLevel, MapSortingColumns, SearchDebounceTime } from '$lib/config/AppConfig';
@@ -7,20 +7,23 @@
 	import { FieldControl, SegmentButtons } from '@undp-data/svelte-undp-components';
 	import { Checkbox, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		id: string;
+		onselect?: (style: DashboardMapStyle) => void;
+	}
 
-	export let id: string;
-	let mapData: MapsData | undefined;
+	let { id = $bindable(), onselect = () => {} }: Props = $props();
+	let mapData: MapsData | undefined = $state();
 
-	let query = '';
-	let accessLevel: AccessLevel = AccessLevel.PUBLIC;
-	let onlyStar = false;
-	let sortby = $page.data.config.MapPageSortingColumn;
+	let query = $state('');
+	let accessLevel: AccessLevel = $state(AccessLevel.PUBLIC);
+	let onlyStar = $state(false);
+	let sortby = $state(page.data.config.MapPageSortingColumn);
 	let offset = 0;
 	let limit = 9;
-	let viewType: TableViewType = $page.data.config.MapPageTableViewType;
+	let viewType: TableViewType = $state(page.data.config.MapPageTableViewType);
 
 	const fetchMapStyles = async (url?: string) => {
 		if (!url) {
@@ -61,7 +64,7 @@
 
 	const handleSelect = (e: { detail: { style: DashboardMapStyle } }) => {
 		const style: DashboardMapStyle = e.detail.style;
-		dispatch('select', { style });
+		if (onselect) onselect(style);
 	};
 
 	const handlePaginationClicked = async (e: { detail: { url: string } }) => {
@@ -106,29 +109,33 @@
 	<div class="column is-12-mobile is-flex is-justify-content-flex-end is-flex-wrap-wrap p-0">
 		<div class="mr-2">
 			<FieldControl title="Sort results" showHelp={false}>
-				<div slot="control">
-					<div class="select mt-auto">
-						<select bind:value={sortby} on:change={handleSortbyChanged}>
-							{#each MapSortingColumns as option}
-								<option value={option.value}>{option.label}</option>
-							{/each}
-						</select>
+				{#snippet control()}
+					<div>
+						<div class="select mt-auto">
+							<select bind:value={sortby} onchange={handleSortbyChanged}>
+								{#each MapSortingColumns as option}
+									<option value={option.value}>{option.label}</option>
+								{/each}
+							</select>
+						</div>
 					</div>
-				</div>
+				{/snippet}
 			</FieldControl>
 		</div>
 		<div>
 			<FieldControl title="View as" showHelp={false}>
-				<div slot="control">
-					<SegmentButtons
-						buttons={[
-							{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
-							{ title: 'List', icon: 'fa-solid fa-list', value: 'list' }
-						]}
-						bind:selected={viewType}
-						on:change={handleViewTypeChanged}
-					/>
-				</div>
+				{#snippet control()}
+					<div>
+						<SegmentButtons
+							buttons={[
+								{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
+								{ title: 'List', icon: 'fa-solid fa-list', value: 'list' }
+							]}
+							bind:selected={viewType}
+							on:change={handleViewTypeChanged}
+						/>
+					</div>
+				{/snippet}
 			</FieldControl>
 		</div>
 	</div>
@@ -148,16 +155,18 @@
 			loading={!mapData}
 		/>
 
-		{#if $page.data.session}
+		{#if page.data.session}
 			<div class="py-2">
 				<FieldControl title="Access Level" showHelp={false}>
-					<div slot="control">
-						<AccessLevelSwitcher
-							bind:accessLevel
-							on:change={handleAccessLevelChanged}
-							isSegmentButton={false}
-						/>
-					</div>
+					{#snippet control()}
+						<div>
+							<AccessLevelSwitcher
+								bind:accessLevel
+								on:change={handleAccessLevelChanged}
+								isSegmentButton={false}
+							/>
+						</div>
+					{/snippet}
 				</FieldControl>
 			</div>
 

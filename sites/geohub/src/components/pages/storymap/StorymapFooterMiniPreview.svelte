@@ -8,17 +8,24 @@
 	} from '@undp-data/svelte-maplibre-storymap';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
-
-	const dispatch = createEventDispatcher();
+	import { getContext, onMount } from 'svelte';
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
-	let template_id: StoryMapTemplate;
+	let template_id: StoryMapTemplate = $state('light');
 
-	export let isActive = false;
-	export let disabled = false;
+	interface Props {
+		isActive?: boolean;
+		disabled?: boolean;
+		onedit?: () => void;
+	}
 
-	let isHovered = false;
+	let {
+		isActive = $bindable(false),
+		disabled = $bindable(false),
+		onedit = () => {}
+	}: Props = $props();
+
+	let isHovered = $state(false);
 
 	const tippyTooltip = initTooltipTippy();
 
@@ -32,7 +39,7 @@
 	}, 300);
 
 	const handleSettingClicked = () => {
-		dispatch('edit');
+		if (onedit) onedit();
 	};
 </script>
 
@@ -40,10 +47,10 @@
 	class="preview {isActive ? 'is-active' : ''} {!isActive && isHovered ? 'is-hover' : ''}"
 	role="menuitem"
 	tabindex="-1"
-	on:mouseenter={() => {
+	onmouseenter={() => {
 		isHovered = true;
 	}}
-	on:mouseleave={() => {
+	onmouseleave={() => {
 		isHovered = false;
 	}}
 >
@@ -57,7 +64,7 @@
 		<div class="is-flex ope-buttons">
 			<button
 				class="ope-button mr-1 is-flex is-align-items-center is-justify-content-center"
-				on:click={handleSettingClicked}
+				onclick={handleSettingClicked}
 				{disabled}
 				use:tippyTooltip={{ content: 'Change the setting of this slide' }}
 			>

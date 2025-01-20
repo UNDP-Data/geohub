@@ -80,7 +80,8 @@
 	let showPreview = $state(false);
 	let showSaveDialog = $state(false);
 
-	const handleChapterClicked = (chapter: unknown) => {
+	const handleChapterClicked = (chapter: StoryMapChapter) => {
+		if (!chapter) return;
 		isHeaderSlideActive = false;
 		isFooterSlideActive = false;
 
@@ -316,9 +317,7 @@
 		requirePreviewUpdated = !requirePreviewUpdated;
 	};
 
-	const handleSlideEdit = (e: { detail: { chapter: StoryMapChapter } }) => {
-		const chapter: StoryMapChapter = e.detail.chapter;
-
+	const handleSlideEdit = (chapter: StoryMapChapter) => {
 		if ($activeStorymapChapterStore?.id === chapter.id) {
 			showSlideSetting = !showSlideSetting;
 		} else {
@@ -348,8 +347,7 @@
 		requirePreviewUpdated = !requirePreviewUpdated;
 	};
 
-	const handleSlideDuplicated = (e: { detail: { chapter: StoryMapChapter } }) => {
-		const chapter: StoryMapChapter = e.detail.chapter;
+	const handleSlideDuplicated = (chapter: StoryMapChapter) => {
 		const cIndex = $configStore.chapters.findIndex((c) => c.id === chapter.id);
 		if (cIndex === -1) return;
 
@@ -365,8 +363,7 @@
 		requireUpdated = !requireUpdated;
 	};
 
-	const handleSlideDeleted = (e: { detail: { chapter: StoryMapChapter } }) => {
-		const chapter: StoryMapChapter = e.detail.chapter;
+	const handleSlideDeleted = (chapter: StoryMapChapter) => {
 		const cIndex = $configStore.chapters.findIndex((c) => c.id === chapter.id);
 		if (cIndex === -1) return;
 
@@ -624,7 +621,7 @@
 							<p class="slide-number px-4 is-size-7">{1}</p>
 							<StorymapHeaderMiniPreview
 								bind:isActive={isHeaderSlideActive}
-								on:edit={handleHeaderEdit}
+								onedit={handleHeaderEdit}
 								disabled={isProcessing}
 							/>
 						</button>
@@ -640,7 +637,7 @@
 									? 'is-dropping'
 									: ``} {draggingUp ? 'drag-up' : 'drag-down'}"
 								onclick={() => {
-									handleChapterClicked(chapter);
+									handleChapterClicked(chapter as unknown as StoryMapChapter);
 								}}
 								draggable={true}
 								ondragstart={(event) => dragstart(event, chapter.id)}
@@ -655,10 +652,10 @@
 								<StorymapChapterMiniPreview
 									bind:chapter={$configStore.chapters[index]}
 									{isActive}
-									on:edit={handleSlideEdit}
-									on:delete={handleSlideDeleted}
-									on:duplicate={handleSlideDuplicated}
-									on:change={() => {
+									onedit={handleSlideEdit}
+									ondelete={handleSlideDeleted}
+									onduplicate={handleSlideDuplicated}
+									onchange={() => {
 										requirePreviewUpdated = !requirePreviewUpdated;
 									}}
 									disabled={isProcessing}
@@ -684,7 +681,7 @@
 						<p class="slide-number px-4 is-size-7">{$configStore.chapters.length + 2}</p>
 						<StorymapFooterMiniPreview
 							bind:isActive={isFooterSlideActive}
-							on:edit={handleFooterEdit}
+							onedit={handleFooterEdit}
 							disabled={isProcessing}
 						/>
 					</button>
@@ -711,24 +708,23 @@
 						<StorymapHeaderEdit
 							bind:width={slideSettingWidth}
 							height={editorContentHeight}
-							on:change={handleHeaderChanged}
-							on:textchange={initBreadcrumbs}
-							on:close={handleSlideEditClosed}
+							onchange={handleHeaderChanged}
+							ontextchange={initBreadcrumbs}
+							onclose={handleSlideEditClosed}
 						/>
 					{:else if isFooterSlideActive}
 						<StorymapFooterEdit
 							bind:width={slideSettingWidth}
 							height={editorContentHeight}
-							on:close={handleSlideEditClosed}
+							onclose={handleSlideEditClosed}
 						/>
 					{:else if $activeStorymapChapterStore}
 						{#key requireEditorUpdated}
 							<StorymapChapterEdit
-								bind:chapter={$activeStorymapChapterStore}
 								bind:width={slideSettingWidth}
 								height={editorContentHeight}
-								on:change={handleSlideChanged}
-								on:close={handleSlideEditClosed}
+								onchange={handleSlideChanged}
+								onclose={handleSlideEditClosed}
 							/>
 						{/key}
 					{/if}
@@ -764,7 +760,7 @@
 <StorymapMetaEdit
 	bind:isOpen={isDialogOpen}
 	bind:this={storymapMetaEditor}
-	on:initialize={handleInitialized}
+	onInit={handleInitialized}
 />
 
 {#if $configStore && showPreview}
