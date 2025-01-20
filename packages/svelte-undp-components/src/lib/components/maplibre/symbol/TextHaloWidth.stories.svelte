@@ -49,4 +49,4 @@
 	</Map>
 </Template>
 
-<Story name="Primary" args={{ layerId: layer.id }} />
+<Story name="Primary" args={{ layerId: layer.id, defaultHaloWidth: 1 }} />

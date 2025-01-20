@@ -220,7 +220,10 @@
 			<Accordion title="Text halo width" bind:isExpanded={expanded['text-halo-width']}>
 				{#snippet content()}
 					<div class="pb-2">
-						<TextHaloWidth bind:layerId={targetLayer.id} />
+						<TextHaloWidth
+							bind:layerId={targetLayer.id}
+							defaultHaloWidth={page.data.config.LabelHaloWidth}
+						/>
 					</div>
 				{/snippet}
 				{#snippet buttons()}
