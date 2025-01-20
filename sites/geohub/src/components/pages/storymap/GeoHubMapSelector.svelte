@@ -62,14 +62,8 @@
 		fetchMapStyles();
 	});
 
-	const handleSelect = (e: { detail: { style: DashboardMapStyle } }) => {
-		const style: DashboardMapStyle = e.detail.style;
-		if (onselect) onselect(style);
-	};
-
-	const handlePaginationClicked = async (e: { detail: { url: string } }) => {
-		const apiUrl = e.detail.url;
-		await fetchMapStyles(apiUrl);
+	const handlePaginationClicked = async (apiUrl: URL) => {
+		await fetchMapStyles(apiUrl.href);
 	};
 
 	const handleAccessLevelChanged = async () => {
@@ -162,7 +156,7 @@
 						<div>
 							<AccessLevelSwitcher
 								bind:accessLevel
-								on:change={handleAccessLevelChanged}
+								onchange={handleAccessLevelChanged}
 								isSegmentButton={false}
 							/>
 						</div>
@@ -182,10 +176,10 @@
 	<div class="column">
 		<MapStyleCardList
 			bind:mapData
-			on:reload={handlePaginationClicked}
+			onreload={handlePaginationClicked}
 			bind:viewType
 			mode="select"
-			on:select={handleSelect}
+			{onselect}
 			bind:selectedId={id}
 		/>
 	</div>

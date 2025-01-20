@@ -426,7 +426,7 @@
 									bind:metadata
 									bind:selectedBand
 									bandsDetail={bands}
-									on:change={handleBandSelected}
+									onchange={handleBandSelected}
 									disabled={isLoading}
 								/>
 							</div>

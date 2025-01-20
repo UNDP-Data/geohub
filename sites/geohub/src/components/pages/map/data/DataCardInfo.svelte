@@ -57,13 +57,13 @@
 		<div class="card-title is-flex is-flex-direction-row is-align-content-center">
 			<p class="title is-5 has-text-left pr-2">{feature.properties.name}</p>
 		</div>
-		{#if !(stacType && ['cog', 'mosaicjson'].includes(stacType))}
+		{#if !(stacType && ['cog', 'mosaicjson'].includes(stacType as string))}
 			<div class="star py-2">
 				<Star
 					bind:id={feature.properties.id as string}
 					bind:isStar={feature.properties.is_star as boolean}
 					bind:no_stars={feature.properties.no_stars}
-					on:starDeleted={handleStarDeleted}
+					ondelete={handleStarDeleted}
 					table="datasets"
 				/>
 			</div>

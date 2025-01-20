@@ -112,8 +112,8 @@
 					{#if !(stacType && ['cog', 'mosaicjson'].includes(stacType)) && properties}
 						<div class="pr-1">
 							<Star
-								bind:id={properties.id}
-								bind:isStar={properties.is_star}
+								bind:id={properties.id as string}
+								bind:isStar={properties.is_star as boolean}
 								bind:no_stars={properties.no_stars}
 								table="datasets"
 							/>

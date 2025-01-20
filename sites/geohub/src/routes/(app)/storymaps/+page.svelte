@@ -340,7 +340,7 @@
 							<div>
 								<AccessLevelSwitcher
 									bind:accessLevel
-									on:change={handleAccessLevelChanged}
+									onchange={handleAccessLevelChanged}
 									isSegmentButton={false}
 								/>
 							</div>

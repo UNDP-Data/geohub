@@ -444,7 +444,7 @@
 								<RasterBandSelectbox
 									bind:metadata={rasterMetadata}
 									bind:selectedBand
-									on:change={handleBandSelected}
+									onchange={handleBandSelected}
 								/>
 							</div>
 						</div>
