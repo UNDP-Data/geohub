@@ -64,7 +64,7 @@
 		"@typescript-eslint/parser": "^8.16.0",
 		"@undp-data/undp-bulma": "workspace:^",
 		"eslint": "^9.15.0",
-		"eslint-config-prettier": "^9.1.0",
+		"eslint-config-prettier": "^10.0.0",
 		"eslint-plugin-storybook": "^0.11.1",
 		"eslint-plugin-svelte": "^2.46.0",
 		"globals": "^15.12.0",
