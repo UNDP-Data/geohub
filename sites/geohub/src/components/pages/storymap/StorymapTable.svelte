@@ -6,17 +6,19 @@
 	import type { StorymapsData, TableViewType } from '$lib/types';
 	import { Notification } from '@undp-data/svelte-undp-components';
 	import { CardWithImage, Loader, Pagination } from '@undp-data/svelte-undp-design';
-	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time/Time.svelte';
 
-	export let storiesData: StorymapsData | undefined;
-	export let viewType: TableViewType;
+	interface Props {
+		storiesData: StorymapsData | undefined;
+		viewType: TableViewType;
+		onReload?: (url: URL) => void;
+	}
 
-	const dispatch = createEventDispatcher();
+	let { storiesData = $bindable(), viewType = $bindable(), onReload = () => {} }: Props = $props();
 
 	const handlePaginationClicked = async (url: string) => {
 		const apiUrl = new URL(url);
-		dispatch('reload', { url: apiUrl });
+		if (onReload) onReload(apiUrl);
 	};
 </script>
 
@@ -42,12 +44,12 @@
 				<tbody>
 					{#each storiesData.stories as story}
 						{@const storymapLink = story.links?.find((l) => l.rel === 'storymap')?.href}
-						{@const accessIcon = getAccessLevelIcon(story.access_level, true)}
+						{@const accessIcon = getAccessLevelIcon(story.access_level as AccessLevel, true)}
 						{#if storymapLink}
 							<tr class="map-row">
 								<td
 									class="map-title map-col"
-									on:click={() => {
+									onclick={() => {
 										goto(storymapLink);
 									}}
 								>
@@ -55,7 +57,7 @@
 								</td>
 								<td
 									class="map-col"
-									on:click={() => {
+									onclick={() => {
 										goto(storymapLink);
 									}}
 								>
@@ -67,7 +69,7 @@
 								</td>
 								<td
 									class="map-col"
-									on:click={() => {
+									onclick={() => {
 										goto(storymapLink);
 									}}
 								>
@@ -75,13 +77,13 @@
 								</td>
 								<td
 									class="map-col"
-									on:click={() => {
+									onclick={() => {
 										goto(storymapLink);
 									}}>{story.created_user}</td
 								>
 								<td
 									class="map-col"
-									on:click={() => {
+									onclick={() => {
 										goto(storymapLink);
 									}}
 								>
@@ -91,7 +93,7 @@
 								</td>
 								<td
 									class="map-col"
-									on:click={() => {
+									onclick={() => {
 										goto(storymapLink);
 									}}
 								>
@@ -102,8 +104,8 @@
 								<td>
 									<Star
 										isCompact={true}
-										bind:id={story.id}
-										bind:isStar={story.is_star}
+										bind:id={story.id as string}
+										bind:isStar={story.is_star as boolean}
 										bind:no_stars={story.no_stars}
 										table="storymaps"
 									/>
@@ -120,14 +122,14 @@
 				{@const storyLink = story.links?.find((l) => l.rel === 'storymap')?.href}
 				{@const staticLink = story.links?.find((l) => l.rel === 'static-auto')?.href}
 				{@const accessLevel = story.access_level}
-				{@const accessIcon = getAccessLevelIcon(story.access_level, true)}
+				{@const accessIcon = getAccessLevelIcon(story.access_level as AccessLevel, true)}
 
 				<div class="column is-one-third-tablet is-one-third-desktop is-full-mobile">
 					<CardWithImage
-						title={story.title}
+						title={story.title as string}
 						url={storyLink}
 						tag="Story"
-						image={staticLink?.replace('{width}', '298').replace('{height}', '180')}
+						image={staticLink?.replace('{width}', '298').replace('{height}', '180') as string}
 						width={298}
 						height={180}
 						linkName="Explore"

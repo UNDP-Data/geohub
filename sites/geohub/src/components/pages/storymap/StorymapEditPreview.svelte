@@ -18,17 +18,25 @@
 	} from '@undp-data/svelte-maplibre-storymap';
 	import { debounce } from 'lodash-es';
 	import { AttributionControl, Map, NavigationControl, type StyleSpecification } from 'maplibre-gl';
-	import { getContext, onMount, setContext } from 'svelte';
+	import { getContext, onMount, setContext, untrack } from 'svelte';
 
-	export let chapter: StoryMapChapterType | undefined = undefined;
-	export let width = '100%';
-	export let height = 0;
+	interface Props {
+		chapter?: StoryMapChapterType | undefined;
+		width?: string;
+		height?: number;
+	}
 
-	let mapContainer: HTMLDivElement;
+	let {
+		chapter = $bindable(undefined),
+		width = $bindable('100%'),
+		height = $bindable(0)
+	}: Props = $props();
+
+	let mapContainer: HTMLDivElement | undefined = $state();
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
-	let template_id: StoryMapTemplate;
-	let footerHeight = 0;
+	let template_id: StoryMapTemplate = $state('light');
+	let footerHeight = $state(0);
 
 	let navigationControl: NavigationControl;
 
@@ -109,7 +117,6 @@
 		}
 	};
 
-	$: chapter, updateMapStyle();
 	const updateMapStyle = debounce(async () => {
 		if (!$mapStore) return;
 		if (!mapStyle) return;
@@ -190,6 +197,14 @@
 			$mapStore.easeTo({ center: newCenter, duration: 20000, easing: (n) => n });
 		}
 	}, 300);
+
+	$effect(() => {
+		if (chapter) {
+			untrack(() => {
+				updateMapStyle();
+			});
+		}
+	});
 </script>
 
 <div

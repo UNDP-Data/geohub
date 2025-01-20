@@ -847,7 +847,7 @@
 							bind:selectedBand
 							bandsDetail={bands}
 							disabled={isLoading}
-							on:change={handleBandSelected}
+							onchange={handleBandSelected}
 						/>
 					</div>
 				</div>

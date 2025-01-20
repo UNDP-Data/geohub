@@ -79,8 +79,7 @@
 
 	let sortby = $state(getSortByFromUrl(page.url) ?? data.config.MapPageSortingColumn);
 
-	const handlePaginationClicked = async (e) => {
-		const apiUrl = e.detail.url;
+	const handlePaginationClicked = async (apiUrl: URL) => {
 		await reload(apiUrl);
 	};
 
@@ -180,7 +179,8 @@
 		}
 
 		if (url.search !== page.url.search) {
-			goto(url, { replaceState: true, noScroll: true, keepFocus: true, invalidateAll: false });
+			const pageUrl = `/storymaps${url.search}`;
+			goto(pageUrl, { replaceState: true, noScroll: true, keepFocus: true, invalidateAll: false });
 		}
 
 		const res = await fetch(`/api/storymaps${url.search}`);
@@ -211,7 +211,7 @@
 		}
 	};
 
-	const handleTabChanged = async (e) => {
+	const handleTabChanged = async (e: { detail: { activeTab: string } }) => {
 		const active = e.detail.activeTab;
 
 		const apiUrl = new URL(page.url);
@@ -340,7 +340,7 @@
 							<div>
 								<AccessLevelSwitcher
 									bind:accessLevel
-									on:change={handleAccessLevelChanged}
+									onchange={handleAccessLevelChanged}
 									isSegmentButton={false}
 								/>
 							</div>
@@ -358,7 +358,7 @@
 			{/if}
 		</div>
 		<div class="column">
-			<StorymapTable bind:storiesData bind:viewType on:reload={handlePaginationClicked} />
+			<StorymapTable bind:storiesData bind:viewType onReload={handlePaginationClicked} />
 		</div>
 	</div>
 </div>

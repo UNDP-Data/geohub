@@ -6,19 +6,31 @@
 	import type { DashboardMapStyle, MapsData, TableViewType } from '$lib/types';
 	import { Notification } from '@undp-data/svelte-undp-components';
 	import { CardWithImage, Loader, Pagination } from '@undp-data/svelte-undp-design';
-	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time';
-	const dispatch = createEventDispatcher();
 
-	export let mapData: MapsData | undefined;
-	export let showMenu = true;
-	export let viewType: TableViewType = 'card';
-	export let mode: 'browse' | 'select' = 'browse';
-	export let selectedId = '';
+	interface Props {
+		mapData: MapsData | undefined;
+		showMenu?: boolean;
+		viewType?: TableViewType;
+		mode?: 'browse' | 'select';
+		selectedId?: string;
+		onreload?: (url: URL) => void;
+		onselect?: (style: DashboardMapStyle) => void;
+	}
+
+	let {
+		mapData = $bindable(),
+		showMenu = $bindable(true),
+		viewType = $bindable('card'),
+		mode = $bindable('browse'),
+		selectedId = $bindable(''),
+		onreload = () => {},
+		onselect = () => {}
+	}: Props = $props();
 
 	const handlePaginationClicked = async (url: string) => {
 		const apiUrl = new URL(url);
-		dispatch('reload', { url: apiUrl });
+		if (onreload) onreload(apiUrl);
 	};
 
 	const handleSelect = (style: DashboardMapStyle) => {
@@ -29,7 +41,7 @@
 			}
 		} else {
 			if (selectedId !== style.id) {
-				dispatch('select', { style });
+				if (onselect) onselect(style);
 			}
 		}
 	};
@@ -61,7 +73,7 @@
 							{@const selected = selectedId === style.id}
 							<tr
 								class="map-row {selected ? 'selected' : ''}"
-								on:click={() => {
+								onclick={() => {
 									handleSelect(style);
 								}}
 							>
@@ -89,7 +101,11 @@
 										{style.updated_user}
 									{/if}
 								</td>
-								<td on:click|stopPropagation>
+								<td
+									onclick={(e) => {
+										e.stopPropagation();
+									}}
+								>
 									<Star
 										isCompact={true}
 										bind:id={style.id}

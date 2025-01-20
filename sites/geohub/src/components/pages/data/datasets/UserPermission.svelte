@@ -34,14 +34,14 @@
 
 		/**
 		 * get message body for adding permission
-		 * @param url should specify $page.url object
+		 * @param url should specify page.url object
 		 * @param username user name
 		 */
 		getAddMessageBody: (url: URL, username: string) => string;
 
 		/**
 		 * get message body for editing permission
-		 * @param url should specify $page.url object
+		 * @param url should specify page.url object
 		 * @param username user name
 		 */
 		getModifyMessageBody: (url: URL, username: string) => string;
@@ -282,7 +282,7 @@ ${username}`;
 </script>
 
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { Permission } from '$lib/config/AppConfig';
 	import type { DatasetPermission } from '$lib/server/DatasetPermissionManager';
 	import type { StorymapPermission } from '$lib/server/StorymapPermissionManager';
@@ -315,7 +315,7 @@ ${username}`;
 		$state();
 	let errorMessage = $state('');
 
-	let signedInUser = $page.data.session?.user;
+	let signedInUser = page.data.session?.user;
 
 	let user_email = $state('');
 	let user_permission: Permission | undefined = $state();
@@ -381,10 +381,10 @@ ${username}`;
 		user_permission = isAdd ? Permission.READ : targetUserPermission?.permission;
 		isSendMessage = true;
 		if (isAdd) {
-			messageBody = api.getAddMessageBody($page.url, signedInUser?.name as string);
+			messageBody = api.getAddMessageBody(page.url, signedInUser?.name as string);
 			showAddDialog = true;
 		} else {
-			messageBody = api.getModifyMessageBody($page.url, signedInUser?.name as string);
+			messageBody = api.getModifyMessageBody(page.url, signedInUser?.name as string);
 			showEditDialog = true;
 		}
 	};

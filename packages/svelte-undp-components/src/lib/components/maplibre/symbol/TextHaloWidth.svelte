@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { NumberInput } from '$lib/components/ui/index.js';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import type { LayerSpecification } from 'maplibre-gl';
@@ -8,6 +7,7 @@
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layerId: string;
+	export let defaultHaloWidth: number = 1;
 
 	const style = $map
 		.getStyle()
@@ -16,9 +16,7 @@
 
 	let propertyName = 'text-halo-width';
 	let value =
-		style.paint && style.paint[propertyName]
-			? style.paint[propertyName]
-			: Number($page.data.config.LabelHaloWidth);
+		style.paint && style.paint[propertyName] ? style.paint[propertyName] : defaultHaloWidth;
 	let layerType = 'symbol';
 	let maxValue = 10;
 	let minValue = 0;

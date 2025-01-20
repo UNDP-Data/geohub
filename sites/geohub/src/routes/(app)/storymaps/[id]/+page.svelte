@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import UserPermission, {
 		StorymapPermissionAPI
 	} from '$components/pages/data/datasets/UserPermission.svelte';
@@ -64,7 +64,7 @@
 		breadcrumbs = [
 			{ title: 'home', url: '/' },
 			{ title: 'storymaps', url: '/storymaps' },
-			{ title: storymap.title as string, url: $page.url.href }
+			{ title: storymap.title as string, url: page.url.href }
 		];
 
 		storymapLink = storymap.links?.find((l) => l.rel === 'storymap')?.href as string;
@@ -156,7 +156,7 @@
 			];
 		}
 
-		const hash = $page.url.hash;
+		const hash = page.url.hash;
 		activeTab = hash.length > 0 && tabs.find((t) => t.id === hash) ? hash : `#${TabNames.INFO}`;
 	});
 </script>
@@ -181,7 +181,7 @@
 				View
 			</a>
 
-			{#if $page.data.session && ((storymap.permission && storymap.permission > Permission.READ) || $page.data.session.user.is_superuser)}
+			{#if page.data.session && ((storymap.permission && storymap.permission > Permission.READ) || page.data.session.user.is_superuser)}
 				<a
 					class="button is-link is-outlined is-uppercase has-text-weight-bold {isUpdating
 						? 'is-loading'
@@ -193,7 +193,7 @@
 				</a>
 			{/if}
 
-			{#if $page.data.session}
+			{#if page.data.session}
 				<button
 					class="button is-link is-outlined is-uppercase has-text-weight-bold {isUpdating
 						? 'is-loading'
@@ -205,7 +205,7 @@
 				</button>
 			{/if}
 
-			{#if $page.data.session && ((storymap.permission && storymap.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
+			{#if page.data.session && ((storymap.permission && storymap.permission === Permission.OWNER) || page.data.session.user.is_superuser)}
 				<button
 					class="button is-link is-outlined is-uppercase has-text-weight-bold {isUpdating
 						? 'is-loading'
@@ -315,7 +315,7 @@
 		</div>
 	</div>
 
-	{#if $page.data.session}
+	{#if page.data.session}
 		<div hidden={activeTab !== `#${TabNames.PERMISSIONS}`}>
 			<UserPermission api={new StorymapPermissionAPI(storymap)} />
 		</div>

@@ -1181,7 +1181,7 @@
 							<div>
 								<ImageUploader
 									bind:dataUrl={StorymapDefaultLogo}
-									on:change={() => {
+									onchange={() => {
 										userSettings.StorymapDefaultLogo = StorymapDefaultLogo ?? '';
 									}}
 								/>

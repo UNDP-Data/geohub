@@ -561,7 +561,7 @@
 					{#snippet control()}
 						<div>
 							<AccessLevelSwitcher
-								bind:accessLevel={editAccessLevel}
+								bind:accessLevel={editAccessLevel as AccessLevel}
 								disableOrganisation={countPrivateLayers > 0}
 								disablePublic={countPrivateLayers + countOrganisationLayers > 0}
 							/>

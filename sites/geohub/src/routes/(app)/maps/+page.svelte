@@ -197,8 +197,7 @@
 		mapData = data.styles;
 	};
 
-	const handlePaginationClicked = async (e: { detail: { url: URL } }) => {
-		const apiUrl = e.detail.url;
+	const handlePaginationClicked = async (apiUrl: URL) => {
 		await reload(apiUrl);
 	};
 
@@ -338,7 +337,7 @@
 							<div>
 								<AccessLevelSwitcher
 									bind:accessLevel
-									on:change={handleAccessLevelChanged}
+									onchange={handleAccessLevelChanged}
 									isSegmentButton={false}
 								/>
 							</div>
@@ -356,7 +355,7 @@
 			{/if}
 		</div>
 		<div class="column">
-			<MapStyleCardList bind:mapData on:reload={handlePaginationClicked} bind:viewType />
+			<MapStyleCardList bind:mapData onreload={handlePaginationClicked} bind:viewType />
 		</div>
 	</div>
 </div>

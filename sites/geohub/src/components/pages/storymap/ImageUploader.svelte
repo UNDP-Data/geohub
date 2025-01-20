@@ -1,12 +1,15 @@
 <script lang="ts">
 	import Dropzone from '@undp-data/svelte-file-dropzone';
 	import { FieldControl, initTooltipTippy } from '@undp-data/svelte-undp-components';
-	import { createEventDispatcher } from 'svelte';
 
-	const dispatch = createEventDispatcher();
 	const tippyTooltip = initTooltipTippy();
 
-	export let dataUrl: string | undefined;
+	interface Props {
+		dataUrl: string | undefined;
+		onchange?: () => void;
+	}
+
+	let { dataUrl = $bindable(), onchange = () => {} }: Props = $props();
 
 	const acceptedExts = ['.png', '.jpeg', '.jpg', '.webp', '.svg', '.gif'];
 
@@ -16,12 +19,12 @@
 		const targetFile = acceptedFiles[0];
 		const url = await file2dataurl(targetFile);
 		dataUrl = url;
-		dispatch('change');
+		if (onchange) onchange();
 	};
 
 	const handleRemoveFile = () => {
 		dataUrl = undefined;
-		dispatch('change');
+		if (onchange) onchange();
 	};
 
 	const file2dataurl = (file: File): Promise<string> => {
@@ -43,31 +46,37 @@
 			<button
 				class="delete"
 				use:tippyTooltip={{ content: 'Remove the image from this slide.' }}
-				on:click={handleRemoveFile}
+				onclick={handleRemoveFile}
 				aria-label="delete"
 			></button>
 		</div>
 	{:else}
 		<div class="dropzone">
 			<FieldControl title="Upload an image" showHelp={true} showHelpPopup={false}>
-				<div slot="control">
-					<Dropzone
-						accept={acceptedExts.join(',')}
-						noClick={false}
-						multiple={false}
-						inputElement={undefined}
-						on:drop={async (e) => await handleFileSelect(e)}
-					>
-						<div style="display: flex; justify-content: center; align-items: center; height: 100%">
-							<p>Drag & drop or select a file here</p>
-						</div>
-					</Dropzone>
-				</div>
-				<div slot="help">
-					<p>
-						The following image formats are acceptable: {acceptedExts.join(', ')}
-					</p>
-				</div>
+				{#snippet control()}
+					<div>
+						<Dropzone
+							accept={acceptedExts.join(',')}
+							noClick={false}
+							multiple={false}
+							inputElement={undefined}
+							on:drop={async (e) => await handleFileSelect(e)}
+						>
+							<div
+								style="display: flex; justify-content: center; align-items: center; height: 100%"
+							>
+								<p>Drag & drop or select a file here</p>
+							</div>
+						</Dropzone>
+					</div>
+				{/snippet}
+				{#snippet help()}
+					<div>
+						<p>
+							The following image formats are acceptable: {acceptedExts.join(', ')}
+						</p>
+					</div>
+				{/snippet}
 			</FieldControl>
 		</div>
 	{/if}
