@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { SwaggerUIBundle } from 'swagger-ui-dist';
 	import 'swagger-ui-dist/swagger-ui.css';
 
-	let spec = $page.data.spec;
+	let spec = page.data.spec;
 
-	let swaggerDiv: HTMLDivElement = $state();
+	let swaggerDiv: HTMLDivElement | undefined = $state();
 
 	$effect(() => {
 		if (swaggerDiv) {

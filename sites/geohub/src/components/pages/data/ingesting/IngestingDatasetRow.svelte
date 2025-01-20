@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import type { IngestingDataset, IngestingWebsocketMessage } from '$lib/types';
 	import type { OnGroupDataMessageArgs, WebPubSubClient } from '@azure/web-pubsub-client';
 	import {
@@ -19,7 +19,7 @@
 	}
 
 	let { dataset = $bindable(), change = () => {} }: Props = $props();
-	const userId = $page.data.session?.user?.id;
+	const userId = page.data.session?.user?.id;
 
 	const tippy = initTippy({
 		placement: 'bottom-end',
@@ -33,8 +33,8 @@
 	let tooltipContent: HTMLElement | undefined = $state();
 
 	// get AzureWebPubSubClient from +page.svelte
-	const wpsClient: WebPubSubClient | undefined = $page.data.wss.url
-		? getContext($page.data.wss.group)
+	const wpsClient: WebPubSubClient | undefined = page.data.wss.url
+		? getContext(page.data.wss.group)
 		: undefined;
 
 	let isDetailsShown = $state(false);
@@ -156,13 +156,13 @@
 
 	const handleCancelDataset = () => {
 		if (!wpsClient) return;
-		const wss = $page.data.wss;
+		const wss = page.data.wss;
 		if (!wss.url) return;
 		const rawUrl = new URL(dataset.raw.url);
 		wpsClient.sendToGroup(
 			wss.group,
 			{
-				user: $page.data.session?.user.id,
+				user: page.data.session?.user.id,
 				url: `${rawUrl.origin}${rawUrl.pathname}`,
 				cancel: true
 			},

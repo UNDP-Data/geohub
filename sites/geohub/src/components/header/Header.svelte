@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { beforeNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import UserAccount from '$components/header/UserAccount.svelte';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import { Header } from '@undp-data/svelte-undp-design';
@@ -17,7 +17,7 @@
 	let { isPositionFixed = true, showSignin = true }: Props = $props();
 
 	let showMobileMenu = $state(false);
-	let headerLinks = $state($page.data.headerLinks);
+	let headerLinks = $state(page.data.headerLinks);
 
 	beforeNavigate(() => {
 		showMobileMenu = false;

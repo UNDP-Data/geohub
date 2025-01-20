@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { signIn } from '@auth/sveltekit/client';
 	import type { PageData } from './$types';
 
@@ -10,7 +10,7 @@
 
 	let { data }: Props = $props();
 
-	let previousPage: URL = $state(new URL($page.url.origin));
+	let previousPage: URL = $state(new URL(page.url.origin));
 	afterNavigate(({ from }) => {
 		if (from?.url) {
 			previousPage = from?.url;

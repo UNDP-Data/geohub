@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 	import { BlockBlobClient } from '@azure/storage-blob';
 	import Dropzone from '@undp-data/svelte-file-dropzone';
@@ -33,7 +33,7 @@
 	let breadcrumbs: BreadcrumbPage[] = $state([
 		{ title: 'home', url: '/' },
 		{ title: 'datasets', url: '/data' },
-		{ title: 'upload', url: $page.url.href }
+		{ title: 'upload', url: page.url.href }
 	]);
 
 	let selectedFiles: Array<File> = [];

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import VectorTableColumn from '$components/pages/map/layers/vector/VectorTableColumn.svelte';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import type { IngestingDataset } from '$lib/types';
@@ -15,7 +15,7 @@
 
 	let { datasets = $bindable(), button }: Props = $props();
 
-	const config: UserConfig = $page.data.config;
+	const config: UserConfig = page.data.config;
 
 	let sortby = $state(config.DataPageIngestingSortingColumn);
 	let sortingorder = $state(config.DataPageIngestingSortingOrder);

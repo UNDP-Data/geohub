@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import {
 		StaticImageControl,
 		type ControlOptions
@@ -25,7 +25,7 @@
 	let { data }: Props = $props();
 	let styleUrl: string = $state(data.styleUrl);
 
-	let origin = $page.url.origin;
+	let origin = page.url.origin;
 	let apiUrl = $state('');
 
 	const headerHeight: Writable<number> = getContext('header-height');

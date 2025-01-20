@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import PublishedDatasets from '$components/pages/data/datasets/PublishedDatasets.svelte';
 	import IngestingDatasets from '$components/pages/data/ingesting/IngestingDatasets.svelte';
 	import { getWebPubSubClient } from '$lib/WebPubSubClient';
@@ -29,7 +29,7 @@
 
 	let breadcrumbs: BreadcrumbPage[] = $state([
 		{ title: 'home', url: '/' },
-		{ title: 'datasets', url: $page.url.href }
+		{ title: 'datasets', url: page.url.href }
 	]);
 
 	// setup AzureWebPubSubClient instance and set it in context
@@ -47,7 +47,7 @@
 
 	let tabs: Tab[] = $state([]);
 
-	const hash = $page.url.hash;
+	const hash = page.url.hash;
 
 	let activeTab: string = $state('');
 

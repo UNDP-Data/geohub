@@ -1,23 +1,23 @@
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import type { FooterItem } from '@undp-data/svelte-undp-design';
 	import { Footer, Header } from '@undp-data/svelte-undp-design';
 	import { setContext } from 'svelte';
 	import { writable } from 'svelte/store';
 
-	let title = $state($page.data.title ?? 'GeoHub Static Image API');
-	let site_name = $state($page.data.site_name ?? 'GeoHub Static Image API');
+	let title = $state(page.data.title ?? 'GeoHub Static Image API');
+	let site_name = $state(page.data.site_name ?? 'GeoHub Static Image API');
 	let site_description = $state(
-		$page.data.site_description ??
+		page.data.site_description ??
 			'Static image API can generate an PNG image dynamically by specified maplibre style JSON.'
 	);
 
 	afterNavigate(() => {
-		title = $page.data.title ?? 'GeoHub Static Image API';
-		site_name = $page.data.site_name ?? 'GeoHub Static Image API';
+		title = page.data.title ?? 'GeoHub Static Image API';
+		site_name = page.data.site_name ?? 'GeoHub Static Image API';
 		site_description =
-			$page.data.site_description ??
+			page.data.site_description ??
 			'Static image API can generate an PNG image dynamically by specified maplibre style JSON.';
 	});
 
@@ -67,13 +67,13 @@
 	<meta property="og:description" content={site_description} />
 	<meta name="twitter:description" content={site_description} />
 	<meta property="og:title" content={title} />
-	<!-- <meta property="og:image" content="{$page.url.origin}/api/og?content={content}" /> -->
+	<!-- <meta property="og:image" content="{page.url.origin}/api/og?content={content}" /> -->
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={title} />
-	<!-- <meta name="twitter:image" content="{$page.url.origin}/api/og?content={content}" /> -->
-	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
+	<!-- <meta name="twitter:image" content="{page.url.origin}/api/og?content={content}" /> -->
+	<meta property="og:url" content="{page.url.origin}{page.url.pathname}" />
 
 	<style type="text/css">
 		html,

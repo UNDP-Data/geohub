@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { goto, replaceState } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import {
 		AccessLevel,
@@ -37,42 +37,42 @@
 
 	let isLoading = $state(false);
 
-	const config: UserConfig = $page.data.config;
+	const config: UserConfig = page.data.config;
 
 	let viewType: TableViewType = $state(
-		($page.url.searchParams.get('viewType') as TableViewType) ?? config.DataPageTableViewType
+		(page.url.searchParams.get('viewType') as TableViewType) ?? config.DataPageTableViewType
 	);
 
-	let limit = $state($page.url.searchParams.get('limit') ?? `${config.DataPageSearchLimit}`);
-	let offset = $page.url.searchParams.get('offset') ?? 0;
-	let sortby = $state($page.url.searchParams.get('sortby') ?? config.DataPageSortingColumn);
-	let query = $state($page.url.searchParams.get('query') ?? '');
+	let limit = $state(page.url.searchParams.get('limit') ?? `${config.DataPageSearchLimit}`);
+	let offset = page.url.searchParams.get('offset') ?? 0;
+	let sortby = $state(page.url.searchParams.get('sortby') ?? config.DataPageSortingColumn);
+	let query = $state(page.url.searchParams.get('query') ?? '');
 	let queryType: 'and' | 'or' =
-		($page.url.searchParams.get('queryoperator') as 'and' | 'or') ??
+		(page.url.searchParams.get('queryoperator') as 'and' | 'or') ??
 		config.DataPageSearchQueryOperator;
 	let operatorType: 'and' | 'or' =
-		($page.url.searchParams.get('operator') as 'and' | 'or') ??
-		$page.data.config.DataPageTagSearchOperator;
+		(page.url.searchParams.get('operator') as 'and' | 'or') ??
+		page.data.config.DataPageTagSearchOperator;
 	let isOperatorTypeAnd = $state(operatorType === 'and');
 
-	const _level = $page.url.searchParams.get('accesslevel');
+	const _level = page.url.searchParams.get('accesslevel');
 	let accessLevel: AccessLevel = $state(
 		_level
 			? (Number(_level) as AccessLevel)
-			: $page.data.session
+			: page.data.session
 				? AccessLevel.ALL
 				: AccessLevel.PUBLIC
 	);
 
-	let showFavourite = $state($page.url.searchParams.get('staronly') === 'true' ? true : false);
-	let showSatellite = $state($page.url.searchParams.get('type') === 'stac' ? true : false);
+	let showFavourite = $state(page.url.searchParams.get('staronly') === 'true' ? true : false);
+	let showSatellite = $state(page.url.searchParams.get('type') === 'stac' ? true : false);
 	let hideGlobal: boolean = $state(false);
 
-	let searchedApiUrl: string = $state($page.url.href);
+	let searchedApiUrl: string = $state(page.url.href);
 	let showAdvancedSearch = $state(false);
 
 	const getTagsFromUrl = (key: 'sdg_goal' | 'country' | 'algorithm') => {
-		const values = $page.url.searchParams.getAll(key);
+		const values = page.url.searchParams.getAll(key);
 		const tags: Tag[] = [];
 		values?.forEach((value) => {
 			tags.push({
@@ -85,7 +85,7 @@
 
 	const getContinentsFromUrl = () => {
 		const key = 'continent';
-		const continents = $page.url.searchParams.getAll(key) ?? [];
+		const continents = page.url.searchParams.getAll(key) ?? [];
 		return continents;
 	};
 
@@ -159,8 +159,8 @@
 	};
 
 	const handleLimitChanged = async () => {
-		const currentLimit = $page.url.searchParams.get('limit')
-			? $page.url.searchParams.get('limit')
+		const currentLimit = page.url.searchParams.get('limit')
+			? page.url.searchParams.get('limit')
 			: `${config.DataPageSearchLimit}`;
 		if (currentLimit && currentLimit !== limit) {
 			offset = '0';
@@ -200,7 +200,7 @@
 	const handleAccessLevelChanged = async () => {
 		offset = 0;
 
-		const href = new URL($page.url);
+		const href = new URL(page.url);
 		href.searchParams.set('offset', `${offset}`);
 		if (accessLevel === AccessLevel.ALL) {
 			href.searchParams.delete('accesslevel');
@@ -214,7 +214,7 @@
 	const handleFavouriteChanged = async () => {
 		showFavourite = !showFavourite;
 
-		const href = new URL($page.url);
+		const href = new URL(page.url);
 
 		href.searchParams.delete('limit');
 		href.searchParams.delete('offset');
@@ -231,7 +231,7 @@
 	const handleSatelliteChanged = async () => {
 		showSatellite = !showSatellite;
 
-		const href = new URL($page.url);
+		const href = new URL(page.url);
 
 		href.searchParams.delete('limit');
 		href.searchParams.delete('offset');
@@ -246,7 +246,7 @@
 	};
 
 	const updateSDGtags = async () => {
-		const apiUrl = $page.url;
+		const apiUrl = page.url;
 		apiUrl.searchParams.delete('sdg_goal');
 		selectedSDGs?.forEach((t) => {
 			apiUrl.searchParams.append(t.key, t.value as string);
@@ -279,7 +279,7 @@
 
 	const getTags = (key: string) => {
 		let selectedTags: Tag[] = [];
-		const values = $page.url.searchParams.getAll(key);
+		const values = page.url.searchParams.getAll(key);
 		values.forEach((v) => {
 			if (selectedTags.find((t) => t.key === key && t.value === v)) return;
 
@@ -294,7 +294,7 @@
 	const handleTagChanged = async (e: { detail: { key: string; selected: Tag[] } }) => {
 		const key: string = e.detail.key;
 		const selected: Tag[] = e.detail.selected;
-		const apiUrl = $page.url;
+		const apiUrl = page.url;
 		apiUrl.searchParams.delete(key);
 		selected?.forEach((t) => {
 			apiUrl.searchParams.append(t.key, t.value as string);
@@ -306,7 +306,7 @@
 		const filtered = selectedContinents.filter((s) => s !== name);
 		selectedContinents = [...filtered];
 
-		const apiUrl = $page.url;
+		const apiUrl = page.url;
 		apiUrl.searchParams.delete('continent');
 		selectedContinents?.forEach((t) => {
 			apiUrl.searchParams.append('continent', t);
@@ -321,7 +321,7 @@
 			return { key: 'country', value: c.iso_3 } as Tag;
 		});
 
-		const apiUrl = $page.url;
+		const apiUrl = page.url;
 		apiUrl.searchParams.delete('country');
 		selectedCountries?.forEach((t) => {
 			apiUrl.searchParams.append('country', t.value as string);
@@ -333,14 +333,14 @@
 	const handleViewTypeChanged = (e: { detail: { value: TableViewType } }) => {
 		viewType = e.detail.value;
 
-		const apiUrl = new URL($page.url);
+		const apiUrl = new URL(page.url);
 		apiUrl.searchParams.set('viewType', viewType);
 		replaceState(apiUrl, '');
 	};
 
 	const handleOperatorChanged = async () => {
 		operatorType = isOperatorTypeAnd ? 'or' : 'and';
-		const apiUrl = new URL($page.url);
+		const apiUrl = new URL(page.url);
 		apiUrl.searchParams.delete('operator');
 		apiUrl.searchParams.set('operator', operatorType);
 		reload(apiUrl);
@@ -348,13 +348,13 @@
 
 	let isReseted = $state(false);
 	const handleResetFilter = async () => {
-		const apiUrl = new URL(`${$page.url.origin}${$page.url.pathname}${$page.url.hash}`);
+		const apiUrl = new URL(`${page.url.origin}${page.url.pathname}${page.url.hash}`);
 		limit = `${config.DataPageSearchLimit}`;
 		offset = 0;
 		sortby = config.DataPageSortingColumn;
 		query = '';
 		queryType = config.DataPageSearchQueryOperator;
-		operatorType = $page.data.config.DataPageTagSearchOperator;
+		operatorType = page.data.config.DataPageTagSearchOperator;
 		isOperatorTypeAnd = operatorType === 'and';
 		showFavourite = false;
 		showSatellite = false;
@@ -367,7 +367,7 @@
 	};
 
 	onMount(() => {
-		const apiUrl = new URL($page.url);
+		const apiUrl = new URL(page.url);
 		reload(apiUrl);
 	});
 </script>
@@ -452,7 +452,7 @@
 			/>
 		</div>
 
-		{#if $page.data.session}
+		{#if page.data.session}
 			<div class="py-2">
 				<Checkbox
 					label="Show starred only"
@@ -472,7 +472,7 @@
 			/>
 		</div>
 
-		{#if $page.data.session}
+		{#if page.data.session}
 			<div class="pt-2 pb-1">
 				<FieldControl title="Access Level" showHelp={false}>
 					{#snippet control()}

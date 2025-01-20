@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { getMapImageFromStyle } from '$lib/helper';
 	import type { StoryMapConfig } from '$lib/types';
 	import {
@@ -66,7 +66,7 @@
 	const updateMapStyle = debounce(async () => {
 		template_id = ($configStore as StoryMapConfig).template_id as StoryMapTemplate;
 		const newStyle = await applyLayerEvent();
-		mapImageData = await getMapImageFromStyle(newStyle, 212, 124, $page.data.staticApiUrl);
+		mapImageData = await getMapImageFromStyle(newStyle, 212, 124, page.data.staticApiUrl);
 	}, 300);
 
 	const handleSettingClicked = () => {
