@@ -28,7 +28,7 @@
 	</div>
 {/if}
 
-<style>
-	@import '$lib/css/light/footer.scss';
-	@import '$lib/css/dark/footer.scss';
+<style lang="scss">
+	@import './css/light/footer.scss';
+	@import './css/dark/footer.scss';
 </style>

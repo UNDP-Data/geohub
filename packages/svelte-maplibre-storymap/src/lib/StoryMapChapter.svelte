@@ -166,7 +166,7 @@
 	</div>
 </section>
 
-<style>
-	@import '$lib/css/light/chapter.scss';
-	@import '$lib/css/dark/chapter.scss';
+<style lang="scss">
+	@import './css/light/chapter.scss';
+	@import './css/dark/chapter.scss';
 </style>
