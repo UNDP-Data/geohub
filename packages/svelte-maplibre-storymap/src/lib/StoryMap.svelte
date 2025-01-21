@@ -238,6 +238,7 @@
 	};
 
 	const handleScrollToIndex = debounce(async (index: number) => {
+		if (!$mapStore) return;
 		slideIndex = index;
 		if (index === 0) {
 			scrollTo('header');
