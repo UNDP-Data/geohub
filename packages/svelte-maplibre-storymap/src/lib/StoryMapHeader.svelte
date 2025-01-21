@@ -3,8 +3,12 @@
 	import type { StoryMapTemplate } from './interfaces/StoryMapTemplate.js';
 	import { STORYMAP_CONFIG_STORE_CONTEXT_KEY, type StoryMapConfigStore } from './stores/index.js';
 
-	export let template: StoryMapTemplate = 'light';
-	export let size: 'small' | 'normal' = 'normal';
+	interface Props {
+		template?: StoryMapTemplate;
+		size?: 'small' | 'normal';
+	}
+
+	let { template = $bindable('light'), size = $bindable('normal') }: Props = $props();
 
 	let config: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 </script>
@@ -25,6 +29,6 @@
 </div>
 
 <style lang="scss">
-	@import '$lib/css/light/header.scss';
-	@import '$lib/css/dark/header.scss';
+	@import './css/light/header.scss';
+	@import './css/dark/header.scss';
 </style>

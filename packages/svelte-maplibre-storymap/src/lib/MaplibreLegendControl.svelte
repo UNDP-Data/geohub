@@ -1,6 +1,6 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	import type { ControlPosition, IControl, Map } from 'maplibre-gl';
-	import { onDestroy, onMount } from 'svelte';
+	import { onDestroy, onMount, untrack } from 'svelte';
 
 	export class MaplibreLegendControl implements IControl {
 		private map?: Map;
@@ -79,37 +79,51 @@
 	import { debounce } from 'lodash-es';
 	import { layerTypes } from './helpers.js';
 
-	export let map: Map;
-	export let styleId: string;
-	export let width = 384;
-	export let origin = '';
-	export let position: ControlPosition = 'bottom-left';
-	export let isExpanded = true;
-	/**
-	 * If true, show layer visibility and opacity controls, and coappse/expand all buttons. Default is true.
-	 */
-	export let showInteractive = true;
-	/**
-	 * If true, show all layers including invisible layers.
-	 * Also, it will hide remote legend layer such as satellite imagery and terrain algorithm layer
-	 * Defaut is true.
-	 */
-	export let showInvisibleLayers = true;
+	interface Props {
+		map: Map;
+		styleId: string;
+		width?: number;
+		origin?: string;
+		position?: ControlPosition;
+		isExpanded?: boolean;
+		/**
+		 * If true, show layer visibility and opacity controls, and coappse/expand all buttons. Default is true.
+		 */
+		showInteractive?: boolean;
+		/**
+		 * If true, show all layers including invisible layers.
+		 * Also, it will hide remote legend layer such as satellite imagery and terrain algorithm layer
+		 * Defaut is true.
+		 */
+		showInvisibleLayers?: boolean;
+	}
+
+	let {
+		map = $bindable(),
+		styleId = $bindable(),
+		width = $bindable(384),
+		origin = $bindable(''),
+		position = $bindable('bottom-left'),
+		isExpanded = $bindable(true),
+		showInteractive = $bindable(true),
+		showInvisibleLayers = $bindable(true)
+	}: Props = $props();
 
 	let control: MaplibreLegendControl | undefined;
-	let contentDiv: HTMLDivElement;
+	let contentDiv: HTMLDivElement | undefined = $state();
 
-	let legend: LegendLayer[] = [];
-	let isLoading = false;
+	let legend: LegendLayer[] = $state([]);
+	let isLoading = $state(false);
 
 	const tippyTooltip = initTooltipTippy();
 
-	let expanded: { [key: string]: boolean } = {};
-	let layerOpacity: { [key: string]: number } = {};
+	let expanded: { [key: string]: boolean } = $state({});
+	let layerOpacity: { [key: string]: number } = $state({});
 
-	let numberOfVisibleLayers = 0;
+	let numberOfVisibleLayers = $state(0);
 
 	onMount(() => {
+		if (!contentDiv) return;
 		control = new MaplibreLegendControl(contentDiv);
 		map.addControl(control, position);
 		getLegend();
@@ -122,8 +136,7 @@
 		}
 	});
 
-	$: styleId, getLegend();
-	let isStyleChanged = false;
+	let isStyleChanged = $state(false);
 
 	const getLegend = async () => {
 		try {
@@ -266,6 +279,13 @@
 			}).length;
 		}
 	};
+	$effect(() => {
+		if (styleId) {
+			untrack(() => {
+				getLegend();
+			});
+		}
+	});
 </script>
 
 <div
@@ -282,7 +302,7 @@
 						<button
 							class="button m-0 px-4"
 							disabled={expandAllDisabled()}
-							on:click={handleExpandAll}
+							onclick={handleExpandAll}
 							use:tippyTooltip={{ content: 'Expand all layers' }}
 						>
 							<span class="icon">
@@ -294,7 +314,7 @@
 							class="button m-0 px-4"
 							disabled={collapseAllDisabled()}
 							use:tippyTooltip={{ content: 'Collapse all layers' }}
-							on:click={handleCollapseAll}
+							onclick={handleCollapseAll}
 						>
 							<span class="icon">
 								<span class="material-icons"> compress </span>
@@ -322,31 +342,22 @@
 								isSelected={false}
 								showHoveredColor={true}
 							>
-								<div slot="buttons">
-									{#key isStyleChanged}
-										<OpacityEditor
-											bind:opacity={layerOpacity[l.id]}
-											{showOpacity}
-											on:change={(e) => {
-												const opacity = e.detail.opacity;
-												handleOpacityChanged(opacity, l.layer);
-											}}
-										/>
-									{/key}
-								</div>
-								<div class="is-flex is-align-items-center" slot="content">
-									{#if isRemoteLegend}
-										<img src={l.legend} alt={l.name} />
-									{:else}
-										<!-- eslint-disable svelte/no-at-html-tags -->
-										{@html l.legend}
-									{/if}
-								</div>
-							</Accordion>
-						{:else}
-							<div class="non-interactive-layer p-4">
-								<FieldControl title={clean(l.name)} showHelp={false}>
-									<div class="is-flex is-align-items-center" slot="control">
+								{#snippet buttons()}
+									<div>
+										{#key isStyleChanged}
+											<OpacityEditor
+												bind:opacity={layerOpacity[l.id]}
+												{showOpacity}
+												on:change={(e) => {
+													const opacity = e.detail.opacity;
+													handleOpacityChanged(opacity, l.layer);
+												}}
+											/>
+										{/key}
+									</div>
+								{/snippet}
+								{#snippet content()}
+									<div class="is-flex is-align-items-center">
 										{#if isRemoteLegend}
 											<img src={l.legend} alt={l.name} />
 										{:else}
@@ -354,6 +365,21 @@
 											{@html l.legend}
 										{/if}
 									</div>
+								{/snippet}
+							</Accordion>
+						{:else}
+							<div class="non-interactive-layer p-4">
+								<FieldControl title={clean(l.name)} showHelp={false}>
+									{#snippet control()}
+										<div class="is-flex is-align-items-center">
+											{#if isRemoteLegend}
+												<img src={l.legend} alt={l.name} />
+											{:else}
+												<!-- eslint-disable svelte/no-at-html-tags -->
+												{@html l.legend}
+											{/if}
+										</div>
+									{/snippet}
 								</FieldControl>
 							</div>
 						{/if}
@@ -366,7 +392,7 @@
 	</FloatingPanel>
 </div>
 
-<style lang="scss">
+<style>
 	button {
 		border: none;
 		outline: none;

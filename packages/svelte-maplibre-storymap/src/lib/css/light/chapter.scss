@@ -1,3 +1,4 @@
+@use 'sass:meta';
 .light {
 	&.step {
 		margin-bottom: 60vh;
@@ -53,7 +54,7 @@
 				gap: 20px;
 				box-sizing: border-box;
 
-				@import '../markdown-style.scss';
+				@include meta.load-css('../markdown-style.scss');
 
 				&.small {
 					.markdown-content {
