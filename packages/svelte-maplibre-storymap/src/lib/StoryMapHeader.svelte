@@ -28,7 +28,7 @@
 	{/if}
 </div>
 
-<style lang="scss">
-	@use '$lib/css/light/header.scss' as *;
-	@use '$lib/css/dark/header.scss' as *;
+<style>
+	@import '$lib/css/light/header.scss';
+	@import '$lib/css/dark/header.scss';
 </style>

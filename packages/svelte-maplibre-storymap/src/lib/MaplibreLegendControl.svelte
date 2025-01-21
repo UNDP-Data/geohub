@@ -392,7 +392,7 @@
 	</FloatingPanel>
 </div>
 
-<style lang="scss">
+<style>
 	button {
 		border: none;
 		outline: none;

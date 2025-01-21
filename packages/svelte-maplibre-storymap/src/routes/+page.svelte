@@ -15,7 +15,7 @@
 	];
 </script>
 
-<StoryMap bind:config={data.config} bind:template={cssMode} />
+<StoryMap config={data.config} bind:template={cssMode} />
 
 <div class="overlay">
 	<div class="buttons has-addons">
