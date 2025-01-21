@@ -1,3 +1,4 @@
+@use 'sass:meta';
 .light {
 	&.footer {
 		width: 100%;
@@ -26,6 +27,6 @@
 			padding: 8px 0;
 			line-height: 1.5;
 		}
-		@import '../markdown-style.scss';
+		@include meta.load-css('../markdown-style.scss');
 	}
 }

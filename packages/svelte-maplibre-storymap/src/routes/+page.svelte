@@ -2,9 +2,13 @@
 	import { StoryMap, type StoryMapTemplate } from '$lib/index.js';
 	import type { PageData } from './$types.js';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
 
-	let cssMode: StoryMapTemplate = 'light';
+	let { data = $bindable() }: Props = $props();
+
+	let cssMode: StoryMapTemplate = $state('light');
 	let cssModes: { id: StoryMapTemplate; label: string }[] = [
 		{ id: 'light', label: 'Light' },
 		{ id: 'dark', label: 'Dark' }

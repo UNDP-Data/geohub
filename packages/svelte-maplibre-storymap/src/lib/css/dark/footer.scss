@@ -1,3 +1,4 @@
+@use 'sass:meta';
 .dark {
 	&.footer {
 		width: 100% !important;
@@ -27,6 +28,6 @@
 			line-height: 1.5;
 			color: white;
 		}
-		@import '../markdown-style.scss';
+		@include meta.load-css('../markdown-style.scss');
 	}
 }

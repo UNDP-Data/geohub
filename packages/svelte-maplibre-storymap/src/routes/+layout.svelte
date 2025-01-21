@@ -2,6 +2,11 @@
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 
 	onMount(() => {
 		let protocol = new pmtiles.Protocol();
@@ -31,4 +36,4 @@
 	</style>
 </svelte:head>
 
-<slot />
+{@render children?.()}

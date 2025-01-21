@@ -38,17 +38,14 @@
 {/if}
 
 <StoryMap
-	bind:config={data.storymap}
-	bind:template={data.storymap.template_id}
+	config={data.storymap}
+	template={data.storymap.template_id}
 	bind:marginTop={$headerHeightStore}
 >
 	{#snippet footer()}
 		<div>
 			{#if showHeaderFooter}
-				<Footer
-					logoUrl="/assets/undp-images/undp-logo-white.svg"
-					bind:footerItems={data.footerLinks}
-				/>
+				<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" footerItems={data.footerLinks} />
 				<BackToTop top={backToTopPosition} />
 			{/if}
 		</div>
