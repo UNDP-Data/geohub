@@ -26,7 +26,7 @@
 		"@undp-data/svelte-undp-design": "^2.4.2",
 		"@undp-data/undp-bulma": "^1.1.2",
 		"eslint": "^9.16.0",
-		"eslint-config-prettier": "^9.1.0",
+		"eslint-config-prettier": "^10.0.0",
 		"eslint-plugin-svelte": "^2.46.1",
 		"globals": "^15.13.0",
 		"maplibre-gl": "^5.0.0",
