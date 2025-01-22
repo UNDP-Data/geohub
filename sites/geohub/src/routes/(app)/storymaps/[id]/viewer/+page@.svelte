@@ -16,6 +16,8 @@
 
 	let { data = $bindable() }: Props = $props();
 
+	let config = $state(data.storymap);
+
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
 
@@ -37,11 +39,7 @@
 	<Header isPositionFixed={true} />
 {/if}
 
-<StoryMap
-	config={data.storymap}
-	template={data.storymap.template_id}
-	bind:marginTop={$headerHeightStore}
->
+<StoryMap bind:config template={data.storymap.template_id} bind:marginTop={$headerHeightStore}>
 	{#snippet footer()}
 		<div>
 			{#if showHeaderFooter}
