@@ -175,6 +175,9 @@ importers:
       marked:
         specifier: ^15.0.6
         version: 15.0.6
+      pmtiles:
+        specifier: ^4.2.1
+        version: 4.2.1
       scrollama:
         specifier: ^3.2.0
         version: 3.2.0
@@ -215,9 +218,6 @@ importers:
       globals:
         specifier: ^15.14.0
         version: 15.14.0
-      pmtiles:
-        specifier: ^4.2.1
-        version: 4.2.1
       prettier:
         specifier: ^3.4.2
         version: 3.4.2

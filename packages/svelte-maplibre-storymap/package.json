@@ -51,7 +51,6 @@
 		"eslint-config-prettier": "^10.0.1",
 		"eslint-plugin-svelte": "^2.46.1",
 		"globals": "^15.14.0",
-		"pmtiles": "^4.2.1",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
 		"publint": "^0.3.2",
@@ -74,6 +73,7 @@
 		"lodash-es": "^4.17.21",
 		"maplibre-gl": "^5.0.1",
 		"marked": "^15.0.6",
+		"pmtiles": "^4.2.1",
 		"scrollama": "^3.2.0"
 	}
 }

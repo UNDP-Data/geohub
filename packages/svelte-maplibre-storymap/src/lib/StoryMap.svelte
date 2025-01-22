@@ -3,6 +3,7 @@
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import {
+		addProtocol,
 		AttributionControl,
 		Map,
 		NavigationControl,
@@ -10,17 +11,18 @@
 		type StyleSpecification
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
+	import { Protocol } from 'pmtiles';
 	import scrollama from 'scrollama';
 	import { onMount, setContext } from 'svelte';
 	import { setLayerOpacity } from './helpers.js';
 	import MaplibreLegendControl from './MaplibreLegendControl.svelte';
 	import {
-		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
-		STORYMAP_MAPSTORE_CONTEXT_KEY,
-		STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY,
 		createMapStore,
 		createMapStyleStore,
 		createStoryMapConfigStore,
+		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
+		STORYMAP_MAPSTORE_CONTEXT_KEY,
+		STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY,
 		type MapStore,
 		type MapStyleStore,
 		type StoryMapConfigStore
@@ -81,6 +83,9 @@
 	});
 
 	onMount(async () => {
+		let protocol = new Protocol();
+		addProtocol('pmtiles', protocol.tile);
+
 		if (!mapContainer) return;
 		const styleInfo = getStyleInfo(config.style);
 		if (styleInfo) {
