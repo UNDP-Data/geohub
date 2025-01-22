@@ -255,10 +255,17 @@
 			} else {
 				style = $configStore.style;
 			}
-			const center = config.location.center ?? (style.center as [number, number]) ?? [0, 0];
-			const zoom = config.location.zoom ?? style.zoom ?? 0;
-			const bearing = config.location.bearing ?? style.bearing ?? 0;
-			const pitch = config.location.pitch ?? style.pitch ?? 0;
+
+			const isCustomisedLocationAvailable =
+				$configStore.location.center && $configStore.location.center[0] !== null;
+
+			const center = isCustomisedLocationAvailable
+				? $configStore.location.center
+				: ((style.center as [number, number]) ?? [0, 0]);
+			const zoom = $configStore.location.zoom ?? style.zoom ?? 0;
+			const bearing = $configStore.location.bearing ?? style.bearing ?? 0;
+			const pitch = $configStore.location.pitch ?? style.pitch ?? 0;
+
 			$mapStore.setBearing(bearing);
 			$mapStore.setPitch(pitch);
 			$mapStore.flyTo({ center: center, zoom: zoom });

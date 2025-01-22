@@ -4,8 +4,9 @@ import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import StorymapManager from '$lib/server/StorymapManager';
 import { StorymapPermissionManager } from '$lib/server/StorymapPermissionManager';
 import { getDomainFromEmail } from '$lib/helper';
+import type { StyleSpecification } from 'maplibre-gl';
 
-export const GET: RequestHandler = async ({ params, locals, url }) => {
+export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const session = await locals.auth();
 	const user_email = session?.user.email as string;
 	let is_superuser = false;
@@ -24,13 +25,29 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 	}
 
 	if (story.style) {
+		if (story.location.center && story.location.center[0] === null) {
+			const res = await fetch(story.style as string);
+			if (res.ok) {
+				const style: StyleSpecification = await res.json();
+				story.location.center = (style.center as [number, number]) ?? [0, 0];
+				story.location.zoom = style.zoom ?? 0;
+				story.location.bearing = style.bearing ?? 0;
+				story.location.pitch = style.pitch ?? 0;
+			} else {
+				story.location.center = [0, 0];
+				story.location.zoom = 0;
+				story.location.bearing = 0;
+				story.location.pitch = 0;
+			}
+		}
+
 		story.style = `${url.origin}${story.style}`;
 	}
 	story.chapters.forEach((ch) => {
 		ch.style = `${url.origin}${ch.style}`;
 	});
 
-	story.links = story.links.map((l) => {
+	story.links = story.links?.map((l) => {
 		const _url = new URL(decodeURI(l.href), url.origin);
 		const subUrl = _url.searchParams.get('url');
 		if (subUrl) {
@@ -45,7 +62,7 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 		const permission = await sp.getBySignedUser();
 		if (!(permission && permission >= Permission.READ)) {
 			const domain = user_email ? getDomainFromEmail(user_email) : undefined;
-			const access_level: AccessLevel = story.access_level;
+			const access_level: AccessLevel = story.access_level as AccessLevel;
 			if (access_level === AccessLevel.PRIVATE) {
 				if (story.created_user !== user_email) {
 					return new Response(
@@ -56,7 +73,7 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 					);
 				}
 			} else if (access_level === AccessLevel.ORGANIZATION) {
-				if (!story.created_user.endsWith(domain)) {
+				if (!story.created_user?.endsWith(domain as string)) {
 					return new Response(
 						JSON.stringify({ message: `No permission to access to this storymap.` }),
 						{
