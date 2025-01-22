@@ -262,9 +262,13 @@
 			const center = isCustomisedLocationAvailable
 				? $configStore.location.center
 				: ((style.center as [number, number]) ?? [0, 0]);
-			const zoom = $configStore.location.zoom ?? style.zoom ?? 0;
-			const bearing = $configStore.location.bearing ?? style.bearing ?? 0;
-			const pitch = $configStore.location.pitch ?? style.pitch ?? 0;
+			const zoom = isCustomisedLocationAvailable ? $configStore.location.zoom : (style.zoom ?? 0);
+			const bearing = isCustomisedLocationAvailable
+				? ($configStore.location.bearing ?? 0)
+				: (style.bearing ?? 0);
+			const pitch = isCustomisedLocationAvailable
+				? ($configStore.location.pitch ?? 0)
+				: (style.pitch ?? 0);
 
 			$mapStore.setBearing(bearing);
 			$mapStore.setPitch(pitch);
