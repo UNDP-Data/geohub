@@ -35,7 +35,7 @@
 		"@storybook/svelte": "^8.3.4",
 		"@storybook/sveltekit": "^8.3.4",
 		"@storybook/test": "^8.3.4",
-		"@sveltejs/adapter-auto": "^3.2.5",
+		"@sveltejs/adapter-auto": "^4.0.0",
 		"@sveltejs/kit": "^2.6.1",
 		"@sveltejs/package": "^2.3.5",
 		"@sveltejs/vite-plugin-svelte": "^3.1.2",
