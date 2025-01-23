@@ -10,51 +10,62 @@
 	import { Switch } from '@undp-data/svelte-undp-design';
 	import debounce from 'debounce';
 	import type { Map } from 'maplibre-gl';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import { PageSizes, supportedExtensions } from './constants/index.js';
 	import { PageOrientations } from './constants/pageOrientations.js';
 	import { mm2pixel } from './helpers/index.js';
 	import type { ControlOptions } from './interface/ControlOptions.ts';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		/**
+		 * Maplibre Map object
+		 */
+		map: Map;
+		/**
+		 * If true, show control
+		 */
+		show?: boolean;
+		/**
+		 * Style JSON URL (optional)
+		 */
+		style: string;
+		/**
+		 * GeoHub Static Image API URL
+		 * https://staticimage.undpgeohub.org/api
+		 */
+		apiBase: string;
+		/**
+		 * Optional values
+		 */
+		options?: ControlOptions;
+		/**
+		 * if enabled, show advanced settings
+		 */
+		showAdvanced?: boolean;
+		/**
+		 * If true, make API types (Center, BBOX, Auto) hiddden
+		 */
+		hiddenApiTypes?: boolean;
 
-	/**
-	 * Maplibre Map object
-	 */
-	export let map: Map;
+		/**
+		 * onChange event when static api URL is changed
+		 * @param url Static API URL href
+		 */
+		onchange?: (url: string) => void;
+	}
 
-	/**
-	 * If true, show control
-	 */
-	export let show = false;
+	let {
+		map = $bindable(),
+		show = $bindable(false),
+		style = $bindable(),
+		apiBase = $bindable(),
+		options = $bindable({}),
+		showAdvanced = $bindable(false),
+		hiddenApiTypes = $bindable(false),
+		onchange = () => {}
+	}: Props = $props();
 
-	/**
-	 * Style JSON URL (optional)
-	 */
-	export let style: string;
-
-	/**
-	 * GeoHub Static Image API URL
-	 * https://staticimage.undpgeohub.org/api
-	 */
-	export let apiBase: string;
-
-	/**
-	 * Optional values
-	 */
-	export let options: ControlOptions = {};
-
-	/**
-	 * if enabled, show advanced settings
-	 */
-	export let showAdvanced = false;
-
-	/**
-	 * If true, make API types (Center, BBOX, Auto) hiddden
-	 */
-	export let hiddenApiTypes = false;
-
-	let previewContainer: HTMLDivElement;
+	let previewContainer: HTMLDivElement | undefined = $state();
 
 	const defaultOptions: ControlOptions = {
 		width: 300,
@@ -72,15 +83,15 @@
 		orientation: 'portrait'
 	};
 
-	let width: number;
-	let height: number;
-	let defaultSize: [number, number];
-	let selectedPageName: string;
-	let selectedOrientation: 'portrait' | 'landscape';
+	let width: number = $state(0);
+	let height: number = $state(0);
+	let defaultSize: [number, number] = $state(PageSizes['A4']);
+	let selectedPageName: string = $state('');
+	let selectedOrientation: 'portrait' | 'landscape' = $state('portrait');
 
 	let apiUrl: string;
 
-	let tabs: Tab[] = [
+	let tabs: Tab[] = $state([
 		{
 			id: 'center',
 			label: 'center'
@@ -93,11 +104,12 @@
 			id: 'auto',
 			label: 'auto'
 		}
-	];
+	]);
 
-	let activeTab = tabs[0].id as 'center' | 'bbox' | 'auto';
+	let activeTab = $state('center');
 
 	onMount(() => {
+		if (!previewContainer) return;
 		options = Object.assign(defaultOptions, options);
 
 		if (options.width && options.height) {
@@ -120,8 +132,6 @@
 		updateApiUrl();
 	});
 
-	$: selectedOrientation, handlePageSizeChanged();
-	$: selectedPageName, handlePageSizeChanged();
 	const handlePageSizeChanged = () => {
 		if (!map) return;
 		if (selectedPageName in PageSizes) {
@@ -140,7 +150,6 @@
 		updateApiUrl();
 	};
 
-	$: style, handleStyleChanged();
 	const handleStyleChanged = () => {
 		updateApiUrl();
 	};
@@ -196,9 +205,7 @@
 			url.searchParams.set('ratio', `${options.ratio}`);
 		}
 
-		dispatch('change', {
-			url: url.href
-		});
+		if (onchange) onchange(url.href);
 	}, 300);
 
 	const handleActiveTabChanged = (tab: 'center' | 'bbox' | 'auto') => {
@@ -239,24 +246,33 @@
 			map.touchPitch.enable();
 		}
 	};
+	$effect(() => {
+		if (style) {
+			untrack(() => {
+				handleStyleChanged();
+			});
+		}
+	});
 </script>
 
 <div class="export-contents">
 	<FieldControl title="page size" showHelp={false} isFirstCharCapitalized={true}>
-		<div slot="control" class="control has-icons-left">
-			<div class="select is-fullwidth">
-				<select bind:value={selectedPageName}>
-					<option value="custom">Custom</option>
-					{#each Object.keys(PageSizes) as name}
-						{@const size = PageSizes[name]}
-						<option value={name}>{name} ({size[0]} mm x {size[1]} mm)</option>
-					{/each}
-				</select>
+		{#snippet control()}
+			<div class="control has-icons-left">
+				<div class="select is-fullwidth">
+					<select bind:value={selectedPageName} onchange={handlePageSizeChanged}>
+						<option value="custom">Custom</option>
+						{#each Object.keys(PageSizes) as name}
+							{@const size = PageSizes[name]}
+							<option value={name}>{name} ({size[0]} mm x {size[1]} mm)</option>
+						{/each}
+					</select>
+				</div>
+				<div class="icon is-small is-left">
+					<i class="fa-solid fa-file-lines"></i>
+				</div>
 			</div>
-			<div class="icon is-small is-left">
-				<i class="fa-solid fa-file-lines"></i>
-			</div>
-		</div>
+		{/snippet}
 	</FieldControl>
 
 	{#if selectedPageName !== 'custom'}
@@ -264,67 +280,76 @@
 			return { title: o, value: o };
 		})}
 		<FieldControl title="Orientation" showHelp={false} isFirstCharCapitalized={true}>
-			<div slot="control">
-				<SegmentButtons
-					size="small"
-					capitalized={true}
-					fontWeight="semibold"
-					buttons={orientationButtons}
-					bind:selected={selectedOrientation}
-				/>
-			</div>
+			{#snippet control()}
+				<div>
+					<SegmentButtons
+						size="small"
+						capitalized={true}
+						fontWeight="semibold"
+						buttons={orientationButtons}
+						bind:selected={selectedOrientation}
+						on:change={handlePageSizeChanged}
+					/>
+				</div>
+			{/snippet}
 		</FieldControl>
 	{/if}
 
 	{#if selectedPageName === 'custom'}
 		<div class="is-flex">
 			<FieldControl title="Width" showHelp={false} isFirstCharCapitalized={true}>
-				<div slot="control" class="mr-2">
-					<div class="control is-flex is-align-items-center">
-						<input
-							class="input is-small"
-							type="number"
-							placeholder="Type width"
-							bind:value={width}
-							on:change={handleMoveend}
-						/>
-						<span class="pl-1">px</span>
+				{#snippet control()}
+					<div class="mr-2">
+						<div class="control is-flex is-align-items-center">
+							<input
+								class="input is-small"
+								type="number"
+								placeholder="Type width"
+								bind:value={width}
+								onchange={handleMoveend}
+							/>
+							<span class="pl-1">px</span>
+						</div>
 					</div>
-				</div>
+				{/snippet}
 			</FieldControl>
 
 			<FieldControl title="Height" showHelp={false} isFirstCharCapitalized={true}>
-				<div slot="control">
-					<div class="control is-flex is-align-items-center">
-						<input
-							class="input is-small"
-							type="number"
-							placeholder="Type height"
-							bind:value={height}
-							on:change={handleMoveend}
-						/>
-						<span class="pl-1">px</span>
+				{#snippet control()}
+					<div>
+						<div class="control is-flex is-align-items-center">
+							<input
+								class="input is-small"
+								type="number"
+								placeholder="Type height"
+								bind:value={height}
+								onchange={handleMoveend}
+							/>
+							<span class="pl-1">px</span>
+						</div>
 					</div>
-				</div>
+				{/snippet}
 			</FieldControl>
 		</div>
 	{/if}
 
 	<FieldControl title="High resolution" showHelp={false} isFirstCharCapitalized={true}>
-		<div slot="control">
-			<SegmentButtons
-				size="small"
-				capitalized={true}
-				buttons={[
-					{ title: '@1x', value: 1 },
-					{ title: '@2x', value: 2 },
-					{ title: '@3x', value: 3 },
-					{ title: '@4x', value: 4 }
-				]}
-				bind:selected={options.ratio}
-				on:change={updateApiUrl}
-			/>
-		</div>
+		{#snippet control()}
+			<div>
+				<SegmentButtons
+					size="small"
+					capitalized={true}
+					buttons={[
+						{ title: '@1x', value: 1 },
+						{ title: '@2x', value: 2 },
+						{ title: '@3x', value: 3 },
+						{ title: '@4x', value: 4 }
+					]}
+					bind:selected={options.ratio}
+					on:change={updateApiUrl}
+				/>
+			</div>
+		{/snippet}
 	</FieldControl>
 
 	<span class="is-flex my-2">
@@ -336,17 +361,19 @@
 
 	{#if showAdvanced}
 		<FieldControl title="File extension" showHelp={false} isFirstCharCapitalized={true}>
-			<div slot="control">
-				<SegmentButtons
-					size="small"
-					uppercase={true}
-					buttons={supportedExtensions.map((e) => {
-						return { title: e, value: e };
-					})}
-					bind:selected={options.extension}
-					on:change={updateApiUrl}
-				/>
-			</div>
+			{#snippet control()}
+				<div>
+					<SegmentButtons
+						size="small"
+						uppercase={true}
+						buttons={supportedExtensions.map((e) => {
+							return { title: e, value: e };
+						})}
+						bind:selected={options.extension}
+						on:change={updateApiUrl}
+					/>
+				</div>
+			{/snippet}
 		</FieldControl>
 		{#if !hiddenApiTypes}
 			<Tabs
@@ -363,32 +390,52 @@
 			<div class="p-1" hidden={options.defaultApi !== 'center'}>
 				<div class="is-flex">
 					<FieldControl title="longitude" showHelp={false} isFirstCharCapitalized={true}>
-						<div slot="control">
-							<input class="input is-small" type="number" bind:value={options.longitude} readonly />
-						</div>
+						{#snippet control()}
+							<div>
+								<input
+									class="input is-small"
+									type="number"
+									bind:value={options.longitude}
+									readonly
+								/>
+							</div>
+						{/snippet}
 					</FieldControl>
 					<FieldControl title="latitude" showHelp={false} isFirstCharCapitalized={true}>
-						<div slot="control">
-							<input class="input is-small" type="number" bind:value={options.latitude} readonly />
-						</div>
+						{#snippet control()}
+							<div>
+								<input
+									class="input is-small"
+									type="number"
+									bind:value={options.latitude}
+									readonly
+								/>
+							</div>
+						{/snippet}
 					</FieldControl>
 				</div>
 
 				<div class="is-flex">
 					<FieldControl title="zoom level" showHelp={false} isFirstCharCapitalized={true}>
-						<div slot="control">
-							<input class="input is-small" type="number" bind:value={options.zoom} readonly />
-						</div>
+						{#snippet control()}
+							<div>
+								<input class="input is-small" type="number" bind:value={options.zoom} readonly />
+							</div>
+						{/snippet}
 					</FieldControl>
 					<FieldControl title="bearing" showHelp={false} isFirstCharCapitalized={true}>
-						<div slot="control">
-							<input class="input is-small" type="number" bind:value={options.bearing} readonly />
-						</div>
+						{#snippet control()}
+							<div>
+								<input class="input is-small" type="number" bind:value={options.bearing} readonly />
+							</div>
+						{/snippet}
 					</FieldControl>
 					<FieldControl title="pitch" showHelp={false} isFirstCharCapitalized={true}>
-						<div slot="control">
-							<input class="input is-small" type="number" bind:value={options.pitch} readonly />
-						</div>
+						{#snippet control()}
+							<div>
+								<input class="input is-small" type="number" bind:value={options.pitch} readonly />
+							</div>
+						{/snippet}
 					</FieldControl>
 				</div>
 			</div>
@@ -399,29 +446,37 @@
 
 					<div class="is-flex">
 						<FieldControl title="min longitude" showHelp={false} isFirstCharCapitalized={true}>
-							<div slot="control">
-								<input class="input is-small" type="number" value={bbox[0]} readonly />
-							</div>
+							{#snippet control()}
+								<div>
+									<input class="input is-small" type="number" value={bbox[0]} readonly />
+								</div>
+							{/snippet}
 						</FieldControl>
 
 						<FieldControl title="max longitude" showHelp={false} isFirstCharCapitalized={true}>
-							<div slot="control">
-								<input class="input is-small" type="number" value={bbox[2]} readonly />
-							</div>
+							{#snippet control()}
+								<div>
+									<input class="input is-small" type="number" value={bbox[2]} readonly />
+								</div>
+							{/snippet}
 						</FieldControl>
 					</div>
 
 					<div class="is-flex">
 						<FieldControl title="min latitude" showHelp={false} isFirstCharCapitalized={true}>
-							<div slot="control">
-								<input class="input is-small" type="number" value={bbox[1]} readonly />
-							</div>
+							{#snippet control()}
+								<div>
+									<input class="input is-small" type="number" value={bbox[1]} readonly />
+								</div>
+							{/snippet}
 						</FieldControl>
 
 						<FieldControl title="max latitude" showHelp={false} isFirstCharCapitalized={true}>
-							<div slot="control">
-								<input class="input is-small" type="number" value={bbox[3]} readonly />
-							</div>
+							{#snippet control()}
+								<div>
+									<input class="input is-small" type="number" value={bbox[3]} readonly />
+								</div>
+							{/snippet}
 						</FieldControl>
 					</div>
 				{/if}
@@ -442,7 +497,7 @@
 	class="preview"
 	style="width:{width}px; height:{height}px"
 	hidden={!show}
-/>
+></div>
 
 <style lang="scss">
 	.export-contents {
