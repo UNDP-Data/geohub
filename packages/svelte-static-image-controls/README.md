@@ -17,7 +17,7 @@ Use `MaplibreStaticImageControl` class if you want to add a control of maplibre.
 ```svelte
 <script lang="ts">
 	import { MaplibreStaticImageControl } from '@undp-data/svelte-geohub-static-image-controls';
-	import '@undp-data/undp-bulma/dist/style.css';
+	import '@undp-data/undp-bulma/dist/undp-bulma.css';
 	import { Map } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { onMount } from 'svelte';

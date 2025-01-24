@@ -2,7 +2,7 @@
 	import { MaplibreStaticImageControl } from '$lib';
 	import type { ControlOptions } from '$lib/interface/index.js';
 	import { CopyToClipboard } from '@undp-data/svelte-undp-components';
-	import '@undp-data/undp-bulma/dist/style.css';
+	import '@undp-data/undp-bulma/dist/undp-bulma.css';
 	import { addProtocol, Map, NavigationControl, ScaleControl } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import * as pmtiles from 'pmtiles';
