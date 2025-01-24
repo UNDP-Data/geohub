@@ -1,4 +1,4 @@
-import '@undp-data/undp-bulma/dist/style.css';
+import '@undp-data/undp-bulma/dist/undp-bulma.css';
 
 export const parameters = {
 	backgrounds: {

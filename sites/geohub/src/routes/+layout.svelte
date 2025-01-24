@@ -67,5 +67,5 @@
 {@render children?.()}
 
 <style global lang="scss">
-	@import '@undp-data/undp-bulma/dist/style.css';
+	@import '@undp-data/undp-bulma/dist/undp-bulma.css';
 </style>
