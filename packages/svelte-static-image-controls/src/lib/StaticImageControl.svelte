@@ -129,7 +129,7 @@
 
 		map.getContainer().appendChild(previewContainer);
 		map.on('moveend', handleMoveend);
-		updateApiUrl();
+		handlePageSizeChanged();
 	});
 
 	const handlePageSizeChanged = () => {

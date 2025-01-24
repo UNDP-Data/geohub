@@ -98,7 +98,6 @@
 
 	let control: MaplibreStaticApiControl | undefined = $state();
 	let buttonDiv: HTMLDivElement | undefined = $state();
-	let contentDiv: HTMLDivElement | undefined = $state();
 
 	let dragOptions: DragOptions = {
 		bounds: map.getContainer()
@@ -122,6 +121,11 @@
 			control = undefined;
 		}
 	});
+
+	const handleUrlChanged = (url: string) => {
+		apiUrl = url;
+		if (onchange) onchange(apiUrl);
+	};
 
 	const handleExport = async () => {
 		try {
@@ -164,11 +168,7 @@
 	</button>
 </div>
 
-<div
-	class="static-control {show ? 'is-active' : ''}"
-	bind:this={contentDiv}
-	use:draggable={dragOptions}
->
+<div class="static-control {show ? 'is-active' : ''}" use:draggable={dragOptions}>
 	<FloatingPanel
 		{title}
 		showExpand={true}
@@ -186,7 +186,7 @@
 				bind:showAdvanced
 				bind:options
 				bind:hiddenApiTypes
-				{onchange}
+				onchange={handleUrlChanged}
 			/>
 
 			{#if apiUrl}
