@@ -82,8 +82,8 @@
 		replaceState(url, '');
 	};
 
-	const handleUrlChanged = (e: { detail: { url: string } }) => {
-		staticApiUrl = e.detail.url;
+	const handleUrlChanged = (url: string) => {
+		staticApiUrl = url;
 	};
 	const handleExport = async () => {
 		try {
@@ -176,7 +176,7 @@
 			showAdvanced={true}
 			hiddenApiTypes={true}
 			bind:options={exportOptions}
-			on:change={handleUrlChanged}
+			onchange={handleUrlChanged}
 		/>
 
 		{#if staticApiUrl}
