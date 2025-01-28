@@ -1,22 +1,31 @@
 <script lang="ts">
 	import Breadcrumbs, { type BreadcrumbPage } from './Breadcrumbs.svelte';
-	import MenuButton, {
-		type MenuButton as MenuButtonType,
-		type MenuSubButton
-	} from './MenuButton.svelte';
+	import MenuButton, { type MenuButtonType, type MenuSubButtonType } from './MenuButton.svelte';
 	import Tabs, { type Tab } from './Tabs.svelte';
 
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
-	export let title: string;
-	export let icon = '';
-	export let breadcrumbs: BreadcrumbPage[];
-	export let tabs: Tab[] = [];
-	export let activeTab = '';
-	export let button: MenuButtonType | undefined = undefined;
-	export let subButtons: MenuSubButton[] | undefined = undefined;
+	interface Props {
+		title: string;
+		icon?: string;
+		breadcrumbs: BreadcrumbPage[];
+		tabs?: Tab[];
+		activeTab?: string;
+		button?: MenuButtonType | undefined;
+		subButtons?: MenuSubButtonType[] | undefined;
+	}
+
+	let {
+		title = $bindable(),
+		icon = $bindable(''),
+		breadcrumbs = $bindable(),
+		tabs = $bindable([]),
+		activeTab = $bindable(''),
+		button = $bindable(undefined),
+		subButtons = $bindable(undefined)
+	}: Props = $props();
 
 	const handleBreadcrumbClicked = (e: { detail: BreadcrumbPage }) => {
 		dispatch('breadcrumbClicked', e.detail);

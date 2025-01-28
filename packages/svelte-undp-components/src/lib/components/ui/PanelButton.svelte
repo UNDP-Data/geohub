@@ -1,13 +1,27 @@
 <script lang="ts">
 	import { initTippy, initTooltipTippy } from '$lib/util/initTippy.js';
 
-	export let icon: string;
-	export let iconDisabled = '';
-	export let width: string;
-	export let tooltip: string;
-	export let disabled = false;
-	export let isShow = false;
-	export let hideBorder = true;
+	interface Props {
+		icon: string;
+		iconDisabled?: string;
+		width: string;
+		tooltip: string;
+		disabled?: boolean;
+		isShow?: boolean;
+		hideBorder?: boolean;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		icon = $bindable(),
+		iconDisabled = $bindable(''),
+		width = $bindable(),
+		tooltip = $bindable(),
+		disabled = $bindable(false),
+		isShow = $bindable(false),
+		hideBorder = $bindable(true),
+		children
+	}: Props = $props();
 
 	const tippy = initTippy({
 		placement: 'bottom-end',
@@ -24,7 +38,7 @@
 			});
 		}
 	});
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
 	const tippyTooltip = initTooltipTippy();
 </script>
@@ -43,7 +57,7 @@
 
 	<div class="tooltip" data-testid="tooltip" style="width: {width}" bind:this={tooltipContent}>
 		<div class="panel container p-2" style="width: {width}">
-			<slot />
+			{@render children?.()}
 		</div>
 	</div>
 </div>

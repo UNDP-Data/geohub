@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	/**
 	 * Colormap types
 	 */
@@ -103,21 +103,30 @@
 <script lang="ts">
 	import chroma from 'chroma-js';
 
-	export let colorMapName: string;
-	export let colorMapType: ColorMapTypes;
-	export let isCardStyle = true;
-	export let isSelected: boolean;
-	export let isReverseColors = false;
-
-	let cardStyle: string;
-
-	$: {
-		if (colorMapName) setCardStyle();
+	interface Props {
+		colorMapName: string;
+		colorMapType: ColorMapTypes;
+		isCardStyle?: boolean;
+		isSelected: boolean;
+		isReverseColors?: boolean;
 	}
+
+	let {
+		colorMapName = $bindable(),
+		colorMapType = $bindable(),
+		isCardStyle = $bindable(true),
+		isSelected = $bindable(),
+		isReverseColors = $bindable(false)
+	}: Props = $props();
+
+	let cardStyle: string = $state('');
 
 	const setCardStyle = () => {
 		cardStyle = colorMapStyle(colorMapType, colorMapName, isCardStyle, isReverseColors);
 	};
+	$effect(() => {
+		if (colorMapName) setCardStyle();
+	});
 </script>
 
 <div class="card" data-testid="color-map-picker-card-container">

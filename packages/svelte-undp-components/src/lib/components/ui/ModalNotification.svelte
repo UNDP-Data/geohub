@@ -4,16 +4,31 @@
 	import Notification from './Notification.svelte';
 
 	const dispatch = createEventDispatcher();
-	export let dialogOpen = false;
-	export let title: string;
-	export let message: string;
-	export let messageType: 'warning' | 'info' | 'danger' = 'warning';
-	export let target = '';
-	export let continueText = 'continue';
-	export let cancelText = 'cancel';
-	export let showIcon = false;
-	export let continueColor: 'primary' | 'link' | 'none' = 'primary';
-	export let cancelColor: 'primary' | 'link' | 'none' = 'none';
+	interface Props {
+		dialogOpen?: boolean;
+		title: string;
+		message: string;
+		messageType?: 'warning' | 'info' | 'danger';
+		target?: string;
+		continueText?: string;
+		cancelText?: string;
+		showIcon?: boolean;
+		continueColor?: 'primary' | 'link' | 'none';
+		cancelColor?: 'primary' | 'link' | 'none';
+	}
+
+	let {
+		dialogOpen = $bindable(false),
+		title = $bindable(),
+		message = $bindable(),
+		messageType = $bindable('warning'),
+		target = $bindable(''),
+		continueText = $bindable('continue'),
+		cancelText = $bindable('cancel'),
+		showIcon = $bindable(false),
+		continueColor = $bindable('primary'),
+		cancelColor = $bindable('none')
+	}: Props = $props();
 
 	const handleCancel = () => {
 		dialogOpen = false;
@@ -27,38 +42,42 @@
 </script>
 
 <ModalTemplate {title} bind:show={dialogOpen}>
-	<div slot="content">
-		<Notification type={messageType} showCloseButton={false} bind:showIcon>
-			<div class="has-text-weight-medium">
-				{message}
-				<br />
-				<p>{target ? target : ''}</p>
+	{#snippet content()}
+		<div>
+			<Notification type={messageType} showCloseButton={false} bind:showIcon>
+				<div class="has-text-weight-medium">
+					{message}
+					<br />
+					<p>{target ? target : ''}</p>
+				</div>
+			</Notification>
+		</div>
+	{/snippet}
+	{#snippet buttons()}
+		<div class="is-flex">
+			<div class="footer-button mr-2">
+				<button
+					class="button {continueColor === 'none'
+						? ''
+						: `is-${continueColor}`} is-uppercase has-text-weight-bold"
+					onclick={handleContinue}
+				>
+					{continueText}
+				</button>
 			</div>
-		</Notification>
-	</div>
-	<div class="is-flex" slot="buttons">
-		<div class="footer-button mr-2">
-			<button
-				class="button {continueColor === 'none'
-					? ''
-					: `is-${continueColor}`} is-uppercase has-text-weight-bold"
-				on:click={handleContinue}
-			>
-				{continueText}
-			</button>
+			<div class="footer-button">
+				<button
+					data-testid="cancel-button"
+					class="cancel-button button is-uppercase has-text-weight-bold {cancelColor === 'none'
+						? 'is-light'
+						: `is-${cancelColor}`}"
+					onclick={handleCancel}
+				>
+					{cancelText}
+				</button>
+			</div>
 		</div>
-		<div class="footer-button">
-			<button
-				data-testid="cancel-button"
-				class="cancel-button button is-uppercase has-text-weight-bold {cancelColor === 'none'
-					? 'is-light'
-					: `is-${cancelColor}`}"
-				on:click={handleCancel}
-			>
-				{cancelText}
-			</button>
-		</div>
-	</div>
+	{/snippet}
 </ModalTemplate>
 
 <style lang="scss">

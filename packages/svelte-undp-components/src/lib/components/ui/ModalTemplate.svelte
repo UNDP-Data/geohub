@@ -2,11 +2,25 @@
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { fade } from 'svelte/transition';
 
-	export let title: string;
-	export let show = false;
-	export let showClose = true;
-	export let hiddenButtons = false;
-	export let width = '';
+	interface Props {
+		title: string;
+		show?: boolean;
+		showClose?: boolean;
+		hiddenButtons?: boolean;
+		width?: string;
+		content?: import('svelte').Snippet;
+		buttons?: import('svelte').Snippet;
+	}
+
+	let {
+		title = $bindable(),
+		show = $bindable(false),
+		showClose = $bindable(true),
+		hiddenButtons = $bindable(false),
+		width = $bindable(''),
+		content,
+		buttons
+	}: Props = $props();
 
 	const close = () => {
 		if (!showClose) return;
@@ -22,30 +36,30 @@
 	};
 </script>
 
-<svelte:window on:keydown={handleEnterEscape} />
+<svelte:window onkeydown={handleEnterEscape} />
 
 <div class="modal {show ? 'is-active' : ''}" transition:fade|global>
 	<div
 		class="modal-background {showClose ? 'close' : ''}"
 		role="none"
-		on:click={close}
-		on:keydown={handleEnterKey}
+		onclick={close}
+		onkeydown={handleEnterKey}
 	></div>
 
 	<div class="modal-card" style={width ? `width: ${width};` : ''}>
 		<section class="modal-card-body">
 			{#if showClose}
-				<button class="delete is-large" aria-label="close" title="Close" on:click={close}></button>
+				<button class="delete is-large" aria-label="close" title="Close" onclick={close}></button>
 			{/if}
 			<div class="mx-4">
 				<h5 class="title is-5 mb-0">{title}</h5>
 
 				<div class="my-5">
-					<slot name="content" />
+					{@render content?.()}
 				</div>
 
 				<div class="pt-4" hidden={hiddenButtons}>
-					<slot name="buttons" />
+					{@render buttons?.()}
 				</div>
 			</div>
 		</section>

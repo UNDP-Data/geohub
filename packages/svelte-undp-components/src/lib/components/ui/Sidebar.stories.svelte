@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import Sidebar from './Sidebar.svelte';
 
@@ -17,8 +17,12 @@
 
 {#snippet template(args)}
 	<Sidebar {...args}>
-		<div slot="content">sidebar content</div>
-		<div slot="main">main content</div>
+		{#snippet content()}
+			<div>sidebar content</div>
+		{/snippet}
+		{#snippet main()}
+			<div>main content</div>
+		{/snippet}
 	</Sidebar>
 {/snippet}
 

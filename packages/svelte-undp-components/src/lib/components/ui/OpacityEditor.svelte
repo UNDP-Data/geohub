@@ -3,14 +3,18 @@
 	import { createEventDispatcher } from 'svelte';
 	import Slider from './Slider.svelte';
 
-	export let opacity = 1;
-	export let showOpacity = true;
+	interface Props {
+		opacity?: number;
+		showOpacity?: boolean;
+	}
+
+	let { opacity = $bindable(1), showOpacity = $bindable(true) }: Props = $props();
 
 	const dispatch = createEventDispatcher();
 	const tippy = initTippy({});
 	const tippyTooltip = initTooltipTippy();
 
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
 	const handleChanged = (e: { detail: { values: number[] } }) => {
 		const values = e.detail.values;
@@ -57,7 +61,7 @@
 
 	<button
 		class="mt-1"
-		on:click={handleVisibilityChanged}
+		onclick={handleVisibilityChanged}
 		use:tippyTooltip={{ content: 'Change layer visibility' }}
 	>
 		{#if opacity === 0}

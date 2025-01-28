@@ -2,11 +2,21 @@
 	import * as d3 from 'd3';
 	import { onMount } from 'svelte';
 
-	export let counts: number[];
-	export let bins: number[];
-	export let unit = '';
-	export let xLabel = '';
-	export let yLabel = '';
+	interface Props {
+		counts: number[];
+		bins: number[];
+		unit?: string;
+		xLabel?: string;
+		yLabel?: string;
+	}
+
+	let {
+		counts = $bindable(),
+		bins = $bindable(),
+		unit = $bindable(''),
+		xLabel = $bindable(''),
+		yLabel = $bindable('')
+	}: Props = $props();
 
 	// Chart dimensions
 	const width = 300;
@@ -16,7 +26,7 @@
 	const marginBottom = 30;
 	const marginLeft = 40;
 
-	let diagramElement: HTMLDivElement;
+	let diagramElement: HTMLDivElement | undefined = $state();
 
 	onMount(() => {
 		const [minCount, maxCount] = [Math.min(...counts), Math.max(...counts)];

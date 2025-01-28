@@ -6,18 +6,32 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let title: string;
-	export let isExpanded: boolean;
-	export let isSelected = false;
-	export let showHoveredColor = false;
-	export let isUppercase = true;
-	export let padding = 'px-4';
+	interface Props {
+		title: string;
+		isExpanded: boolean;
+		isSelected?: boolean;
+		showHoveredColor?: boolean;
+		isUppercase?: boolean;
+		padding?: string;
+		buttons?: import('svelte').Snippet;
+		content?: import('svelte').Snippet;
+	}
+
+	let {
+		title = $bindable(),
+		isExpanded = $bindable(),
+		isSelected = $bindable(false),
+		showHoveredColor = $bindable(false),
+		isUppercase = $bindable(true),
+		padding = $bindable('px-4'),
+		buttons,
+		content
+	}: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();
 
-	let isHovered = false;
+	let isHovered = $state(false);
 
-	$: isExpanded, handleToggleChanged();
 	const handleToggleChanged = () => {
 		dispatch('toggled', {
 			isExpanded: isExpanded
@@ -37,10 +51,10 @@
 	}`}"
 	role="menuitem"
 	tabindex="-1"
-	on:mouseenter={() => {
+	onmouseenter={() => {
 		isHovered = true;
 	}}
-	on:mouseleave={() => {
+	onmouseleave={() => {
 		isHovered = false;
 	}}
 >
@@ -50,9 +64,10 @@
 			use:tippyTooltip={{ content: title }}
 			role="button"
 			tabindex="0"
-			on:keydown={handleEnterKey}
-			on:click={() => {
+			onkeydown={handleEnterKey}
+			onclick={() => {
 				isExpanded = !isExpanded;
+				handleToggleChanged();
 			}}
 		>
 			<span class="mr-2">
@@ -63,11 +78,11 @@
 			<span class="has-text-grey-dark">{clean(title, isUppercase)}</span>
 		</span>
 
-		<slot name="buttons" />
+		{@render buttons?.()}
 	</div>
 
 	<div class="content pb-2" hidden={!isExpanded}>
-		<slot name="content" />
+		{@render content?.()}
 	</div>
 </div>
 

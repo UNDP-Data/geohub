@@ -1,14 +1,24 @@
 <script lang="ts">
 	import { initTooltipTippy } from '$lib/util/initTippy.js';
 
-	export let maxWidth = 300;
-	export let type: 'info' | 'help' = 'info';
-	export let size: 'small' | 'normal' | 'medium' | 'large' = 'small';
+	interface Props {
+		maxWidth?: number;
+		type?: 'info' | 'help';
+		size?: 'small' | 'normal' | 'medium' | 'large';
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		maxWidth = $bindable(300),
+		type = $bindable('info'),
+		size = $bindable('small'),
+		children
+	}: Props = $props();
 
 	const tippy = initTooltipTippy({
 		maxWidth
 	});
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 </script>
 
 <div class="help icon m-0" role="button" use:tippy={{ content: tooltipContent }}>
@@ -22,7 +32,7 @@
 </div>
 
 <div bind:this={tooltipContent} data-testid="help-tooltip-content" class="tooltip p-2">
-	<slot />
+	{@render children?.()}
 </div>
 
 <style lang="scss">

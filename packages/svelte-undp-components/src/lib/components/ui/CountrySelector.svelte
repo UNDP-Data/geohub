@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	export interface Country {
 		iso_3: string;
 		iso_code: number;
@@ -21,17 +21,29 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let selected: string[] = [];
-	export let showOnlyExists = false;
-	export let geohubOrigin = '';
-	export let placeholder = 'Type country name or ISO code';
-	export let continents: number[] = [];
-	export let regions: number[] = [];
-	export let showSelectedCountries = true;
+	interface Props {
+		selected?: string[];
+		showOnlyExists?: boolean;
+		geohubOrigin?: string;
+		placeholder?: string;
+		continents?: number[];
+		regions?: number[];
+		showSelectedCountries?: boolean;
+	}
 
-	let query = '';
+	let {
+		selected = $bindable([]),
+		showOnlyExists = $bindable(false),
+		geohubOrigin = $bindable(''),
+		placeholder = $bindable('Type country name or ISO code'),
+		continents = $bindable([]),
+		regions = $bindable([]),
+		showSelectedCountries = $bindable(true)
+	}: Props = $props();
 
-	let isLoading = false;
+	let query = $state('');
+
+	let isLoading = $state(false);
 	let tippy = initTippy({
 		appendTo: document.body,
 		maxWidth: 500,
@@ -40,10 +52,10 @@
 		arrow: false,
 		offset: [0, 0]
 	});
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
 	let countries: Country[] = [];
-	let countriesFiltered: Country[] = [];
+	let countriesFiltered: Country[] = $state([]);
 
 	const handleInput = debounce(() => {
 		const regionFiltered = applyContinentRegionFilter(countries);
@@ -115,8 +127,8 @@
 		placeholder={selected.length === 0
 			? placeholder
 			: `${selected.length} ${selected.length === 1 ? 'country is' : 'countries are'} selected`}
-		on:input={handleInput}
-		on:keydown={handleEnterKey}
+		oninput={handleInput}
+		onkeydown={handleEnterKey}
 		use:tippy={{ content: tooltipContent }}
 	/>
 	<span class="icon is-small is-left">
@@ -131,7 +143,7 @@
 				{#each selected as iso3}
 					<div class="cell">
 						<Chips
-							bind:label={iso3}
+							label={iso3}
 							showDelete={true}
 							on:delete={() => {
 								handleDeleteCountry(iso3);
@@ -158,7 +170,7 @@
 							class="ml-auto"
 							type="checkbox"
 							checked={isSelected}
-							on:change={() => {
+							onchange={() => {
 								handleCountrySelected(country);
 							}}
 						/>

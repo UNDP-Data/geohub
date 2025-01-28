@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	export interface SegmentButton {
 		title: string;
 		value: string | number | string[] | number[];
@@ -9,16 +9,31 @@
 
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	export let buttons: SegmentButton[];
-	export let selected: string | number | undefined = undefined;
-	export let multiSelect = false;
-	export let selectedItems: { [key: string | number]: boolean } = {};
-	export let wrap = false;
-	export let size: 'small' | 'normal' | 'medium' | 'large' = 'normal';
-	export let capitalized = false;
-	export let uppercase = false;
-	export let fontWeight: 'light' | 'normal' | 'medium' | 'semibold' | 'bold' = 'normal';
-	export let activeColor = 'is-black';
+	interface Props {
+		buttons: SegmentButton[];
+		selected?: string | number | undefined;
+		multiSelect?: boolean;
+		selectedItems?: { [key: string | number]: boolean };
+		wrap?: boolean;
+		size?: 'small' | 'normal' | 'medium' | 'large';
+		capitalized?: boolean;
+		uppercase?: boolean;
+		fontWeight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
+		activeColor?: string;
+	}
+
+	let {
+		buttons = $bindable(),
+		selected = $bindable(undefined),
+		multiSelect = $bindable(false),
+		selectedItems = $bindable({}),
+		wrap = $bindable(false),
+		size = $bindable('normal'),
+		capitalized = $bindable(false),
+		uppercase = $bindable(false),
+		fontWeight = $bindable('normal'),
+		activeColor = $bindable('is-black')
+	}: Props = $props();
 
 	const dispatch = createEventDispatcher();
 
@@ -31,7 +46,7 @@
 				value: e.value
 			});
 		} else {
-			selected = e.value;
+			selected = e.value as string | number;
 			dispatch('change', {
 				value: selected
 			});
@@ -45,10 +60,10 @@
 			<button
 				type="button"
 				class="segment-button button is-{size} {(!multiSelect && selected === button.value) ||
-				(multiSelect && selectedItems[button.value])
+				(multiSelect && selectedItems[button.value as number])
 					? `${activeColor} is-active`
 					: ''}"
-				on:click={() => handleSelected(button)}
+				onclick={() => handleSelected(button)}
 				disabled={button.disabled ?? false}
 			>
 				{#if button.icon}

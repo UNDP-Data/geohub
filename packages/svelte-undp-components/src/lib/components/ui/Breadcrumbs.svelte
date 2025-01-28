@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	export interface BreadcrumbPage {
 		/** Title of breadcrumbs */
 		title: string;
@@ -17,16 +17,20 @@
 
 	const dispatch = createEventDispatcher();
 
-	/**
-	 * An array of BreadcrumbPage objects to be shown as breadcrumbs.
-	 * If `url` property is provided, it will be navigated to the web page linked.
-	 * If `url` is not provided, it will dispatch a click event instead.
-	 */
-	export let pages: BreadcrumbPage[];
-	/**
-	 * Size of breadcrumbs
-	 */
-	export let size: 'small' | 'normal' | 'medium' | 'large' = 'small';
+	interface Props {
+		/**
+		 * An array of BreadcrumbPage objects to be shown as breadcrumbs.
+		 * If `url` property is provided, it will be navigated to the web page linked.
+		 * If `url` is not provided, it will dispatch a click event instead.
+		 */
+		pages: BreadcrumbPage[];
+		/**
+		 * Size of breadcrumbs
+		 */
+		size?: 'small' | 'normal' | 'medium' | 'large';
+	}
+
+	let { pages = $bindable(), size = $bindable('small') }: Props = $props();
 
 	const handleClicked = (page: BreadcrumbPage) => {
 		dispatch('click', page);
@@ -38,7 +42,7 @@
 		{#each pages as page, index}
 			{#if index === pages.length - 1}
 				<li class="is-active">
-					<!-- svelte-ignore a11y-missing-attribute -->
+					<!-- svelte-ignore a11y_missing_attribute -->
 					<a
 						aria-current="page"
 						data-sveltekit-preload-data="off"
@@ -55,17 +59,17 @@
 				</li>
 			{:else}
 				<li>
-					<!-- svelte-ignore a11y-missing-attribute -->
+					<!-- svelte-ignore a11y_missing_attribute -->
 					<a
 						role="button"
 						tabindex="-1"
 						aria-current="page"
 						data-sveltekit-preload-data="off"
 						data-sveltekit-preload-code="off"
-						on:click={() => {
+						onclick={() => {
 							handleClicked(page);
 						}}
-						on:keydown={handleEnterKey}
+						onkeydown={handleEnterKey}
 					>
 						{page.title}
 					</a>

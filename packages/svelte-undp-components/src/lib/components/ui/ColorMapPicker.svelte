@@ -2,7 +2,7 @@
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { initTippy } from '$lib/util/initTippy.js';
 	import chroma from 'chroma-js';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, untrack } from 'svelte';
 	import ColorMapPickerCard, {
 		ColorMapTypes,
 		DivergingColorMaps,
@@ -11,12 +11,16 @@
 	} from './ColorMapPickerCard.svelte';
 	import Tabs, { type Tab } from './Tabs.svelte';
 
-	/**
-	 * ColorMap name
-	 */
-	export let colorMapName: string;
+	interface Props {
+		/**
+		 * ColorMap name
+		 */
+		colorMapName: string;
+	}
 
-	let isShow = false;
+	let { colorMapName = $bindable() }: Props = $props();
+
+	let isShow = $state(false);
 
 	const tippy = initTippy({
 		appendTo: document.body,
@@ -33,9 +37,9 @@
 			});
 		}
 	});
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
-	let isReverseColors = colorMapName.indexOf('_r') !== -1;
+	let isReverseColors = $state(colorMapName.indexOf('_r') !== -1);
 
 	const dispatch = createEventDispatcher();
 	const colorMapTypes = [
@@ -44,16 +48,19 @@
 		{ name: ColorMapTypes.QUALITATIVE, codes: QualitativeColorMaps }
 	];
 
-	let activeColorMapType: string =
+	let activeColorMapType: string = $state(
 		colorMapTypes
 			.map((type) =>
 				type.codes.find((code) => code === colorMapName.replace('_r', '')) ? type.name : null
 			)
-			.find((name) => name !== null) || colorMapTypes[0].name;
+			.find((name) => name !== null) || colorMapTypes[0].name
+	);
 
-	let tabs: Tab[] = colorMapTypes.map((type) => {
-		return { label: type.name, id: type.name };
-	});
+	let tabs: Tab[] = $state(
+		colorMapTypes.map((type) => {
+			return { label: type.name, id: type.name };
+		})
+	);
 
 	const handleColorMapClick = (cmName: string) => {
 		//the lines below if removed will break  all the components that use this component and bind
@@ -71,7 +78,7 @@
 		dispatch('change', { colorMapName: cmName });
 	};
 
-	let colorMapStyle = '';
+	let colorMapStyle = $state('');
 	const getColorMapStyle = () => {
 		const isReverse = colorMapName.indexOf('_r') !== -1;
 		let colorMap = chroma.scale(colorMapName.replace('_r', '')).mode('lrgb').colors(5, 'rgba');
@@ -80,7 +87,13 @@
 		}
 		colorMapStyle = `height: 40px; width: 100%; background: linear-gradient(90deg, ${colorMap});`;
 	};
-	$: colorMapName, getColorMapStyle();
+	$effect(() => {
+		if (colorMapName) {
+			untrack(() => {
+				getColorMapStyle();
+			});
+		}
+	});
 
 	const handleReverseColorsChanged = () => {
 		const isReverse = colorMapName.indexOf('_r') !== -1;
@@ -124,8 +137,8 @@
 							class="card {colorMapName.replace('_r', '') === cmName ? 'selected' : ''}"
 							role="button"
 							tabindex="0"
-							on:click={() => handleColorMapClick(cmName)}
-							on:keydown={handleEnterKey}
+							onclick={() => handleColorMapClick(cmName)}
+							onkeydown={handleEnterKey}
 						>
 							<ColorMapPickerCard
 								colorMapName={cmName}
@@ -142,11 +155,7 @@
 
 	<div class="mt-2">
 		<label class="checkbox is-flex is-align-items-center reverse-check">
-			<input
-				type="checkbox"
-				bind:checked={isReverseColors}
-				on:change={handleReverseColorsChanged}
-			/>
+			<input type="checkbox" bind:checked={isReverseColors} onchange={handleReverseColorsChanged} />
 			<span class="ml-1">Reverse colors</span>
 		</label>
 	</div>

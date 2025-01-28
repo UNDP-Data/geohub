@@ -6,11 +6,23 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let title: string;
-	export let isExpanded = true;
-	export let showExpand = true;
-	export let headerHeight = 48;
-	export let showClose = true;
+	interface Props {
+		title: string;
+		isExpanded?: boolean;
+		showExpand?: boolean;
+		headerHeight?: number;
+		showClose?: boolean;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		title = $bindable(),
+		isExpanded = $bindable(true),
+		showExpand = $bindable(true),
+		headerHeight = $bindable(48),
+		showClose = $bindable(true),
+		children
+	}: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();
 
@@ -30,11 +42,11 @@
 			class="header-title is-size-6 my-4 pr-2"
 			role="button"
 			tabindex="0"
-			on:click={() => {
+			onclick={() => {
 				if (!showExpand) return;
 				isExpanded = !isExpanded;
 			}}
-			on:keydown={handleEnterKey}
+			onkeydown={handleEnterKey}
 		>
 			{clean(title)}
 		</div>
@@ -43,7 +55,7 @@
 				{#if showExpand}
 					<button
 						class="button chevron-button {isExpanded ? 'is-expanded' : ''} px-2"
-						on:click={() => {
+						onclick={() => {
 							isExpanded = !isExpanded;
 						}}
 						use:tippyTooltip={{ content: isExpanded ? 'Collapse' : 'Expand' }}
@@ -57,7 +69,7 @@
 				{#if showClose}
 					<button
 						class="button pr-2"
-						on:click={handleClose}
+						onclick={handleClose}
 						use:tippyTooltip={{ content: 'Close' }}
 						aria-label="close"
 					>
@@ -70,7 +82,7 @@
 		{/if}
 	</div>
 	<div class="contents" hidden={!isExpanded}>
-		<slot />
+		{@render children?.()}
 	</div>
 </div>
 

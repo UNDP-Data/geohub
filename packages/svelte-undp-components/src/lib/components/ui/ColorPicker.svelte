@@ -5,7 +5,11 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let color: RgbaColor;
+	interface Props {
+		color: RgbaColor;
+	}
+
+	let { color = $bindable() }: Props = $props();
 
 	const changeColor = debounce((e) => {
 		const newRgba: RgbaColor = e.detail.color.rgba;

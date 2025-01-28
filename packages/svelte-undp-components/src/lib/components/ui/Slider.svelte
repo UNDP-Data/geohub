@@ -6,28 +6,47 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let min: number;
-	export let max: number;
-	export let step = 1;
-	export let values: number[];
-	export let rest: boolean | 'pip' | 'label' = true;
-	export let disabled = false;
-	export let floatLabel = true;
-	export let pips = true;
-	export let pipstep = 1;
-	export let all: boolean | 'pip' | 'label' = false;
-	export let first: 'pip' | 'label' | false = 'label';
-	export let last: 'pip' | 'label' | false = 'label';
-	export let prefix = '';
-	export let suffix = '';
-	export let range: boolean | 'min' | 'max' = values.length > 1 ? true : false;
-	export let showEditor = false;
+	interface Props {
+		min: number;
+		max: number;
+		step?: number;
+		values: number[];
+		rest?: boolean | 'pip' | 'label';
+		disabled?: boolean;
+		floatLabel?: boolean;
+		pips?: boolean;
+		pipstep?: number;
+		all?: boolean | 'pip' | 'label';
+		first?: 'pip' | 'label' | false;
+		last?: 'pip' | 'label' | false;
+		prefix?: string;
+		suffix?: string;
+		range?: boolean | 'min' | 'max';
+		showEditor?: boolean;
+		formatter?: (value: number, index: number, percent: number) => number | string;
+	}
 
-	export let formatter: (value: number, index: number, percent: number) => number | string = (
-		value
-	) => {
-		return value;
-	};
+	let {
+		min = $bindable(),
+		max = $bindable(),
+		step = $bindable(1),
+		values = $bindable(),
+		rest = $bindable(true),
+		disabled = $bindable(false),
+		floatLabel = $bindable(true),
+		pips = $bindable(true),
+		pipstep = $bindable(1),
+		all = $bindable(false),
+		first = $bindable('label'),
+		last = $bindable('label'),
+		prefix = $bindable(''),
+		suffix = $bindable(''),
+		range = $bindable(values.length > 1 ? true : false),
+		showEditor = $bindable(false),
+		formatter = (value: number) => {
+			return value;
+		}
+	}: Props = $props();
 
 	const setSliderValue = debounce((e: { detail: { values: number[] } }) => {
 		values = e.detail.values;

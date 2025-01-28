@@ -2,10 +2,18 @@
 	import { initTippy } from '$lib/util/initTippy.js';
 	import { createEventDispatcher } from 'svelte';
 
-	export let selected: number[] = [];
-	export let placeholder = 'Select SDG';
-	export let isFullWidth = false;
-	let isActive = false;
+	interface Props {
+		selected?: number[];
+		placeholder?: string;
+		isFullWidth?: boolean;
+	}
+
+	let {
+		selected = $bindable([]),
+		placeholder = $bindable('Select SDG'),
+		isFullWidth = $bindable(false)
+	}: Props = $props();
+	let isActive = $state(false);
 
 	const dispatch = createEventDispatcher();
 
@@ -22,8 +30,8 @@
 			isActive = false;
 		}
 	});
-	let tooltipContent: HTMLElement;
-	let buttonWidth = 0;
+	let tooltipContent: HTMLElement | undefined = $state();
+	let buttonWidth = $state(0);
 
 	const sdgNumbers = Array.from({ length: 17 }, (_, i) => i + 1);
 
@@ -98,7 +106,7 @@
 					class="ml-auto"
 					type="checkbox"
 					checked={isSelected}
-					on:change={() => {
+					onchange={() => {
 						handleSDGSelected(number);
 					}}
 				/>

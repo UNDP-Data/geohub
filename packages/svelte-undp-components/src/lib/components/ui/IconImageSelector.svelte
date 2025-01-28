@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	export interface IconImageType {
 		src: string;
 		alt: string;
@@ -14,16 +14,24 @@
 	const tippy = initTippy({
 		appendTo: document.body
 	});
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
-	export let selected: string;
-	export let images: IconImageType[] = [];
-	export let readonly = false;
+	interface Props {
+		selected: string;
+		images?: IconImageType[];
+		readonly?: boolean;
+	}
+
+	let {
+		selected = $bindable(),
+		images = $bindable([]),
+		readonly = $bindable(false)
+	}: Props = $props();
 
 	const dispatch = createEventDispatcher();
 
 	let showDialog = false;
-	let iconImage = '';
+	let iconImage = $state('');
 
 	onMount(() => {
 		iconImage = getIconImageSrc(selected) as string;

@@ -4,10 +4,19 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let alt: string;
-	export let src: string;
-	export let isSelected = false;
-	export let withinForm = false;
+	interface Props {
+		alt: string;
+		src: string;
+		isSelected?: boolean;
+		withinForm?: boolean;
+	}
+
+	let {
+		alt = $bindable(),
+		src = $bindable(),
+		isSelected = $bindable(false),
+		withinForm = $bindable(false)
+	}: Props = $props();
 
 	const handleIconSelect = () => {
 		dispatch('select', { alt, src });
@@ -17,8 +26,8 @@
 <div
 	role="button"
 	tabindex="0"
-	on:click={handleIconSelect}
-	on:keydown={handleEnterKey}
+	onclick={handleIconSelect}
+	onkeydown={handleEnterKey}
 	class="card"
 	data-testid="icon-image-picker-card-container"
 >

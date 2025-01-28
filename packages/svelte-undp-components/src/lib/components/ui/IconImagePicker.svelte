@@ -6,8 +6,12 @@
 	import type { Tab } from './Tabs.svelte';
 	import Tabs from './Tabs.svelte';
 
-	export let images: IconImageType[] = [];
-	export let selected: string;
+	interface Props {
+		images?: IconImageType[];
+		selected: string;
+	}
+
+	let { images = $bindable([]), selected = $bindable() }: Props = $props();
 
 	const iconGroupRanges = [
 		{
@@ -24,12 +28,14 @@
 		}
 	];
 
-	let tabs: Tab[] = iconGroupRanges.map((type) => {
-		return { label: type.id, id: type.id } as Tab;
-	});
+	let tabs: Tab[] = $state(
+		iconGroupRanges.map((type) => {
+			return { label: type.id, id: type.id } as Tab;
+		})
+	);
 
-	let activeIconGroupId = iconGroupRanges[0].id;
-	let iconGroupsByLetter: { id: string; values: IconImageType[] }[] = [];
+	let activeIconGroupId = $state(iconGroupRanges[0].id);
+	let iconGroupsByLetter: { id: string; values: IconImageType[] }[] = $state([]);
 
 	onMount(async () => {
 		iconGroupsByLetter = await getIconGroupsByLetter();
@@ -96,7 +102,7 @@
 		on:tabChange={(e) => (activeIconGroupId = e.detail)}
 		fontWeight="semibold"
 	/>
-	<button class="delete close is-radiusless" on:click={handleClosePopup} aria-label="delete"
+	<button class="delete close is-radiusless" onclick={handleClosePopup} aria-label="delete"
 	></button>
 
 	<div class="card-icon">
@@ -106,8 +112,8 @@
 					<div
 						role="button"
 						tabindex="0"
-						on:keydown={handleEnterKey}
-						on:click={() => {
+						onkeydown={handleEnterKey}
+						onclick={() => {
 							handleIconClick(spriteImage.alt);
 						}}
 						title="Icon Picker Card"
