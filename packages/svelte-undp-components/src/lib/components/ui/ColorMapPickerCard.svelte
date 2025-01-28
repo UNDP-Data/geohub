@@ -127,7 +127,8 @@
 				class={isSelected ? '' : 'is-clickable'}
 				style={cardStyle}
 				data-testid="color-map-figure"
-			/>
+				aria-label="color-map-card"
+			></div>
 		</div>
 	</div>
 </div>

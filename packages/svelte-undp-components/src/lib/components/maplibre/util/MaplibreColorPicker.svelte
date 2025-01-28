@@ -8,21 +8,29 @@
 	const tippy = initTippy({
 		appendTo: document.body
 	});
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
 	const dispatch = createEventDispatcher();
 
-	export let rgba = `rgba(0,0,0,1)`;
-	export let width: string = '';
-	export let readonly = false;
+	interface Props {
+		rgba?: string;
+		width?: string;
+		readonly?: boolean;
+	}
 
-	let color: RgbaColor = {
+	let {
+		rgba = $bindable(`rgba(0,0,0,1)`),
+		width = $bindable(''),
+		readonly = $bindable(false)
+	}: Props = $props();
+
+	let color: RgbaColor = $state({
 		r: chroma(rgba).rgba()[0],
 		g: chroma(rgba).rgba()[1],
 		b: chroma(rgba).rgba()[2],
 		a: chroma(rgba).rgba()[3]
-	};
-	let colorStyle = '';
+	});
+	let colorStyle = $state('');
 
 	const setColor = () => {
 		rgba = chroma.rgb(color.r, color.g, color.b).alpha(color.a).css();
@@ -42,6 +50,7 @@
 		data-testid="color-palette"
 		style={colorStyle}
 		use:tippy={{ content: tooltipContent }}
+		aria-label="color-picker"
 	>
 	</button>
 

@@ -6,7 +6,11 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
+	interface Props {
+		layerId: string;
+	}
+
+	let { layerId = $bindable() }: Props = $props();
 
 	const dispatch = createEventDispatcher();
 	const propertyName = 'text-halo-color';
@@ -15,7 +19,9 @@
 		.getStyle()
 		.layers.filter((layer: LayerSpecification) => layer.id === layerId)[0];
 
-	let rgba = style.paint && style.paint[propertyName] ? style.paint[propertyName] : defaultColor;
+	let rgba = $state(
+		style.paint && style.paint[propertyName] ? style.paint[propertyName] : defaultColor
+	);
 
 	const handleSetColor = (e: CustomEvent) => {
 		if (style.type !== 'symbol') return;

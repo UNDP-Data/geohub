@@ -35,7 +35,7 @@
 	<div class="is-flex mt-6 mb-5">
 		<h2 class="title is-2 is-uppercase">
 			{#if icon}
-				<i class="{icon} p-1 pr-2" />
+				<i class="{icon} p-1 pr-2"></i>
 			{/if}
 			{title}
 		</h2>

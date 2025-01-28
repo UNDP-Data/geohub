@@ -117,9 +117,13 @@
 		{disabled}
 	/>
 
-	<button class="panel-button button is-{size} {size === 'small' ? 'px-4' : ''}" {disabled}>
+	<button
+		aria-label="date-picker"
+		class="panel-button button is-{size} {size === 'small' ? 'px-4' : ''}"
+		{disabled}
+	>
 		<span class="icon is-small">
-			<i class={icon} />
+			<i class={icon}></i>
 		</span>
 	</button>
 </div>

@@ -229,9 +229,8 @@
 				{/if}
 			</span>
 			{#if defaultValue !== value}
-				<!-- svelte-ignore a11y-interactive-supports-focus -->
-				<!-- svelte-ignore a11y-missing-attribute -->
-				<!-- svelte-ignore a11y-missing-content -->
+				<!-- svelte-ignore a11y_interactive_supports_focus -->
+				<!-- svelte-ignore a11y_missing_attribute -->
 				<a
 					class="tag is-delete is-light {isActive || isExpanded
 						? 'is-info'
@@ -243,6 +242,7 @@
 					role="button"
 					data-sveltekit-preload-data="off"
 					data-sveltekit-preload-code="off"
+					aria-label="clear"
 				></a>
 			{/if}
 		</span>

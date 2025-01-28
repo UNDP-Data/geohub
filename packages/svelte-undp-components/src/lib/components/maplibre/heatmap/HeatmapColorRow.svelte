@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import type { RgbaColor } from 'svelte-awesome-color-picker';
 	export interface HeatmapColorRow {
 		index?: number;
@@ -17,18 +17,19 @@
 	const tippy = initTippy({
 		appendTo: document.body
 	});
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
-	export let colorRow: HeatmapColorRow;
-	export let readonly = false;
+	interface Props {
+		colorRow: HeatmapColorRow;
+		readonly?: boolean;
+	}
+
+	let { colorRow = $bindable(), readonly = $bindable(false) }: Props = $props();
 
 	const dispatch = createEventDispatcher();
 
-	let color: RgbaColor;
-	let colorPickerStyle: string;
-
-	$: color, updateColorMap(color);
-	$: colorPickerStyle = getColorPickerStyle(colorRow?.color as RgbaColor);
+	let color: RgbaColor = $state();
+	let colorPickerStyle: string = $state('');
 
 	onMount(() => {
 		setColorFromProp();
@@ -72,6 +73,10 @@
 		const rgb = [color.r, color.g, color.b].join();
 		return `caret-color:rgb(${rgb}); background-color: rgb(${rgb})`;
 	};
+
+	$effect(() => {
+		colorPickerStyle = getColorPickerStyle(colorRow?.color as RgbaColor);
+	});
 </script>
 
 <div
@@ -84,10 +89,15 @@
 			use:tippy={{ content: !readonly ? tooltipContent : undefined }}
 			class={!readonly ? 'discrete' : 'discrete-readonly'}
 			style="{colorPickerStyle}; width:100%; height:24px"
-		/>
+		></div>
 		{#if !readonly}
 			<div class="tooltip" data-testid="tooltip" bind:this={tooltipContent}>
-				<ColorPicker bind:color />
+				<ColorPicker
+					bind:color
+					on:changeColor={() => {
+						updateColorMap(color);
+					}}
+				/>
 			</div>
 		{/if}
 	</div>

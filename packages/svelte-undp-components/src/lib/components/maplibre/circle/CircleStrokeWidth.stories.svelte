@@ -1,19 +1,19 @@
-<script lang="ts" context="module">
-	import type { Meta } from '@storybook/svelte';
+<script lang="ts" module>
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import type { CircleLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
 	import Map from '../Map.svelte';
 	import CircleStrokeWidth from './CircleStrokeWidth.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Circle/CircleStrokeWidth',
 		component: CircleStrokeWidth,
-		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
 				description: 'Layer ID to edit'
 			}
 		}
-	};
+	});
 
 	const title = 'Circle Stroke Width Control';
 
@@ -36,17 +36,17 @@
 	};
 </script>
 
-<script lang="ts">
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-	import type { CircleLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
-</script>
-
-<Template let:args>
+{#snippet template(args)}
 	<Map {title} {source} {layer}>
 		<CircleStrokeWidth {...args}></CircleStrokeWidth>
 	</Map>
-</Template>
+{/snippet}
 
-<Story name="Primary" args={{ layerId: layer.id }} />
+<Story name="Primary" tags={['autodocs']} args={{ layerId: layer.id }} children={template} />
 
-<Story name="Step value by 2" args={{ layerId: layer.id, stepValue: 2 }} />
+<Story
+	name="Step value by 2"
+	tags={['autodocs']}
+	args={{ layerId: layer.id, stepValue: 2 }}
+	children={template}
+/>

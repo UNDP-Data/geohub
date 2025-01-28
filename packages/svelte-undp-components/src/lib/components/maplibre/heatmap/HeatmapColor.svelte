@@ -10,7 +10,11 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
+	interface Props {
+		layerId: string;
+	}
+
+	let { layerId = $bindable() }: Props = $props();
 	const propertyName = 'heatmap-color';
 	const style = $map
 		.getStyle()
@@ -34,7 +38,7 @@
 		'rgb(255,0,0)'
 	];
 
-	let colorValues: HeatmapColorRowType[] = [];
+	let colorValues: HeatmapColorRowType[] = $state([]);
 	let heatMapValues =
 		style.paint && style.paint[propertyName] ? style.paint[propertyName] : heatMapDefaultValues;
 
@@ -95,10 +99,11 @@
 
 <div class="fixed-grid has-{colorValues.length}-cols">
 	<div class="grid is-gap-1">
-		{#each colorValues as colorValueRow}
+		<!-- eslint-disable @typescript-eslint/no-unused-vars -->
+		{#each colorValues as colorValueRow, index}
 			<div class="cell">
 				<HeatmapColorRow
-					bind:colorRow={colorValueRow}
+					bind:colorRow={colorValues[index]}
 					on:changeColorMap={handleChangeColorMap}
 					readonly={false}
 				/>

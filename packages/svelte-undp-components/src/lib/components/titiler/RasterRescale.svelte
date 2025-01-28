@@ -5,54 +5,67 @@
 	import { getActiveBandIndex } from '$lib/util/getActiveBandIndex.js';
 	import { getValueFromRasterTileUrl } from '$lib/util/getValueFromRasterTileUrl.js';
 	import { isInt } from '$lib/util/isInt.js';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	const dispatch = createEventDispatcher();
 
-	export let layerId: string;
-	export let metadata: RasterTileMetadata;
-	export let unit = '';
-	export let rescale: number[];
-
-	let layerMin = NaN;
-	let layerMax = NaN;
-
-	if ('stats' in metadata) {
-		const band = metadata.active_band_no;
-		layerMin = Number(metadata.stats[band].min);
-		layerMax = Number(metadata.stats[band].max);
-	} else {
-		const bandIndex = getActiveBandIndex(metadata);
-		const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
-		layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
-		layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
+	interface Props {
+		layerId: string;
+		metadata: RasterTileMetadata;
+		unit?: string;
+		rescale: number[];
 	}
 
-	// restore rescale values from URL
-	if (!rescale) {
-		// default legend uses `rescale` param
-		rescale = getValueFromRasterTileUrl($map, layerId, 'rescale') as number[];
+	let {
+		layerId = $bindable(),
+		metadata = $bindable(),
+		unit = $bindable(''),
+		rescale = $bindable()
+	}: Props = $props();
 
+	let layerMin = $state(NaN);
+	let layerMax = $state(NaN);
+
+	let step = $state(1);
+
+	onMount(() => {
+		if ('stats' in metadata) {
+			const band = metadata.active_band_no;
+			layerMin = Number(metadata.stats[band].min);
+			layerMax = Number(metadata.stats[band].max);
+		} else {
+			const bandIndex = getActiveBandIndex(metadata);
+			const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
+			layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
+			layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
+		}
+
+		// restore rescale values from URL
 		if (!rescale) {
-			// classify legend uses `colormap` param
-			const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];
-			if (Array.isArray(colormap)) {
-				// interval legend
-				const first = colormap[0];
-				const last = colormap[colormap.length - 1];
-				rescale = [first[0][0], last[0][1]];
-			} else {
-				// unique value legend or default legend
-				rescale = [layerMin, layerMax];
+			// default legend uses `rescale` param
+			rescale = getValueFromRasterTileUrl($map, layerId, 'rescale') as number[];
+
+			if (!rescale) {
+				// classify legend uses `colormap` param
+				const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];
+				if (Array.isArray(colormap)) {
+					// interval legend
+					const first = colormap[0];
+					const last = colormap[colormap.length - 1];
+					rescale = [first[0][0], last[0][1]];
+				} else {
+					// unique value legend or default legend
+					rescale = [layerMin, layerMax];
+				}
 			}
 		}
-	}
 
-	// if min and max are integer, set step to 1, otherwise use 0.1 for step.
-	// but use 0.1 step if the difference of min and max is less than 1
-	let step = isInt(layerMin) && isInt(layerMax) && layerMax - layerMin > 1 ? 1 : 0.1;
+		// if min and max are integer, set step to 1, otherwise use 0.1 for step.
+		// but use 0.1 step if the difference of min and max is less than 1
+		step = isInt(layerMin) && isInt(layerMax) && layerMax - layerMin > 1 ? 1 : 0.1;
+	});
 
 	const onSliderStop = (e) => {
 		rescale = [...e.detail.values];

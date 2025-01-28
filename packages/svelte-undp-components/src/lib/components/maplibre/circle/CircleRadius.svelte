@@ -5,35 +5,41 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	/**
-	 * Layer ID to edit
-	 */
-	export let layerId: string;
+	interface Props {
+		/**
+		 * Layer ID to edit
+		 */
+		layerId: string;
+		/**
+		 * If true, it becomes readonly
+		 */
+		readonly?: boolean;
+		/**
+		 * Default value
+		 */
+		defaultValue?: number;
+		/**
+		 * Maximum value
+		 */
+		maxValue?: number;
+		/**
+		 * Minimum value
+		 */
+		minValue?: number;
+		/**
+		 * Step value
+		 */
+		stepValue?: number;
+	}
 
-	/**
-	 * If true, it becomes readonly
-	 */
-	export let readonly = false;
-
-	/**
-	 * Default value
-	 */
-	export let defaultValue = 5;
-
-	/**
-	 * Maximum value
-	 */
-	export let maxValue = 30;
-
-	/**
-	 * Minimum value
-	 */
-	export let minValue = 0;
-
-	/**
-	 * Step value
-	 */
-	export let stepValue = 0.5;
+	let {
+		layerId = $bindable(),
+		readonly = $bindable(false),
+		defaultValue = $bindable(5),
+		maxValue = $bindable(30),
+		minValue = $bindable(0),
+		stepValue = $bindable(0.5)
+	}: Props = $props();
 
 	let propertyName = 'circle-radius';
 
@@ -42,7 +48,7 @@
 		return value as number;
 	};
 
-	let value: number = getValue();
+	let value: number = $state(getValue());
 
 	onMount(() => {
 		setValue();

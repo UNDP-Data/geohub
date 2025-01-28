@@ -125,6 +125,7 @@
 				data-testid="open-button"
 				href={value}
 				target={openNewTab ? '_blank' : ''}
+				aria-label="Open link"
 			>
 				<span class="icon {openButtonColor}">
 					<i class="fa-solid fa-arrow-up-right-from-square"></i>

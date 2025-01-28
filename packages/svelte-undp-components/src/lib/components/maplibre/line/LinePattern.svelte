@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	export interface LineType {
 		title: string;
 		value: string | number[];
@@ -18,11 +18,15 @@
 	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import { isEqual, sortBy } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
+	interface Props {
+		layerId: string;
+	}
+
+	let { layerId = $bindable() }: Props = $props();
 
 	const propertyName = 'line-dasharray';
 
@@ -30,13 +34,12 @@
 		.getStyle()
 		.layers.filter((layer: LayerSpecification) => layer.id === layerId)[0];
 
-	let lineType = (
-		style?.paint[propertyName]
+	let lineType = $state(
+		(style?.paint[propertyName]
 			? LineTypes.find((item) => isEqual(sortBy(item.value), sortBy(style.paint[propertyName])))
 			: LineTypes.find((item) => item.title === 'solid')
-	)?.title;
-
-	$: lineType, setLineType();
+		)?.title
+	);
 
 	const setLinePatterns = () => {
 		const pattern: Radio[] = LineTypes.map((type) => {
@@ -55,7 +58,7 @@
 		return pattern;
 	};
 
-	let linePatterns: Radio[] = setLinePatterns();
+	let linePatterns: Radio[] = $state(setLinePatterns());
 
 	const setLineType = () => {
 		if (style?.type !== 'line' || lineType === undefined) return;
@@ -67,15 +70,19 @@
 			map.setPaintProperty(layerId, propertyName, undefined);
 		}
 	};
+	onMount(() => {
+		setLineType();
+	});
 </script>
 
 <div class="line-pattern-view-container" data-testid="line-pattern-view-container">
 	<Radios
 		bind:radios={linePatterns}
-		bind:value={lineType}
+		bind:value={lineType as string}
 		allowHtml={true}
 		groupName="line-pattern-{layerId}"
 		isVertical={true}
+		on:change={setLineType}
 	/>
 </div>
 

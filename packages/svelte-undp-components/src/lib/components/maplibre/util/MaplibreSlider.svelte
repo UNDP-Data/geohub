@@ -3,19 +3,31 @@
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
+	interface Props {
+		layerId: string;
+		defaultValue: number;
+		maxValue: number;
+		minValue: number;
+		propertyName: string;
+		propertyType?: 'paint' | 'layout';
+		stepValue: number;
+		suffix?: string;
+	}
 
-	export let defaultValue: number;
-	export let maxValue: number;
-	export let minValue: number;
-	export let propertyName: string;
-	export let propertyType: 'paint' | 'layout' = 'paint';
-	export let stepValue: number;
-	export let suffix = '';
+	let {
+		layerId = $bindable(),
+		defaultValue = $bindable(),
+		maxValue = $bindable(),
+		minValue = $bindable(),
+		propertyName = $bindable(),
+		propertyType = $bindable('paint'),
+		stepValue = $bindable(),
+		suffix = $bindable('')
+	}: Props = $props();
 
 	const dispatch = createEventDispatcher();
 
@@ -36,9 +48,7 @@
 		return Number(value);
 	};
 
-	let values = [getValue()];
-
-	$: values, setValue();
+	let values = $state([getValue()]);
 
 	const setValue = debounce(() => {
 		const newStyle = JSON.parse(JSON.stringify(style));
@@ -57,6 +67,10 @@
 			value: values[0]
 		});
 	}, 300);
+
+	onMount(() => {
+		setValue();
+	});
 </script>
 
 <Slider
@@ -69,4 +83,5 @@
 	last="label"
 	rest={false}
 	{suffix}
+	on:change={setValue}
 />

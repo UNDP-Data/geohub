@@ -1,19 +1,20 @@
-<script lang="ts" context="module">
-	import type { Meta } from '@storybook/svelte';
+<script lang="ts" module>
+	import type { RasterTileMetadata } from '$lib/interfaces/RasterTileMetadata.js';
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 	import Map from '../maplibre/Map.svelte';
 	import RasterClassifyLegend from './RasterClassifyLegend.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/titiler/RasterClassifyLegend',
 		component: RasterClassifyLegend,
-		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
 				description: 'Layer ID to edit'
 			}
 		}
-	};
+	});
 
 	const title = 'Raster Classify Legend Control';
 
@@ -110,17 +111,11 @@
 	};
 </script>
 
-<script lang="ts">
-	import type { RasterTileMetadata } from '$lib/interfaces/RasterTileMetadata.js';
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
-</script>
-
-<Template let:args>
+{#snippet template(args)}
 	<Map {title} {source} {layer}>
 		<RasterClassifyLegend {...args}></RasterClassifyLegend>
 	</Map>
-</Template>
+{/snippet}
 
 <Story
 	name="Primary"
@@ -130,4 +125,6 @@
 		colorMapName: 'brbg',
 		numberOfClasses: 6
 	}}
+	tags={['autodocs']}
+	children={template}
 />

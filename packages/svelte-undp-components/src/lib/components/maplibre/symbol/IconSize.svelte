@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import type { IconImageType } from '$lib/components/ui/IconImageSelector.svelte';
 
 	let icons: { [key: string]: IconImageType } = {};
@@ -13,31 +13,47 @@
 	import chroma from 'chroma-js';
 	import { hexToCSSFilter } from 'hex-to-css-filter';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { getContext, onMount } from 'svelte';
+	import { getContext, onMount, untrack } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
-	export let metadata: VectorTileMetadata;
-	export let defaultIcon = 'circle';
-	export let defaultIconSize = 1;
-	export let defaultColor: string;
-	export let numberOfClasses: number;
-	export let numberOfClassesMinimum = 2;
-	export let numberOfClassesMaximum = 25;
-	export let defaultNumberOfClasses = 5;
-	export let classificationMethod: ClassificationMethodTypes =
-		ClassificationMethodTypes.NATURAL_BREAK;
-	export let numberOfRandomSamplingPoints = 1000;
-	export let apiOrigin = '';
+	interface Props {
+		layerId: string;
+		metadata: VectorTileMetadata;
+		defaultIcon?: string;
+		defaultIconSize?: number;
+		defaultColor: string;
+		numberOfClasses: number;
+		numberOfClassesMinimum?: number;
+		numberOfClassesMaximum?: number;
+		defaultNumberOfClasses?: number;
+		classificationMethod?: ClassificationMethodTypes;
+		numberOfRandomSamplingPoints?: number;
+		apiOrigin?: string;
+	}
+
+	let {
+		layerId = $bindable(),
+		metadata = $bindable(),
+		defaultIcon = $bindable('circle'),
+		defaultIconSize = $bindable(1),
+		defaultColor = $bindable(),
+		numberOfClasses = $bindable(),
+		numberOfClassesMinimum = $bindable(2),
+		numberOfClassesMaximum = $bindable(25),
+		defaultNumberOfClasses = $bindable(5),
+		classificationMethod = $bindable(ClassificationMethodTypes.NATURAL_BREAK),
+		numberOfRandomSamplingPoints = $bindable(1000),
+		apiOrigin = $bindable('')
+	}: Props = $props();
 
 	let maxValue = 5;
 	let minValue = 0;
 	let propertyName = 'icon-size';
 	let stepValue = 0.25;
 
-	let cssIconFilter = '';
-	let icon: IconImageType | undefined;
+	let cssIconFilter = $state('');
+	let icon: IconImageType | undefined = $state();
 
 	const setCssIconFilter = () => {
 		if (!defaultColor) return;
@@ -57,7 +73,13 @@
 		return style.layout && style.layout[propertyName] ? style.layout[propertyName] : defaultIcon;
 	};
 
-	$: defaultColor, setCssIconFilter();
+	$effect(() => {
+		if (defaultColor) {
+			untrack(() => {
+				setCssIconFilter();
+			});
+		}
+	});
 
 	onMount(() => {
 		loadIconImage();

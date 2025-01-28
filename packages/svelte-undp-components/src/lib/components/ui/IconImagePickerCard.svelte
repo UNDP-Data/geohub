@@ -55,7 +55,7 @@
 			</div>
 			{#if isSelected}
 				<div class="selected" title="Icon Selected">
-					<i class="fa-solid fa-check" />
+					<i class="fa-solid fa-check"></i>
 				</div>
 			{/if}
 		</div>

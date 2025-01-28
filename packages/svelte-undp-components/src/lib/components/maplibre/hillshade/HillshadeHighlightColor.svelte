@@ -5,7 +5,11 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
+	interface Props {
+		layerId: string;
+	}
+
+	let { layerId = $bindable() }: Props = $props();
 	const propertyName = 'hillshade-highlight-color';
 
 	let defaultColor = '#FFFFFF';
@@ -18,7 +22,7 @@
 		return color as string;
 	};
 
-	let rgba = getColor();
+	let rgba = $state(getColor());
 
 	onMount(() => {
 		rgba = getColor();

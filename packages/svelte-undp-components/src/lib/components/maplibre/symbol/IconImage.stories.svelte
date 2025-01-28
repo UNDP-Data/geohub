@@ -1,19 +1,19 @@
-<script lang="ts" context="module">
-	import type { Meta } from '@storybook/svelte';
+<script lang="ts" module>
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import type { SymbolLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
 	import Map from '../Map.svelte';
 	import IconImage from './IconImage.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Symbol/IconImage',
 		component: IconImage,
-		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
 				description: 'Layer ID to edit'
 			}
 		}
-	};
+	});
 
 	const apiOrigin = 'https://dev.undpgeohub.org';
 
@@ -37,15 +37,15 @@
 	};
 </script>
 
-<script lang="ts">
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-	import type { SymbolLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
-</script>
-
-<Template let:args>
+{#snippet template(args)}
 	<Map {title} {source} {layer}>
 		<IconImage {...args}></IconImage>
 	</Map>
-</Template>
+{/snippet}
 
-<Story name="Primary" args={{ layerId: layer.id, apiOrigin: apiOrigin }} />
+<Story
+	name="Primary"
+	args={{ layerId: layer.id, apiOrigin: apiOrigin }}
+	tags={['autodocs']}
+	children={template}
+/>

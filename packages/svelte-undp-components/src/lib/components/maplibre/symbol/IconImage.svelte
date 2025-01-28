@@ -1,5 +1,5 @@
-<script lang="ts" context="module">
-	let images: IconImageType[] = [];
+<script lang="ts" module>
+	let images: IconImageType[] = $state([]);
 </script>
 
 <script lang="ts">
@@ -11,9 +11,17 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
-	export let readonly = false;
-	export let apiOrigin = '';
+	interface Props {
+		layerId: string;
+		readonly?: boolean;
+		apiOrigin?: string;
+	}
+
+	let {
+		layerId = $bindable(),
+		readonly = $bindable(false),
+		apiOrigin = $bindable('')
+	}: Props = $props();
 
 	const propertyName = 'icon-image';
 	const style = $map
@@ -27,7 +35,7 @@
 		return undefined;
 	};
 
-	let selected = getIconImage(style);
+	let selected = $state(getIconImage(style));
 
 	const updateLegend = () => {
 		if (!$map.getLayer(layerId)) return;

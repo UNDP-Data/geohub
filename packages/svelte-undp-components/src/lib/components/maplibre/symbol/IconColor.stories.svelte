@@ -1,19 +1,20 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import VectorColorClassification from '$lib/components/maplibre/util/VectorColorClassification.svelte';
-	import type { Meta } from '@storybook/svelte';
+	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import type { SymbolLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
 	import Map from '../Map.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Symbol/IconColor',
 		component: VectorColorClassification,
-		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
 				description: 'Layer ID to edit'
 			}
 		}
-	};
+	});
 
 	const title = 'Icon Color Control';
 
@@ -692,17 +693,11 @@
 	};
 </script>
 
-<script lang="ts">
-	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-	import type { SymbolLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
-</script>
-
-<Template let:args>
+{#snippet template(args)}
 	<Map {title} {source} {layer} center={[30.4082, -1.9975]} zoom={10}>
 		<VectorColorClassification {...args}></VectorColorClassification>
 	</Map>
-</Template>
+{/snippet}
 
 <Story
 	name="Primary"
@@ -721,4 +716,6 @@
 		colorMapName: 'viridis',
 		defaultColor: '#000000'
 	}}
+	tags={['autodocs']}
+	children={template}
 />

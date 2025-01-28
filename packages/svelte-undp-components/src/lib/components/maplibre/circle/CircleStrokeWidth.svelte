@@ -5,30 +5,36 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	/**
-	 * Layer ID to edit
-	 */
-	export let layerId: string;
+	interface Props {
+		/**
+		 * Layer ID to edit
+		 */
+		layerId: string;
+		/**
+		 * Default value
+		 */
+		defaultValue?: number;
+		/**
+		 * Maximum value
+		 */
+		maxValue?: number;
+		/**
+		 * Minimum value
+		 */
+		minValue?: number;
+		/**
+		 * Step value
+		 */
+		stepValue?: number;
+	}
 
-	/**
-	 * Default value
-	 */
-	export let defaultValue = 0;
-
-	/**
-	 * Maximum value
-	 */
-	export let maxValue = 10;
-
-	/**
-	 * Minimum value
-	 */
-	export let minValue = 0;
-
-	/**
-	 * Step value
-	 */
-	export let stepValue = 0.5;
+	let {
+		layerId = $bindable(),
+		defaultValue = $bindable(0),
+		maxValue = $bindable(10),
+		minValue = $bindable(0),
+		stepValue = $bindable(0.5)
+	}: Props = $props();
 
 	let propertyName = 'circle-stroke-width';
 
@@ -37,7 +43,7 @@
 		return value as number;
 	};
 
-	let value = getValue();
+	let value = $state(getValue());
 
 	onMount(() => {
 		setValue();

@@ -95,9 +95,9 @@
 
 <div class="colormap-button is-flex" use:tippy={{ content: tooltipContent }}>
 	{#key isReverseColors}
-		<div style={colorMapStyle} data-testid="color-map-figure" />
+		<div style={colorMapStyle} data-testid="color-map-figure"></div>
 	{/key}
-	<button class="button is-small">
+	<button class="button is-small" aria-label="show color picker">
 		<span class="icon is-small">
 			<i class="fa-solid fa-chevron-down toggle-icon {isShow ? 'show' : ''}"></i>
 		</span>
@@ -113,7 +113,7 @@
 		isCapitalized={true}
 	/>
 
-	<button class="delete close is-radiusless"></button>
+	<button class="delete close is-radiusless" aria-label="close"></button>
 
 	<div class="card-color">
 		{#key isReverseColors}

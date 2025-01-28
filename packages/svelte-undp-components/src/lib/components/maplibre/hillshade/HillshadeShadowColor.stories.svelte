@@ -1,19 +1,19 @@
-<script lang="ts" context="module">
-	import type { Meta } from '@storybook/svelte';
+<script lang="ts" module>
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import type { HillshadeLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
 	import Map from '../Map.svelte';
 	import HillshadeShadowColor from './HillshadeShadowColor.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Hillshade/HillshadeShadowColor',
 		component: HillshadeShadowColor,
-		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
 				description: 'Layer ID to edit'
 			}
 		}
-	};
+	});
 
 	const title = 'Hillshade Shadow Color Control';
 
@@ -35,15 +35,10 @@
 	};
 </script>
 
-<script lang="ts">
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-	import type { HillshadeLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
-</script>
-
-<Template let:args>
+{#snippet template(args)}
 	<Map {title} {source} {layer}>
 		<HillshadeShadowColor {...args}></HillshadeShadowColor>
 	</Map>
-</Template>
+{/snippet}
 
-<Story name="Primary" args={{ layerId: layer.id }} />
+<Story name="Primary" args={{ layerId: layer.id }} tags={['autodocs']} children={template} />

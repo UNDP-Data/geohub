@@ -53,7 +53,7 @@
 			>
 				{#if button.icon}
 					<span class="icon is-small">
-						<i class={button.icon} />
+						<i class={button.icon}></i>
 					</span>
 				{/if}
 				<span

@@ -17,20 +17,33 @@
 	const mapStore: MapStore = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, mapStore);
 
-	export let title: string;
-	export let source: SourceSpecification | undefined = undefined;
-	export let layer: LayerSpecification | undefined = undefined;
+	let mapContainer: HTMLDivElement | undefined = $state(undefined);
 
-	export let center = [0, 0];
-	export let zoom = 3;
-	export let bearing = 0;
-	export let pitch = 0;
+	interface Props {
+		title: string;
+		source?: SourceSpecification | undefined;
+		layer?: LayerSpecification | undefined;
+		center?: number[];
+		zoom?: number;
+		bearing?: number;
+		pitch?: number;
+		style?: string;
+		children?: import('svelte').Snippet;
+	}
 
-	let mapContainer: HTMLDivElement | undefined = undefined;
+	let {
+		title = $bindable(),
+		source = undefined,
+		layer = undefined,
+		center = [0, 0],
+		zoom = 3,
+		bearing = 0,
+		pitch = 0,
+		style = 'https://dev.undpgeohub.org/api/mapstyle/style.json',
+		children
+	}: Props = $props();
 
-	export let style = 'https://dev.undpgeohub.org/api/mapstyle/style.json';
-
-	let isLoaded = false;
+	let isLoaded = $state(false);
 
 	onMount(() => {
 		let protocol = new Protocol();
@@ -86,11 +99,13 @@
 <div class="map" bind:this={mapContainer}></div>
 
 <FieldControl {title} showHelp={false}>
-	<div slot="control">
-		{#if isLoaded}
-			<slot />
-		{/if}
-	</div>
+	{#snippet control()}
+		<div>
+			{#if isLoaded}
+				{@render children?.()}
+			{/if}
+		</div>
+	{/snippet}
 </FieldControl>
 
 <style lang="scss">

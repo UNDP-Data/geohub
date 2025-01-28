@@ -16,7 +16,7 @@
 	import { updateIntervalValues } from '$lib/util/updateIntervalValues.js';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
-	import { getContext, onMount } from 'svelte';
+	import { getContext, onMount, untrack } from 'svelte';
 	import type { ColorMapRow } from './LegendColorMapRow.svelte';
 	import LegendColorMapRow from './LegendColorMapRow.svelte';
 	import MaplibreColorPicker from './MaplibreColorPicker.svelte';
@@ -24,27 +24,45 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
-	export let metadata: VectorTileMetadata;
-	export let propertyName:
-		| 'fill-extrusion-color'
-		| 'fill-color'
-		| 'line-color'
-		| 'icon-color'
-		| 'circle-color'
-		| 'text-color';
-	export let transparentColor = [255, 255, 255, 0];
-	export let onlyNumberFields = false;
-	export let numberOfClasses: number;
-	export let numberOfClassesMinimum = 2;
-	export let numberOfClassesMaximum = 25;
-	export let defaultNumberOfClasses = 5;
-	export let classificationMethod: ClassificationMethodTypes =
-		ClassificationMethodTypes.NATURAL_BREAK;
-	export let numberOfRandomSamplingPoints = 1000;
-	export let uniqueValueThreshold = 25;
-	export let colorMapName = '';
-	export let defaultColor = '';
+	interface Props {
+		layerId: string;
+		metadata: VectorTileMetadata;
+		propertyName:
+			| 'fill-extrusion-color'
+			| 'fill-color'
+			| 'line-color'
+			| 'icon-color'
+			| 'circle-color'
+			| 'text-color';
+		transparentColor?: number[];
+		onlyNumberFields?: boolean;
+		numberOfClasses: number;
+		numberOfClassesMinimum?: number;
+		numberOfClassesMaximum?: number;
+		defaultNumberOfClasses?: number;
+		classificationMethod?: ClassificationMethodTypes;
+		numberOfRandomSamplingPoints?: number;
+		uniqueValueThreshold?: number;
+		colorMapName?: string;
+		defaultColor?: string;
+	}
+
+	let {
+		layerId = $bindable(),
+		metadata = $bindable(),
+		propertyName = $bindable(),
+		transparentColor = $bindable([255, 255, 255, 0]),
+		onlyNumberFields = $bindable(false),
+		numberOfClasses = $bindable(),
+		numberOfClassesMinimum = $bindable(2),
+		numberOfClassesMaximum = $bindable(25),
+		defaultNumberOfClasses = $bindable(5),
+		classificationMethod = $bindable(ClassificationMethodTypes.NATURAL_BREAK),
+		numberOfRandomSamplingPoints = $bindable(1000),
+		uniqueValueThreshold = $bindable(25),
+		colorMapName = $bindable(''),
+		defaultColor = $bindable('')
+	}: Props = $props();
 
 	const getVectorDefaultColor = (
 		layerId: string,
@@ -86,9 +104,9 @@
 	const maplibreLayerId = $map.getLayer(layerId)?.sourceLayer;
 	let statLayer = metadata.json?.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
 
-	let containerWidth: number;
+	let containerWidth: number = $state(0);
 
-	let isUniqueValue = false;
+	let isUniqueValue = $state(false);
 
 	const getColor = (): string | string[] => {
 		let color = $map.getPaintProperty(layerId, propertyName);
@@ -100,7 +118,10 @@
 			color = color[2];
 		}
 
-		color = convertFunctionToExpression(color, chroma(transparentColor).hex());
+		color = convertFunctionToExpression(
+			color,
+			chroma(transparentColor as unknown as chroma.ChromaInput).hex()
+		);
 		return color as string | string[];
 	};
 
@@ -117,8 +138,11 @@
 		}
 	};
 
-	let value = getColor();
-	let propertySelectValue = Array.isArray(value) ? value[1][1] : '';
+	let value = $state(getColor());
+	const getDefaultPropertyValue = () => {
+		return Array.isArray(value) ? value[1][1] : '';
+	};
+	let propertySelectValue = $state(getDefaultPropertyValue());
 
 	const restoreColorMapRows = () => {
 		let rows = [];
@@ -161,11 +185,8 @@
 		return rows;
 	};
 
-	let colorMapRows: ColorMapRow[] = [];
+	let colorMapRows: ColorMapRow[] = $state([]);
 	let randomSample: { [key: string]: number[] } = {};
-
-	$: isConstantColor = propertySelectValue?.length === 0;
-	$: classificationMethod, handleClassificationMethodChanged();
 
 	onMount(() => {
 		resetClassificationMethods();
@@ -339,6 +360,14 @@
 			map.setPaintProperty(layerId, propertyName, caseExpr);
 		}
 	};
+	let isConstantColor = $derived(propertySelectValue?.length === 0);
+	$effect(() => {
+		if (classificationMethod) {
+			untrack(() => {
+				handleClassificationMethodChanged();
+			});
+		}
+	});
 </script>
 
 <div class="py-2" bind:clientWidth={containerWidth}>
@@ -368,41 +397,49 @@
 				<div class="columns">
 					<div class="column is-6 pr-1">
 						<FieldControl title="Method">
-							<div slot="help">
-								Whether to apply a classification method for a vector layer in selected property.
-								This setting is only used when you select a property to classify the layer
-								appearance.
-							</div>
-							<div slot="control">
-								<div class="select is-normal is-fullwidth">
-									<select
-										bind:value={classificationMethod}
-										on:change={handleClassificationMethodChanged}
-									>
-										{#each ClassificationMethods as classificationMethod}
-											<option
-												class="legend-text"
-												title="Classification Method"
-												value={classificationMethod.code}>{classificationMethod.name}</option
-											>
-										{/each}
-									</select>
+							{#snippet help()}
+								<div>
+									Whether to apply a classification method for a vector layer in selected property.
+									This setting is only used when you select a property to classify the layer
+									appearance.
 								</div>
-							</div>
+							{/snippet}
+							{#snippet control()}
+								<div>
+									<div class="select is-normal is-fullwidth">
+										<select
+											bind:value={classificationMethod}
+											onchange={handleClassificationMethodChanged}
+										>
+											{#each ClassificationMethods as classificationMethod}
+												<option
+													class="legend-text"
+													title="Classification Method"
+													value={classificationMethod.code}>{classificationMethod.name}</option
+												>
+											{/each}
+										</select>
+									</div>
+								</div>
+							{/snippet}
 						</FieldControl>
 					</div>
 					<div class="column pl-1">
 						<FieldControl title="Classes">
-							<div slot="help">Increate or decrease the number of classes</div>
-							<div slot="control">
-								<NumberInput
-									bind:value={numberOfClasses}
-									minValue={numberOfClassesMinimum}
-									maxValue={numberOfClassesMaximum}
-									on:change={handleIncrementDecrementClasses}
-									size="normal"
-								/>
-							</div>
+							{#snippet help()}
+								<div>Increate or decrease the number of classes</div>
+							{/snippet}
+							{#snippet control()}
+								<div>
+									<NumberInput
+										bind:value={numberOfClasses}
+										minValue={numberOfClassesMinimum}
+										maxValue={numberOfClassesMaximum}
+										on:change={handleIncrementDecrementClasses}
+										size="normal"
+									/>
+								</div>
+							{/snippet}
 						</FieldControl>
 					</div>
 				</div>
@@ -429,9 +466,10 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each colorMapRows as colorMapRow}
+					<!-- eslint-disable @typescript-eslint/no-unused-vars -->
+					{#each colorMapRows as colorMapRow, index}
 						<LegendColorMapRow
-							bind:colorMapRow
+							bind:colorMapRow={colorMapRows[index]}
 							bind:colorMapName
 							bind:hasUniqueValues={isUniqueValue}
 							on:changeIntervalValues={handleChangeIntervalValues}

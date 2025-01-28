@@ -1,13 +1,17 @@
 <script lang="ts">
 	import MaplibreSlider from '$lib/components/maplibre/util/MaplibreSlider.svelte';
 
-	export let layerId: string;
+	interface Props {
+		layerId: string;
+	}
 
-	let defaultValue = 335;
-	let maxValue = 359;
-	let minValue = 0;
-	let propertyName = 'hillshade-illumination-direction';
-	let stepValue = 1;
+	let { layerId = $bindable() }: Props = $props();
+
+	let defaultValue = $state(335);
+	let maxValue = $state(359);
+	let minValue = $state(0);
+	let propertyName = $state('hillshade-illumination-direction');
+	let stepValue = $state(1);
 </script>
 
 <MaplibreSlider

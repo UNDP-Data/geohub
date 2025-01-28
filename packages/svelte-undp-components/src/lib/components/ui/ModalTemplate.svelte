@@ -30,12 +30,12 @@
 		role="none"
 		on:click={close}
 		on:keydown={handleEnterKey}
-	/>
+	></div>
 
 	<div class="modal-card" style={width ? `width: ${width};` : ''}>
 		<section class="modal-card-body">
 			{#if showClose}
-				<button class="delete is-large" aria-label="close" title="Close" on:click={close} />
+				<button class="delete is-large" aria-label="close" title="Close" on:click={close}></button>
 			{/if}
 			<div class="mx-4">
 				<h5 class="title is-5 mb-0">{title}</h5>

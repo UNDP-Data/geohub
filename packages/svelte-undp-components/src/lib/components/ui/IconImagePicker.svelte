@@ -96,7 +96,8 @@
 		on:tabChange={(e) => (activeIconGroupId = e.detail)}
 		fontWeight="semibold"
 	/>
-	<button class="delete close is-radiusless" on:click={handleClosePopup}></button>
+	<button class="delete close is-radiusless" on:click={handleClosePopup} aria-label="delete"
+	></button>
 
 	<div class="card-icon">
 		{#each iconGroupsByLetter as iconGroup}

@@ -2,12 +2,16 @@
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import { clean } from '$lib/util/clean.js';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
-	export let parentId: string;
+	interface Props {
+		layerId: string;
+		parentId: string;
+	}
+
+	let { layerId = $bindable(), parentId = $bindable() }: Props = $props();
 
 	const dispatch = createEventDispatcher();
 	const propertyName = 'icon-keep-upright';
@@ -38,12 +42,11 @@
 			break;
 	}
 
-	let selected =
+	let selected = $state(
 		style.layout && style.layout[propertyNameSymbolPlacement]
 			? style.layout[propertyNameSymbolPlacement]
-			: defaultValue;
-
-	$: selected, setSymbolPlacement();
+			: defaultValue
+	);
 
 	const setSymbolPlacement = () => {
 		if (style.type !== 'symbol') return;
@@ -58,10 +61,18 @@
 
 		dispatch('change');
 	};
+	onMount(() => {
+		setSymbolPlacement();
+	});
 </script>
 
 <div class="select" style="height: 30px;">
-	<select bind:value={selected} style="width: 100%;" title="Icon overlap">
+	<select
+		bind:value={selected}
+		style="width: 100%;"
+		title="Icon overlap"
+		onchange={setSymbolPlacement}
+	>
 		{#each choices as choice}
 			<option class="legend-text" value={choice}>{clean(choice)}</option>
 		{/each}

@@ -1,33 +1,28 @@
-<script lang="ts" context="module">
-	import type { Meta } from '@storybook/svelte';
+<script lang="ts" module>
+	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import Map from '../Map.svelte';
 	import RasterSaturation from './RasterSaturation.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Raster/RasterSaturation',
 		component: RasterSaturation,
-		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
 				description: 'Layer ID to edit'
 			}
 		}
-	};
+	});
 
 	const title = 'Raster Saturation Control';
 
 	const style = 'https://dev.undpgeohub.org/api/mapstyle/aerialstyle.json';
 </script>
 
-<script lang="ts">
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-</script>
-
-<Template let:args>
+{#snippet template(args)}
 	<Map {title} {style}>
 		<RasterSaturation {...args}></RasterSaturation>
 	</Map>
-</Template>
+{/snippet}
 
-<Story name="Primary" args={{ layerId: 'bingaerial' }} />
+<Story name="Primary" args={{ layerId: 'bingaerial' }} tags={['autodocs']} children={template} />

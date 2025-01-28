@@ -13,39 +13,54 @@
 	import { getSampleFromHistogram } from '$lib/util/getSampleFromHistogram.js';
 	import { getSampleFromInterval } from '$lib/util/getSampleFromInterval.js';
 	import { debounce } from 'lodash-es';
-	import { getContext, onMount } from 'svelte';
+	import { getContext, onMount, untrack } from 'svelte';
 	import type { ColorMapRow } from './LegendColorMapRow.svelte';
 	import PropertySelect from './PropertySelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
-	export let metadata: VectorTileMetadata;
+	interface Props {
+		layerId: string;
+		metadata: VectorTileMetadata;
+		defaultValue: number;
+		maxValue: number;
+		minValue: number;
+		propertyName: string;
+		stepValue: number;
+		legendCssTemplate: string; // should include {value} for the replacement
+		styleType?: 'layout' | 'paint';
+		dataLabel?: string;
+		numberOfClasses: number;
+		numberOfClassesMinimum?: number;
+		numberOfClassesMaximum?: number;
+		defaultNumberOfClasses?: number;
+		classificationMethod?: ClassificationMethodTypes;
+		numberOfRandomSamplingPoints?: number;
+	}
 
-	export let defaultValue: number;
-	export let maxValue: number;
-	export let minValue: number;
-	export let propertyName: string;
-	export let stepValue: number;
-	export let legendCssTemplate: string; // should include {value} for the replacement
-	export let styleType: 'layout' | 'paint' = 'paint';
-	export let dataLabel = 'Value';
-	export let numberOfClasses: number;
-	export let numberOfClassesMinimum = 2;
-	export let numberOfClassesMaximum = 25;
-	export let defaultNumberOfClasses = 5;
-	export let classificationMethod: ClassificationMethodTypes =
-		ClassificationMethodTypes.NATURAL_BREAK;
-	export let numberOfRandomSamplingPoints = 1000;
-
-	$: classificationMethod, handleClassificationMethodChanged();
+	let {
+		layerId = $bindable(),
+		metadata = $bindable(),
+		defaultValue = $bindable(),
+		maxValue = $bindable(),
+		minValue = $bindable(),
+		propertyName = $bindable(),
+		stepValue = $bindable(),
+		legendCssTemplate = $bindable(),
+		styleType = $bindable('paint'),
+		dataLabel = $bindable('Value'),
+		numberOfClasses = $bindable(),
+		numberOfClassesMinimum = $bindable(2),
+		numberOfClassesMaximum = $bindable(25),
+		defaultNumberOfClasses = $bindable(5),
+		classificationMethod = $bindable(ClassificationMethodTypes.NATURAL_BREAK),
+		numberOfRandomSamplingPoints = $bindable(1000)
+	}: Props = $props();
 
 	const maplibreLayerId = $map.getLayer(layerId)?.sourceLayer as string;
 	let statLayer = metadata.json?.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
 
-	$: isConstantValue = propertySelectValue?.length === 0;
-
-	let colorMapRows: ColorMapRow[] = [];
+	let colorMapRows: ColorMapRow[] = $state([]);
 	let randomSample: { [key: string]: number[] } = {};
 
 	const getValue = () => {
@@ -60,8 +75,11 @@
 		return value;
 	};
 
-	let value: unknown = getValue();
-	let propertySelectValue = Array.isArray(value) ? value[1][1] : '';
+	let value: unknown = $state(getValue());
+	const getDefaultPropertyValue = () => {
+		return Array.isArray(value) ? value[1][1] : '';
+	};
+	let propertySelectValue = $state(getDefaultPropertyValue());
 
 	onMount(() => {
 		resetClassificationMethods();
@@ -235,6 +253,14 @@
 
 		updateMapFromRows();
 	}, 300);
+	$effect(() => {
+		if (classificationMethod) {
+			untrack(() => {
+				handleClassificationMethodChanged();
+			});
+		}
+	});
+	let isConstantValue = $derived(propertySelectValue?.length === 0);
 </script>
 
 <div class="is-flex">
@@ -269,40 +295,48 @@
 		<div class="columns">
 			<div class="column is-6 pr-1">
 				<FieldControl title="Method">
-					<div slot="help">
-						Whether to apply a classification method for a vector layer in selected property. This
-						setting is only used when you select a property to classify the layer appearance.
-					</div>
-					<div slot="control">
-						<div class="select is-normal is-fullwidth">
-							<select
-								bind:value={classificationMethod}
-								on:change={handleClassificationMethodChanged}
-							>
-								{#each ClassificationMethods as classificationMethod}
-									<option
-										class="legend-text"
-										title="Classification Method"
-										value={classificationMethod.code}>{classificationMethod.name}</option
-									>
-								{/each}
-							</select>
+					{#snippet help()}
+						<div>
+							Whether to apply a classification method for a vector layer in selected property. This
+							setting is only used when you select a property to classify the layer appearance.
 						</div>
-					</div>
+					{/snippet}
+					{#snippet control()}
+						<div>
+							<div class="select is-normal is-fullwidth">
+								<select
+									bind:value={classificationMethod}
+									onchange={handleClassificationMethodChanged}
+								>
+									{#each ClassificationMethods as classificationMethod}
+										<option
+											class="legend-text"
+											title="Classification Method"
+											value={classificationMethod.code}>{classificationMethod.name}</option
+										>
+									{/each}
+								</select>
+							</div>
+						</div>
+					{/snippet}
 				</FieldControl>
 			</div>
 			<div class="column pl-1">
 				<FieldControl title="Classes">
-					<div slot="help">Increate or decrease the number of classes</div>
-					<div slot="control">
-						<NumberInput
-							bind:value={numberOfClasses}
-							minValue={numberOfClassesMinimum}
-							maxValue={numberOfClassesMaximum}
-							on:change={handleIncrementDecrementClasses}
-							size="normal"
-						/>
-					</div>
+					{#snippet help()}
+						<div>Increate or decrease the number of classes</div>
+					{/snippet}
+					{#snippet control()}
+						<div>
+							<NumberInput
+								bind:value={numberOfClasses}
+								minValue={numberOfClassesMinimum}
+								maxValue={numberOfClassesMaximum}
+								on:change={handleIncrementDecrementClasses}
+								size="normal"
+							/>
+						</div>
+					{/snippet}
 				</FieldControl>
 			</div>
 		</div>
@@ -321,7 +355,7 @@
 				{#each colorMapRows as row, index}
 					<tr data-testid="line-width-row-container">
 						<td style="min-width: 100px;">
-							<div style={legendCssTemplate.replace(/{value}/g, `${row.value}`)} />
+							<div style={legendCssTemplate.replace(/{value}/g, `${row.value}`)}></div>
 						</td>
 						<td style="min-width: 100px;">
 							<NumberInput

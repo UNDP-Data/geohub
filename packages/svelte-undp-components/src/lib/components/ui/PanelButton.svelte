@@ -34,9 +34,10 @@
 		class="panel-button {hideBorder ? 'border-hidden' : ''} button"
 		{disabled}
 		use:tippy={{ content: tooltipContent }}
+		aria-label="show tooltip"
 	>
 		<span class="icon is-small">
-			<i class={disabled && iconDisabled ? iconDisabled : icon} />
+			<i class={disabled && iconDisabled ? iconDisabled : icon}></i>
 		</span>
 	</button>
 

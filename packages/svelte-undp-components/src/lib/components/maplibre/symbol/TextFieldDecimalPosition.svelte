@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	import type { Map, SymbolLayerSpecification } from 'maplibre-gl';
 	export const getDecimalPosition = (map: Map, layerId: string) => {
 		let decimalPosition = 1;
@@ -71,8 +71,12 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
-	export let metadata: VectorTileMetadata;
+	interface Props {
+		layerId: string;
+		metadata: VectorTileMetadata;
+	}
+
+	let { layerId = $bindable(), metadata = $bindable() }: Props = $props();
 
 	const propertyName = 'text-field';
 
@@ -83,7 +87,7 @@
 	};
 
 	let style = getLayerStyle();
-	let decimalPosition = getDecimalPosition($map, layerId);
+	let decimalPosition = $state(getDecimalPosition($map, layerId));
 
 	const setDecimalPosition = () => {
 		const layer = $map.getLayer(layerId);

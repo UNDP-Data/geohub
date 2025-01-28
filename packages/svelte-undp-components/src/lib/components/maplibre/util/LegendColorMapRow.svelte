@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	export interface ColorMapRow {
 		index?: number;
 		color?: number[];
@@ -13,46 +13,45 @@
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { initTippy } from '$lib/util/initTippy.js';
 	import chroma from 'chroma-js';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, untrack } from 'svelte';
 	import type { RgbaColor } from 'svelte-awesome-color-picker';
 
 	const tippy = initTippy({
 		appendTo: document.body
 	});
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
-	/**
-	 * Color row data
-	 */
-	export let colorMapRow: ColorMapRow;
+	interface Props {
+		/**
+		 * Color row data
+		 */
+		colorMapRow: ColorMapRow;
+		/**
+		 * Colormap name. If colormap name is changed, color will be reset.
+		 */
+		colorMapName: string;
+		/**
+		 * If true, it will be unique value mode instead of ranged value mode.
+		 */
+		hasUniqueValues: boolean;
+		/**
+		 * If true, it becomes readonly mode.
+		 */
+		readonly?: boolean;
+	}
 
-	/**
-	 * Colormap name. If colormap name is changed, color will be reset.
-	 */
-	export let colorMapName: string;
+	let {
+		colorMapRow = $bindable(),
+		colorMapName = $bindable(),
+		hasUniqueValues = $bindable(),
+		readonly = $bindable(false)
+	}: Props = $props();
 
-	/**
-	 * If true, it will be unique value mode instead of ranged value mode.
-	 */
-	export let hasUniqueValues: boolean;
-
-	/**
-	 * If true, it becomes readonly mode.
-	 */
-	export let readonly = false;
-
-	let signal;
+	let signal = $state();
 	const dispatch = createEventDispatcher();
 
-	let color: RgbaColor;
-	let colorPickerStyle: string;
-
-	$: colorMapRow.color, getColorPickerStyle();
-
-	// load color map upon change of layer color map name
-	$: colorMapName, setColorFromProp();
-
-	$: isVisible = color.a !== 0;
+	let color: RgbaColor = $state();
+	let colorPickerStyle: string = $state('');
 
 	// set color based on default value
 	const setColorFromProp = () => {
@@ -82,7 +81,6 @@
 		return colorPickerStyle;
 	};
 
-	$: isVisible, handleVisibilityChanged();
 	const handleVisibilityChanged = () => {
 		if (isVisible) {
 			color.a = 1;
@@ -129,6 +127,28 @@
 			value: parseFloat(value)
 		});
 	};
+	$effect(() => {
+		if (colorMapRow.color) {
+			untrack(() => {
+				getColorPickerStyle();
+			});
+		}
+	});
+	// load color map upon change of layer color map name
+	$effect(() => {
+		if (colorMapName) {
+			untrack(() => {
+				setColorFromProp();
+			});
+		}
+	});
+	let isVisible = $state(true);
+
+	$effect(() => {
+		if (color.a === 0) {
+			isVisible = false;
+		}
+	});
 </script>
 
 <!--
@@ -140,28 +160,31 @@ the key statement is necessary as it forces to rerender the legend item in case 
 			{#if readonly}
 				<div class=" icon">
 					{#if isVisible}
-						<i class="fa-solid fa-eye" />
+						<i class="fa-solid fa-eye"></i>
 					{:else}
-						<i class="fa-solid fa-eye-slash" />
+						<i class="fa-solid fa-eye-slash"></i>
 					{/if}
 				</div>
 				<div
 					title="Color Map Control"
 					class="discrete-readonly ml-2"
 					style="{colorPickerStyle}; width:100%; height:20px"
-				/>
+				></div>
 			{:else}
 				<div
 					role="button"
 					tabindex="0"
 					class="visible-button icon"
-					on:click={() => (isVisible = !isVisible)}
-					on:keydown={handleEnterKey}
+					onclick={() => {
+						isVisible = !isVisible;
+						handleVisibilityChanged();
+					}}
+					onkeydown={handleEnterKey}
 				>
 					{#if isVisible}
-						<i class="fa-solid fa-eye" />
+						<i class="fa-solid fa-eye"></i>
 					{:else}
-						<i class="fa-solid fa-eye-slash" />
+						<i class="fa-solid fa-eye-slash"></i>
 					{/if}
 				</div>
 
@@ -170,7 +193,7 @@ the key statement is necessary as it forces to rerender the legend item in case 
 					use:tippy={{ content: tooltipContent }}
 					class="discrete ml-2"
 					style="{colorPickerStyle}; width:100%; height:20px"
-				/>
+				></div>
 				<div class="tooltip" data-testid="tooltip" bind:this={tooltipContent}>
 					<ColorPicker bind:color on:changeColor={handleColorChanged} />
 				</div>
@@ -183,7 +206,7 @@ the key statement is necessary as it forces to rerender the legend item in case 
 					id="start"
 					type="number"
 					value={colorMapRow.start}
-					on:change={handleInput}
+					onchange={handleInput}
 					required
 					disabled={readonly}
 				/>
@@ -205,7 +228,7 @@ the key statement is necessary as it forces to rerender the legend item in case 
 					type="number"
 					id="end"
 					value={colorMapRow.end}
-					on:change={handleInput}
+					onchange={handleInput}
 					required
 					disabled={readonly}
 				/>

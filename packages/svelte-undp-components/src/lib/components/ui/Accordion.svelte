@@ -58,7 +58,7 @@
 			<span class="mr-2">
 				<i
 					class="fa-solid fa-chevron-down toggle-icon {isExpanded ? 'active' : ''} has-text-primary"
-				/>
+				></i>
 			</span>
 			<span class="has-text-grey-dark">{clean(title, isUppercase)}</span>
 		</span>

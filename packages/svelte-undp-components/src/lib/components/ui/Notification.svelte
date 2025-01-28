@@ -30,11 +30,11 @@
 	class="notification {`${type !== '' ? `is-${type} is-light` : ''}`} message"
 >
 	{#if showCloseButton}
-		<button class="delete" on:click={close} />
+		<button class="delete" on:click={close} aria-label="close"></button>
 	{/if}
 	{#if showIcon}
 		<div class="icon">
-			<i class="fa-solid {icon} fa-lg" style="color:{color}" />
+			<i class="fa-solid {icon} fa-lg" style="color:{color}"></i>
 		</div>
 	{/if}
 	<div class="text"><slot /></div>

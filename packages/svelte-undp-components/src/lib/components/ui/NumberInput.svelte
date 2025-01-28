@@ -134,6 +134,7 @@
 				on:click={handleDecrement}
 				disabled={value <= minValue}
 				title="Decrease number"
+				aria-label="decrease number"
 			>
 				<span class="icon is-small">
 					<i class="fas fa-minus"></i>
@@ -158,6 +159,7 @@
 				on:click={handleIncrement}
 				disabled={value >= maxValue}
 				title="Increase number"
+				aria-label="increase number"
 			>
 				<span class="icon is-small">
 					<i class="fas fa-plus"></i>

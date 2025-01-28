@@ -47,6 +47,7 @@
 							isExpanded = !isExpanded;
 						}}
 						use:tippyTooltip={{ content: isExpanded ? 'Collapse' : 'Expand' }}
+						aria-label="expand"
 					>
 						<span class="icon is-small">
 							<i class="fa-solid fa-chevron-down"></i>
@@ -58,6 +59,7 @@
 						class="button pr-2"
 						on:click={handleClose}
 						use:tippyTooltip={{ content: 'Close' }}
+						aria-label="close"
 					>
 						<span class="icon is-small">
 							<i class="fas fa-xmark"></i>

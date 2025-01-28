@@ -9,16 +9,29 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
-	export let parentId: string | undefined = undefined;
-	export let metadata: VectorTileMetadata;
-	export let propertySelectValue: string;
-	export let showEmptyFields = false;
-	export let onlyNumberFields: boolean;
-	export let emptyFieldLabel = 'No Label';
-	export let readonly = false;
+	interface Props {
+		layerId: string;
+		parentId?: string | undefined;
+		metadata: VectorTileMetadata;
+		propertySelectValue: string;
+		showEmptyFields?: boolean;
+		onlyNumberFields: boolean;
+		emptyFieldLabel?: string;
+		readonly?: boolean;
+	}
 
-	let propertySelectOptions: string[];
+	let {
+		layerId = $bindable(),
+		parentId = $bindable(undefined),
+		metadata = $bindable(),
+		propertySelectValue = $bindable(),
+		showEmptyFields = $bindable(false),
+		onlyNumberFields = $bindable(),
+		emptyFieldLabel = $bindable('No Label'),
+		readonly = $bindable(false)
+	}: Props = $props();
+
+	let propertySelectOptions: string[] = $state();
 
 	const dispatch = createEventDispatcher();
 
@@ -95,7 +108,7 @@
 			class="is-normal"
 			bind:value={propertySelectValue}
 			data-testid="property-select-input"
-			on:change={propertyChanged}
+			onchange={propertyChanged}
 			title="Property Options"
 			disabled={readonly}
 		>
@@ -112,6 +125,6 @@
 		</select>
 	</div>
 	<span class="icon is-small is-left">
-		<i style="color:black" class="fas fa-table-list" />
+		<i style="color:black" class="fas fa-table-list"></i>
 	</span>
 </div>
