@@ -110,7 +110,7 @@
 		minimum = $bindable(undefined),
 		showPrefix = $bindable(false),
 		unit = $bindable(''),
-		isExpanded = $bindable(false),
+		isExpanded = $bindable(),
 		showEditor = $bindable(false),
 		showRestPip = $bindable(false),
 		showAll = $bindable(false),

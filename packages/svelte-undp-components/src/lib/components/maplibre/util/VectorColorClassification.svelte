@@ -258,7 +258,7 @@
 			const isReverse = colorMapName.indexOf('_r') !== -1;
 
 			// trim and remove empty value from the list
-			let cleanedValues = values.filter((v) => (v as string).trim() !== '');
+			let cleanedValues = values?.filter((v) => `${v}`.trim() !== '');
 			let classes = cleanedValues.length + 1; // create colors including default value
 			let scaleColorList = chroma
 				.scale(colorMapName.replace('_r', ''))
@@ -341,7 +341,7 @@
 				const row = colorMapRows[i];
 				if (row.end) {
 					const value = row.end as string;
-					colorSteps.push(value.trim());
+					colorSteps.push(`${value}`.trim());
 				}
 				const color = chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).hex();
 				colorSteps.push(color);

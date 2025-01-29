@@ -68,7 +68,7 @@
 </script>
 
 <div
-	class="button sdg-button {isFullWidth ? 'is-fullwidth' : ''} px-2"
+	class="button sdg-button {isFullWidth ? 'is-fullwidth' : ''} px-4"
 	aria-haspopup="true"
 	aria-controls="dropdown-menu"
 	use:tippy={{ content: tooltipContent }}

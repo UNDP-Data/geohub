@@ -26,7 +26,7 @@
 		buttons = $bindable(),
 		selected = $bindable(undefined),
 		multiSelect = $bindable(false),
-		selectedItems = $bindable({}),
+		selectedItems = $bindable(),
 		wrap = $bindable(false),
 		size = $bindable('normal'),
 		capitalized = $bindable(false),
@@ -38,6 +38,9 @@
 	const dispatch = createEventDispatcher();
 
 	const handleSelected = (e: SegmentButton) => {
+		if (!selectedItems) {
+			selectedItems = {};
+		}
 		if (multiSelect) {
 			const value = e.value as string | number;
 			selectedItems[value] = selectedItems[value] ? !selectedItems[value] : true;
@@ -45,6 +48,7 @@
 				items: selectedItems,
 				value: e.value
 			});
+			selectedItems = JSON.parse(JSON.stringify(selectedItems));
 		} else {
 			selected = e.value as string | number;
 			dispatch('change', {
@@ -60,7 +64,7 @@
 			<button
 				type="button"
 				class="segment-button button is-{size} {(!multiSelect && selected === button.value) ||
-				(multiSelect && selectedItems[button.value as number])
+				(multiSelect && selectedItems && selectedItems[button.value as number])
 					? `${activeColor} is-active`
 					: ''}"
 				onclick={() => handleSelected(button)}

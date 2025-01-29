@@ -26,7 +26,7 @@
 
 	let {
 		button = $bindable(),
-		subButtons = $bindable(undefined),
+		subButtons = $bindable(),
 		color = $bindable('primary')
 	}: Props = $props();
 

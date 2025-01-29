@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { initTippy, initTooltipTippy } from '$lib/util/initTippy.js';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import Slider from './Slider.svelte';
 
 	interface Props {
@@ -32,6 +32,10 @@
 			opacity
 		});
 	};
+
+	onMount(() => {
+		opacity = opacity > 1 ? opacity / 100 : opacity;
+	});
 </script>
 
 <div class="is-flex is-align-items-center">

@@ -8,7 +8,7 @@
 	}
 
 	let {
-		show = $bindable(false),
+		show = $bindable(),
 		showText = $bindable('Hide details'),
 		hideText = $bindable('Show details')
 	}: Props = $props();

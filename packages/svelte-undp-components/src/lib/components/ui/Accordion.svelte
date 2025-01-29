@@ -20,9 +20,9 @@
 	let {
 		title = $bindable(),
 		isExpanded = $bindable(),
-		isSelected = $bindable(false),
-		showHoveredColor = $bindable(false),
-		isUppercase = $bindable(true),
+		isSelected = $bindable(),
+		showHoveredColor = false,
+		isUppercase = true,
 		padding = $bindable('px-4'),
 		buttons,
 		content
