@@ -109,7 +109,7 @@
 <Footer logoUrl="/assets/undp-images/undp-logo-white.svg" bind:footerItems />
 
 <style global lang="scss">
-	@import '@undp-data/undp-bulma/dist/style.css';
+	@import '@undp-data/undp-bulma/dist/undp-bulma.css';
 
 	:global(.country-header) {
 		z-index: 99;
