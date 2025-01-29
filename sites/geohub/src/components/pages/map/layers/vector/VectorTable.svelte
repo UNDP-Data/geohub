@@ -205,7 +205,8 @@
 		$tableMenuShownStore = false;
 	};
 
-	const handleFilterInput = () => {
+	const handleFilterInput = (e) => {
+		query = e.detail.value;
 		updateTable();
 	};
 
@@ -428,7 +429,7 @@
 		<div class="is-flex px-4 py-2" bind:clientHeight={headerHeight}>
 			<div class="search-control">
 				<SearchExpand
-					bind:value={query}
+					value={query}
 					open={true}
 					placeholder="Type keyword..."
 					on:change={handleFilterInput}

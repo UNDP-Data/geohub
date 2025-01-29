@@ -48,13 +48,14 @@
 	};
 
 	const handleTextInput = debounce(() => {
-		if (forbiddenCharacters.test(value)) {
-			value = value.replace(forbiddenCharacters, '');
+		if (value.length >= minSearchLength) {
+			if (forbiddenCharacters.test(value)) {
+				value = value.replace(forbiddenCharacters, '');
+			}
+			dispatch('change', {
+				value
+			});
 		}
-		if (value.length < minSearchLength) return;
-		dispatch('change', {
-			value
-		});
 	}, timeout);
 
 	const handleKeyDown = (event: KeyboardEvent) => {
