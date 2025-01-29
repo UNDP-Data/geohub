@@ -100,7 +100,7 @@
 		"maplibre-gl": "^5.0.1",
 		"simple-statistics": "^7.8.7",
 		"svelte-awesome-color-picker": "^3.1.4",
-		"svelte-copy": "^1.4.2",
+		"svelte-copy": "^2.0.0",
 		"svelte-range-slider-pips": "^3.1.4",
 		"svelte-tippy": "^1.3.2",
 		"tippy.js": "^6.3.7"

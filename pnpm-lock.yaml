@@ -385,8 +385,8 @@ importers:
         specifier: ^3.1.4
         version: 3.1.4(svelte@5.19.4)
       svelte-copy:
-        specifier: ^1.4.2
-        version: 1.4.2(svelte@5.19.4)
+        specifier: ^2.0.0
+        version: 2.0.0(svelte@5.19.4)
       svelte-range-slider-pips:
         specifier: ^3.1.4
         version: 3.1.4(svelte@5.19.4)
@@ -5590,10 +5590,10 @@ packages:
       svelte: ^4.0.0 || ^5.0.0-next.0
       typescript: '>=5.0.0'
 
-  svelte-copy@1.4.2:
-    resolution: {integrity: sha512-Q99JvWDzB58JlbVWX2VxjHX/CQ5ayDLUGGJgL2EqU1+3c9CDOtxLrKFZx5CVN5bN/DDl62nxtazz0j3nGX1Xew==}
+  svelte-copy@2.0.0:
+    resolution: {integrity: sha512-wJ784qrc9CF7EtrlT2kwJfHnqae/pp4fkgzYeUxex4iFBm6HosT2904t5cZZ1GAZzg/z9V+lCZVP5rpiYsN6Tw==}
     peerDependencies:
-      svelte: ^3.55.0 || ^4.0.0
+      svelte: ^5.0.0
 
   svelte-eslint-parser@0.43.0:
     resolution: {integrity: sha512-GpU52uPKKcVnh8tKN5P4UZpJ/fUDndmq7wfsvoVXsyP+aY0anol7Yqo01fyrlaWGMFfm4av5DyrjlaXdLRJvGA==}
@@ -11435,7 +11435,7 @@ snapshots:
     transitivePeerDependencies:
       - picomatch
 
-  svelte-copy@1.4.2(svelte@5.19.4):
+  svelte-copy@2.0.0(svelte@5.19.4):
     dependencies:
       svelte: 5.19.4
 
