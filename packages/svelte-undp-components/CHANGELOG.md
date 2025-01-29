@@ -1,5 +1,18 @@
 # @undp-data/svelte-undp-components
 
+## 1.5.18
+
+### Patch Changes
+
+- 1ac4d94: chore: updated monorepo package dependencies
+- 905236f: fix: export defaultHaloWidth from TextHaloWidth component
+- a038e3d: chore: upgrade maplibre to v5
+- 8e7812f: fix: changed <p> to <div> in FieldControl to wrap slot.
+- a2662a7: fix: switched vitePreprocess to sveltePreprocess becauseb of svelte-package hang
+- Updated dependencies [1ac4d94]
+- Updated dependencies [a2662a7]
+  - @undp-data/svelte-undp-design@2.4.7
+
 ## 1.5.17
 
 ### Patch Changes

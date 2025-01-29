@@ -1,5 +1,24 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 1.0.0
+
+### Major Changes
+
+- a2662a7: chore: migrate storymap client components to svelte 5.
+
+### Patch Changes
+
+- 8ef8cdf: fix: add pmtiles protocol at the StoryMap component inside.
+- a038e3d: chore: upgrade maplibre to v5
+- ff3b0b4: fix: fixed bug of not setting default location in storymap if users do not customise.
+- Updated dependencies [1ac4d94]
+- Updated dependencies [905236f]
+- Updated dependencies [a038e3d]
+- Updated dependencies [8e7812f]
+- Updated dependencies [a2662a7]
+  - @undp-data/svelte-undp-components@1.5.18
+  - @undp-data/svelte-undp-design@2.4.7
+
 ## 0.4.13
 
 ### Patch Changes

@@ -1,5 +1,24 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 3.0.0
+
+### Major Changes
+
+- dbd2da0: chore: migrate to svelte 5 for static api control.
+
+### Patch Changes
+
+- a038e3d: chore: upgrade maplibre to v5
+- Updated dependencies [1ac4d94]
+- Updated dependencies [905236f]
+- Updated dependencies [a038e3d]
+- Updated dependencies [8e7812f]
+- Updated dependencies [a2662a7]
+- Updated dependencies [1ac4d94]
+  - @undp-data/svelte-undp-components@1.5.18
+  - @undp-data/svelte-undp-design@2.4.7
+  - @undp-data/undp-bulma@2.0.0
+
 ## 2.0.41
 
 ### Patch Changes

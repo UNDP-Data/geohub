@@ -1,5 +1,26 @@
 # geohub
 
+## 1.22.29
+
+### Patch Changes
+
+- 1ac4d94: chore: updated monorepo package dependencies
+- 6d68c1e: chore: use named import of sveltePreprocess
+- dbd2da0: chore: migrate to svelte 5 for static api control.
+- 13aa269: chore: migrated some map components to svelte 5, and fixed reactivity bug in LayerList
+- 0124b84: fix: fixed bug of not showing no of stars correctly for map and data page.
+- 905236f: chore: migrated storymap components to svelte 5
+- 6004be7: fix: fixed bug of adding layer in map editor. and migrated some map editor components to svelte 5
+- a038e3d: chore: upgrade maplibre to v5
+- b2a44b5: chore: migrating data tab components of map editor to svelte 5
+- a2662a7: chore: migrate storymap client components to svelte 5.
+- 8e7812f: chore: migrate STAC related components and MiniMap to svelte 5
+- 0124b84: fix: fixed bug of not updating layer list when new layer is added to layer tab.
+- 905236f: fix: fixed storymap pagination bug.
+- aad7a9a: fix: fixed bug of when layer is deleted.
+- 39057e9: chore: update dependencies of svelte to v5.
+- ff3b0b4: fix: fixed bug of not setting default location in storymap if users do not customise.
+
 ## 1.22.28
 
 ### Patch Changes
