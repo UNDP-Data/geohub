@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 2.4.8
+
+### Patch Changes
+
+- 0ae54db: fix: fixed vector table searching behaviour
+
 ## 2.4.7
 
 ### Patch Changes
