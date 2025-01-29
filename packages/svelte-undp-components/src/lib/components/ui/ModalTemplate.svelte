@@ -91,6 +91,8 @@
 					top: 1rem;
 					right: 1rem;
 
+					border-radius: 45px;
+
 					@media (max-width: 48em) {
 						top: 0.5rem;
 						right: 0.5rem;
