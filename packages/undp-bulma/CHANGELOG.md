@@ -1,5 +1,11 @@
 # @undp-data/undp-bulma
 
+## 2.0.0
+
+### Major Changes
+
+- 1ac4d94: feat: updated major dependencies. CSS file name was changed from style.css to undp-bulma.css
+
 ## 1.1.2
 
 ### Patch Changes

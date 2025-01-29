@@ -1,5 +1,12 @@
 # @undp-data/cgaz-admin-tool
 
+## 0.0.10
+
+### Patch Changes
+
+- 1ac4d94: chore: updated monorepo package dependencies
+- a038e3d: chore: upgrade maplibre to v5
+
 ## 0.0.9
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @undp-data/svelte-undp-design
 
+## 2.4.7
+
+### Patch Changes
+
+- 1ac4d94: chore: updated monorepo package dependencies
+- a2662a7: fix: switched vitePreprocess to sveltePreprocess becauseb of svelte-package hang
+
 ## 2.4.6
 
 ### Patch Changes
