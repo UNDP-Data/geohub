@@ -6,14 +6,15 @@ const config: StorybookConfig = {
 		'@storybook/addon-links',
 		'@storybook/addon-essentials',
 		'@storybook/addon-interactions',
-		'@storybook/addon-svelte-csf'
+		'@storybook/addon-svelte-csf',
+		'@storybook/addon-mdx-gfm'
 	],
 	framework: {
 		name: '@storybook/sveltekit',
 		options: {}
 	},
 	docs: {
-		autodocs: 'tag'
+		autodocs: true
 	},
 	staticDirs: ['../static'],
 	refs: {

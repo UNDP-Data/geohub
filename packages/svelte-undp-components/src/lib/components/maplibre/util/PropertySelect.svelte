@@ -60,8 +60,9 @@
 		metadata: VectorTileMetadata,
 		onlyNumberFields = true
 	) => {
-		const vectorInfo: VectorLayerMetadata[] = metadata.json.vector_layers;
-
+		if (!map || !metadata) return;
+		const vectorInfo: VectorLayerMetadata[] = metadata.json?.vector_layers as VectorLayerMetadata[];
+		if (!vectorInfo) return;
 		const style = map.getStyle();
 		const layer = style?.layers?.find((l) => l.id === layerId) as LayerSpecification;
 
