@@ -92,8 +92,8 @@
 		map.showCollisionBoxes = showCollisionBoxes;
 	};
 
-	const handleUrlChanged = (e: { detail: { url: string } }) => {
-		apiUrl = e.detail.url;
+	const handleUrlChanged = (url: string) => {
+		apiUrl = url;
 	};
 
 	const handleExport = () => {
@@ -243,7 +243,7 @@
 										apiBase="{origin}/api"
 										showAdvanced={true}
 										bind:options
-										on:change={handleUrlChanged}
+										onchange={handleUrlChanged}
 									/>
 								</div>
 							{/snippet}
