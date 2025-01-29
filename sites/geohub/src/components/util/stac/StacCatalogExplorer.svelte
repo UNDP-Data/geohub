@@ -3,7 +3,7 @@
 	import StacCatalogItem from '$components/util/stac/StacCatalogItem.svelte';
 	import StacCatalogMap from '$components/util/stac/StacCatalogMap.svelte';
 	import type { DatasetFeature, Stac, StacCatalogBreadcrumb, StacDataLayer } from '$lib/types';
-	import { Breadcrumbs, clean } from '@undp-data/svelte-undp-components';
+	import { type BreadcrumbPage, Breadcrumbs, clean } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { onMount } from 'svelte';
 
@@ -61,19 +61,18 @@
 		if (onBreadcrumbSelected) onBreadcrumbSelected(breadcrumb);
 	};
 
-	const handleBreadcrumbClicked = (e: { detail: StacCatalogBreadcrumb }) => {
-		const page: StacCatalogBreadcrumb = e.detail;
+	const handleBreadcrumbClicked = (page: BreadcrumbPage) => {
 		if (StacBreadcrumbs && StacBreadcrumbs?.length > 0) {
 			const pageIndex = StacBreadcrumbs.findIndex((p) => p.title === page.title);
 			StacBreadcrumbs = [...StacBreadcrumbs.slice(0, pageIndex + 1)];
-			if (onBreadcrumbSelected) onBreadcrumbSelected(page);
+			if (onBreadcrumbSelected) onBreadcrumbSelected(page as StacCatalogBreadcrumb);
 		}
 	};
 </script>
 
 <section class=" p-4">
 	{#if StacBreadcrumbs && StacBreadcrumbs.length > 0}
-		<Breadcrumbs bind:pages={StacBreadcrumbs} size="small" on:click={handleBreadcrumbClicked} />
+		<Breadcrumbs bind:pages={StacBreadcrumbs} size="small" onclick={handleBreadcrumbClicked} />
 
 		{#each StacBreadcrumbs as page, index}
 			{@const isLastPage = index === StacBreadcrumbs.length - 1}

@@ -2,9 +2,6 @@
 	import { clean } from '$lib/util/clean.js';
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { initTooltipTippy } from '$lib/util/initTippy.js';
-	import { createEventDispatcher } from 'svelte';
-
-	const dispatch = createEventDispatcher();
 
 	interface Props {
 		title: string;
@@ -15,17 +12,19 @@
 		padding?: string;
 		buttons?: import('svelte').Snippet;
 		content?: import('svelte').Snippet;
+		ontoggle?: (isExpanded: boolean) => void;
 	}
 
 	let {
 		title = $bindable(),
 		isExpanded = $bindable(),
-		isSelected = $bindable(),
+		isSelected = false,
 		showHoveredColor = false,
 		isUppercase = true,
-		padding = $bindable('px-4'),
+		padding = 'px-4',
 		buttons,
-		content
+		content,
+		ontoggle = () => {}
 	}: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();
@@ -33,9 +32,7 @@
 	let isHovered = $state(false);
 
 	const handleToggleChanged = () => {
-		dispatch('toggled', {
-			isExpanded: isExpanded
-		});
+		if (ontoggle) ontoggle(isExpanded);
 	};
 </script>
 

@@ -29,7 +29,7 @@
 	<FloatingPanel
 		title="Footer slide settings"
 		showExpand={false}
-		on:close={handleClose}
+		onclose={handleClose}
 		bind:headerHeight={panelHeaderHeight}
 	>
 		<div class="editor-container" style="height: {tabContentHeight}px;">

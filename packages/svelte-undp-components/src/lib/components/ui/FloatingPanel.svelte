@@ -2,9 +2,6 @@
 	import { clean } from '$lib/util/clean.js';
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { initTooltipTippy } from '$lib/util/initTippy.js';
-	import { createEventDispatcher } from 'svelte';
-
-	const dispatch = createEventDispatcher();
 
 	interface Props {
 		title: string;
@@ -13,6 +10,7 @@
 		headerHeight?: number;
 		showClose?: boolean;
 		children?: import('svelte').Snippet;
+		onclose?: () => void;
 	}
 
 	let {
@@ -25,10 +23,6 @@
 	}: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();
-
-	const handleClose = () => {
-		dispatch('close');
-	};
 </script>
 
 <div class="floating-panel">
@@ -69,7 +63,7 @@
 				{#if showClose}
 					<button
 						class="button pr-2"
-						onclick={handleClose}
+						onclick={onclose}
 						use:tippyTooltip={{ content: 'Close' }}
 						aria-label="close"
 					>

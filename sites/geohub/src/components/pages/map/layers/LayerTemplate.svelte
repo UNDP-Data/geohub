@@ -454,7 +454,7 @@
 	bind:isExpanded
 	isSelected={$editingLayerStore?.id === layer.id}
 	showHoveredColor={true}
-	on:toggled={handleToggleChanged}
+	ontoggle={handleToggleChanged}
 >
 	{#snippet buttons()}
 		<div class="accordion-content is-flex is-align-items-center">

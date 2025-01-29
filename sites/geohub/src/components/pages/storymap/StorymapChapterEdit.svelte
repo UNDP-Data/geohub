@@ -180,7 +180,7 @@
 	<FloatingPanel
 		title="slide settings"
 		showExpand={false}
-		on:close={handleClose}
+		onclose={handleClose}
 		bind:headerHeight={panelHeaderHeight}
 	>
 		<div bind:clientHeight={tabHeight}>

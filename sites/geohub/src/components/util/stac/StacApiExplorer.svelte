@@ -878,7 +878,7 @@
 					<Tabs
 						{tabs}
 						bind:activeTab
-						on:tabChange={handleTabChange}
+						onchange={handleTabChange}
 						isCentered={true}
 						isBoxed={false}
 						isUppercase

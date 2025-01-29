@@ -13,10 +13,6 @@
 <script lang="ts">
 	import { handleEnterKey } from '$lib/index.js';
 
-	import { createEventDispatcher } from 'svelte';
-
-	const dispatch = createEventDispatcher();
-
 	interface Props {
 		/**
 		 * An array of BreadcrumbPage objects to be shown as breadcrumbs.
@@ -28,13 +24,10 @@
 		 * Size of breadcrumbs
 		 */
 		size?: 'small' | 'normal' | 'medium' | 'large';
+		onclick?: (page: BreadcrumbPage) => void;
 	}
 
-	let { pages = $bindable(), size = $bindable('small') }: Props = $props();
-
-	const handleClicked = (page: BreadcrumbPage) => {
-		dispatch('click', page);
-	};
+	let { pages = $bindable(), size = $bindable('small'), onclick = () => {} }: Props = $props();
 </script>
 
 <nav class="breadcrumb has-text-weight-bold is-uppercase is-{size}" aria-label="breadcrumbs">
@@ -67,7 +60,7 @@
 						data-sveltekit-preload-data="off"
 						data-sveltekit-preload-code="off"
 						onclick={() => {
-							handleClicked(page);
+							if (onclick) onclick(page);
 						}}
 						onkeydown={handleEnterKey}
 					>

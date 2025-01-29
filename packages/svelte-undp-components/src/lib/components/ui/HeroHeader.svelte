@@ -3,10 +3,6 @@
 	import MenuButton, { type MenuButtonType, type MenuSubButtonType } from './MenuButton.svelte';
 	import Tabs, { type Tab } from './Tabs.svelte';
 
-	import { createEventDispatcher } from 'svelte';
-
-	const dispatch = createEventDispatcher();
-
 	interface Props {
 		title: string;
 		icon?: string;
@@ -15,6 +11,8 @@
 		activeTab?: string;
 		button?: MenuButtonType | undefined;
 		subButtons?: MenuSubButtonType[] | undefined;
+		onBreadcrumbClick?: (page: BreadcrumbPage) => void;
+		onTabChange?: (tab: string) => void;
 	}
 
 	let {
@@ -24,22 +22,14 @@
 		tabs = $bindable([]),
 		activeTab = $bindable(''),
 		button = $bindable(undefined),
-		subButtons = $bindable(undefined)
+		subButtons = $bindable(undefined),
+		onBreadcrumbClick = () => {},
+		onTabChange = () => {}
 	}: Props = $props();
-
-	const handleBreadcrumbClicked = (e: { detail: BreadcrumbPage }) => {
-		dispatch('breadcrumbClicked', e.detail);
-	};
-
-	const handleTabChange = () => {
-		dispatch('tabChanged', {
-			activeTab
-		});
-	};
 </script>
 
 <div class="has-background-light px-6 {tabs?.length > 0 ? 'pt-4' : 'py-4'}">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} on:click={handleBreadcrumbClicked} /></div>
+	<div class="py-4"><Breadcrumbs pages={breadcrumbs} onclick={onBreadcrumbClick} /></div>
 
 	<div class="is-flex mt-6 mb-5">
 		<h2 class="title is-2 is-uppercase">
@@ -65,7 +55,7 @@
 			isFullwidth={false}
 			isCentered={false}
 			isUppercase={true}
-			on:tabChange={handleTabChange}
+			onchange={onTabChange}
 		/>
 	{/if}
 </div>

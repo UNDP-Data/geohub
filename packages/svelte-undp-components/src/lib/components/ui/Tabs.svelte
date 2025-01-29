@@ -9,9 +9,7 @@
 
 <script lang="ts">
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
-	import { createEventDispatcher } from 'svelte';
 
-	const dispatch = createEventDispatcher();
 	interface Props {
 		isFullwidth?: boolean;
 		isBoxed?: boolean;
@@ -22,6 +20,7 @@
 		isUppercase?: boolean;
 		fontWeight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
 		activeTab: string;
+		onchange?: (tab: string) => void;
 	}
 
 	let {
@@ -33,7 +32,8 @@
 		isCapitalized = $bindable(false),
 		isUppercase = $bindable(false),
 		fontWeight = $bindable('normal'),
-		activeTab = $bindable()
+		activeTab = $bindable(),
+		onchange = () => {}
 	}: Props = $props();
 </script>
 
@@ -52,7 +52,7 @@
 					tabindex="0"
 					onclick={() => {
 						activeTab = tab.id;
-						dispatch('tabChange', activeTab);
+						if (onchange) onchange(activeTab);
 					}}
 					data-sveltekit-preload-data="off"
 					data-sveltekit-preload-code="off"

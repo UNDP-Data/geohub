@@ -382,7 +382,7 @@
 				isFullwidth={false}
 				bind:tabs
 				bind:activeTab
-				on:tabChange={() => handleActiveTabChanged(activeTab)}
+				onchange={() => handleActiveTabChanged(activeTab as 'center' | 'bbox' | 'auto')}
 				isUppercase={true}
 				fontWeight="semibold"
 			/>

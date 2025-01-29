@@ -99,7 +99,7 @@
 	<Tabs
 		bind:tabs
 		bind:activeTab={activeIconGroupId}
-		on:tabChange={(e) => (activeIconGroupId = e.detail)}
+		onchange={(tab: string) => (activeIconGroupId = tab)}
 		fontWeight="semibold"
 	/>
 	<button class="delete close is-radiusless" onclick={handleClosePopup} aria-label="delete"
