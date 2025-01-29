@@ -7,6 +7,7 @@
 	const { Story } = defineMeta({
 		title: 'Components/Maplibre/FillExtrusion/FillExtrusionColor',
 		component: VectoColorClassification,
+		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
@@ -283,7 +284,6 @@
 
 <Story
 	name="Primary"
-	tags={['autodocs']}
 	args={{
 		layerId: layer.id,
 		metadata,

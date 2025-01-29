@@ -7,6 +7,7 @@
 	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Heatmap/HeatmapIntensity',
 		component: HeatmapIntensity,
+		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
@@ -40,4 +41,4 @@
 	</Map>
 {/snippet}
 
-<Story name="Primary" args={{ layerId: layer.id }} tags={['autodocs']} children={template} />
+<Story name="Primary" args={{ layerId: layer.id }} children={template} />

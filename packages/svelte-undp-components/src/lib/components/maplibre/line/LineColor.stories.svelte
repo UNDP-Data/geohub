@@ -7,6 +7,7 @@
 	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Line/LineColor',
 		component: VectoColorClassification,
+		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
@@ -298,6 +299,5 @@
 		colorMapName: 'viridis',
 		defaultColor: '#000000'
 	}}
-	tags={['autodocs']}
 	children={template}
 />

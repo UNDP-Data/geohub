@@ -5,6 +5,7 @@
 	const { Story } = defineMeta({
 		title: 'Components/UI/Sidebar',
 		component: Sidebar,
+		tags: ['autodocs'],
 		argTypes: {
 			position: {
 				control: 'select',
@@ -26,37 +27,24 @@
 	</Sidebar>
 {/snippet}
 
-<Story
-	name="Left sidebar"
-	args={{ position: 'left', height: 300 }}
-	tags={['autodocs']}
-	children={template}
-/>
+<Story name="Left sidebar" args={{ position: 'left', height: 300 }} children={template} />
 
-<Story
-	name="Right sidebar"
-	args={{ position: 'right', height: 300 }}
-	tags={['autodocs']}
-	children={template}
-/>
+<Story name="Right sidebar" args={{ position: 'right', height: 300 }} children={template} />
 
 <Story
 	name="Hide border"
 	args={{ position: 'left', border: 'none', height: 300 }}
-	tags={['autodocs']}
 	children={template}
 />
 
 <Story
 	name="Hide toggle button"
 	args={{ position: 'left', showToggleButton: false, height: 300 }}
-	tags={['autodocs']}
 	children={template}
 />
 
 <Story
 	name="Hide sidebar as default"
 	args={{ position: 'left', show: false, height: 300 }}
-	tags={['autodocs']}
 	children={template}
 />

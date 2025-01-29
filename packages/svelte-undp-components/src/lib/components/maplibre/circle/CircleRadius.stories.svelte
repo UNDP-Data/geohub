@@ -7,6 +7,7 @@
 	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Circle/CircleRadius',
 		component: CircleRadius,
+		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
@@ -41,18 +42,8 @@
 	</Map>
 {/snippet}
 
-<Story name="Primary" tags={['autodocs']} args={{ layerId: layer.id }} children={template} />
+<Story name="Primary" args={{ layerId: layer.id }} children={template} />
 
-<Story
-	name="Readonly"
-	tags={['autodocs']}
-	args={{ layerId: layer.id, readonly: true }}
-	children={template}
-/>
+<Story name="Readonly" args={{ layerId: layer.id, readonly: true }} children={template} />
 
-<Story
-	name="Step value by 2"
-	tags={['autodocs']}
-	args={{ layerId: layer.id, stepValue: 2 }}
-	children={template}
-/>
+<Story name="Step value by 2" args={{ layerId: layer.id, stepValue: 2 }} children={template} />

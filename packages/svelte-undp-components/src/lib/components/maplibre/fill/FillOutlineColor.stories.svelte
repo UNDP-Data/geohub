@@ -7,6 +7,7 @@
 	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Fill/FillOutlineColor',
 		component: FillOutlineColor,
+		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
@@ -41,4 +42,4 @@
 	</Map>
 {/snippet}
 
-<Story name="Primary" tags={['autodocs']} args={{ layerId: layer.id }} children={template} />
+<Story name="Primary" args={{ layerId: layer.id }} children={template} />

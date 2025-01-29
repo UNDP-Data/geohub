@@ -7,6 +7,7 @@
 	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Symbol/IconImage',
 		component: IconImage,
+		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
@@ -43,9 +44,4 @@
 	</Map>
 {/snippet}
 
-<Story
-	name="Primary"
-	args={{ layerId: layer.id, apiOrigin: apiOrigin }}
-	tags={['autodocs']}
-	children={template}
-/>
+<Story name="Primary" args={{ layerId: layer.id, apiOrigin: apiOrigin }} children={template} />

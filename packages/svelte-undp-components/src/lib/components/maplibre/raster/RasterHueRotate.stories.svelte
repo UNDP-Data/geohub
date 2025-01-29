@@ -6,6 +6,7 @@
 	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Raster/RasterHueRotate',
 		component: RasterHueRotate,
+		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
@@ -25,4 +26,4 @@
 	</Map>
 {/snippet}
 
-<Story name="Primary" args={{ layerId: 'bingaerial' }} tags={['autodocs']} children={template} />
+<Story name="Primary" args={{ layerId: 'bingaerial' }} children={template} />

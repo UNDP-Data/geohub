@@ -8,6 +8,7 @@
 	const { Story } = defineMeta({
 		title: 'Components/titiler/RasterClassifyLegend',
 		component: RasterClassifyLegend,
+		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
@@ -125,6 +126,5 @@
 		colorMapName: 'brbg',
 		numberOfClasses: 6
 	}}
-	tags={['autodocs']}
 	children={template}
 />

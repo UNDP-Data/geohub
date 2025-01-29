@@ -8,6 +8,7 @@
 	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Symbol/IconSize',
 		component: IconSize,
+		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
@@ -708,6 +709,5 @@
 		defaultColor: layer.paint?.['icon-color'],
 		apiOrigin: 'https://dev.undpgeohub.org'
 	}}
-	tags={['autodocs']}
 	children={template}
 />

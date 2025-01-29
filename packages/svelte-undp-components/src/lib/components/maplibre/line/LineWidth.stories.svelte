@@ -7,6 +7,7 @@
 	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Line/LineWidth',
 		component: VectorValueClassification,
+		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
@@ -301,6 +302,5 @@
 		classificationMethod: 'n',
 		numberOfRandomSamplingPoints: 1000
 	}}
-	tags={['autodocs']}
 	children={template}
 />

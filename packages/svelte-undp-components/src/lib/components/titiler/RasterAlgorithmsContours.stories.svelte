@@ -7,6 +7,7 @@
 	const { Story } = defineMeta({
 		title: 'Components/titiler/RasterAlgorithms/Contours',
 		component: RasterAlgorithms,
+		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
@@ -70,6 +71,5 @@
 		algorithmsApi: 'https://titiler-dev.undpgeohub.org/algorithms',
 		algorithmId: 'contours'
 	}}
-	tags={['autodocs']}
 	children={template}
 />

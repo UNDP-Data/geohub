@@ -13,7 +13,7 @@
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { initTippy } from '$lib/util/initTippy.js';
 	import chroma from 'chroma-js';
-	import { createEventDispatcher, untrack } from 'svelte';
+	import { createEventDispatcher, onMount, untrack } from 'svelte';
 	import type { RgbaColor } from 'svelte-awesome-color-picker';
 
 	const tippy = initTippy({
@@ -148,6 +148,10 @@
 		if (color.a === 0) {
 			isVisible = false;
 		}
+	});
+
+	onMount(() => {
+		getColorPickerStyle();
 	});
 </script>
 

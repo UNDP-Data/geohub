@@ -7,6 +7,7 @@
 	const { Story } = defineMeta({
 		title: 'Components/titiler/RasterAlgorithms/Hillshade',
 		component: RasterAlgorithms,
+		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
@@ -70,6 +71,5 @@
 		algorithmsApi: 'https://titiler-dev.undpgeohub.org/algorithms',
 		algorithmId: 'hillshade'
 	}}
-	tags={['autodocs']}
 	children={template}
 />

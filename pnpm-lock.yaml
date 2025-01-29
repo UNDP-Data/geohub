@@ -406,9 +406,6 @@ importers:
       '@storybook/addon-links':
         specifier: ^8.5.2
         version: 8.5.2(react@18.3.1)(storybook@8.5.2(prettier@3.4.2))
-      '@storybook/addon-mdx-gfm':
-        specifier: ^8.5.2
-        version: 8.5.2(storybook@8.5.2(prettier@3.4.2))
       '@storybook/addon-svelte-csf':
         specifier: ^5.0.0-next.23
         version: 5.0.0-next.23(@storybook/svelte@8.5.2(storybook@8.5.2(prettier@3.4.2))(svelte@5.19.3))(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.19.3)(vite@6.0.11(@types/node@22.10.5)(sass-embedded@1.83.4)(sass@1.83.4)))(storybook@8.5.2(prettier@3.4.2))(svelte@5.19.3)(vite@6.0.11(@types/node@22.10.5)(sass-embedded@1.83.4)(sass@1.83.4))
@@ -2613,11 +2610,6 @@ packages:
     resolution: {integrity: sha512-jvo16mzXumb96R7m6F56XScIYwtwth0jYzSwO/bi/v1JQ+llbZo8ZXEGPGjzVHQcAM2TL6n0+DekPuyoBJwx1w==}
     peerDependencies:
       storybook: ^8.5.1
-
-  '@storybook/addon-mdx-gfm@8.5.2':
-    resolution: {integrity: sha512-UuJDa2Asch8Z6H+vzLg+/VQQNbHhqmDtn8OSfNHo6Lr6a0uk6LofYKvP/nB7i6wMUvnaM+Qh/b5hAI/VCXitBQ==}
-    peerDependencies:
-      storybook: ^8.5.2
 
   '@storybook/addon-measure@8.5.1':
     resolution: {integrity: sha512-Goc/IRh0aYT7zfDP9fgwL+DFX52DylanoBf0uGf59IQ7sEJHbwWm0OpiSEDo+NbtytbG83UOQamT7aQxhQo7Zw==}
@@ -8646,14 +8638,6 @@ snapshots:
     dependencies:
       remark-gfm: 4.0.0
       storybook: 8.5.1(prettier@3.4.2)
-      ts-dedent: 2.2.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@storybook/addon-mdx-gfm@8.5.2(storybook@8.5.2(prettier@3.4.2))':
-    dependencies:
-      remark-gfm: 4.0.0
-      storybook: 8.5.2(prettier@3.4.2)
       ts-dedent: 2.2.0
     transitivePeerDependencies:
       - supports-color

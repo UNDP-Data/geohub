@@ -7,6 +7,7 @@
 	const { Story } = defineMeta({
 		title: 'Components/pg_tileserv/VectorSimulation',
 		component: VectorSimulation,
+		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
 				type: 'string',
@@ -71,6 +72,5 @@
 		layerId: layer.id,
 		datasetUrl: sourceUrl
 	}}
-	tags={['autodocs']}
 	children={template}
 />
