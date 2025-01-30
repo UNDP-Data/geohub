@@ -691,8 +691,8 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0
       drizzle-orm:
-        specifier: ^0.38.3
-        version: 0.38.3(@types/pg@8.11.10)(@types/react@19.0.2)(postgres@3.4.5)(react@18.3.1)
+        specifier: ^0.39.0
+        version: 0.39.1(@types/pg@8.11.10)(@types/react@19.0.2)(postgres@3.4.5)(react@18.3.1)
       flatgeobuf:
         specifier: ^3.36.0
         version: 3.36.0
@@ -4068,8 +4068,8 @@ packages:
     resolution: {integrity: sha512-HmA/NeewvHywhJ2ENXD3KvOuM/+K2dGLJfxVfIHsGwaqKICJnS+Ke2L6UcSrSrtMJLJaT0Im1Qv4TFXfaZShyw==}
     hasBin: true
 
-  drizzle-orm@0.38.3:
-    resolution: {integrity: sha512-w41Y+PquMpSff/QDRGdItG0/aWca+/J3Sda9PPGkTxBtjWQvgU1jxlFBXdjog5tYvTu58uvi3PwR1NuCx0KeZg==}
+  drizzle-orm@0.39.1:
+    resolution: {integrity: sha512-2bDHlzTY31IDmrYn8i+ZZrxK8IyBD4mPZ7JmZdVDQj2tpBZXs/gxB/1kK5pSvkjxPUMNOVsTnoGkSltgjuJwcA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=4'
@@ -10659,7 +10659,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.38.3(@types/pg@8.11.10)(@types/react@19.0.2)(postgres@3.4.5)(react@18.3.1):
+  drizzle-orm@0.39.1(@types/pg@8.11.10)(@types/react@19.0.2)(postgres@3.4.5)(react@18.3.1):
     optionalDependencies:
       '@types/pg': 8.11.10
       '@types/react': 19.0.2
