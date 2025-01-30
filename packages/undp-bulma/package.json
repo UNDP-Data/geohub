@@ -4,6 +4,16 @@
   "description": "This package is to manage customised Bulma css for UNDP GeoHub",
   "type": "module",
   "main": "bulma.scss",
+  "exports": {
+    ".": {
+      "import": "./dist/undp-bulma.css",
+      "require": "./dist/undp-bulma.css"
+    },
+    "./dist/undp-bulma.css": {
+      "import": "./dist/undp-bulma.css",
+      "require": "./dist/undp-bulma.css"
+    }
+  },
   "files": [
     "dist",
     "!dist/**/*.js",
@@ -14,7 +24,9 @@
   "private": false,
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && copyfiles -u 2 'assets/sdgs/*' dist/assets/sdgs",
+    "build": "npm run package:scss && npm run package:copyassets",
+    "package:scss": "sass --load-path=node_modules bulma.scss dist/undp-bulma.css",
+    "package:copyassets": "copyfiles -u 2 'assets/sdgs/*' dist/assets/sdgs && copyfiles -u 2 'assets/fonts/*' dist/assets/fonts",
     "preview": "vite preview"
   },
   "repository": {

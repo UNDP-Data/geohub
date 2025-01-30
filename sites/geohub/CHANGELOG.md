@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.30
+
+### Patch Changes
+
+- 0ae54db: fix: fixed vector table searching behaviour
+
 ## 1.22.29
 
 ### Patch Changes
