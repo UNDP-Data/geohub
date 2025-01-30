@@ -1,21 +1,20 @@
 <script lang="ts">
 	import { initTippy } from '$lib/util/initTippy.js';
-	import { createEventDispatcher } from 'svelte';
 
 	interface Props {
 		selected?: number[];
 		placeholder?: string;
 		isFullWidth?: boolean;
+		onselect?: (sdgs: number[]) => void;
 	}
 
 	let {
-		selected = $bindable([]),
-		placeholder = $bindable('Select SDG'),
-		isFullWidth = $bindable(false)
+		selected = [],
+		placeholder = 'Select SDG',
+		isFullWidth = false,
+		onselect = () => {}
 	}: Props = $props();
 	let isActive = $state(false);
-
-	const dispatch = createEventDispatcher();
 
 	let tippy = initTippy({
 		appendTo: document.body,
@@ -62,8 +61,7 @@
 			selected = [...selected, sdg];
 			selected = selected.sort((a, b) => a - b);
 		}
-
-		dispatch('select', { sdgs: selected });
+		if (onselect) onselect(selected);
 	};
 </script>
 

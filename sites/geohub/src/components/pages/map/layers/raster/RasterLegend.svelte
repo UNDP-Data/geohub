@@ -362,7 +362,7 @@
 										<div style="width: 100%;">
 											<ColorMapPicker
 												bind:colorMapName={$colorMapNameStore}
-												on:change={handleColorMapChanged}
+												onchange={handleColorMapChanged}
 											/>
 										</div>
 									</div>

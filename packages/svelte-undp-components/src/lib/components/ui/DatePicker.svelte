@@ -2,11 +2,7 @@
 	import { initTippy, initTooltipTippy } from '$lib/util/initTippy.js';
 	import { DatePicker } from '@undp-data/date-picker-svelte';
 	import dayjs from 'dayjs';
-	import { createEventDispatcher } from 'svelte';
-
-	const dispatch = createEventDispatcher();
-
-	let today = new Date();
+	import { onMount } from 'svelte';
 
 	interface Props {
 		/**
@@ -58,20 +54,27 @@
 		 * Width of textbox.
 		 */
 		width?: number | undefined;
+
+		/**
+		 * Event handler for date selection
+		 * @param date Date
+		 */
+		onselect?: (date: Date) => void;
 	}
 
 	let {
-		max = $bindable(new Date()),
-		min = $bindable(dayjs(max).add(-100, 'year').toDate()),
-		value = $bindable(dayjs(today).isAfter(max) ? max : dayjs(today).isBefore(min) ? min : today),
+		max = $bindable(),
+		min = $bindable(),
+		value = $bindable(),
 		enabledDates = $bindable([]),
 		disabledDates = $bindable([]),
-		format = $bindable('MMMM D, YYYY'),
-		tooltip = $bindable('Select a date'),
-		size = $bindable('normal'),
-		icon = $bindable('fas fa-calendar-days fa-lg'),
+		format = 'MMMM D, YYYY',
+		tooltip = 'Select a date',
+		size = 'normal',
+		icon = 'fas fa-calendar-days fa-lg',
 		disabled = $bindable(false),
-		width = $bindable(undefined)
+		width = $bindable(),
+		onselect = () => {}
 	}: Props = $props();
 
 	let tippyInstance: { hide: () => void } | undefined;
@@ -81,9 +84,7 @@
 		if (tippyInstance) {
 			tippyInstance.hide();
 		}
-		dispatch('select', {
-			date: value
-		});
+		if (onselect) onselect(value);
 	};
 
 	const tippyTooltip = initTooltipTippy();
@@ -104,6 +105,19 @@
 	});
 
 	let tooltipContent: HTMLElement | undefined = $state();
+
+	onMount(() => {
+		let today = new Date();
+		if (!max) {
+			max = today;
+		}
+		if (!min) {
+			min = dayjs(max).add(-100, 'year').toDate();
+		}
+		if (!value) {
+			value = dayjs(today).isAfter(max) ? max : dayjs(today).isBefore(min) ? min : today;
+		}
+	});
 </script>
 
 <div

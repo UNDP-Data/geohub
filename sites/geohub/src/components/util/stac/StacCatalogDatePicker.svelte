@@ -205,7 +205,7 @@
 		bind:min={temporalIntervalFrom}
 		bind:max={temporalIntervalTo}
 		{enabledDates}
-		on:select={handleDateSelected}
+		onselect={handleDateSelected}
 	/>
 
 	<div class="is-flex is-justify-content-center is-align-items-center ml-1">

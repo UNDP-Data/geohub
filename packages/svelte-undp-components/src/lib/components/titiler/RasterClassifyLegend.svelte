@@ -243,9 +243,9 @@
 		numberOfClasses = colorMapRows.length;
 	};
 
-	const handleColorMapChanged = (e: { detail: { colorMapName: string } }) => {
-		if (e.detail) {
-			let name = e.detail.colorMapName;
+	const handleColorMapChanged = (colorMapName: string) => {
+		if (colorMapName) {
+			let name = colorMapName;
 			if (!name) return;
 
 			let colorsList = chroma.scale(name.replace('_r', '')).mode('lrgb').colors(numberOfClasses);
@@ -266,8 +266,8 @@
 		classifyImage();
 	};
 
-	const handleIncrementDecrementClasses = (e: CustomEvent) => {
-		numberOfClasses = e.detail.value;
+	const handleIncrementDecrementClasses = (value: number) => {
+		numberOfClasses = value;
 		colorMapRows = [];
 		setInitialColorMapRows();
 		classifyImage();
@@ -437,7 +437,7 @@
 >
 	<div class="field">
 		<p class="control" style="width: {colormapPickerWidth}px">
-			<ColorMapPicker bind:colorMapName on:change={handleColorMapChanged} />
+			<ColorMapPicker bind:colorMapName onchange={handleColorMapChanged} />
 		</p>
 	</div>
 
@@ -482,7 +482,7 @@
 								bind:value={numberOfClasses}
 								minValue={numberOfClassesMinimum}
 								maxValue={numberOfClassesMaximum}
-								on:change={handleIncrementDecrementClasses}
+								onchange={handleIncrementDecrementClasses}
 								size="normal"
 							/>
 						</div>

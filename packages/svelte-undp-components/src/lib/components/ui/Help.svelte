@@ -8,12 +8,7 @@
 		children?: import('svelte').Snippet;
 	}
 
-	let {
-		maxWidth = $bindable(300),
-		type = $bindable('info'),
-		size = $bindable('small'),
-		children
-	}: Props = $props();
+	let { maxWidth = 300, type = 'info', size = 'small', children }: Props = $props();
 
 	const tippy = initTooltipTippy({
 		maxWidth

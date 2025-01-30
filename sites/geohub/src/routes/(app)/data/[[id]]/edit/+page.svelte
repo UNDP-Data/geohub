@@ -96,26 +96,32 @@
 
 	let isDialogOpen = $state(false);
 
-	const handleContinentSelected = (e) => {
-		const selectedItems: { [key: number]: boolean } = e.detail.items;
-		const changedValue: number = e.detail.value;
-		Object.keys(selectedItems).forEach((key) => {
+	const handleContinentSelected = (
+		value: string | number,
+		items?: { [key: string]: boolean; [key: number]: boolean }
+	) => {
+		if (!items) return;
+		const changedValue: number = value as number;
+		Object.keys(items).forEach((key) => {
 			const id = parseInt(key);
 			const continent = continentsMaster.find((c) => c.continent_code === id);
-			if (continent.continent_code === changedValue) {
+			if (continent?.continent_code === changedValue) {
 				continentSelected(continent, false);
 			}
 		});
 	};
 
-	const handleRegionSelected = (e) => {
-		const selectedItems: { [key: number]: boolean } = e.detail.items;
-		const changedValue: number = e.detail.value;
-		Object.keys(selectedItems).forEach((key) => {
+	const handleRegionSelected = (
+		value: string | number,
+		items?: { [key: string]: boolean; [key: number]: boolean }
+	) => {
+		if (!items) return;
+		const changedValue: number = value as number;
+		Object.keys(items).forEach((key) => {
 			const id = parseInt(key);
 			const region = regionsMaster.find((r) => r.region_code === id);
 
-			if (region.region_code === changedValue) {
+			if (region?.region_code === changedValue) {
 				regionSelected(region);
 			}
 		});
@@ -154,7 +160,8 @@
 
 	const regionSelected = (r: Region) => {
 		if (selectedRegions.find((x) => x.region_code === r.region_code)) {
-			selectedRegions.splice(selectedRegions.indexOf(r), 1);
+			const index = selectedRegions.findIndex((x) => x.region_code === r.region_code);
+			selectedRegions.splice(index, 1);
 		} else {
 			selectedRegions.push(r);
 		}
@@ -277,8 +284,7 @@
 		return sdgs.map((s) => parseInt(s.value as string));
 	};
 
-	const handleSdgSelected = (e: { detail: { sdgs: number[] } }) => {
-		const values = e.detail.sdgs;
+	const handleSdgSelected = (values: number[]) => {
 		sdgs = [
 			...values.map((v: number) => {
 				return {
@@ -289,8 +295,8 @@
 		];
 	};
 
-	const handleGlobalRegionalChanged = (e) => {
-		isGlobal = e.detail.value;
+	const handleGlobalRegionalChanged = (value: string | number) => {
+		isGlobal = value as 'global' | 'regional';
 		if (isGlobal === 'global') {
 			selectedContinents = [];
 			selectedRegions = [];
@@ -300,20 +306,19 @@
 		}
 	};
 
-	const handleCountrySelected = (e) => {
-		const _countries: Country[] = e.detail.selected;
-		if (_countries.length === 0) {
+	const handleCountrySelected = (selected: Country[]) => {
+		if (selected.length === 0) {
 			countries = [];
 			return;
 		}
 
-		_countries.forEach((c) => {
+		selected.forEach((c) => {
 			const ct = continentsMaster.find((a) => a.continent_code === c.continent_code);
 			const re = regionsMaster.find((a) => a.region_code === c.region_code);
-			if (!selectedContinents.includes(ct)) {
+			if (ct && !selectedContinents.find((c) => c.continent_code === ct.continent_code)) {
 				selectedContinents.push(ct);
 			}
-			if (!selectedRegions.includes(re)) {
+			if (re && !selectedRegions.find((r) => r.region_code === re.region_code)) {
 				selectedRegions.push(re);
 			}
 		});
@@ -333,7 +338,7 @@
 		regions = [...regions];
 
 		const temp: Tag[] = [];
-		_countries.forEach((c) => {
+		selected.forEach((c) => {
 			if (temp.find((x) => x.value === c.country_name)) return;
 			temp.push({ key: 'country', value: c.iso_3 });
 		});
@@ -687,7 +692,7 @@
 								{ title: 'Regional', icon: 'fas fa-earth-africa', value: 'regional' }
 							]}
 							bind:selected={isGlobal}
-							on:change={handleGlobalRegionalChanged}
+							onchange={handleGlobalRegionalChanged}
 						/>
 					</div>
 				{/snippet}
@@ -718,7 +723,7 @@
 									{buttons}
 									selectedItems={getSelectedContinent()}
 									multiSelect={true}
-									on:change={handleContinentSelected}
+									onchange={handleContinentSelected}
 									wrap={true}
 								/>
 							{/key}
@@ -753,7 +758,7 @@
 										{buttons}
 										selectedItems={getSelectedRegion()}
 										multiSelect={true}
-										on:change={handleRegionSelected}
+										onchange={handleRegionSelected}
 										wrap={true}
 									/>
 								{/key}
@@ -792,7 +797,7 @@
 													selected={selectedCountryCodes()}
 													continents={getSelectedContinentCodes()}
 													regions={getSelectedRegionCodes()}
-													on:select={handleCountrySelected}
+													onselect={handleCountrySelected}
 													showSelectedCountries={false}
 												/>
 											{/if}
@@ -830,7 +835,7 @@
 				{#snippet control()}
 					<div>
 						{#if browser}
-							<SdgSelector selected={getSdgNumbers()} on:select={handleSdgSelected} />
+							<SdgSelector selected={getSdgNumbers()} onselect={handleSdgSelected} />
 						{/if}
 					</div>
 				{/snippet}

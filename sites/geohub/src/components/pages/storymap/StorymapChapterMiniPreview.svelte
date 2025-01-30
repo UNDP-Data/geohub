@@ -226,8 +226,8 @@
 			continueText="delete"
 			cancelText="cancel"
 			bind:dialogOpen={showDeleteDialog}
-			on:continue={handleDeleteClicked}
-			on:cancel={() => {
+			oncontinue={handleDeleteClicked}
+			oncancel={() => {
 				showDeleteDialog = false;
 			}}
 		/>

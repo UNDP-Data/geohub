@@ -43,7 +43,7 @@
 				bind:minValue
 				bind:maxValue
 				bind:step
-				on:change={setIconOffset}
+				onchange={setIconOffset}
 			/>
 		</div>
 	</div>
@@ -55,7 +55,7 @@
 				bind:minValue
 				bind:maxValue
 				bind:step
-				on:change={setIconOffset}
+				onchange={setIconOffset}
 			/>
 		</div>
 	</div>

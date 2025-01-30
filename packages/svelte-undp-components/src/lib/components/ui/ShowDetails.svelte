@@ -9,8 +9,8 @@
 
 	let {
 		show = $bindable(),
-		showText = $bindable('Hide details'),
-		hideText = $bindable('Show details')
+		showText = 'Hide details',
+		hideText = 'Show details'
 	}: Props = $props();
 </script>
 

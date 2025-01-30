@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import ModalTemplate from './ModalTemplate.svelte';
 	import Notification from './Notification.svelte';
 
-	const dispatch = createEventDispatcher();
 	interface Props {
 		dialogOpen?: boolean;
 		title: string;
@@ -15,29 +13,33 @@
 		showIcon?: boolean;
 		continueColor?: 'primary' | 'link' | 'none';
 		cancelColor?: 'primary' | 'link' | 'none';
+		oncancel?: () => void;
+		oncontinue?: () => void;
 	}
 
 	let {
-		dialogOpen = $bindable(false),
+		dialogOpen = $bindable(),
 		title = $bindable(),
 		message = $bindable(),
-		messageType = $bindable('warning'),
-		target = $bindable(''),
-		continueText = $bindable('continue'),
-		cancelText = $bindable('cancel'),
-		showIcon = $bindable(false),
-		continueColor = $bindable('primary'),
-		cancelColor = $bindable('none')
+		messageType = 'warning',
+		target = '',
+		continueText = 'continue',
+		cancelText = 'cancel',
+		showIcon = false,
+		continueColor = 'primary',
+		cancelColor = 'none',
+		oncancel = () => {},
+		oncontinue = () => {}
 	}: Props = $props();
 
 	const handleCancel = () => {
 		dialogOpen = false;
-		dispatch('cancel');
+		if (oncancel) oncancel();
 	};
 
 	const handleContinue = () => {
 		dialogOpen = false;
-		dispatch('continue');
+		if (oncontinue) oncontinue();
 	};
 </script>
 

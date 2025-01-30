@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import IconImagePickerCard from './IconImagePickerCard.svelte';
 	import type { IconImageType } from './IconImageSelector.svelte';
 	import type { Tab } from './Tabs.svelte';
@@ -9,9 +9,16 @@
 	interface Props {
 		images?: IconImageType[];
 		selected: string;
+		onselect?: (selected: string) => void;
+		onclose?: () => void;
 	}
 
-	let { images = $bindable([]), selected = $bindable() }: Props = $props();
+	let {
+		images = $bindable([]),
+		selected = $bindable(),
+		onselect = () => {},
+		onclose = () => {}
+	}: Props = $props();
 
 	const iconGroupRanges = [
 		{
@@ -48,15 +55,13 @@
 		}
 	});
 
-	const dispatch = createEventDispatcher();
-
 	const handleIconClick = (alt: string) => {
 		selected = alt;
-		dispatch('select', { alt });
+		if (onselect) onselect(alt);
 	};
 
 	const handleClosePopup = () => {
-		dispatch('close');
+		if (onclose) onclose();
 	};
 
 	const getIconGroupsByLetter = async () => {

@@ -13,9 +13,9 @@
 	let {
 		counts = $bindable(),
 		bins = $bindable(),
-		unit = $bindable(''),
-		xLabel = $bindable(''),
-		yLabel = $bindable('')
+		unit = '',
+		xLabel = '',
+		yLabel = ''
 	}: Props = $props();
 
 	// Chart dimensions

@@ -389,7 +389,7 @@
 		{:else if propertySelectValue?.length > 0}
 			<div class="is-flex pb-1">
 				<div style="width: {containerWidth}px;">
-					<ColorMapPicker bind:colorMapName on:change={handleColormapNameChanged} />
+					<ColorMapPicker bind:colorMapName onchange={handleColormapNameChanged} />
 				</div>
 			</div>
 
@@ -435,7 +435,7 @@
 										bind:value={numberOfClasses}
 										minValue={numberOfClassesMinimum}
 										maxValue={numberOfClassesMaximum}
-										on:change={handleIncrementDecrementClasses}
+										onchange={handleIncrementDecrementClasses}
 										size="normal"
 									/>
 								</div>

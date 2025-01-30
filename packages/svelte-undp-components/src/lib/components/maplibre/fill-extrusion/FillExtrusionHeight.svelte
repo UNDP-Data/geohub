@@ -166,7 +166,7 @@
 			last="label"
 			rest={false}
 			suffix="m"
-			on:change={handleConstantHeightChagned}
+			onchange={handleConstantHeightChagned}
 		/>
 	</div>
 {:else}
@@ -190,7 +190,7 @@
 					last="label"
 					rest={false}
 					floatLabel={false}
-					on:change={handleExaggerationChanged}
+					onchange={handleExaggerationChanged}
 					formatter={(value) => {
 						if (value === minExaggerationValue) {
 							return 'Low';

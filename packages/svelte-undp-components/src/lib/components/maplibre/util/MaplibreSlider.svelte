@@ -83,5 +83,5 @@
 	last="label"
 	rest={false}
 	{suffix}
-	on:change={setValue}
+	onchange={setValue}
 />

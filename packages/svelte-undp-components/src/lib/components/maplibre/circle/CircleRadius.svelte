@@ -64,6 +64,6 @@
 	bind:minValue
 	bind:maxValue
 	bind:step={stepValue}
-	on:change={setValue}
+	onchange={setValue}
 	bind:readonly
 />

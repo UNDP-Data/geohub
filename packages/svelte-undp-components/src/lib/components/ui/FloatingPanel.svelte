@@ -2,6 +2,7 @@
 	import { clean } from '$lib/util/clean.js';
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { initTooltipTippy } from '$lib/util/initTippy.js';
+	import { onMount } from 'svelte';
 
 	interface Props {
 		title: string;
@@ -16,13 +17,24 @@
 	let {
 		title = $bindable(),
 		isExpanded = $bindable(true),
-		showExpand = $bindable(true),
-		headerHeight = $bindable(48),
-		showClose = $bindable(true),
+		showExpand = true,
+		headerHeight = $bindable(),
+		showClose = true,
+		onclose = () => {},
 		children
 	}: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();
+
+	const handleClose = () => {
+		if (onclose) onclose();
+	};
+
+	onMount(() => {
+		if (!headerHeight) {
+			headerHeight = 48;
+		}
+	});
 </script>
 
 <div class="floating-panel">
@@ -63,7 +75,7 @@
 				{#if showClose}
 					<button
 						class="button pr-2"
-						onclick={onclose}
+						onclick={handleClose}
 						use:tippyTooltip={{ content: 'Close' }}
 						aria-label="close"
 					>

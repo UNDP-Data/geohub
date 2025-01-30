@@ -135,5 +135,5 @@
 	minValue={1}
 	maxValue={10}
 	step={1}
-	on:change={handleChanged}
+	onchange={handleChanged}
 />

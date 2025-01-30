@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Breadcrumbs, { type BreadcrumbPage } from './Breadcrumbs.svelte';
 	import MenuButton, { type MenuButtonType, type MenuSubButtonType } from './MenuButton.svelte';
 	import Tabs, { type Tab } from './Tabs.svelte';
@@ -17,18 +18,24 @@
 
 	let {
 		title = $bindable(),
-		icon = $bindable(''),
+		icon = '',
 		breadcrumbs = $bindable(),
-		tabs = $bindable([]),
+		tabs = $bindable(),
 		activeTab = $bindable(''),
-		button = $bindable(undefined),
-		subButtons = $bindable(undefined),
+		button = $bindable(),
+		subButtons = $bindable(),
 		onBreadcrumbClick = () => {},
 		onTabChange = () => {}
 	}: Props = $props();
+
+	onMount(() => {
+		if (!tabs) {
+			tabs = [];
+		}
+	});
 </script>
 
-<div class="has-background-light px-6 {tabs?.length > 0 ? 'pt-4' : 'py-4'}">
+<div class="has-background-light px-6 {tabs && tabs.length > 0 ? 'pt-4' : 'py-4'}">
 	<div class="py-4"><Breadcrumbs pages={breadcrumbs} onclick={onBreadcrumbClick} /></div>
 
 	<div class="is-flex mt-6 mb-5">
@@ -46,7 +53,7 @@
 		{/if}
 	</div>
 
-	{#if tabs?.length > 0}
+	{#if tabs && tabs.length > 0}
 		<Tabs
 			bind:tabs
 			bind:activeTab

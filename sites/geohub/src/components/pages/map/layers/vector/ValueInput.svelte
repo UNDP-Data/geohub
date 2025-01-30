@@ -11,7 +11,7 @@
 	} from '@undp-data/svelte-undp-components';
 	import arraystat from 'arraystat';
 	import type { Listener, MapMouseEvent, SymbolLayerSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, getContext, onDestroy } from 'svelte';
+	import { getContext, onDestroy } from 'svelte';
 	import { FILTER_INPUTTAGS_CONTEXT_KEY, type FilterInputTags } from './VectorFilter.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -39,6 +39,7 @@
 			| 'any';
 		onapply?: () => void;
 		oncustomTags?: (tagsList: unknown) => void;
+		onsliderStop?: (values: number[]) => void;
 	}
 
 	let {
@@ -50,7 +51,8 @@
 		onapply = () => {},
 		oncustomTags = (tagsList) => {
 			console.log(tagsList);
-		}
+		},
+		onsliderStop = () => {}
 	}: Props = $props();
 
 	const layerStyle = getLayerStyle($map, layer.id);
@@ -77,8 +79,6 @@
 	}
 
 	const hasManyFeatures = attrstats.count > 250;
-
-	const dispatch = createEventDispatcher();
 
 	let hideOptions = true;
 	let uv: string[] = $state(undefined);
@@ -165,9 +165,9 @@
 		}
 	});
 
-	const onSliderStop = (event: CustomEvent) => {
-		expressionValue = event.detail.values;
-		dispatch('sliderStop', event.detail);
+	const onSliderStop = (values: number[]) => {
+		expressionValue = values;
+		if (onsliderStop) onsliderStop(values);
 	};
 
 	onDestroy(() => {
@@ -360,7 +360,7 @@
 					first="label"
 					last="label"
 					rest={false}
-					on:change={onSliderStop}
+					onchange={onSliderStop}
 				/>
 				<div class="columns is-centered pb-2">
 					<button class="button is-small is-uppercase has-text-weight-bold is-link" onclick={apply}>
@@ -499,7 +499,7 @@
 					first="label"
 					last="label"
 					rest={false}
-					on:change={onSliderStop}
+					onchange={onSliderStop}
 				/>
 				<div class="columns is-centered pb-2">
 					<button class="button is-small is-uppercase has-text-weight-bold is-link" onclick={apply}>

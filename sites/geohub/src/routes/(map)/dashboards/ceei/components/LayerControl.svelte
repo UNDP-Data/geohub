@@ -511,10 +511,10 @@
 									suffix="%"
 									formatter={(value) => value.toFixed(2)}
 									disabled={pillarSliders[0].locked}
-									on:change={(event) => {
+									onchange={(values: number[]) => {
 										let newValue = 0;
-										if (event?.detail?.values[0]) {
-											newValue = event?.detail?.values[0];
+										if (values[0]) {
+											newValue = values[0];
 										}
 										handlePillarSlider(1, newValue);
 									}}
@@ -553,10 +553,10 @@
 											suffix="%"
 											formatter={(value) => value.toFixed(2)}
 											disabled={locked}
-											on:change={(event) => {
+											onchange={(values: number[]) => {
 												let newValue = 0;
-												if (event?.detail?.values[0]) {
-													newValue = event?.detail?.values[0];
+												if (values[0]) {
+													newValue = values[0];
 												}
 												handleSlider(id, newValue);
 											}}
@@ -588,10 +588,10 @@
 									suffix="%"
 									formatter={(value) => value.toFixed(2)}
 									disabled={pillarSliders[2].locked}
-									on:change={(event) => {
+									onchange={(values: number[]) => {
 										let newValue = 0;
-										if (event?.detail?.values[0]) {
-											newValue = event?.detail?.values[0];
+										if (values[0]) {
+											newValue = values[0];
 										}
 										handlePillarSlider(3, newValue);
 									}}
@@ -630,10 +630,10 @@
 											suffix="%"
 											formatter={(value) => value.toFixed(2)}
 											disabled={locked}
-											on:change={(event) => {
+											onchange={(values: number[]) => {
 												let newValue = 0;
-												if (event?.detail?.values[0]) {
-													newValue = event?.detail?.values[0];
+												if (values[0]) {
+													newValue = values[0];
 												}
 												handleSlider(id, newValue);
 											}}
@@ -665,10 +665,10 @@
 								suffix="%"
 								formatter={(value) => value.toFixed(2)}
 								disabled={pillarSliders[1].locked}
-								on:change={(event) => {
+								onchange={(values: number[]) => {
 									let newValue = 0;
-									if (event?.detail?.values[0]) {
-										newValue = event?.detail?.values[0];
+									if (values[0]) {
+										newValue = values[0];
 									}
 									handlePillarSlider(2, newValue);
 								}}
@@ -707,10 +707,10 @@
 										suffix="%"
 										formatter={(value) => value.toFixed(2)}
 										disabled={locked}
-										on:change={(event) => {
+										onchange={(values: number[]) => {
 											let newValue = 0;
-											if (event?.detail?.values[0]) {
-												newValue = event?.detail?.values[0];
+											if (values[0]) {
+												newValue = values[0];
 											}
 											handleSlider(id, newValue);
 										}}

@@ -8,7 +8,7 @@
 <script lang="ts">
 	import { clean } from '$lib/util/clean.js';
 	import { initTippy } from '$lib/util/initTippy.js';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import IconImagePicker from './IconImagePicker.svelte';
 
 	const tippy = initTippy({
@@ -20,15 +20,15 @@
 		selected: string;
 		images?: IconImageType[];
 		readonly?: boolean;
+		onselect?: (selected: IconImageType) => void;
 	}
 
 	let {
 		selected = $bindable(),
 		images = $bindable([]),
-		readonly = $bindable(false)
+		readonly = $bindable(false),
+		onselect = () => {}
 	}: Props = $props();
-
-	const dispatch = createEventDispatcher();
 
 	let showDialog = false;
 	let iconImage = $state('');
@@ -59,11 +59,11 @@
 		showDialog = !showDialog;
 	};
 
-	const handleSelect = (event: CustomEvent) => {
-		selected = event.detail.alt;
+	const handleSelect = (alt: string) => {
+		selected = alt;
 		iconImage = getIconImageSrc(selected) as string;
 		const icon = images.find((img) => img.alt === selected);
-		dispatch('select', icon);
+		if (onselect) onselect(icon as IconImageType);
 	};
 </script>
 
@@ -85,7 +85,7 @@
 
 {#if !readonly}
 	<div class="tooltip pb-2" data-testid="tooltip" bind:this={tooltipContent}>
-		<IconImagePicker bind:images on:select={handleSelect} on:close={handleClose} bind:selected />
+		<IconImagePicker bind:images onselect={handleSelect} onclose={handleClose} bind:selected />
 	</div>
 {/if}
 

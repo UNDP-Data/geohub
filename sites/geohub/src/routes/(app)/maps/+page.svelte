@@ -108,8 +108,8 @@
 		await reload(apiUrl);
 	};
 
-	const handleViewTypeChanged = (e: { detail: { value: TableViewType } }) => {
-		viewType = e.detail.value;
+	const handleViewTypeChanged = (value: string | number) => {
+		viewType = value as TableViewType;
 
 		const apiUrl = new URL(page.url);
 		apiUrl.searchParams.set('viewType', viewType);
@@ -299,7 +299,7 @@
 									{ title: 'List', icon: 'fa-solid fa-list', value: 'list' }
 								]}
 								bind:selected={viewType}
-								on:change={handleViewTypeChanged}
+								onchange={handleViewTypeChanged}
 							/>
 						</div>
 					{/snippet}

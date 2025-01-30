@@ -1,10 +1,7 @@
 <script lang="ts">
 	import { debounce } from 'lodash-es';
-	import { createEventDispatcher } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 	import NumberInput from './NumberInput.svelte';
-
-	const dispatch = createEventDispatcher();
 
 	interface Props {
 		min: number;
@@ -24,6 +21,7 @@
 		range?: boolean | 'min' | 'max';
 		showEditor?: boolean;
 		formatter?: (value: number, index: number, percent: number) => number | string;
+		onchange?: (values: number[]) => void;
 	}
 
 	let {
@@ -31,34 +29,31 @@
 		max = $bindable(),
 		step = $bindable(1),
 		values = $bindable(),
-		rest = $bindable(true),
+		rest = true,
 		disabled = $bindable(false),
-		floatLabel = $bindable(true),
-		pips = $bindable(true),
+		floatLabel = true,
+		pips = true,
 		pipstep = $bindable(1),
-		all = $bindable(false),
-		first = $bindable('label'),
-		last = $bindable('label'),
-		prefix = $bindable(''),
-		suffix = $bindable(''),
-		range = $bindable(values.length > 1 ? true : false),
-		showEditor = $bindable(false),
+		all = false,
+		first = 'label',
+		last = 'label',
+		prefix = '',
+		suffix = '',
+		range = values.length > 1 ? true : false,
+		showEditor = false,
 		formatter = (value: number) => {
 			return value;
-		}
+		},
+		onchange = () => {}
 	}: Props = $props();
 
 	const setSliderValue = debounce((e: { detail: { values: number[] } }) => {
 		values = e.detail.values;
-		dispatch('change', {
-			values: values
-		});
+		if (onchange) onchange(values);
 	}, 300);
 
 	const handleNumberChanged = debounce(() => {
-		dispatch('change', {
-			values: values
-		});
+		if (onchange) onchange(values);
 	}, 300);
 </script>
 
@@ -83,7 +78,7 @@
 		{formatter}
 	/>
 
-	{#if showEditor}
+	{#if values && showEditor}
 		{#if values.length === 1}
 			<div class="is-flex is-justify-content-center inputs">
 				<NumberInput
@@ -92,7 +87,7 @@
 					bind:step
 					bind:value={values[0]}
 					size="small"
-					on:change={handleNumberChanged}
+					onchange={handleNumberChanged}
 				/>
 			</div>
 		{:else if values.length === 2}
@@ -103,7 +98,7 @@
 					bind:step
 					bind:value={values[0]}
 					size="small"
-					on:change={handleNumberChanged}
+					onchange={handleNumberChanged}
 				/>
 				<NumberInput
 					bind:minValue={values[0]}
@@ -111,7 +106,7 @@
 					bind:step
 					bind:value={values[1]}
 					size="small"
-					on:change={handleNumberChanged}
+					onchange={handleNumberChanged}
 				/>
 			</div>
 		{/if}

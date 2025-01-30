@@ -27,7 +27,7 @@
 		onclick?: (page: BreadcrumbPage) => void;
 	}
 
-	let { pages = $bindable(), size = $bindable('small'), onclick = () => {} }: Props = $props();
+	let { pages = $bindable(), size = 'small', onclick = () => {} }: Props = $props();
 </script>
 
 <nav class="breadcrumb has-text-weight-bold is-uppercase is-{size}" aria-label="breadcrumbs">

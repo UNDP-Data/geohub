@@ -16,10 +16,8 @@
 	import { initTippy } from '$lib/util/initTippy.js';
 	import { Chips } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import Notification from './Notification.svelte';
-
-	const dispatch = createEventDispatcher();
 
 	interface Props {
 		selected?: string[];
@@ -29,6 +27,7 @@
 		continents?: number[];
 		regions?: number[];
 		showSelectedCountries?: boolean;
+		onselect?: (countries: Country[]) => void;
 	}
 
 	let {
@@ -38,7 +37,8 @@
 		placeholder = $bindable('Type country name or ISO code'),
 		continents = $bindable([]),
 		regions = $bindable([]),
-		showSelectedCountries = $bindable(true)
+		showSelectedCountries = $bindable(true),
+		onselect = () => {}
 	}: Props = $props();
 
 	let query = $state('');
@@ -110,7 +110,7 @@
 
 	const dispatchEvent = () => {
 		const filtered = countries.filter((c) => selected.includes(c.iso_3));
-		dispatch('select', { selected: filtered });
+		if (onselect) onselect(filtered);
 	};
 
 	onMount(() => {

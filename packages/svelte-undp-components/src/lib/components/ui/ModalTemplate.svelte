@@ -14,10 +14,10 @@
 
 	let {
 		title = $bindable(),
-		show = $bindable(false),
-		showClose = $bindable(true),
-		hiddenButtons = $bindable(false),
-		width = $bindable(''),
+		show = $bindable(),
+		showClose = true,
+		hiddenButtons = false,
+		width = $bindable(),
 		content,
 		buttons
 	}: Props = $props();
@@ -38,7 +38,7 @@
 
 <svelte:window onkeydown={handleEnterEscape} />
 
-<div class="modal {show ? 'is-active' : ''}" transition:fade|global>
+<div class="modal {show === true ? 'is-active' : ''}" transition:fade|global>
 	<div
 		class="modal-background {showClose ? 'close' : ''}"
 		role="none"

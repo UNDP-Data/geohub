@@ -85,10 +85,7 @@
 		isInitialized = true;
 	};
 
-	const handleArgumentChanged = async (e: { detail: { id: string; value: number } }) => {
-		const id = e.detail.id;
-		const value = e.detail.value;
-
+	const handleArgumentChanged = async (id: string, value: number | boolean | string) => {
 		if (value === args[id].value) {
 			delete selectedArgs[id];
 		} else {
@@ -142,7 +139,7 @@
 			maximum={arg.limits.max}
 			showPrefix={true}
 			unit={arg.units}
-			on:change={handleArgumentChanged}
+			onchange={handleArgumentChanged}
 			bind:isExpanded={expanded[argId]}
 		/>
 	{/each}

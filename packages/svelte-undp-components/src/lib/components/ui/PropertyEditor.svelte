@@ -6,11 +6,8 @@
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { Switch } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import { createEventDispatcher } from 'svelte';
 	import NumberInput from './NumberInput.svelte';
 	import Slider from './Slider.svelte';
-
-	const dispatch = createEventDispatcher();
 
 	interface Props {
 		/**
@@ -94,29 +91,31 @@
 		 */
 		showAll?: boolean | 'pip' | 'label';
 		formatter?: (value: number, index: number, percent: number) => number | string;
+		onchange?: (id: string, value: ValueType) => void;
 	}
 
 	let {
-		id = $bindable(),
-		type = $bindable(),
-		title = $bindable(),
-		description = $bindable(''),
-		icon = $bindable(''),
+		id,
+		type,
+		title,
+		description = '',
+		icon = '',
 		value = $bindable(),
-		defaultValue = $bindable(),
-		exclusiveMaximum = $bindable(undefined),
-		maximum = $bindable(undefined),
-		exclusiveMinimum = $bindable(undefined),
-		minimum = $bindable(undefined),
-		showPrefix = $bindable(false),
-		unit = $bindable(''),
+		defaultValue,
+		exclusiveMaximum = undefined,
+		maximum = undefined,
+		exclusiveMinimum = undefined,
+		minimum = undefined,
+		showPrefix = false,
+		unit = '',
 		isExpanded = $bindable(),
-		showEditor = $bindable(false),
-		showRestPip = $bindable(false),
-		showAll = $bindable(false),
+		showEditor = false,
+		showRestPip = false,
+		showAll = false,
 		formatter = (value) => {
 			return value;
-		}
+		},
+		onchange = () => {}
 	}: Props = $props();
 
 	const DEFAULT_MINIMUM = -9999;
@@ -127,21 +126,15 @@
 
 	const handleClear = () => {
 		value = defaultValue;
-		dispatch('change', {
-			id: id,
-			value: value
-		});
+		if (onchange) onchange(id, value);
 	};
 
 	const handleChanged = () => {
-		dispatch('change', {
-			id: id,
-			value: value
-		});
+		if (onchange) onchange(id, value);
 	};
 
-	const setSliderValue = debounce((e: { detail: { values: number[] } }) => {
-		value = e.detail.values[0];
+	const setSliderValue = debounce((values: number[]) => {
+		value = values[0];
 		handleChanged();
 	}, 300);
 
@@ -276,14 +269,14 @@
 						{min}
 						{max}
 						{step}
-						bind:rest={showRestPip}
+						rest={showRestPip}
 						floatLabel={true}
 						first="label"
 						last="label"
 						values={[value as number]}
-						bind:all={showAll}
-						bind:showEditor
-						on:change={setSliderValue}
+						all={showAll}
+						{showEditor}
+						onchange={setSliderValue}
 						{formatter}
 					/>
 				{:else if typeof value === 'number'}
@@ -292,7 +285,7 @@
 						minValue={min ?? DEFAULT_MINIMUM}
 						maxValue={max ?? DEFAULT_MAXIMUM}
 						{step}
-						on:change={handleChanged}
+						onchange={handleChanged}
 					/>
 				{/if}
 			{:else}

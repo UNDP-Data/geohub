@@ -55,7 +55,7 @@
 	</button>
 
 	<div class="tooltip" data-testid="tooltip" bind:this={tooltipContent}>
-		<ColorPicker bind:color on:changeColor={setColor} />
+		<ColorPicker bind:color onchange={setColor} />
 	</div>
 {/if}
 

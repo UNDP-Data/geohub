@@ -24,11 +24,7 @@
 		color?: 'primary' | 'link' | 'info' | 'warning' | 'danger' | 'success' | '';
 	}
 
-	let {
-		button = $bindable(),
-		subButtons = $bindable(),
-		color = $bindable('primary')
-	}: Props = $props();
+	let { button = $bindable(), subButtons = $bindable(), color = 'primary' }: Props = $props();
 
 	let isButtonHovered = $state(false);
 

@@ -14,8 +14,8 @@
 		title = $bindable(),
 		linkName = $bindable(),
 		href = $bindable(),
-		size = $bindable('normal'),
-		isArrow = $bindable(true),
+		size = 'normal',
+		isArrow = true,
 		children
 	}: Props = $props();
 </script>

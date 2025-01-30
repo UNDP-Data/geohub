@@ -54,15 +54,15 @@
 	let {
 		value = $bindable(),
 		readonly = $bindable(true),
-		placeholder = $bindable('Copy to clipboard'),
-		textCopy = $bindable('Copy'),
-		textCopied = $bindable('Copied'),
+		placeholder = 'Copy to clipboard',
+		textCopy = 'Copy',
+		textCopied = 'Copied',
 		width = $bindable('100%'),
-		timeout = $bindable(5000),
-		isMultiline = $bindable(false),
-		size = $bindable('normal'),
-		openNewTab = $bindable(true),
-		openButtonColor = $bindable('has-text-link')
+		timeout = 5000,
+		isMultiline = false,
+		size = 'normal',
+		openNewTab = true,
+		openButtonColor = 'has-text-link'
 	}: Props = $props();
 
 	let textCopyButton = $state(textCopy);

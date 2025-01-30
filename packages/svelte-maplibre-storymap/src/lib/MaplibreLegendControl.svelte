@@ -346,10 +346,9 @@
 									<div>
 										{#key isStyleChanged}
 											<OpacityEditor
-												bind:opacity={layerOpacity[l.id]}
+												opacity={layerOpacity[l.id]}
 												{showOpacity}
-												on:change={(e) => {
-													const opacity = e.detail.opacity;
+												onchange={(opacity: number) => {
 													handleOpacityChanged(opacity, l.layer);
 												}}
 											/>

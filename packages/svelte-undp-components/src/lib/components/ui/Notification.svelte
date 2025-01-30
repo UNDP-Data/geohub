@@ -1,20 +1,19 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	interface Props {
 		type?: 'info' | 'warning' | 'danger' | '';
 		showCloseButton?: boolean;
 		showIcon?: boolean;
 		children?: import('svelte').Snippet;
+		onclose?: () => void;
 	}
 
 	let {
-		type = $bindable('info'),
-		showCloseButton = $bindable(true),
-		showIcon = $bindable(true),
-		children
+		type = 'info',
+		showCloseButton = true,
+		showIcon = true,
+		children,
+		onclose = () => {}
 	}: Props = $props();
-
-	const dispatch = createEventDispatcher();
 
 	let color = $state('dodgerblue');
 	let icon = $state('fa-solid fa-circle-info');
@@ -31,7 +30,7 @@
 	const close = () => {
 		if (!nodeRef) return;
 		nodeRef.parentNode?.removeChild(nodeRef);
-		dispatch('close');
+		if (onclose) onclose();
 	};
 </script>
 

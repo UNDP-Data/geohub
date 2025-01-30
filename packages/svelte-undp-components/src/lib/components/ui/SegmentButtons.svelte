@@ -8,7 +8,6 @@
 </script>
 
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	interface Props {
 		buttons: SegmentButton[];
 		selected?: string | number | undefined;
@@ -20,22 +19,22 @@
 		uppercase?: boolean;
 		fontWeight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
 		activeColor?: string;
+		onchange?: (value: string | number, items?: { [key: string | number]: boolean }) => void;
 	}
 
 	let {
 		buttons = $bindable(),
-		selected = $bindable(undefined),
-		multiSelect = $bindable(false),
+		selected = $bindable(),
+		multiSelect = false,
 		selectedItems = $bindable(),
-		wrap = $bindable(false),
-		size = $bindable('normal'),
-		capitalized = $bindable(false),
-		uppercase = $bindable(false),
-		fontWeight = $bindable('normal'),
-		activeColor = $bindable('is-black')
+		wrap = false,
+		size = 'normal',
+		capitalized = false,
+		uppercase = false,
+		fontWeight = 'normal',
+		activeColor = 'is-black',
+		onchange = () => {}
 	}: Props = $props();
-
-	const dispatch = createEventDispatcher();
 
 	const handleSelected = (e: SegmentButton) => {
 		if (!selectedItems) {
@@ -44,16 +43,11 @@
 		if (multiSelect) {
 			const value = e.value as string | number;
 			selectedItems[value] = selectedItems[value] ? !selectedItems[value] : true;
-			dispatch('change', {
-				items: selectedItems,
-				value: e.value
-			});
+			if (onchange) onchange(e.value as string | number, selectedItems);
 			selectedItems = JSON.parse(JSON.stringify(selectedItems));
 		} else {
 			selected = e.value as string | number;
-			dispatch('change', {
-				value: selected
-			});
+			if (onchange) onchange(selected);
 		}
 	};
 </script>

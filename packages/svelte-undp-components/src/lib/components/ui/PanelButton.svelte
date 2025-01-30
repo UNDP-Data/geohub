@@ -7,32 +7,28 @@
 		width: string;
 		tooltip: string;
 		disabled?: boolean;
-		isShow?: boolean;
 		hideBorder?: boolean;
 		children?: import('svelte').Snippet;
 	}
 
 	let {
-		icon = $bindable(),
-		iconDisabled = $bindable(''),
-		width = $bindable(),
-		tooltip = $bindable(),
-		disabled = $bindable(false),
-		isShow = $bindable(false),
-		hideBorder = $bindable(true),
+		icon,
+		iconDisabled = '',
+		width = '300px',
+		tooltip = '',
+		disabled = $bindable(),
+		hideBorder = true,
 		children
 	}: Props = $props();
 
 	const tippy = initTippy({
 		placement: 'bottom-end',
 		onShow(instance) {
-			isShow = true;
 			instance.popper.querySelector('.close')?.addEventListener('click', () => {
 				instance.hide();
 			});
 		},
 		onHide(instance) {
-			isShow = false;
 			instance.popper.querySelector('.close')?.removeEventListener('click', () => {
 				instance.hide();
 			});

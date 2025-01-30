@@ -94,7 +94,7 @@
 			<div class="tooltip" data-testid="tooltip" bind:this={tooltipContent}>
 				<ColorPicker
 					bind:color
-					on:changeColor={() => {
+					onchange={() => {
 						updateColorMap(color);
 					}}
 				/>

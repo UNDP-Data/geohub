@@ -1,8 +1,5 @@
 <script lang="ts">
-	import { clean, handleEnterKey } from '$lib/util';
-	import { createEventDispatcher } from 'svelte';
-
-	const dispatch = createEventDispatcher();
+	import { clean } from '$lib/util';
 
 	interface Props {
 		alt: string;
@@ -17,20 +14,9 @@
 		isSelected = $bindable(false),
 		withinForm = $bindable(false)
 	}: Props = $props();
-
-	const handleIconSelect = () => {
-		dispatch('select', { alt, src });
-	};
 </script>
 
-<div
-	role="button"
-	tabindex="0"
-	onclick={handleIconSelect}
-	onkeydown={handleEnterKey}
-	class="card"
-	data-testid="icon-image-picker-card-container"
->
+<div class="card" data-testid="icon-image-picker-card-container">
 	<div class="card-content">
 		<div class="media is-flex is-justify-content-center">
 			<figure

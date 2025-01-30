@@ -259,8 +259,7 @@
 		return selectedSDGs.map((s) => parseInt(s.value as string));
 	};
 
-	const handleSDGtagChanged = async (e: { detail: { sdgs: number[] } }) => {
-		const sdgs = e.detail.sdgs as number[];
+	const handleSDGtagChanged = async (sdgs: number[]) => {
 		selectedSDGs = [
 			...sdgs.map((v: number) => {
 				return {
@@ -291,9 +290,7 @@
 		return selectedTags;
 	};
 
-	const handleTagChanged = async (e: { detail: { key: string; selected: Tag[] } }) => {
-		const key: string = e.detail.key;
-		const selected: Tag[] = e.detail.selected;
+	const handleTagChanged = async (selected: Tag[], key: string) => {
 		const apiUrl = page.url;
 		apiUrl.searchParams.delete(key);
 		selected?.forEach((t) => {
@@ -315,8 +312,7 @@
 		reload(apiUrl);
 	};
 
-	const handleCountryChanged = async (e: { detail: { selected: Country[] } }) => {
-		const countries: Country[] = e.detail.selected;
+	const handleCountryChanged = async (countries: Country[]) => {
 		selectedCountries = countries.map((c) => {
 			return { key: 'country', value: c.iso_3 } as Tag;
 		});
@@ -330,8 +326,8 @@
 		reload(apiUrl);
 	};
 
-	const handleViewTypeChanged = (e: { detail: { value: TableViewType } }) => {
-		viewType = e.detail.value;
+	const handleViewTypeChanged = (value: string | number) => {
+		viewType = value as TableViewType;
 
 		const apiUrl = new URL(page.url);
 		apiUrl.searchParams.set('viewType', viewType);
@@ -420,7 +416,7 @@
 								{ title: 'Map', icon: 'fa-solid fa-map', value: 'map' }
 							]}
 							bind:selected={viewType}
-							on:change={handleViewTypeChanged}
+							onchange={handleViewTypeChanged}
 						/>
 					</div>
 				{/snippet}
@@ -496,7 +492,7 @@
 							{#key isReseted}
 								<SdgSelector
 									selected={getSdgNumbers()}
-									on:select={handleSDGtagChanged}
+									onselect={handleSDGtagChanged}
 									isFullWidth={true}
 								/>
 							{/key}
@@ -512,7 +508,7 @@
 					<div>
 						{#if browser}
 							{#key isReseted}
-								<CountrySelector selected={getCountryCodes()} on:select={handleCountryChanged} />
+								<CountrySelector selected={getCountryCodes()} onselect={handleCountryChanged} />
 							{/key}
 						{/if}
 					</div>
@@ -570,7 +566,7 @@
 											key={tagKey.key}
 											selected={getTags(tagKey.key)}
 											bind:apiUrl={searchedApiUrl}
-											on:select={handleTagChanged}
+											onselect={handleTagChanged}
 											placeholder="Type {tagKey.title}..."
 										/>
 									{/key}

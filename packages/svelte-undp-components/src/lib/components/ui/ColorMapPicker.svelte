@@ -2,7 +2,7 @@
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { initTippy } from '$lib/util/initTippy.js';
 	import chroma from 'chroma-js';
-	import { createEventDispatcher, untrack } from 'svelte';
+	import { untrack } from 'svelte';
 	import ColorMapPickerCard, {
 		ColorMapTypes,
 		DivergingColorMaps,
@@ -16,9 +16,10 @@
 		 * ColorMap name
 		 */
 		colorMapName: string;
+		onchange?: (colorMapName: string) => void;
 	}
 
-	let { colorMapName = $bindable() }: Props = $props();
+	let { colorMapName = $bindable(), onchange = () => {} }: Props = $props();
 
 	let isShow = $state(false);
 
@@ -41,7 +42,6 @@
 
 	let isReverseColors = $state(colorMapName.indexOf('_r') !== -1);
 
-	const dispatch = createEventDispatcher();
 	const colorMapTypes = [
 		{ name: ColorMapTypes.SEQUENTIAL, codes: SequentialColormaps },
 		{ name: ColorMapTypes.DIVERGING, codes: DivergingColorMaps },
@@ -74,8 +74,7 @@
 		if (cmName !== colorMapName) {
 			colorMapName = cmName;
 		}
-
-		dispatch('change', { colorMapName: cmName });
+		if (onchange) onchange(cmName);
 	};
 
 	let colorMapStyle = $state('');
@@ -102,7 +101,7 @@
 		} else {
 			colorMapName = `${colorMapName}_r`;
 		}
-		dispatch('change', { colorMapName: colorMapName });
+		if (onchange) onchange(colorMapName);
 	};
 </script>
 

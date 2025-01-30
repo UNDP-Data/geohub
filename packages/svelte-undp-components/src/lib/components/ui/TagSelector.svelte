@@ -11,13 +11,11 @@
 	import { initTippy, initTooltipTippy } from '$lib/util/initTippy.js';
 	import { Chips } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import { createEventDispatcher, onMount, untrack } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import Notification from './Notification.svelte';
 
-	const dispatch = createEventDispatcher();
-
 	interface Props {
-		selected?: Tag[];
+		selected: Tag[];
 		geohubOrigin?: string;
 		key?: string;
 		placeholder?: string;
@@ -25,17 +23,19 @@
 		type?: 'single' | 'multi';
 		newTagMode?: boolean;
 		showSelectedTags?: boolean;
+		onselect?: (tags: Tag[], key: string) => void;
 	}
 
 	let {
 		selected = $bindable([]),
-		geohubOrigin = $bindable(''),
-		key = $bindable(''),
-		placeholder = $bindable('Type keyword...'),
-		apiUrl = $bindable(''),
-		type = $bindable('multi'),
-		newTagMode = $bindable(false),
-		showSelectedTags = $bindable(true)
+		geohubOrigin = '',
+		key = '',
+		placeholder = 'Type keyword...',
+		apiUrl = $bindable(),
+		type = 'multi',
+		newTagMode = false,
+		showSelectedTags = true,
+		onselect = () => {}
 	}: Props = $props();
 
 	let query = $state('');
@@ -69,7 +69,7 @@
 	const getTags = async () => {
 		isLoading = true;
 		const res = await fetch(
-			`${geohubOrigin}/api/tags${apiUrl.length > 0 ? `?url=${encodeURIComponent(apiUrl)}` : ''}`
+			`${geohubOrigin}/api/tags${apiUrl && apiUrl.length > 0 ? `?url=${encodeURIComponent(apiUrl)}` : ''}`
 		);
 		const json = await res.json();
 		tags = json[key] ?? [];
@@ -117,7 +117,7 @@
 
 	const dispatchEvent = () => {
 		const filtered = tags.filter((n) => selected.includes(n));
-		dispatch('select', { selected: filtered, key });
+		if (onselect) onselect(filtered, key);
 	};
 
 	$effect(() => {

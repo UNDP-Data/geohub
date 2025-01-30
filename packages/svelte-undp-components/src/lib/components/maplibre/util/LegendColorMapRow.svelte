@@ -199,7 +199,7 @@ the key statement is necessary as it forces to rerender the legend item in case 
 					style="{colorPickerStyle}; width:100%; height:20px"
 				></div>
 				<div class="tooltip" data-testid="tooltip" bind:this={tooltipContent}>
-					<ColorPicker bind:color on:changeColor={handleColorChanged} />
+					<ColorPicker bind:color onchange={handleColorChanged} />
 				</div>
 			{/if}
 		</td>

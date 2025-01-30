@@ -67,8 +67,8 @@
 		step = isInt(layerMin) && isInt(layerMax) && layerMax - layerMin > 1 ? 1 : 0.1;
 	});
 
-	const onSliderStop = (e) => {
-		rescale = [...e.detail.values];
+	const onSliderStop = (values: number[]) => {
+		rescale = [...values];
 		// you need to implement actual process of updating legend in the parent component by subscribing the 'change' event.
 		// see the detailed implementation at RasterDefaultLgend and RasterClassifyLegend.
 		dispatch('change', {
@@ -77,18 +77,20 @@
 	};
 </script>
 
-<Slider
-	bind:values={rescale}
-	min={layerMin}
-	max={layerMax}
-	{step}
-	pips
-	first="label"
-	last="label"
-	rest={false}
-	on:change={onSliderStop}
-	showEditor={true}
-/>
+{#if rescale && rescale.length > 0}
+	<Slider
+		bind:values={rescale}
+		min={layerMin}
+		max={layerMax}
+		{step}
+		pips
+		first="label"
+		last="label"
+		rest={false}
+		onchange={onSliderStop}
+		showEditor={true}
+	/>
+{/if}
 {#if unit}
 	<p class="align-center"><b>{unit}</b></p>
 {/if}

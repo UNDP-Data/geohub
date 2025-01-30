@@ -189,10 +189,9 @@
 
 										<div class="ml-auto">
 											<OpacityEditor
-												opacity={getLayerOpacity(layer.id)}
+												opacity={getLayerOpacity(layer.id) as number}
 												{showOpacity}
-												on:change={(e) => {
-													const opacity = e.detail.opacity;
+												onchange={(opacity: number) => {
 													handleOpacityChanged(opacity, layer);
 												}}
 											/>

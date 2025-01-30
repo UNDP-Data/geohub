@@ -43,12 +43,12 @@
 
 	let {
 		show = $bindable(true),
-		position = $bindable('left'),
+		position = 'left',
 		width = $bindable(360),
 		marginTop = $bindable(0),
-		showToggleButton = $bindable(true),
-		height = $bindable(undefined),
-		border = $bindable('1px solid #1c1c1c'),
+		showToggleButton = true,
+		height = $bindable(),
+		border = '1px solid #1c1c1c',
 		content,
 		main
 	}: Props = $props();

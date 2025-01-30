@@ -24,14 +24,14 @@
 	}
 
 	let {
-		isFullwidth = $bindable(false),
-		isBoxed = $bindable(true),
-		isCentered = $bindable(true),
-		size = $bindable('is-normal'),
+		isFullwidth = false,
+		isBoxed = true,
+		isCentered = true,
+		size = 'is-normal',
 		tabs = $bindable(),
-		isCapitalized = $bindable(false),
-		isUppercase = $bindable(false),
-		fontWeight = $bindable('normal'),
+		isCapitalized = false,
+		isUppercase = false,
+		fontWeight = 'normal',
 		activeTab = $bindable(),
 		onchange = () => {}
 	}: Props = $props();

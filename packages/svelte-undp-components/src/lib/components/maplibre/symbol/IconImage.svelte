@@ -51,8 +51,7 @@
 		return images;
 	};
 
-	const handleSelect = (e: { detail: IconImageType }) => {
-		const item = e.detail;
+	const handleSelect = (item: IconImageType) => {
 		selected = item.alt;
 		updateLegend();
 	};
@@ -63,5 +62,5 @@
 		<Loader size="small" />
 	</div>
 {:then}
-	<IconImageSelector bind:images bind:selected bind:readonly on:select={handleSelect} />
+	<IconImageSelector bind:images bind:selected bind:readonly onselect={handleSelect} />
 {/await}

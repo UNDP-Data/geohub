@@ -1,53 +1,53 @@
 <script lang="ts">
 	import { initTippy, initTooltipTippy } from '$lib/util/initTippy.js';
-	import { createEventDispatcher, onMount } from 'svelte';
 	import Slider from './Slider.svelte';
 
 	interface Props {
-		opacity?: number;
+		opacity: number;
 		showOpacity?: boolean;
+		onchange?: (opacity: number) => void;
 	}
 
-	let { opacity = $bindable(1), showOpacity = $bindable(true) }: Props = $props();
+	let { opacity = $bindable(), showOpacity = true, onchange = () => {} }: Props = $props();
 
-	const dispatch = createEventDispatcher();
+	$effect(() => {
+		if (opacity === undefined) {
+			opacity = 1;
+		}
+	});
+
 	const tippy = initTippy({});
 	const tippyTooltip = initTooltipTippy();
 
 	let tooltipContent: HTMLElement | undefined = $state();
 
-	const handleChanged = (e: { detail: { values: number[] } }) => {
-		const values = e.detail.values;
+	const handleChanged = (values: number[]) => {
 		opacity = values[0] / 100;
-
-		dispatch('change', {
-			opacity
-		});
+		if (onchange) onchange(opacity);
 	};
 
 	const handleVisibilityChanged = () => {
 		opacity = opacity === 0 ? 1 : 0;
-
-		dispatch('change', {
-			opacity
-		});
+		if (onchange) onchange(opacity);
 	};
 
-	onMount(() => {
-		opacity = opacity > 1 ? opacity / 100 : opacity;
-	});
+	// onMount(() => {
+	// 	opacity = opacity > 1 ? opacity / 100 : opacity;
+	// });
 </script>
 
 <div class="is-flex is-align-items-center">
 	{#if showOpacity}
-		<div
-			class="opacity-control is-flex is-align-items-center p-1 mr-2"
-			use:tippy={{ content: tooltipContent }}
-			use:tippyTooltip={{ content: 'Change opacity (0-100%)' }}
-		>
-			<span class="material-symbols-outlined opacity-icon"> opacity </span>
-			<span class="opacity-value ml-auto">{`${(opacity * 100).toFixed(0)}`}%</span>
-		</div>
+		{#key opacity}
+			<div
+				class="opacity-control is-flex is-align-items-center p-1 mr-2"
+				use:tippy={{ content: tooltipContent }}
+				use:tippyTooltip={{ content: 'Change opacity (0-100%)' }}
+			>
+				<span class="material-symbols-outlined opacity-icon"> opacity </span>
+				<span class="opacity-value ml-auto">{`${(opacity * 100).toFixed(0)}`}%</span>
+			</div>
+		{/key}
 
 		<div class="opacity-popup" bind:this={tooltipContent}>
 			<Slider
@@ -58,7 +58,7 @@
 				rest={false}
 				pips={true}
 				suffix="%"
-				on:change={handleChanged}
+				onchange={handleChanged}
 			/>
 		</div>
 	{/if}
@@ -68,11 +68,13 @@
 		onclick={handleVisibilityChanged}
 		use:tippyTooltip={{ content: 'Change layer visibility' }}
 	>
-		{#if opacity === 0}
-			<span class="material-symbols-outlined visibility-icon"> visibility_off </span>
-		{:else}
-			<span class="material-symbols-outlined visibility-icon"> visibility </span>
-		{/if}
+		{#key opacity}
+			{#if opacity === 0}
+				<span class="material-symbols-outlined visibility-icon"> visibility_off </span>
+			{:else}
+				<span class="material-symbols-outlined visibility-icon"> visibility </span>
+			{/if}
+		{/key}
 	</button>
 </div>
 

@@ -283,7 +283,7 @@
 				{minValue}
 				{maxValue}
 				bind:step={stepValue}
-				on:change={setValue}
+				onchange={setValue}
 				readonly={false}
 			/>
 		</div>
@@ -332,7 +332,7 @@
 								bind:value={numberOfClasses}
 								minValue={numberOfClassesMinimum}
 								maxValue={numberOfClassesMaximum}
-								on:change={handleIncrementDecrementClasses}
+								onchange={handleIncrementDecrementClasses}
 								size="normal"
 							/>
 						</div>
@@ -359,12 +359,12 @@
 						</td>
 						<td style="min-width: 100px;">
 							<NumberInput
-								bind:value={row.value}
+								bind:value={row.value as number}
 								{minValue}
 								{maxValue}
 								bind:step={stepValue}
-								on:change={(e) => {
-									handleRowValueChanged(e.detail.value, index);
+								onchange={(value: number) => {
+									handleRowValueChanged(value, index);
 								}}
 								size="small"
 								readonly={false}

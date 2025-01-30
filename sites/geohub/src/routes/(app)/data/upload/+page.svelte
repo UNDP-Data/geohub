@@ -770,7 +770,7 @@
 				<div class="mt-3">
 					<Notification
 						type="danger"
-						on:close={() => {
+						onclose={() => {
 							errorMessages = errorMessages.filter((msg) => msg !== message);
 						}}
 					>

@@ -190,7 +190,7 @@
 
 <Sidebar
 	bind:show={$sidebarMenuShownStore}
-	bind:position={sideBarPosition}
+	position={sideBarPosition}
 	bind:marginTop={$headerHeightStore}
 	bind:width={$sidebarWidthStore}
 	border="none"

@@ -487,7 +487,7 @@
 				<OpacityEditor
 					bind:opacity={layerOpacity}
 					showOpacity={false}
-					on:change={handleVisibilityChanged}
+					onchange={handleVisibilityChanged}
 				/>
 
 				<div
@@ -627,10 +627,10 @@
 		{#if isDeleteDialogVisible}
 			<ModalNotification
 				bind:dialogOpen={isDeleteDialogVisible}
-				on:cancel={() => {
+				oncancel={() => {
 					isDeleteDialogVisible = false;
 				}}
-				on:continue={handleDeleted}
+				oncontinue={handleDeleted}
 				title="Delete Layer"
 				message="Are you sure you want to delete this layer?"
 				target={clean(layer.name)}

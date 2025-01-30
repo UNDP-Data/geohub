@@ -152,7 +152,7 @@
 								exclusiveMinimum={args.exclusiveMinimum}
 								maximum={args.maximum}
 								exclusiveMaximum={args.exclusiveMaximum}
-								on:change={handleParameterValueChanged}
+								onchange={handleParameterValueChanged}
 								bind:isExpanded={expanded[key]}
 								showRestPip={args.options_descriptions ? true : false}
 								showAll={args.options_descriptions ? 'pip' : false}

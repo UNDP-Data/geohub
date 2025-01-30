@@ -108,8 +108,7 @@
 		map.setLayoutProperty(layerId, 'visibility', visibility);
 	};
 
-	const handleOpacityChanged = (e: { detail: { values: number[] } }) => {
-		const values = e.detail.values;
+	const handleOpacityChanged = (values: number[]) => {
 		const opacity = values[0] / 100;
 		updateOpacity(opacity);
 	};
@@ -232,7 +231,7 @@
 								rest={false}
 								pips={true}
 								suffix="%"
-								on:change={handleOpacityChanged}
+								onchange={handleOpacityChanged}
 							/>
 						{/key}
 					</div>

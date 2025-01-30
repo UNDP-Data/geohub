@@ -14,12 +14,12 @@
 
 	let {
 		title = $bindable(),
-		showHelp = $bindable(true),
-		showHelpPopup = $bindable(true),
+		showHelp = true,
+		showHelpPopup = true,
 		marginBottom = $bindable(''),
-		fontWeight = $bindable('normal'),
-		isFirstCharCapitalized = $bindable(true),
-		iconType = $bindable('info'),
+		fontWeight = 'normal',
+		isFirstCharCapitalized = true,
+		iconType = 'info',
 		help,
 		control
 	}: Props = $props();
