@@ -1,5 +1,11 @@
 # @undp-data/undp-bulma
 
+## 2.0.1
+
+### Patch Changes
+
+- 092b444: fix: fixed bug of undp bulma css building. use sass to build
+
 ## 2.0.0
 
 ### Major Changes
