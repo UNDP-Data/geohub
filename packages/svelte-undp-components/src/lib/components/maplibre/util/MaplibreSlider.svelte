@@ -3,7 +3,7 @@
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -16,6 +16,7 @@
 		propertyType?: 'paint' | 'layout';
 		stepValue: number;
 		suffix?: string;
+		onchange?: (value: number) => void;
 	}
 
 	let {
@@ -26,10 +27,9 @@
 		propertyName = $bindable(),
 		propertyType = $bindable('paint'),
 		stepValue = $bindable(),
-		suffix = $bindable('')
+		suffix = $bindable(''),
+		onchange = () => {}
 	}: Props = $props();
-
-	const dispatch = createEventDispatcher();
 
 	const style = $map
 		.getStyle()
@@ -62,10 +62,7 @@
 		} else {
 			map.setLayoutProperty(layerId, propertyName, values[0]);
 		}
-
-		dispatch('change', {
-			value: values[0]
-		});
+		if (onchange) onchange(values[0]);
 	}, 300);
 
 	onMount(() => {

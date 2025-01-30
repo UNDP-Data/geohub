@@ -147,7 +147,7 @@
 
 <PropertySelect
 	bind:propertySelectValue
-	on:select={handlePropertyChange}
+	onselect={handlePropertyChange}
 	{layerId}
 	{metadata}
 	onlyNumberFields={true}

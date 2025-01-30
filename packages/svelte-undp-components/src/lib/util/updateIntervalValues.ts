@@ -1,9 +1,12 @@
 import type { ColorMapRow } from '$lib/components/maplibre/util/LegendColorMapRow.svelte';
 
-export const updateIntervalValues = (event: CustomEvent, colorMapRows: ColorMapRow[]) => {
-	const rowIndex = event.detail.index;
-	const inputType = event.detail.id;
-	let inputValue = event.detail.value as number;
+export const updateIntervalValues = (
+	event: { index: number; id: number | string; value: number },
+	colorMapRows: ColorMapRow[]
+) => {
+	const rowIndex = event.index;
+	const inputType = event.id;
+	let inputValue = event.value as number;
 	const currentRow = colorMapRows.at(rowIndex);
 	if (rowIndex == 0) {
 		const nextRow = colorMapRows.at(rowIndex + 1);

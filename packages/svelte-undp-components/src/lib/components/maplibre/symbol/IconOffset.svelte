@@ -2,7 +2,7 @@
 	import NumberInput from '$lib/components/ui/NumberInput.svelte';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -12,7 +12,6 @@
 
 	let { layerId = $bindable() }: Props = $props();
 
-	const dispatch = createEventDispatcher();
 	const propertyName = 'icon-offset';
 	const style = $map
 		.getStyle()
@@ -29,8 +28,6 @@
 	const setIconOffset = () => {
 		iconOffsetValues = [xValue, yValue];
 		map.setLayoutProperty(layerId, propertyName, iconOffsetValues);
-
-		dispatch('change');
 	};
 </script>
 

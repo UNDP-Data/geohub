@@ -5,7 +5,7 @@
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import { clean } from '$lib/util/clean.js';
 	import type { LayerSpecification, Map } from 'maplibre-gl';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -18,6 +18,7 @@
 		onlyNumberFields: boolean;
 		emptyFieldLabel?: string;
 		readonly?: boolean;
+		onselect?: (property: string) => void;
 	}
 
 	let {
@@ -28,12 +29,11 @@
 		showEmptyFields = $bindable(false),
 		onlyNumberFields = $bindable(),
 		emptyFieldLabel = $bindable('No Label'),
-		readonly = $bindable(false)
+		readonly = $bindable(false),
+		onselect = () => {}
 	}: Props = $props();
 
 	let propertySelectOptions: string[] = $state();
-
-	const dispatch = createEventDispatcher();
 
 	onMount(() => {
 		setPropertyList();
@@ -49,9 +49,7 @@
 	}
 
 	const propertyChanged = () => {
-		dispatch('select', {
-			prop: propertySelectValue
-		});
+		if (onselect) onselect(propertySelectValue);
 	};
 
 	const getLayerProperties = (

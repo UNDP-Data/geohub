@@ -273,8 +273,12 @@
 		classifyImage();
 	};
 
-	const handleChangeIntervalValues = (event: CustomEvent) => {
-		colorMapRows = updateIntervalValues(event, colorMapRows);
+	const handleChangeIntervalValues = (args: {
+		index: number;
+		id: number | string;
+		value: number;
+	}) => {
+		colorMapRows = updateIntervalValues(args, colorMapRows);
 		classifyImage();
 	};
 
@@ -519,7 +523,9 @@
 					bind:colorMapRow={colorMapRows[index]}
 					bind:colorMapName
 					hasUniqueValues={layerHasUniqueValues}
-					on:changeColorMap={handleColorMapChanged}
+					onchangeColorMap={() => {
+						handleColorMapChanged('');
+					}}
 					on:changeIntervalValues={handleChangeIntervalValues}
 					readonly={false}
 				/>

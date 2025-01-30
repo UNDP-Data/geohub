@@ -409,7 +409,7 @@
 							bind:metadata
 							bind:unit
 							bind:rescale={$rescaleStore}
-							on:change={handleRescaleChanged}
+							onchange={handleRescaleChanged}
 						/>
 					</div>
 				{/snippet}

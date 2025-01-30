@@ -2,7 +2,7 @@
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import { clean } from '$lib/util/clean.js';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -13,7 +13,6 @@
 
 	let { layerId = $bindable(), parentId = $bindable() }: Props = $props();
 
-	const dispatch = createEventDispatcher();
 	const propertyName = 'icon-keep-upright';
 	const propertyNameSymbolPlacement = 'symbol-placement';
 	const style = $map
@@ -58,8 +57,6 @@
 		newStyle.layout[propertyNameSymbolPlacement] = selected;
 		map.setLayoutProperty(layerId, propertyNameSymbolPlacement, selected);
 		map.setLayoutProperty(layerId, propertyName, selected !== 'point');
-
-		dispatch('change');
 	};
 	onMount(() => {
 		setSymbolPlacement();

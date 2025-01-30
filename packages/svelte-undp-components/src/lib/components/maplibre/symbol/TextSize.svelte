@@ -2,7 +2,7 @@
 	import NumberInput from '$lib/components/ui/NumberInput.svelte';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -12,8 +12,6 @@
 	}
 
 	let { layerId = $bindable(), defaultSize = $bindable(16) }: Props = $props();
-
-	const dispatch = createEventDispatcher();
 
 	const style = $map
 		.getStyle()
@@ -31,7 +29,6 @@
 	const setValue = () => {
 		if (style.type !== layerType) return;
 		map.setLayoutProperty(layerId, propertyName, value);
-		dispatch('change');
 	};
 	onMount(() => {
 		setValue();

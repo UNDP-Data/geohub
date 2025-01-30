@@ -12,7 +12,7 @@
 	import { initTippy } from '$lib/util/initTippy.js';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	const tippy = initTippy({
 		appendTo: document.body
@@ -22,11 +22,14 @@
 	interface Props {
 		colorRow: HeatmapColorRow;
 		readonly?: boolean;
+		onchange?: () => void;
 	}
 
-	let { colorRow = $bindable(), readonly = $bindable(false) }: Props = $props();
-
-	const dispatch = createEventDispatcher();
+	let {
+		colorRow = $bindable(),
+		readonly = $bindable(false),
+		onchange = () => {}
+	}: Props = $props();
 
 	let color: RgbaColor = $state();
 	let colorPickerStyle: string = $state('');
@@ -62,7 +65,7 @@
 					a: rgba[3] * 255
 				};
 				colorPickerStyle = getColorPickerStyle(colorRow.color);
-				dispatch('changeColorMap');
+				if (onchange) onchange();
 			} catch (e) {
 				console.log(e);
 			}

@@ -37,11 +37,11 @@
 		map.setPaintProperty(layerId, propertyName, rgba);
 	});
 
-	const handleSetColor = (e: CustomEvent) => {
-		rgba = e.detail.color;
+	const handleSetColor = (color: string) => {
+		rgba = color;
 		map.setPaintProperty(layerId, propertyName, rgba);
-		defaultColor = e.detail.color;
+		defaultColor = color;
 	};
 </script>
 
-<MaplibreColorPicker {rgba} on:change={handleSetColor} />
+<MaplibreColorPicker {rgba} onchange={handleSetColor} />

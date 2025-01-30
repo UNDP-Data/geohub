@@ -187,5 +187,5 @@
 	{layerId}
 	parentId={layer.parentId}
 	{metadata}
-	on:select={setTextField}
+	onselect={setTextField}
 />

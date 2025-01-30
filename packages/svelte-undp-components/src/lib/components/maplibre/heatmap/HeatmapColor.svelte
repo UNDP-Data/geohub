@@ -104,7 +104,7 @@
 			<div class="cell">
 				<HeatmapColorRow
 					bind:colorRow={colorValues[index]}
-					on:changeColorMap={handleChangeColorMap}
+					onchange={handleChangeColorMap}
 					readonly={false}
 				/>
 			</div>

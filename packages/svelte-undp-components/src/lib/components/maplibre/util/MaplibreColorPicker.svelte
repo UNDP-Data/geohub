@@ -2,7 +2,6 @@
 	import ColorPicker from '$lib/components/ui/ColorPicker.svelte';
 	import { initTippy } from '$lib/util/initTippy.js';
 	import chroma from 'chroma-js';
-	import { createEventDispatcher } from 'svelte';
 	import type { RgbaColor } from 'svelte-awesome-color-picker';
 
 	const tippy = initTippy({
@@ -10,18 +9,18 @@
 	});
 	let tooltipContent: HTMLElement | undefined = $state();
 
-	const dispatch = createEventDispatcher();
-
 	interface Props {
 		rgba?: string;
 		width?: string;
 		readonly?: boolean;
+		onchange?: (color: string) => void;
 	}
 
 	let {
 		rgba = $bindable(`rgba(0,0,0,1)`),
 		width = $bindable(''),
-		readonly = $bindable(false)
+		readonly = $bindable(false),
+		onchange = () => {}
 	}: Props = $props();
 
 	let color: RgbaColor = $state({
@@ -35,9 +34,7 @@
 	const setColor = () => {
 		rgba = chroma.rgb(color.r, color.g, color.b).alpha(color.a).css();
 		colorStyle = `height: 32px; width:${width ? `${width}` : '100%'}; background: ${rgba};`;
-		dispatch('change', {
-			color: rgba
-		});
+		if (onchange) onchange(rgba);
 	};
 	setColor();
 </script>

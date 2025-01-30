@@ -5,24 +5,24 @@
 	import { getActiveBandIndex } from '$lib/util/getActiveBandIndex.js';
 	import { getValueFromRasterTileUrl } from '$lib/util/getValueFromRasterTileUrl.js';
 	import { isInt } from '$lib/util/isInt.js';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-
-	const dispatch = createEventDispatcher();
 
 	interface Props {
 		layerId: string;
 		metadata: RasterTileMetadata;
 		unit?: string;
 		rescale: number[];
+		onchange?: (rescale: number[]) => void;
 	}
 
 	let {
 		layerId = $bindable(),
 		metadata = $bindable(),
 		unit = $bindable(''),
-		rescale = $bindable()
+		rescale = $bindable(),
+		onchange = () => {}
 	}: Props = $props();
 
 	let layerMin = $state(NaN);
@@ -71,9 +71,7 @@
 		rescale = [...values];
 		// you need to implement actual process of updating legend in the parent component by subscribing the 'change' event.
 		// see the detailed implementation at RasterDefaultLgend and RasterClassifyLegend.
-		dispatch('change', {
-			rescale: rescale
-		});
+		if (onchange) onchange(rescale);
 	};
 </script>
 

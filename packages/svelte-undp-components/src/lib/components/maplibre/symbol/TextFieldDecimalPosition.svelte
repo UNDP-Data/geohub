@@ -65,9 +65,7 @@
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import { getPropertyValueFromExpression } from '$lib/util/getPropertyValueFromExpression.js';
 	import { isInt } from '$lib/util/isInt.js';
-	import { createEventDispatcher, getContext } from 'svelte';
-
-	const dispatch = createEventDispatcher();
+	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -124,9 +122,6 @@
 
 	const handleChanged = () => {
 		setDecimalPosition();
-		dispatch('change', {
-			decimalPosition
-		});
 	};
 </script>
 

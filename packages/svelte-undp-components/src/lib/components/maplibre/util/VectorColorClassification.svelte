@@ -194,10 +194,10 @@
 		updateMapFromRows();
 	});
 
-	const handleSetColor = (e: CustomEvent) => {
-		value = e.detail.color;
+	const handleSetColor = (color: string) => {
+		value = color;
 		map.setPaintProperty(layerId, propertyName, value);
-		defaultColor = e.detail.color;
+		defaultColor = color;
 	};
 
 	const handlePropertyChange = debounce(() => {
@@ -216,10 +216,13 @@
 		updateMapFromRows();
 	}, 300);
 
-	const handleChangeIntervalValues = debounce((event) => {
-		colorMapRows = updateIntervalValues(event, colorMapRows);
-		updateMapFromRows();
-	}, 300);
+	const handleChangeIntervalValues = debounce(
+		(args: { index: number; id: number | string; value: number }) => {
+			colorMapRows = updateIntervalValues(args, colorMapRows);
+			updateMapFromRows();
+		},
+		300
+	);
 
 	const handleClassificationMethodChanged = () => {
 		if (!$map) return;
@@ -373,7 +376,7 @@
 <div class="py-2" bind:clientWidth={containerWidth}>
 	<PropertySelect
 		bind:propertySelectValue
-		on:select={handlePropertyChange}
+		onselect={handlePropertyChange}
 		{layerId}
 		{metadata}
 		{onlyNumberFields}
@@ -384,7 +387,7 @@
 	<div class="pt-2">
 		{#if isConstantColor && typeof value === 'string'}
 			<div>
-				<MaplibreColorPicker bind:rgba={value} on:change={handleSetColor} width="100%" />
+				<MaplibreColorPicker bind:rgba={value} onchange={handleSetColor} width="100%" />
 			</div>
 		{:else if propertySelectValue?.length > 0}
 			<div class="is-flex pb-1">
@@ -472,8 +475,8 @@
 							bind:colorMapRow={colorMapRows[index]}
 							bind:colorMapName
 							bind:hasUniqueValues={isUniqueValue}
-							on:changeIntervalValues={handleChangeIntervalValues}
-							on:changeColorMap={handleRowColorChanged}
+							onchangeIntervalValues={handleChangeIntervalValues}
+							onchangeColorMap={handleRowColorChanged}
 						/>
 					{/each}
 				</tbody>

@@ -13,7 +13,7 @@
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { initTippy } from '$lib/util/initTippy.js';
 	import chroma from 'chroma-js';
-	import { createEventDispatcher, onMount, untrack } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import type { RgbaColor } from 'svelte-awesome-color-picker';
 
 	const tippy = initTippy({
@@ -38,17 +38,22 @@
 		 * If true, it becomes readonly mode.
 		 */
 		readonly?: boolean;
+
+		onchangeColorMap?: () => void;
+
+		onchangeIntervalValues?: (args: { index: number; id: number | string; value: number }) => void;
 	}
 
 	let {
 		colorMapRow = $bindable(),
 		colorMapName = $bindable(),
 		hasUniqueValues = $bindable(),
-		readonly = $bindable(false)
+		readonly = $bindable(false),
+		onchangeColorMap = () => {},
+		onchangeIntervalValues = () => {}
 	}: Props = $props();
 
 	let signal = $state();
-	const dispatch = createEventDispatcher();
 
 	let color: RgbaColor = $state();
 	let colorPickerStyle: string = $state('');
@@ -106,7 +111,7 @@
         */
 				colorMapRow.color = rgba;
 				colorPickerStyle = getColorPickerStyle();
-				dispatch('changeColorMap');
+				if (onchangeColorMap) onchangeColorMap();
 			} catch (e) {
 				console.log(e);
 			}
@@ -121,11 +126,13 @@
 		const id = e.target.id;
 		const value = (e.target as HTMLInputElement).value;
 		signal = value;
-		dispatch('changeIntervalValues', {
-			index: colorMapRow.index,
-			id,
-			value: parseFloat(value)
-		});
+		if (onchangeIntervalValues) {
+			onchangeIntervalValues({
+				index: colorMapRow.index as number,
+				id,
+				value: parseFloat(value)
+			});
+		}
 	};
 	$effect(() => {
 		if (colorMapRow.color) {
