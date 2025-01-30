@@ -7,6 +7,9 @@ $undp_gray_light: hsl(0, 0%, 71%);
 $undp_font: '"ProximaNova", sans-serif';
 $black: #000;
 
+// SDG icons
+@use "./sdgs.scss";
+
 @use "bulma/sass/utilities/initial-variables.scss" as iv with (
   // revert basic colors to 0.9.4
   $orange: hsl(14, 100%, 53%),
@@ -25,7 +28,7 @@ $black: #000;
   $radius: 0,
   $radius-medium: 0,
   $radius-large: 0,
-  $radius-rounded: 0
+  // $radius-rounded: 0
 );
 
 @use "bulma/sass/utilities/derived-variables.scss" as dv
@@ -266,9 +269,6 @@ button {
     background-color: #232e3d;
   }
 }
-
-// SDG icons
-@import "./sdgs.scss";
 
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css");
 // import Material Icons
