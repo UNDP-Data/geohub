@@ -800,7 +800,7 @@
 										format="MM/DD/YYYY"
 										size="small"
 										width={85}
-										on:select={handleSearchParameterChanged}
+										onselect={handleSearchParameterChanged}
 									/>
 								</div>
 							{/snippet}
@@ -815,7 +815,7 @@
 										format="MM/DD/YYYY"
 										size="small"
 										width={85}
-										on:select={handleSearchParameterChanged}
+										onselect={handleSearchParameterChanged}
 									/>
 								</div>
 							{/snippet}
@@ -852,7 +852,7 @@
 										rest={false}
 										suffix="%"
 										range="min"
-										on:change={handleSearchParameterChanged}
+										onchange={handleSearchParameterChanged}
 									/>
 								</div>
 							{/snippet}
@@ -878,7 +878,7 @@
 					<Tabs
 						{tabs}
 						bind:activeTab
-						on:tabChange={handleTabChange}
+						onchange={handleTabChange}
 						isCentered={true}
 						isBoxed={false}
 						isUppercase

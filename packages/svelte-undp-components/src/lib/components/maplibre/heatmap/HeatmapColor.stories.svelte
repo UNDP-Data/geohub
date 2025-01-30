@@ -1,9 +1,10 @@
-<script lang="ts" context="module">
-	import type { Meta } from '@storybook/svelte';
+<script lang="ts" module>
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import type { HeatmapLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
 	import Map from '../Map.svelte';
 	import HeatmapColor from './HeatmapColor.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Heatmap/HeatmapColor',
 		component: HeatmapColor,
 		tags: ['autodocs'],
@@ -13,7 +14,7 @@
 				description: 'Layer ID to edit'
 			}
 		}
-	};
+	});
 
 	const title = 'Heatmap Color Control';
 
@@ -32,15 +33,10 @@
 	};
 </script>
 
-<script lang="ts">
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-	import type { HeatmapLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
-</script>
-
-<Template let:args>
+{#snippet template(args)}
 	<Map {title} {source} {layer}>
 		<HeatmapColor {...args}></HeatmapColor>
 	</Map>
-</Template>
+{/snippet}
 
-<Story name="Primary" args={{ layerId: layer.id }} />
+<Story name="Primary" args={{ layerId: layer.id }} children={template} />

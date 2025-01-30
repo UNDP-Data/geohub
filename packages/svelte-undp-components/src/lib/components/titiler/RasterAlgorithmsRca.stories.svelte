@@ -1,9 +1,10 @@
-<script lang="ts" context="module">
-	import type { Meta } from '@storybook/svelte';
+<script lang="ts" module>
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 	import Map from '../maplibre/Map.svelte';
 	import RasterAlgorithms from './RasterAlgorithms.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/titiler/RasterAlgorithms/RCA',
 		component: RasterAlgorithms,
 		tags: ['autodocs'],
@@ -26,7 +27,7 @@
 				defaultValue: ''
 			}
 		}
-	};
+	});
 
 	const title = 'Raster Algorithms Control';
 
@@ -57,22 +58,18 @@
 	};
 </script>
 
-<script lang="ts">
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
-</script>
-
-<Template let:args>
+{#snippet template(args)}
 	<Map {title} {source} {layer} zoom={12.7} center={[22.6393, 32.75113]}>
 		<RasterAlgorithms {...args}></RasterAlgorithms>
 	</Map>
-</Template>
+{/snippet}
 
 <Story
-	name="rca"
+	name="hillshade"
 	args={{
 		layerId: layer.id,
 		algorithmsApi: 'https://titiler-dev.undpgeohub.org/algorithms',
 		algorithmId: 'rca'
 	}}
+	children={template}
 />

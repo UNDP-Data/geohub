@@ -1,9 +1,10 @@
-<script lang="ts" context="module">
-	import type { Meta } from '@storybook/svelte';
+<script lang="ts" module>
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import type { HeatmapLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
 	import Map from '../Map.svelte';
 	import HeatmapIntensity from './HeatmapIntensity.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Heatmap/HeatmapIntensity',
 		component: HeatmapIntensity,
 		tags: ['autodocs'],
@@ -13,7 +14,7 @@
 				description: 'Layer ID to edit'
 			}
 		}
-	};
+	});
 
 	const title = 'Heatmap Intensity Control';
 
@@ -34,15 +35,10 @@
 	};
 </script>
 
-<script lang="ts">
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-	import type { HeatmapLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
-</script>
-
-<Template let:args>
+{#snippet template(args)}
 	<Map {title} {source} {layer}>
 		<HeatmapIntensity {...args}></HeatmapIntensity>
 	</Map>
-</Template>
+{/snippet}
 
-<Story name="Primary" args={{ layerId: layer.id }} />
+<Story name="Primary" args={{ layerId: layer.id }} children={template} />

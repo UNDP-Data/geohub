@@ -603,7 +603,7 @@
 							{ title: 'Mosaic', icon: 'fa-solid fa-grip', value: 'mosaic' }
 						]}
 						bind:selected={sceneType}
-						on:change={() => {
+						onchange={() => {
 							loadItems(false);
 						}}
 					/>
@@ -615,7 +615,7 @@
 					<SegmentButtons
 						buttons={getViewTypes()}
 						bind:selected={viewType}
-						on:change={handleViewTypeChanged}
+						onchange={handleViewTypeChanged}
 					/>
 				{/key}
 			</div>

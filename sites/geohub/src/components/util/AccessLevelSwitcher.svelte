@@ -31,8 +31,8 @@
 	let email = page.data.session?.user.email;
 	let domain: string | undefined = email ? getDomainFromEmail(email) : undefined;
 
-	const handleAccessLevelClicked = (e: { detail: { value: AccessLevel } }) => {
-		accessLevel = e.detail.value;
+	const handleAccessLevelClicked = (value: string | number) => {
+		accessLevel = value as AccessLevel;
 		if (onchange) onchange();
 	};
 
@@ -75,8 +75,8 @@
 				<SegmentButtons
 					buttons={getSegmentButtons()}
 					bind:selected={accessLevel}
-					bind:size
-					on:change={handleAccessLevelClicked}
+					{size}
+					onchange={handleAccessLevelClicked}
 				/>
 			{:else}
 				<div class="select is-fullwidth">

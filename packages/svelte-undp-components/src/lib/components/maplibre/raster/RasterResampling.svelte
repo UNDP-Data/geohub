@@ -1,11 +1,15 @@
 <script lang="ts">
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
+	interface Props {
+		layerId: string;
+	}
+
+	let { layerId = $bindable() }: Props = $props();
 
 	let options = [
 		{
@@ -21,17 +25,18 @@
 	const getResamplingMethod = () => {
 		return $map.getPaintProperty(layerId, 'raster-resampling') || 'linear';
 	};
-	let value = getResamplingMethod() as string;
-
-	$: value, setValue();
+	let value = $state(getResamplingMethod() as string);
 
 	const setValue = () => {
 		map.setPaintProperty(layerId, 'raster-resampling', value);
 	};
+	onMount(() => {
+		setValue();
+	});
 </script>
 
 <div class="select is-fullwidth">
-	<select bind:value>
+	<select bind:value onchange={setValue}>
 		{#each options as option}
 			<option value={option.value}>{option.title}</option>
 		{/each}

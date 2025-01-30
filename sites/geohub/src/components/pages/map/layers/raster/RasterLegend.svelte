@@ -362,7 +362,7 @@
 										<div style="width: 100%;">
 											<ColorMapPicker
 												bind:colorMapName={$colorMapNameStore}
-												on:change={handleColorMapChanged}
+												onchange={handleColorMapChanged}
 											/>
 										</div>
 									</div>
@@ -409,7 +409,7 @@
 							bind:metadata
 							bind:unit
 							bind:rescale={$rescaleStore}
-							on:change={handleRescaleChanged}
+							onchange={handleRescaleChanged}
 						/>
 					</div>
 				{/snippet}

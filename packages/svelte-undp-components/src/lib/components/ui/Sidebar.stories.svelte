@@ -1,8 +1,8 @@
-<script lang="ts" context="module">
-	import type { Meta } from '@storybook/svelte';
+<script lang="ts" module>
+	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import Sidebar from './Sidebar.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/UI/Sidebar',
 		component: Sidebar,
 		tags: ['autodocs'],
@@ -13,30 +13,38 @@
 				defaultValue: 'left'
 			}
 		}
-	};
+	});
 </script>
 
-<script lang="ts">
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-</script>
-
-<Template let:args>
-	<!--👇 'on:click' allows to forward event to addon-actions  -->
+{#snippet template(args)}
 	<Sidebar {...args}>
-		<div slot="content">sidebar content</div>
-		<div slot="main">main content</div>
+		{#snippet content()}
+			<div>sidebar content</div>
+		{/snippet}
+		{#snippet main()}
+			<div>main content</div>
+		{/snippet}
 	</Sidebar>
-</Template>
+{/snippet}
 
-<Story name="Left sidebar" args={{ position: 'left', height: 300 }} />
+<Story name="Left sidebar" args={{ position: 'left', height: 300 }} children={template} />
 
-<Story name="Right sidebar" args={{ position: 'right', height: 300 }} />
+<Story name="Right sidebar" args={{ position: 'right', height: 300 }} children={template} />
 
-<Story name="Hide border" args={{ position: 'left', border: 'none', height: 300 }} />
+<Story
+	name="Hide border"
+	args={{ position: 'left', border: 'none', height: 300 }}
+	children={template}
+/>
 
 <Story
 	name="Hide toggle button"
 	args={{ position: 'left', showToggleButton: false, height: 300 }}
+	children={template}
 />
 
-<Story name="Hide sidebar as default" args={{ position: 'left', show: false, height: 300 }} />
+<Story
+	name="Hide sidebar as default"
+	args={{ position: 'left', show: false, height: 300 }}
+	children={template}
+/>

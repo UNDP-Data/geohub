@@ -9,10 +9,10 @@
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		STORYMAP_MAPSTORE_CONTEXT_KEY,
 		STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY,
+		StoryMapChapter,
 		StoryMapHeader,
 		type MapStore,
 		type MapStyleStore,
-		type StoryMapChapter,
 		type StoryMapConfigStore,
 		type StoryMapTemplate
 	} from '@undp-data/svelte-maplibre-storymap';

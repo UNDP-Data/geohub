@@ -13,29 +13,35 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	/**
-	 * maplibre layer ID
-	 */
-	export let layerId: string;
+	interface Props {
+		/**
+		 * maplibre layer ID
+		 */
+		layerId: string;
+		/**
+		 * Titiler Algorithm ID
+		 */
+		algorithmId?: string;
+		/**
+		 * Titiler alrgorithms endpoint URL
+		 */
+		algorithmsApi?: string;
+	}
 
-	/**
-	 * Titiler Algorithm ID
-	 */
-	export let algorithmId = '';
+	let {
+		layerId = $bindable(),
+		algorithmId = $bindable(''),
+		algorithmsApi = $bindable('')
+	}: Props = $props();
 
-	/**
-	 * Titiler alrgorithms endpoint URL
-	 */
-	export let algorithmsApi = '';
+	let algorithms: { [key: string]: RasterAlgorithm } = $state();
 
-	let algorithms: { [key: string]: RasterAlgorithm };
+	let parameters: { [key: string]: number } = $state({});
 
-	let parameters: { [key: string]: number } = {};
-
-	let expanded: { [key: string]: boolean } = {};
+	let expanded: { [key: string]: boolean } = $state({});
 	// to allow only an accordion to be expanded
-	let expandedDatasetId: string;
-	$: {
+	let expandedDatasetId: string = $state('');
+	$effect(() => {
 		let expandedDatasets = Object.keys(expanded).filter(
 			(key) => expanded[key] === true && key !== expandedDatasetId
 		);
@@ -48,7 +54,7 @@
 				});
 			expanded[expandedDatasets[0]] = true;
 		}
-	}
+	});
 
 	const getAlgorithms = async () => {
 		const res = await fetch(algorithmsApi);
@@ -130,36 +136,38 @@
 				title="Customize parameter{Object.keys(params).length > 1 ? 's' : ''}"
 				showHelp={false}
 			>
-				<div slot="control">
-					{#each Object.keys(params) as key}
-						{@const args = params[key]}
-						<PropertyEditor
-							bind:id={key}
-							type={args.type}
-							title={args.title}
-							description={args.description}
-							bind:value={parameters[key]}
-							defaultValue={args.default}
-							unit={args.unit}
-							minimum={args.minimum}
-							exclusiveMinimum={args.exclusiveMinimum}
-							maximum={args.maximum}
-							exclusiveMaximum={args.exclusiveMaximum}
-							on:change={handleParameterValueChanged}
-							bind:isExpanded={expanded[key]}
-							showRestPip={args.options_descriptions ? true : false}
-							showAll={args.options_descriptions ? 'pip' : false}
-							formatter={(value) => {
-								const options = args.options_descriptions;
-								if (options && options.length > 0) {
-									return options[value];
-								} else {
-									return value;
-								}
-							}}
-						/>
-					{/each}
-				</div>
+				{#snippet control()}
+					<div>
+						{#each Object.keys(params) as key}
+							{@const args = params[key]}
+							<PropertyEditor
+								id={key}
+								type={args.type}
+								title={args.title}
+								description={args.description}
+								bind:value={parameters[key]}
+								defaultValue={args.default}
+								unit={args.unit}
+								minimum={args.minimum}
+								exclusiveMinimum={args.exclusiveMinimum}
+								maximum={args.maximum}
+								exclusiveMaximum={args.exclusiveMaximum}
+								onchange={handleParameterValueChanged}
+								bind:isExpanded={expanded[key]}
+								showRestPip={args.options_descriptions ? true : false}
+								showAll={args.options_descriptions ? 'pip' : false}
+								formatter={(value) => {
+									const options = args.options_descriptions;
+									if (options && options.length > 0) {
+										return options[value];
+									} else {
+										return value;
+									}
+								}}
+							/>
+						{/each}
+					</div>
+				{/snippet}
 			</FieldControl>
 		{/if}
 	{/if}

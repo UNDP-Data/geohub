@@ -75,8 +75,7 @@
 		tabs = [...tabs];
 	};
 
-	const handleClickTab = (e) => {
-		activeTab = e.detail;
+	const handleClickTab = (activeTab: string) => {
 		const url = page.url;
 		url.searchParams.set('activetab', activeTab);
 		replaceState(url, '');
@@ -154,7 +153,7 @@
 		isFullwidth={false}
 		bind:tabs
 		bind:activeTab
-		on:tabChange={handleClickTab}
+		onchange={handleClickTab}
 		isUppercase={true}
 		fontWeight="semibold"
 	/>

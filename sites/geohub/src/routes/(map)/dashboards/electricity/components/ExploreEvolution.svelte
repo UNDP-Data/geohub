@@ -18,8 +18,8 @@
 		reloadAdmin(scaleColorList, showMapLabels);
 	};
 
-	const colorPickerChangeHandler = (e) => {
-		colorMapNameStore = e.detail.colorMapName;
+	const colorPickerChangeHandler = (colorMapName: string) => {
+		colorMapNameStore = colorMapName;
 		loadMapColors();
 	};
 
@@ -38,7 +38,7 @@
 
 <div class="mt-2 p-4 has-background-light">
 	<p class="mb-2">Electricity access</p>
-	<ColorMapPicker colorMapName={colorMapNameStore} on:change={colorPickerChangeHandler} />
+	<ColorMapPicker colorMapName={colorMapNameStore} onchange={colorPickerChangeHandler} />
 	<label class="checkbox mt-2">
 		<input type="checkbox" onchange={showLabelsHandler} checked={showMapLabels} />
 		Show Labels

@@ -51,8 +51,7 @@
 		];
 	};
 
-	const handleBreadcrumbClicked = (e: { detail: ToolBreadcrumb }) => {
-		const page: ToolBreadcrumb = e.detail;
+	const handleBreadcrumbClicked = (page: BreadcrumbPage) => {
 		if (breadcrumbs?.length > 0) {
 			const pageIndex = breadcrumbs.findIndex((p) => p.title === page.title);
 			breadcrumbs = [...breadcrumbs.slice(0, pageIndex + 1)];
@@ -61,7 +60,7 @@
 </script>
 
 {#if breadcrumbs && breadcrumbs.length > 0}
-	<Breadcrumbs bind:pages={breadcrumbs} size="small" on:click={handleBreadcrumbClicked} />
+	<Breadcrumbs bind:pages={breadcrumbs} size="small" onclick={handleBreadcrumbClicked} />
 {/if}
 
 {#if dataset}

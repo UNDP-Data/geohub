@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	export interface Tab {
 		id: string;
 		label: string;
@@ -9,18 +9,32 @@
 
 <script lang="ts">
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
-	import { createEventDispatcher } from 'svelte';
 
-	export let isFullwidth = false;
-	export let isBoxed = true;
-	export let isCentered = true;
-	export let size: 'is-small' | 'is-medium' | 'is-large' | 'is-normal' = 'is-normal';
-	export let tabs: Tab[];
-	export let isCapitalized = false;
-	export let isUppercase = false;
-	export let fontWeight: 'light' | 'normal' | 'medium' | 'semibold' | 'bold' = 'normal';
-	const dispatch = createEventDispatcher();
-	export let activeTab: string;
+	interface Props {
+		isFullwidth?: boolean;
+		isBoxed?: boolean;
+		isCentered?: boolean;
+		size?: 'is-small' | 'is-medium' | 'is-large' | 'is-normal';
+		tabs: Tab[];
+		isCapitalized?: boolean;
+		isUppercase?: boolean;
+		fontWeight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
+		activeTab: string;
+		onchange?: (tab: string) => void;
+	}
+
+	let {
+		isFullwidth = false,
+		isBoxed = true,
+		isCentered = true,
+		size = 'is-normal',
+		tabs = $bindable(),
+		isCapitalized = false,
+		isUppercase = false,
+		fontWeight = 'normal',
+		activeTab = $bindable(),
+		onchange = () => {}
+	}: Props = $props();
 </script>
 
 <div
@@ -36,13 +50,13 @@
 					role="tab"
 					class="tab-{tab.id.toLowerCase()}"
 					tabindex="0"
-					on:click={() => {
+					onclick={() => {
 						activeTab = tab.id;
-						dispatch('tabChange', activeTab);
+						if (onchange) onchange(activeTab);
 					}}
 					data-sveltekit-preload-data="off"
 					data-sveltekit-preload-code="off"
-					on:keydown={handleEnterKey}
+					onkeydown={handleEnterKey}
 				>
 					{#if tab.icon}
 						<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>

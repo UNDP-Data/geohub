@@ -5,15 +5,18 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	/**
-	 * Layer ID to edit
-	 */
-	export let layerId: string;
+	interface Props {
+		/**
+		 * Layer ID to edit
+		 */
+		layerId: string;
+		/**
+		 * Layer ID to edit
+		 */
+		defaultColor?: string;
+	}
 
-	/**
-	 * Layer ID to edit
-	 */
-	export let defaultColor: string = 'rgba(0,0,0,1)';
+	let { layerId = $bindable(), defaultColor = $bindable('rgba(0,0,0,1)') }: Props = $props();
 
 	const propertyName = 'circle-stroke-color';
 
@@ -27,18 +30,18 @@
 		return color as string;
 	};
 
-	let rgba = getColor();
+	let rgba = $state(getColor());
 
 	onMount(() => {
 		rgba = getColor();
 		map.setPaintProperty(layerId, propertyName, rgba);
 	});
 
-	const handleSetColor = (e: CustomEvent) => {
-		rgba = e.detail.color;
+	const handleSetColor = (color: string) => {
+		rgba = color;
 		map.setPaintProperty(layerId, propertyName, rgba);
-		defaultColor = e.detail.color;
+		defaultColor = color;
 	};
 </script>
 
-<MaplibreColorPicker {rgba} on:change={handleSetColor} />
+<MaplibreColorPicker {rgba} onchange={handleSetColor} />

@@ -305,9 +305,9 @@
 
 				<div class="container mt-2">
 					<Slider
-						bind:values={expression.value}
-						min={layerMin}
-						max={layerMax}
+						bind:values={expression.value as number[]}
+						min={layerMin as number}
+						max={layerMax as number}
 						step={getSliderStep()}
 						range={expression?.operator
 							? ['>', '>='].includes(expression.operator)

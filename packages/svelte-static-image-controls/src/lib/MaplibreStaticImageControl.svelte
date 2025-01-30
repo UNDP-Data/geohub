@@ -173,7 +173,7 @@
 		{title}
 		showExpand={true}
 		showClose={true}
-		on:close={() => {
+		onclose={() => {
 			show = false;
 		}}
 	>

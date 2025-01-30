@@ -1,14 +1,18 @@
 <script lang="ts">
 	import MaplibreSlider from '$lib/components/maplibre/util/MaplibreSlider.svelte';
 
-	export let layerId: string;
+	interface Props {
+		layerId: string;
+	}
 
-	let defaultValue = 0;
-	let maxValue = 9999;
-	let minValue = 0;
-	let propertyName = 'fill-extrusion-base';
-	let stepValue = 1;
-	let suffix = 'm';
+	let { layerId = $bindable() }: Props = $props();
+
+	let defaultValue = $state(0);
+	let maxValue = $state(9999);
+	let minValue = $state(0);
+	let propertyName = $state('fill-extrusion-base');
+	let stepValue = $state(1);
+	let suffix = $state('m');
 </script>
 
 <MaplibreSlider

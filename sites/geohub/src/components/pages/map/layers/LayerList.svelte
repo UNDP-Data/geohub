@@ -326,8 +326,8 @@
 
 <ModalNotification
 	bind:dialogOpen={isDeleteDialogVisible}
-	on:cancel={handleCancel}
-	on:continue={handleDeleteAll}
+	oncancel={handleCancel}
+	oncontinue={handleDeleteAll}
 	target={$layerListStore.map((l) => l.name).join(', ')}
 	title="Delete all layers"
 	message="Are you sure you want to delete the all following layers?"

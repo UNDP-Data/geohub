@@ -421,7 +421,7 @@
 
 <FloatingPanel
 	title={$editingLayerStore ? `${$editingLayerStore.name}` : 'Table'}
-	on:close={handleClose}
+	onclose={handleClose}
 	showExpand={false}
 	bind:headerHeight={panelHeaderHeight}
 >

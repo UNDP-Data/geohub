@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	export interface MenuButtonType {
 		title: string;
 		href: string;
@@ -18,11 +18,15 @@
 
 	import { initTooltipTippy } from '$lib/util/initTippy.js';
 
-	export let button: MenuButtonType;
-	export let subButtons: MenuSubButtonType[] | undefined = undefined;
-	export let color: 'primary' | 'link' | 'info' | 'warning' | 'danger' | 'success' | '' = 'primary';
+	interface Props {
+		button: MenuButtonType;
+		subButtons?: MenuSubButtonType[] | undefined;
+		color?: 'primary' | 'link' | 'info' | 'warning' | 'danger' | 'success' | '';
+	}
 
-	let isButtonHovered = false;
+	let { button = $bindable(), subButtons = $bindable(), color = 'primary' }: Props = $props();
+
+	let isButtonHovered = $state(false);
 
 	const tippyTooltip = initTooltipTippy();
 </script>
@@ -32,7 +36,7 @@
 		role="menu"
 		tabindex="-1"
 		class="dropdown is-right {isButtonHovered ? 'is-active' : ''}"
-		on:mouseleave={() => (isButtonHovered = false)}
+		onmouseleave={() => (isButtonHovered = false)}
 	>
 		<div class="dropdown-trigger">
 			<a
@@ -41,7 +45,7 @@
 				aria-controls="hero-header-dropdown-menu"
 				href={button.href}
 				use:tippyTooltip={{ content: button.tooltip }}
-				on:mouseenter={() => (isButtonHovered = true)}
+				onmouseenter={() => (isButtonHovered = true)}
 			>
 				<span>{button.title}</span>
 				<span class="icon is-small">
@@ -54,23 +58,23 @@
 			class="dropdown-menu"
 			id="hero-header-dropdown-menu"
 			role="menu"
-			on:mouseleave={() => (isButtonHovered = false)}
+			onmouseleave={() => (isButtonHovered = false)}
 		>
 			<div class="dropdown-content">
 				{#each subButtons as btn}
 					{#if btn.callback}
-						<!-- svelte-ignore a11y-missing-attribute -->
+						<!-- svelte-ignore a11y_missing_attribute -->
 						<a
 							class="dropdown-item"
 							role="menuitem"
 							tabindex="0"
 							use:tippyTooltip={{ content: btn.tooltip }}
-							on:click={() => {
+							onclick={() => {
 								if (btn.callback) {
 									btn.callback(btn);
 								}
 							}}
-							on:keydown={handleEnterKey}
+							onkeydown={handleEnterKey}
 						>
 							{btn.title}
 						</a>

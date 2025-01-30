@@ -92,14 +92,14 @@
 			bind:buttons={symbolVectorTypes}
 			bind:selected={symbolVectorType}
 			{size}
-			on:change={setLayerType}
+			onchange={setLayerType}
 		/>
 	{:else}
 		<SegmentButtons
 			bind:buttons={polygonVectorTypes}
 			bind:selected={polygonVectorType}
 			{size}
-			on:change={setLayerType}
+			onchange={setLayerType}
 		/>
 	{/if}
 {/if}

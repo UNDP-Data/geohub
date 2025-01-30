@@ -2,33 +2,37 @@
 	import NumberInput from '$lib/components/ui/NumberInput.svelte';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
-	export let defaultSize = 16;
+	interface Props {
+		layerId: string;
+		defaultSize?: number;
+	}
 
-	const dispatch = createEventDispatcher();
+	let { layerId = $bindable(), defaultSize = $bindable(16) }: Props = $props();
 
 	const style = $map
 		.getStyle()
 		.layers.filter((layer: LayerSpecification) => layer.id === layerId)[0];
 
 	let layerType = 'symbol';
-	let maxValue = 32;
-	let minValue = 0;
+	let maxValue = $state(32);
+	let minValue = $state(0);
 	let propertyName = 'text-size';
-	let stepValue = 0.5;
-	let value = style.layout && style.layout[propertyName] ? style.layout[propertyName] : defaultSize;
-
-	$: value, setValue();
+	let stepValue = $state(0.5);
+	let value = $state(
+		style.layout && style.layout[propertyName] ? style.layout[propertyName] : defaultSize
+	);
 
 	const setValue = () => {
 		if (style.type !== layerType) return;
 		map.setLayoutProperty(layerId, propertyName, value);
-		dispatch('change');
 	};
+	onMount(() => {
+		setValue();
+	});
 </script>
 
-<NumberInput bind:value bind:minValue bind:maxValue bind:step={stepValue} on:change={setValue} />
+<NumberInput bind:value bind:minValue bind:maxValue bind:step={stepValue} onchange={setValue} />

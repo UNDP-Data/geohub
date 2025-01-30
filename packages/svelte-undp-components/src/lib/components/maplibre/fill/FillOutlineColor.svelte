@@ -5,7 +5,11 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
+	interface Props {
+		layerId: string;
+	}
+
+	let { layerId = $bindable() }: Props = $props();
 	const propertyName = 'fill-outline-color';
 
 	let defaultColor = 'rgba(0,0,0,1)';
@@ -27,17 +31,17 @@
 		return fillOutlineColor as string;
 	};
 
-	let rgba = getFillOutlineColor();
+	let rgba = $state(getFillOutlineColor());
 
 	onMount(() => {
 		rgba = getFillOutlineColor();
 		map.setPaintProperty(layerId, propertyName, rgba);
 	});
 
-	const handleSetColor = (e: CustomEvent) => {
-		rgba = e.detail.color;
+	const handleSetColor = (color: string) => {
+		rgba = color;
 		map.setPaintProperty(layerId, propertyName, rgba);
 	};
 </script>
 
-<MaplibreColorPicker {rgba} on:change={handleSetColor} />
+<MaplibreColorPicker {rgba} onchange={handleSetColor} />

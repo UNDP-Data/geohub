@@ -109,8 +109,8 @@
 <Tabs
 	bind:tabs
 	bind:activeTab
-	on:tabChange={(e) => {
-		activeTab = e.detail;
+	onchange={(tab: string) => {
+		activeTab = tab as TabNames;
 		setActiveTab2store();
 	}}
 	size="is-normal"

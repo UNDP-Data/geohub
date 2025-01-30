@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	/**
 	 * Check if the raster is unique value dataset or not
 	 * @param metadata raster tile metadata
@@ -49,20 +49,33 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
-	export let metadata: RasterTileMetadata;
-	export let rescale: number[] | undefined = undefined;
-	export let numberOfClasses = 5;
-	export let colorMapName = 'viridis';
-	export let classificationMethod: ClassificationMethodTypes =
-		ClassificationMethodTypes.NATURAL_BREAK;
-	export let numberOfRandomSamplingPoints = 1000;
-	export let numberOfClassesMaximum = 25;
-	export let numberOfClassesMinimum = 2;
+	interface Props {
+		layerId: string;
+		metadata: RasterTileMetadata;
+		rescale?: number[] | undefined;
+		numberOfClasses?: number;
+		colorMapName?: string;
+		classificationMethod?: ClassificationMethodTypes;
+		numberOfRandomSamplingPoints?: number;
+		numberOfClassesMaximum?: number;
+		numberOfClassesMinimum?: number;
+	}
+
+	let {
+		layerId = $bindable(),
+		metadata = $bindable(),
+		rescale = $bindable(undefined),
+		numberOfClasses = $bindable(5),
+		colorMapName = $bindable('viridis'),
+		classificationMethod = $bindable(ClassificationMethodTypes.NATURAL_BREAK),
+		numberOfRandomSamplingPoints = $bindable(1000),
+		numberOfClassesMaximum = $bindable(25),
+		numberOfClassesMinimum = $bindable(2)
+	}: Props = $props();
 
 	const layerHasUniqueValues = isUniqueValueRaster(metadata) ?? false;
 
-	let colorMapRows: Array<ColorMapRow> = [];
+	let colorMapRows: Array<ColorMapRow> = $state([]);
 	let layerMax: number;
 	let layerMin: number;
 	let histogram: { bins: number[]; count: number[] };
@@ -130,12 +143,11 @@
 		numberOfClasses = Object.keys(legendLabels).length;
 	}
 
-	let containerWidth: number;
+	let containerWidth: number = $state();
 	let numberOfClassesWidth: number;
-	let colormapPickerWidth: number;
-	$: colormapPickerWidth = layerHasUniqueValues
-		? containerWidth
-		: containerWidth - numberOfClassesWidth;
+	let colormapPickerWidth: number = $derived(
+		layerHasUniqueValues ? containerWidth : containerWidth - numberOfClassesWidth
+	);
 
 	const setInitialColorMapRows = (isClassificationMethodEdited = false) => {
 		if (layerHasUniqueValues) {
@@ -231,9 +243,9 @@
 		numberOfClasses = colorMapRows.length;
 	};
 
-	const handleColorMapChanged = (e: { detail: { colorMapName: string } }) => {
-		if (e.detail) {
-			let name = e.detail.colorMapName;
+	const handleColorMapChanged = (colorMapName: string) => {
+		if (colorMapName) {
+			let name = colorMapName;
 			if (!name) return;
 
 			let colorsList = chroma.scale(name.replace('_r', '')).mode('lrgb').colors(numberOfClasses);
@@ -254,15 +266,19 @@
 		classifyImage();
 	};
 
-	const handleIncrementDecrementClasses = (e: CustomEvent) => {
-		numberOfClasses = e.detail.value;
+	const handleIncrementDecrementClasses = (value: number) => {
+		numberOfClasses = value;
 		colorMapRows = [];
 		setInitialColorMapRows();
 		classifyImage();
 	};
 
-	const handleChangeIntervalValues = (event: CustomEvent) => {
-		colorMapRows = updateIntervalValues(event, colorMapRows);
+	const handleChangeIntervalValues = (args: {
+		index: number;
+		id: number | string;
+		value: number;
+	}) => {
+		colorMapRows = updateIntervalValues(args, colorMapRows);
 		classifyImage();
 	};
 
@@ -425,7 +441,7 @@
 >
 	<div class="field">
 		<p class="control" style="width: {colormapPickerWidth}px">
-			<ColorMapPicker bind:colorMapName on:change={handleColorMapChanged} />
+			<ColorMapPicker bind:colorMapName onchange={handleColorMapChanged} />
 		</p>
 	</div>
 
@@ -433,40 +449,48 @@
 		<div class="columns mb-0">
 			<div class="column is-6 pr-1 py-0">
 				<FieldControl title="Method">
-					<div slot="help">
-						Whether to apply a classification method for a vector layer in selected property. This
-						setting is only used when you select a property to classify the layer appearance.
-					</div>
-					<div slot="control">
-						<div class="select is-normal is-fullwidth">
-							<select
-								bind:value={classificationMethod}
-								on:change={handleClassificationMethodChange}
-							>
-								{#each ClassificationMethods as classificationMethod}
-									<option
-										class="legend-text"
-										title="Classification Method"
-										value={classificationMethod.code}>{classificationMethod.name}</option
-									>
-								{/each}
-							</select>
+					{#snippet help()}
+						<div>
+							Whether to apply a classification method for a vector layer in selected property. This
+							setting is only used when you select a property to classify the layer appearance.
 						</div>
-					</div>
+					{/snippet}
+					{#snippet control()}
+						<div>
+							<div class="select is-normal is-fullwidth">
+								<select
+									bind:value={classificationMethod}
+									onchange={handleClassificationMethodChange}
+								>
+									{#each ClassificationMethods as classificationMethod}
+										<option
+											class="legend-text"
+											title="Classification Method"
+											value={classificationMethod.code}>{classificationMethod.name}</option
+										>
+									{/each}
+								</select>
+							</div>
+						</div>
+					{/snippet}
 				</FieldControl>
 			</div>
 			<div class="column pl-1 py-0">
 				<FieldControl title="Classes">
-					<div slot="help">Increase of decrease the number of classes.</div>
-					<div slot="control">
-						<NumberInput
-							bind:value={numberOfClasses}
-							minValue={numberOfClassesMinimum}
-							maxValue={numberOfClassesMaximum}
-							on:change={handleIncrementDecrementClasses}
-							size="normal"
-						/>
-					</div>
+					{#snippet help()}
+						<div>Increase of decrease the number of classes.</div>
+					{/snippet}
+					{#snippet control()}
+						<div>
+							<NumberInput
+								bind:value={numberOfClasses}
+								minValue={numberOfClassesMinimum}
+								maxValue={numberOfClassesMaximum}
+								onchange={handleIncrementDecrementClasses}
+								size="normal"
+							/>
+						</div>
+					{/snippet}
 				</FieldControl>
 			</div>
 		</div>
@@ -493,12 +517,15 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each colorMapRows as colorMapRow}
+			<!-- eslint-disable @typescript-eslint/no-unused-vars -->
+			{#each colorMapRows as colorMapRow, index}
 				<LegendColorMapRow
-					bind:colorMapRow
+					bind:colorMapRow={colorMapRows[index]}
 					bind:colorMapName
 					hasUniqueValues={layerHasUniqueValues}
-					on:changeColorMap={handleColorMapChanged}
+					onchangeColorMap={() => {
+						handleColorMapChanged('');
+					}}
 					on:changeIntervalValues={handleChangeIntervalValues}
 					readonly={false}
 				/>

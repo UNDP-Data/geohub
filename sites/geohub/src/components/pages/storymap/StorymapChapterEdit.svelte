@@ -180,7 +180,7 @@
 	<FloatingPanel
 		title="slide settings"
 		showExpand={false}
-		on:close={handleClose}
+		onclose={handleClose}
 		bind:headerHeight={panelHeaderHeight}
 	>
 		<div bind:clientHeight={tabHeight}>
@@ -257,7 +257,7 @@
 													{ title: 'Full Width', value: 'full' }
 												]}
 												bind:selected={cardSize}
-												on:change={handleCardSizeChange}
+												onchange={handleCardSizeChange}
 											/>
 										</div>
 									{/snippet}
@@ -275,7 +275,7 @@
 														{ title: 'right', value: 'right', icon: 'fa-solid fa-align-right' }
 													]}
 													bind:selected={$activeChapterStore.alignment}
-													on:change={handleChange}
+													onchange={handleChange}
 												/>
 											</div>
 										{/snippet}
@@ -434,7 +434,7 @@
 													{ title: 'instant jump', value: 'jumpTo' }
 												]}
 												bind:selected={mapAnimation}
-												on:change={() => {
+												onchange={() => {
 													if (!$activeChapterStore) return;
 													$activeChapterStore.mapAnimation = mapAnimation;
 													handleChange;

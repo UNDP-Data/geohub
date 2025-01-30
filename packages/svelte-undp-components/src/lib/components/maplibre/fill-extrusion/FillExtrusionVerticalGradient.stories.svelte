@@ -1,9 +1,10 @@
-<script lang="ts" context="module">
-	import type { Meta } from '@storybook/svelte';
+<script lang="ts" module>
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import type { FillExtrusionLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
 	import Map from '../Map.svelte';
 	import FillExtrusionVerticalGradient from './FillExtrusionVerticalGradient.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/Maplibre/FillExtrusion/FillExtrusionVerticalGradient',
 		component: FillExtrusionVerticalGradient,
 		tags: ['autodocs'],
@@ -13,7 +14,7 @@
 				description: 'Layer ID to edit'
 			}
 		}
-	};
+	});
 
 	const title = 'Fill Extrusion Vertical Gradient Control';
 
@@ -36,15 +37,10 @@
 	};
 </script>
 
-<script lang="ts">
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-	import type { FillExtrusionLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
-</script>
-
-<Template let:args>
+{#snippet template(args)}
 	<Map {title} {source} {layer} zoom={15} center={[139.80244, 35.6418]} pitch={85} bearing={90}>
 		<FillExtrusionVerticalGradient {...args}></FillExtrusionVerticalGradient>
 	</Map>
-</Template>
+{/snippet}
 
-<Story name="Primary" args={{ layerId: layer.id }} />
+<Story name="Primary" args={{ layerId: layer.id }} children={template} />

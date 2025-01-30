@@ -108,8 +108,8 @@
 		await reload(apiUrl);
 	};
 
-	const handleViewTypeChanged = (e: { detail: { value: TableViewType } }) => {
-		viewType = e.detail.value;
+	const handleViewTypeChanged = (value: string | number) => {
+		viewType = value as TableViewType;
 
 		const apiUrl = new URL(page.url);
 		apiUrl.searchParams.set('viewType', viewType);
@@ -215,14 +215,12 @@
 		}
 	};
 
-	const handleTabChanged = async (e: { detail: { activeTab: string } }) => {
-		const active = e.detail.activeTab;
-
+	const handleTabChanged = async (activeTab: string) => {
 		const apiUrl = new URL(page.url.toString());
 		offset = 0;
 		apiUrl.searchParams.set('offset', `${offset}`);
 
-		if (active === '#maps') {
+		if (activeTab === '#maps') {
 			apiUrl.searchParams.delete('mydata');
 		} else {
 			apiUrl.searchParams.set('mydata', 'true');
@@ -248,13 +246,7 @@
 	});
 </script>
 
-<HeroHeader
-	title="Maps"
-	bind:breadcrumbs
-	bind:tabs
-	bind:activeTab
-	on:tabChanged={handleTabChanged}
-/>
+<HeroHeader title="Maps" bind:breadcrumbs bind:tabs bind:activeTab onTabChange={handleTabChanged} />
 
 <div class="m-6 my-4">
 	<section id="style-list-top" class="header-content columns is-flex is-flex-wrap-wrap">
@@ -307,7 +299,7 @@
 									{ title: 'List', icon: 'fa-solid fa-list', value: 'list' }
 								]}
 								bind:selected={viewType}
-								on:change={handleViewTypeChanged}
+								onchange={handleViewTypeChanged}
 							/>
 						</div>
 					{/snippet}

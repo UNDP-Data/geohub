@@ -2,74 +2,80 @@
 	import { initTippy, initTooltipTippy } from '$lib/util/initTippy.js';
 	import { DatePicker } from '@undp-data/date-picker-svelte';
 	import dayjs from 'dayjs';
-	import { createEventDispatcher } from 'svelte';
+	import { onMount } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		/**
+		 * Maximum date for picker. Default is today.
+		 */
+		max?: Date;
+		/**
+		 * Minimum date for picker. Default is 100 years before maximum date
+		 */
+		min?: Date;
+		/**
+		 * A selected date currently.
+		 * If value is after max date, max date will be default.
+		 * If value is before min date, min date will be default.
+		 * Otherwise, default is today.
+		 */
+		value?: Date;
+		/**
+		 * Enabled dates. All dates will be disabled except them. Default is not specified.
+		 * Disabled dates will be ignored if this is used.
+		 */
+		enabledDates?: Date[];
+		/**
+		 * Disabled dates. Dates on the array will be disabled.
+		 */
+		disabledDates?: Date[];
+		/**
+		 * Date format shown in textbox.
+		 * See dayjs documentation. https://day.js.org/docs/en/display/format
+		 */
+		format?: string;
+		/**
+		 * Tooltip text for calendar button tooltip
+		 */
+		tooltip?: string;
+		/**
+		 * Size of date picker
+		 */
+		size?: 'small' | 'normal' | 'medium' | 'large';
+		/**
+		 * Fontawesome class name for button icon
+		 */
+		icon?: string;
+		/**
+		 * If true, disable the control
+		 */
+		disabled?: boolean;
+		/**
+		 * Width of textbox.
+		 */
+		width?: number | undefined;
 
-	/**
-	 * Maximum date for picker. Default is today.
-	 */
-	export let max: Date = new Date();
-	/**
-	 * Minimum date for picker. Default is 100 years before maximum date
-	 */
-	export let min: Date = dayjs(max).add(-100, 'year').toDate();
+		/**
+		 * Event handler for date selection
+		 * @param date Date
+		 */
+		onselect?: (date: Date) => void;
+	}
 
-	let today = new Date();
-
-	/**
-	 * A selected date currently.
-	 * If value is after max date, max date will be default.
-	 * If value is before min date, min date will be default.
-	 * Otherwise, default is today.
-	 */
-	export let value: Date = dayjs(today).isAfter(max)
-		? max
-		: dayjs(today).isBefore(min)
-			? min
-			: today;
-
-	/**
-	 * Enabled dates. All dates will be disabled except them. Default is not specified.
-	 * Disabled dates will be ignored if this is used.
-	 */
-	export let enabledDates: Date[] = [];
-
-	/**
-	 * Disabled dates. Dates on the array will be disabled.
-	 */
-	export let disabledDates: Date[] = [];
-
-	/**
-	 * Date format shown in textbox.
-	 * See dayjs documentation. https://day.js.org/docs/en/display/format
-	 */
-	export let format = 'MMMM D, YYYY';
-
-	/**
-	 * Tooltip text for calendar button tooltip
-	 */
-	export let tooltip = 'Select a date';
-
-	/**
-	 * Size of date picker
-	 */
-	export let size: 'small' | 'normal' | 'medium' | 'large' = 'normal';
-
-	/**
-	 * Fontawesome class name for button icon
-	 */
-	export let icon = 'fas fa-calendar-days fa-lg';
-
-	/**
-	 * If true, disable the control
-	 */
-	export let disabled = false;
-
-	/**
-	 * Width of textbox.
-	 */
-	export let width: number | undefined = undefined;
+	let {
+		max = $bindable(),
+		min = $bindable(),
+		value = $bindable(),
+		enabledDates = $bindable([]),
+		disabledDates = $bindable([]),
+		format = 'MMMM D, YYYY',
+		tooltip = 'Select a date',
+		size = 'normal',
+		icon = 'fas fa-calendar-days fa-lg',
+		disabled = $bindable(false),
+		width = $bindable(),
+		onselect = () => {}
+	}: Props = $props();
 
 	let tippyInstance: { hide: () => void } | undefined;
 
@@ -78,9 +84,7 @@
 		if (tippyInstance) {
 			tippyInstance.hide();
 		}
-		dispatch('select', {
-			date: value
-		});
+		if (onselect) onselect(value);
 	};
 
 	const tippyTooltip = initTooltipTippy();
@@ -100,7 +104,20 @@
 		}
 	});
 
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
+
+	onMount(() => {
+		let today = new Date();
+		if (!max) {
+			max = today;
+		}
+		if (!min) {
+			min = dayjs(max).add(-100, 'year').toDate();
+		}
+		if (!value) {
+			value = dayjs(today).isAfter(max) ? max : dayjs(today).isBefore(min) ? min : today;
+		}
+	});
 </script>
 
 <div
@@ -117,9 +134,13 @@
 		{disabled}
 	/>
 
-	<button class="panel-button button is-{size} {size === 'small' ? 'px-4' : ''}" {disabled}>
+	<button
+		aria-label="date-picker"
+		class="panel-button button is-{size} {size === 'small' ? 'px-4' : ''}"
+		{disabled}
+	>
 		<span class="icon is-small">
-			<i class={icon} />
+			<i class={icon}></i>
 		</span>
 	</button>
 </div>

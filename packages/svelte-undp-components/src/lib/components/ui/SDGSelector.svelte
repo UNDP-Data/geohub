@@ -1,13 +1,20 @@
 <script lang="ts">
 	import { initTippy } from '$lib/util/initTippy.js';
-	import { createEventDispatcher } from 'svelte';
 
-	export let selected: number[] = [];
-	export let placeholder = 'Select SDG';
-	export let isFullWidth = false;
-	let isActive = false;
+	interface Props {
+		selected?: number[];
+		placeholder?: string;
+		isFullWidth?: boolean;
+		onselect?: (sdgs: number[]) => void;
+	}
 
-	const dispatch = createEventDispatcher();
+	let {
+		selected = [],
+		placeholder = 'Select SDG',
+		isFullWidth = false,
+		onselect = () => {}
+	}: Props = $props();
+	let isActive = $state(false);
 
 	let tippy = initTippy({
 		appendTo: document.body,
@@ -22,8 +29,8 @@
 			isActive = false;
 		}
 	});
-	let tooltipContent: HTMLElement;
-	let buttonWidth = 0;
+	let tooltipContent: HTMLElement | undefined = $state();
+	let buttonWidth = $state(0);
 
 	const sdgNumbers = Array.from({ length: 17 }, (_, i) => i + 1);
 
@@ -54,13 +61,12 @@
 			selected = [...selected, sdg];
 			selected = selected.sort((a, b) => a - b);
 		}
-
-		dispatch('select', { sdgs: selected });
+		if (onselect) onselect(selected);
 	};
 </script>
 
 <div
-	class="button sdg-button {isFullWidth ? 'is-fullwidth' : ''} px-2"
+	class="button sdg-button {isFullWidth ? 'is-fullwidth' : ''} px-4"
 	aria-haspopup="true"
 	aria-controls="dropdown-menu"
 	use:tippy={{ content: tooltipContent }}
@@ -98,7 +104,7 @@
 					class="ml-auto"
 					type="checkbox"
 					checked={isSelected}
-					on:change={() => {
+					onchange={() => {
 						handleSDGSelected(number);
 					}}
 				/>

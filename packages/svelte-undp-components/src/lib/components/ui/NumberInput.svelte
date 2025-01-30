@@ -1,22 +1,47 @@
 <script lang="ts">
 	import { isInt } from '$lib/util/isInt.js';
 	import BigNumber from 'bignumber.js';
-	import { createEventDispatcher } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		value: number;
+		minValue: number;
+		maxValue: number;
+		step?: number;
+		size?: 'small' | 'normal' | 'medium' | 'large';
+		readonly?: boolean;
+		onchange?: (value: number) => void;
+	}
 
-	export let value = 0;
-	export let minValue = 0;
-	export let maxValue = 99;
-	export let step = 1;
-	export let size: 'small' | 'normal' | 'medium' | 'large' = 'normal';
-	export let readonly = false;
+	let {
+		value = $bindable(),
+		minValue = $bindable(),
+		maxValue = $bindable(),
+		step = $bindable(),
+		size = 'normal',
+		readonly = $bindable(),
+		onchange = () => {}
+	}: Props = $props();
+
+	$effect(() => {
+		if (!value) {
+			value = 0;
+		}
+		if (!minValue) {
+			minValue = 0;
+		}
+		if (!maxValue) {
+			maxValue = 99;
+		}
+		if (!step) {
+			step = 1;
+		}
+	});
 
 	const handleIncrement = () => {
 		if (value < maxValue) {
 			value = new BigNumber(value).plus(step).toNumber();
 			value = Number(round(value, countDecimals(step)).toFixed(countDecimals(step)));
-			dispatch('change', { value });
+			if (onchange) onchange(value);
 		}
 	};
 
@@ -24,7 +49,7 @@
 		if (value > minValue) {
 			value = new BigNumber(value).minus(step).toNumber();
 			value = Number(round(value, countDecimals(step)).toFixed(countDecimals(step)));
-			dispatch('change', { value });
+			if (onchange) onchange(value);
 		}
 	};
 
@@ -97,8 +122,8 @@
 		} else if (value < minValue) {
 			value = minValue;
 		}
-		value = Number(round(value, countDecimals(step)).toFixed(countDecimals(step)));
-		dispatch('change', { value });
+		value = Number(round(value, countDecimals(step ?? 1)).toFixed(countDecimals(step ?? 1)));
+		if (onchange) onchange(value);
 	};
 
 	// round number based on length of decimal places
@@ -131,9 +156,10 @@
 		<p class="control">
 			<button
 				class="button is-{size} {size === 'small' ? 'px-4' : ''}"
-				on:click={handleDecrement}
+				onclick={handleDecrement}
 				disabled={value <= minValue}
 				title="Decrease number"
+				aria-label="decrease number"
 			>
 				<span class="icon is-small">
 					<i class="fas fa-minus"></i>
@@ -148,16 +174,17 @@
 			bind:value
 			{readonly}
 			title="Number Label"
-			on:input={handleValueChanged}
+			oninput={handleValueChanged}
 		/>
 	</p>
 	{#if !readonly}
 		<p class="control">
 			<button
 				class="button is-{size} {size === 'small' ? 'px-4' : ''}"
-				on:click={handleIncrement}
+				onclick={handleIncrement}
 				disabled={value >= maxValue}
 				title="Increase number"
+				aria-label="increase number"
 			>
 				<span class="icon is-small">
 					<i class="fas fa-plus"></i>

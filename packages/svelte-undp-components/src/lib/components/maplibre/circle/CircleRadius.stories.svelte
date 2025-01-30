@@ -1,9 +1,10 @@
-<script lang="ts" context="module">
-	import type { Meta } from '@storybook/svelte';
+<script lang="ts" module>
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import type { CircleLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
 	import Map from '../Map.svelte';
 	import CircleRadius from './CircleRadius.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Circle/CircleRadius',
 		component: CircleRadius,
 		tags: ['autodocs'],
@@ -13,7 +14,7 @@
 				description: 'Layer ID to edit'
 			}
 		}
-	};
+	});
 
 	const title = 'Circle Radius Control';
 
@@ -35,19 +36,14 @@
 	};
 </script>
 
-<script lang="ts">
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-	import type { CircleLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
-</script>
-
-<Template let:args>
+{#snippet template(args)}
 	<Map {title} {source} {layer}>
 		<CircleRadius {...args}></CircleRadius>
 	</Map>
-</Template>
+{/snippet}
 
-<Story name="Primary" args={{ layerId: layer.id }} />
+<Story name="Primary" args={{ layerId: layer.id }} children={template} />
 
-<Story name="Readonly" args={{ layerId: layer.id, readonly: true }} />
+<Story name="Readonly" args={{ layerId: layer.id, readonly: true }} children={template} />
 
-<Story name="Step value by 2" args={{ layerId: layer.id, stepValue: 2 }} />
+<Story name="Step value by 2" args={{ layerId: layer.id, stepValue: 2 }} children={template} />

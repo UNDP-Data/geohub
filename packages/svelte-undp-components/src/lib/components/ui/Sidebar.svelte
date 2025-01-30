@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	/**
 	 * Sidebar position either 'left' or 'right'
 	 */
@@ -8,48 +8,58 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
 
-	/**
-	 * Show sidebar if true. Default is true
-	 */
-	export let show = true;
+	interface Props {
+		/**
+		 * Show sidebar if true. Default is true
+		 */
+		show?: boolean;
+		/**
+		 * Sidebar position either 'left' or 'right'. Default is left
+		 */
+		position?: SidebarPosition;
+		/**
+		 * Fixed sidebar width. default is 360px
+		 */
+		width?: number;
+		/**
+		 * If you use some header component at the above of sidebar, you can define margin-top value here
+		 */
+		marginTop?: number;
+		/**
+		 * If enabled, show toggle button. Default is true
+		 */
+		showToggleButton?: boolean;
+		/**
+		 * If height is specified, it will not be sized automatically
+		 */
+		height?: number | undefined;
+		/**
+		 * Default sidebar border style
+		 */
+		border?: string;
+		content?: import('svelte').Snippet;
+		main?: import('svelte').Snippet;
+	}
 
-	/**
-	 * Sidebar position either 'left' or 'right'. Default is left
-	 */
-	export let position: SidebarPosition = 'left';
+	let {
+		show = $bindable(true),
+		position = 'left',
+		width = $bindable(360),
+		marginTop = $bindable(0),
+		showToggleButton = true,
+		height = $bindable(),
+		border = '1px solid #1c1c1c',
+		content,
+		main
+	}: Props = $props();
 
-	/**
-	 * Fixed sidebar width. default is 360px
-	 */
-	export let width = 360;
+	let innerWidth: number = $state(0);
+	let innerHeight: number = $state(0);
+	let isMobile = $derived(innerWidth < 768 ? true : false);
+	let defaultMinSidebarWidth = $derived(isMobile ? '100%' : `${width}px`);
+	let splitHeight = $derived(height ? height : innerHeight - marginTop);
 
-	/**
-	 * If you use some header component at the above of sidebar, you can define margin-top value here
-	 */
-	export let marginTop = 0;
-
-	/**
-	 * If enabled, show toggle button. Default is true
-	 */
-	export let showToggleButton = true;
-
-	/**
-	 * If height is specified, it will not be sized automatically
-	 */
-	export let height: number | undefined = undefined;
-
-	/**
-	 * Default sidebar border style
-	 */
-	export let border = '1px solid #1c1c1c';
-
-	let innerWidth: number;
-	let innerHeight: number;
-	$: isMobile = innerWidth < 768 ? true : false;
-	$: defaultMinSidebarWidth = isMobile ? '100%' : `${width}px`;
-	$: splitHeight = height ? height : innerHeight - marginTop;
-
-	$: sidebarOnLeft = position === 'left' ? true : false;
+	let sidebarOnLeft = $derived(position === 'left' ? true : false);
 
 	const handleToggleSidebar = () => {
 		show = !show;
@@ -67,7 +77,7 @@
 				transition:slide={{ axis: 'x' }}
 				data-testid="sidebar-content"
 			>
-				<slot name="content" />
+				{@render content?.()}
 			</div>
 		{/if}
 		<div class="main-content">
@@ -76,7 +86,7 @@
 					class="button toggle-button left {show && isMobile ? 'mobile' : ''} {!show
 						? 'open'
 						: 'close'}"
-					on:click={handleToggleSidebar}
+					onclick={handleToggleSidebar}
 					data-testid="sidebar-button"
 				>
 					<span class="icon toggle-icon">
@@ -88,18 +98,18 @@
 					</span>
 				</button>
 			{/if}
-			<slot name="main" />
+			{@render main?.()}
 		</div>
 	{:else}
 		<div class="main-content">
-			<slot name="main" />
+			{@render main?.()}
 			{#if showToggleButton}
 				<div class="toggle-button-right {show && isMobile ? 'mobile' : ''}">
 					<button
 						class="button toggle-button right {show && isMobile ? 'mobile' : ''} {!show
 							? 'open'
 							: 'close'}"
-						on:click={handleToggleSidebar}
+						onclick={handleToggleSidebar}
 						data-testid="sidebar-button"
 					>
 						<span class="icon toggle-icon">
@@ -120,7 +130,7 @@
 				transition:slide={{ axis: 'x' }}
 				data-testid="sidebar-content"
 			>
-				<slot name="content" />
+				{@render content?.()}
 			</div>
 		{/if}
 	{/if}

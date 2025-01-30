@@ -1,9 +1,10 @@
-<script lang="ts" context="module">
-	import type { Meta } from '@storybook/svelte';
+<script lang="ts" module>
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 	import Map from '../maplibre/Map.svelte';
 	import RasterAlgorithms from './RasterAlgorithms.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/titiler/RasterAlgorithms/Hillshade',
 		component: RasterAlgorithms,
 		tags: ['autodocs'],
@@ -26,7 +27,7 @@
 				defaultValue: ''
 			}
 		}
-	};
+	});
 
 	const title = 'Raster Algorithms Control';
 
@@ -57,16 +58,11 @@
 	};
 </script>
 
-<script lang="ts">
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
-</script>
-
-<Template let:args>
+{#snippet template(args)}
 	<Map {title} {source} {layer} zoom={10} center={[34.5, -1.5]}>
 		<RasterAlgorithms {...args}></RasterAlgorithms>
 	</Map>
-</Template>
+{/snippet}
 
 <Story
 	name="hillshade"
@@ -75,4 +71,5 @@
 		algorithmsApi: 'https://titiler-dev.undpgeohub.org/algorithms',
 		algorithmId: 'hillshade'
 	}}
+	children={template}
 />

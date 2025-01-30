@@ -2,26 +2,37 @@
 	import { clean } from '$lib/util/clean.js';
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { initTooltipTippy } from '$lib/util/initTippy.js';
-	import { createEventDispatcher } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		title: string;
+		isExpanded: boolean;
+		isSelected?: boolean;
+		showHoveredColor?: boolean;
+		isUppercase?: boolean;
+		padding?: string;
+		buttons?: import('svelte').Snippet;
+		content?: import('svelte').Snippet;
+		ontoggle?: (isExpanded: boolean) => void;
+	}
 
-	export let title: string;
-	export let isExpanded: boolean;
-	export let isSelected = false;
-	export let showHoveredColor = false;
-	export let isUppercase = true;
-	export let padding = 'px-4';
+	let {
+		title = $bindable(),
+		isExpanded = $bindable(),
+		isSelected = false,
+		showHoveredColor = false,
+		isUppercase = true,
+		padding = 'px-4',
+		buttons,
+		content,
+		ontoggle = () => {}
+	}: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();
 
-	let isHovered = false;
+	let isHovered = $state(false);
 
-	$: isExpanded, handleToggleChanged();
 	const handleToggleChanged = () => {
-		dispatch('toggled', {
-			isExpanded: isExpanded
-		});
+		if (ontoggle) ontoggle(isExpanded);
 	};
 </script>
 
@@ -37,10 +48,10 @@
 	}`}"
 	role="menuitem"
 	tabindex="-1"
-	on:mouseenter={() => {
+	onmouseenter={() => {
 		isHovered = true;
 	}}
-	on:mouseleave={() => {
+	onmouseleave={() => {
 		isHovered = false;
 	}}
 >
@@ -50,24 +61,25 @@
 			use:tippyTooltip={{ content: title }}
 			role="button"
 			tabindex="0"
-			on:keydown={handleEnterKey}
-			on:click={() => {
+			onkeydown={handleEnterKey}
+			onclick={() => {
 				isExpanded = !isExpanded;
+				handleToggleChanged();
 			}}
 		>
 			<span class="mr-2">
 				<i
 					class="fa-solid fa-chevron-down toggle-icon {isExpanded ? 'active' : ''} has-text-primary"
-				/>
+				></i>
 			</span>
 			<span class="has-text-grey-dark">{clean(title, isUppercase)}</span>
 		</span>
 
-		<slot name="buttons" />
+		{@render buttons?.()}
 	</div>
 
 	<div class="content pb-2" hidden={!isExpanded}>
-		<slot name="content" />
+		{@render content?.()}
 	</div>
 </div>
 

@@ -55,8 +55,7 @@
 
 	let terrainAlgoIds = ['contours', 'hillshade', 'terrainrgb', 'terrarium'];
 
-	const handleBreadcrumbClicked = (e: { detail: ToolsBreadcrumb }) => {
-		const page: ToolsBreadcrumb = e.detail;
+	const handleBreadcrumbClicked = (page: BreadcrumbPage) => {
 		if (breadcrumbs?.length > 0) {
 			const pageIndex = breadcrumbs.findIndex((p) => p.title === page.title);
 			breadcrumbs = [...breadcrumbs.slice(0, pageIndex + 1)];
@@ -321,7 +320,7 @@
 <HeroHeader
 	title="Tools and add-ons"
 	bind:breadcrumbs
-	on:breadcrumbClicked={handleBreadcrumbClicked}
+	onBreadcrumbClick={handleBreadcrumbClicked}
 />
 
 <div class="m-6 tools">

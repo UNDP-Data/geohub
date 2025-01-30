@@ -469,8 +469,8 @@
 					{layerId}
 					parentId={layer.parentId}
 					{metadata}
-					on:select={(e) => {
-						handlePropertySelect(e.detail.prop, nextStep);
+					onselect={(property: string) => {
+						handlePropertySelect(property, nextStep);
 					}}
 				/>
 			</div>

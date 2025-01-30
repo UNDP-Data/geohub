@@ -1,12 +1,28 @@
 <script lang="ts">
 	import Help from '$lib/components/ui/Help.svelte';
-	export let title: string;
-	export let showHelp = true;
-	export let showHelpPopup = true;
-	export let marginBottom: string = '';
-	export let fontWeight: 'light' | 'normal' | 'medium' | 'semibold' | 'bold' = 'normal';
-	export let isFirstCharCapitalized = true;
-	export let iconType: 'info' | 'help' = 'info';
+	interface Props {
+		title: string;
+		showHelp?: boolean;
+		showHelpPopup?: boolean;
+		marginBottom?: string;
+		fontWeight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
+		isFirstCharCapitalized?: boolean;
+		iconType?: 'info' | 'help';
+		help?: import('svelte').Snippet;
+		control?: import('svelte').Snippet;
+	}
+
+	let {
+		title = $bindable(),
+		showHelp = true,
+		showHelpPopup = true,
+		marginBottom = $bindable(''),
+		fontWeight = 'normal',
+		isFirstCharCapitalized = true,
+		iconType = 'info',
+		help,
+		control
+	}: Props = $props();
 </script>
 
 <div class="field" style={marginBottom ? `margin-bottom: ${marginBottom}` : ''}>
@@ -18,15 +34,15 @@
 		>
 		{#if showHelpPopup && showHelp}
 			<Help type={iconType}>
-				<slot name="help" />
+				{@render help?.()}
 			</Help>
 		{/if}
 	</label>
 	<div class="control">
-		<slot name="control" />
+		{@render control?.()}
 		{#if !showHelpPopup && showHelp}
 			<div class="help font-size has-text-grey-darker is-size-7 has-text-weight-normal mt-2">
-				<slot name="help" />
+				{@render help?.()}
 			</div>
 		{/if}
 	</div>

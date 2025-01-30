@@ -108,8 +108,7 @@
 		map.setLayoutProperty(layerId, 'visibility', visibility);
 	};
 
-	const handleOpacityChanged = (e: { detail: { values: number[] } }) => {
-		const values = e.detail.values;
+	const handleOpacityChanged = (values: number[]) => {
 		const opacity = values[0] / 100;
 		updateOpacity(opacity);
 	};
@@ -165,7 +164,7 @@
 
 {#if $editingLayerStore}
 	<div class="layer-editor">
-		<FloatingPanel title={$editingLayerStore.name} on:close={handleClose}>
+		<FloatingPanel title={$editingLayerStore.name} onclose={handleClose}>
 			<div class="field has-addons" style="border-bottom: 1px solid #EDEFF0;">
 				<p class="control">
 					<button
@@ -232,7 +231,7 @@
 								rest={false}
 								pips={true}
 								suffix="%"
-								on:change={handleOpacityChanged}
+								onchange={handleOpacityChanged}
 							/>
 						{/key}
 					</div>

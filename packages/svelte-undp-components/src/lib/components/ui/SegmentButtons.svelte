@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	export interface SegmentButton {
 		title: string;
 		value: string | number | string[] | number[];
@@ -8,33 +8,46 @@
 </script>
 
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	export let buttons: SegmentButton[];
-	export let selected: string | number | undefined = undefined;
-	export let multiSelect = false;
-	export let selectedItems: { [key: string | number]: boolean } = {};
-	export let wrap = false;
-	export let size: 'small' | 'normal' | 'medium' | 'large' = 'normal';
-	export let capitalized = false;
-	export let uppercase = false;
-	export let fontWeight: 'light' | 'normal' | 'medium' | 'semibold' | 'bold' = 'normal';
-	export let activeColor = 'is-black';
+	interface Props {
+		buttons: SegmentButton[];
+		selected?: string | number | undefined;
+		multiSelect?: boolean;
+		selectedItems?: { [key: string | number]: boolean };
+		wrap?: boolean;
+		size?: 'small' | 'normal' | 'medium' | 'large';
+		capitalized?: boolean;
+		uppercase?: boolean;
+		fontWeight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
+		activeColor?: string;
+		onchange?: (value: string | number, items?: { [key: string | number]: boolean }) => void;
+	}
 
-	const dispatch = createEventDispatcher();
+	let {
+		buttons = $bindable(),
+		selected = $bindable(),
+		multiSelect = false,
+		selectedItems = $bindable(),
+		wrap = false,
+		size = 'normal',
+		capitalized = false,
+		uppercase = false,
+		fontWeight = 'normal',
+		activeColor = 'is-black',
+		onchange = () => {}
+	}: Props = $props();
 
 	const handleSelected = (e: SegmentButton) => {
+		if (!selectedItems) {
+			selectedItems = {};
+		}
 		if (multiSelect) {
 			const value = e.value as string | number;
 			selectedItems[value] = selectedItems[value] ? !selectedItems[value] : true;
-			dispatch('change', {
-				items: selectedItems,
-				value: e.value
-			});
+			if (onchange) onchange(e.value as string | number, selectedItems);
+			selectedItems = JSON.parse(JSON.stringify(selectedItems));
 		} else {
-			selected = e.value;
-			dispatch('change', {
-				value: selected
-			});
+			selected = e.value as string | number;
+			if (onchange) onchange(selected);
 		}
 	};
 </script>
@@ -45,15 +58,15 @@
 			<button
 				type="button"
 				class="segment-button button is-{size} {(!multiSelect && selected === button.value) ||
-				(multiSelect && selectedItems[button.value])
+				(multiSelect && selectedItems && selectedItems[button.value as number])
 					? `${activeColor} is-active`
 					: ''}"
-				on:click={() => handleSelected(button)}
+				onclick={() => handleSelected(button)}
 				disabled={button.disabled ?? false}
 			>
 				{#if button.icon}
 					<span class="icon is-small">
-						<i class={button.icon} />
+						<i class={button.icon}></i>
 					</span>
 				{/if}
 				<span

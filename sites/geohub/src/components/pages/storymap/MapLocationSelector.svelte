@@ -304,7 +304,7 @@
 						pipstep={1}
 						rest={false}
 						suffix="°"
-						on:change={handleBearingChanged}
+						onchange={handleBearingChanged}
 					/>
 				</div>
 			{/snippet}
@@ -328,7 +328,7 @@
 						pipstep={1}
 						rest={false}
 						suffix="°"
-						on:change={handlePitchChanged}
+						onchange={handlePitchChanged}
 					/>
 				</div>
 			{/snippet}

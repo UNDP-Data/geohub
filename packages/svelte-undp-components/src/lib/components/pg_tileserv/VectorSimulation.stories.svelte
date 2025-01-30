@@ -1,9 +1,10 @@
-<script lang="ts" context="module">
-	import type { Meta } from '@storybook/svelte';
+<script lang="ts" module>
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import type { FillLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
 	import Map from '../maplibre/Map.svelte';
 	import VectorSimulation from './VectorSimulation.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/pg_tileserv/VectorSimulation',
 		component: VectorSimulation,
 		tags: ['autodocs'],
@@ -13,7 +14,7 @@
 				description: 'Layer ID to edit'
 			}
 		}
-	};
+	});
 
 	const title = 'Vector Simulation Control';
 	const sourceUrl =
@@ -59,16 +60,11 @@
 	};
 </script>
 
-<script lang="ts">
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-	import type { FillLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
-</script>
-
-<Template let:args>
+{#snippet template(args)}
 	<Map {title} {source} {layer}>
 		<VectorSimulation {...args}></VectorSimulation>
 	</Map>
-</Template>
+{/snippet}
 
 <Story
 	name="Primary"
@@ -76,4 +72,5 @@
 		layerId: layer.id,
 		datasetUrl: sourceUrl
 	}}
+	children={template}
 />

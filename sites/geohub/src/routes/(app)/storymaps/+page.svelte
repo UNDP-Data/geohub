@@ -189,8 +189,8 @@
 		storiesData = stories;
 	};
 
-	const handleViewTypeChanged = (e: { detail: { value: TableViewType } }) => {
-		viewType = e.detail.value;
+	const handleViewTypeChanged = (value: string | number) => {
+		viewType = value as TableViewType;
 
 		const apiUrl = new URL(page.url);
 		apiUrl.searchParams.set('viewType', viewType);
@@ -211,14 +211,12 @@
 		}
 	};
 
-	const handleTabChanged = async (e: { detail: { activeTab: string } }) => {
-		const active = e.detail.activeTab;
-
+	const handleTabChanged = async (activeTab: string) => {
 		const apiUrl = new URL(page.url);
 		offset = 0;
 		apiUrl.searchParams.set('offset', `${offset}`);
 
-		if (active === '#storymaps') {
+		if (activeTab === '#storymaps') {
 			apiUrl.searchParams.delete('mydata');
 		} else {
 			apiUrl.searchParams.set('mydata', 'true');
@@ -254,7 +252,7 @@
 	bind:breadcrumbs
 	bind:tabs
 	bind:activeTab
-	on:tabChanged={handleTabChanged}
+	onTabChange={handleTabChanged}
 />
 
 <div class="mx-6 my-4">
@@ -308,7 +306,7 @@
 									{ title: 'List', icon: 'fa-solid fa-list', value: 'list' }
 								]}
 								bind:selected={viewType}
-								on:change={handleViewTypeChanged}
+								onchange={handleViewTypeChanged}
 							/>
 						</div>
 					{/snippet}

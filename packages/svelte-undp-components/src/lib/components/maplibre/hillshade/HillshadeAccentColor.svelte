@@ -5,7 +5,11 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
+	interface Props {
+		layerId: string;
+	}
+
+	let { layerId = $bindable() }: Props = $props();
 	const propertyName = 'hillshade-accent-color';
 
 	let defaultColor = '#000000';
@@ -18,17 +22,17 @@
 		return color as string;
 	};
 
-	let rgba = getColor();
+	let rgba = $state(getColor());
 
 	onMount(() => {
 		rgba = getColor();
 		map.setPaintProperty(layerId, propertyName, rgba);
 	});
 
-	const handleSetColor = (e: CustomEvent) => {
-		rgba = e.detail.color;
+	const handleSetColor = (color: string) => {
+		rgba = color;
 		map.setPaintProperty(layerId, propertyName, rgba);
 	};
 </script>
 
-<MaplibreColorPicker {rgba} on:change={handleSetColor} />
+<MaplibreColorPicker {rgba} onchange={handleSetColor} />

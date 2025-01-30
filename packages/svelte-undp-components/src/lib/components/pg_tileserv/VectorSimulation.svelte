@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	export interface SimulationArgument {
 		id: string;
 		icon: string;
@@ -38,20 +38,24 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	/*EXPORTS*/
-	export let layerId: string;
-	export let datasetUrl: string;
+	interface Props {
+		/*EXPORTS*/
+		layerId: string;
+		datasetUrl: string;
+	}
+
+	let { layerId = $bindable(), datasetUrl = $bindable() }: Props = $props();
 
 	/*STATE*/
-	let isInitialized = false;
-	let args: { [key: string]: SimulationArgument };
-	let selectedArgs: { [key: string]: SimulationArgument } = {};
-	$: isParameterChanged = Object.keys(selectedArgs).length > 0;
+	let isInitialized = $state(false);
+	let args: { [key: string]: SimulationArgument } = $state();
+	let selectedArgs: { [key: string]: SimulationArgument } = $state({});
+	let isParameterChanged = $derived(Object.keys(selectedArgs).length > 0);
 
-	let expanded: { [key: string]: boolean } = { icon: true };
+	let expanded: { [key: string]: boolean } = $state({ icon: true });
 	// to allow only an accordion to be expanded
-	let expandedDatasetId: string;
-	$: {
+	let expandedDatasetId: string = $state('');
+	$effect(() => {
 		let expandedDatasets = Object.keys(expanded).filter(
 			(key) => expanded[key] === true && key !== expandedDatasetId
 		);
@@ -64,7 +68,7 @@
 				});
 			expanded[expandedDatasets[0]] = true;
 		}
-	}
+	});
 
 	/* FUNCTIONS*/
 	const getArgumentsInURL = () => {
@@ -81,10 +85,7 @@
 		isInitialized = true;
 	};
 
-	const handleArgumentChanged = async (e: { detail: { id: string; value: number } }) => {
-		const id = e.detail.id;
-		const value = e.detail.value;
-
+	const handleArgumentChanged = async (id: string, value: number | boolean | string) => {
 		if (value === args[id].value) {
 			delete selectedArgs[id];
 		} else {
@@ -92,7 +93,6 @@
 			updatedArg.value = value;
 			selectedArgs[id] = updatedArg;
 		}
-		isParameterChanged = Object.keys(selectedArgs).length > 0;
 		await applyParams();
 	};
 
@@ -129,7 +129,7 @@
 		{@const value = selectedArgs[argId]?.value ?? 0}
 
 		<PropertyEditor
-			bind:id={argId}
+			id={argId}
 			{value}
 			defaultValue={arg.value}
 			type="number"
@@ -139,11 +139,11 @@
 			maximum={arg.limits.max}
 			showPrefix={true}
 			unit={arg.units}
-			on:change={handleArgumentChanged}
+			onchange={handleArgumentChanged}
 			bind:isExpanded={expanded[argId]}
 		/>
 	{/each}
 	{#if isParameterChanged}
-		<button on:click={reset} class="button is-light is-small is-uppercase mt-2">Reset all</button>
+		<button onclick={reset} class="button is-light is-small is-uppercase mt-2">Reset all</button>
 	{/if}
 {/if}

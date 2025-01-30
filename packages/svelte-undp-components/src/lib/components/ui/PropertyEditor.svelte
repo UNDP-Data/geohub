@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	type ValueType = number | boolean | string;
 </script>
 
@@ -6,138 +6,135 @@
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { Switch } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import { createEventDispatcher } from 'svelte';
 	import NumberInput from './NumberInput.svelte';
 	import Slider from './Slider.svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		/**
+		 * Property ID
+		 */
+		id: string;
+		/**
+		 * Type of editor.
+		 * integer: show NumberInput element or slider. Slider is only shown if both (exclusive)minimum and (exclusive)maximum are set
+		 * number: show NumberInput element or slider. Slider is only shown if both (exclusive)minimum and (exclusive)maximum are set
+		 * string: show textbox
+		 * boolean: show toggle switch control
+		 */
+		type: 'integer' | 'number' | 'boolean' | 'string';
+		/**
+		 * Title of property
+		 */
+		title: string;
+		/**
+		 * Optional Description of property
+		 */
+		description?: string;
+		/**
+		 * Optional. Fontawesome Icon class name. eg, 'fas fa-user fa-lg'
+		 */
+		icon?: string;
+		/**
+		 * Value
+		 */
+		value: ValueType;
+		/**
+		 * Default value
+		 */
+		defaultValue: ValueType;
+		/**
+		 * Optional. Exclusive maximum value. n < exclusiveMaximum
+		 * it is only used when 'type' is either integer or number
+		 */
+		exclusiveMaximum?: number | undefined;
+		/**
+		 * Optional. maximum value. n < maximum
+		 * if exclusiveMaximum is used, maximum will not be used.
+		 * it is only used when 'type' is either integer or number.
+		 */
+		maximum?: number | undefined;
+		/**
+		 * Optional. Exclusive minimum value. n < exclusiveMinimum
+		 * it is only used when 'type' is either integer or number.
+		 */
+		exclusiveMinimum?: number | undefined;
+		/**
+		 * Optional. minimum value. n < minimum
+		 * if exclusiveMinimum is used, minimum will not be used.
+		 * it is only used when 'type' is either integer or number.
+		 */
+		minimum?: number | undefined;
+		/**
+		 * Optional. If true, show +/- prefix in tag. Only available for numeric data type.
+		 */
+		showPrefix?: boolean;
+		/**
+		 * Optional. Unit name. It will be shown in tag if specified.
+		 */
+		unit?: string;
+		/**
+		 * The state of either expanded or collapsed.
+		 */
+		isExpanded?: boolean;
+		/**
+		 * If enabled, show manual text editor (only available when slider is used)
+		 */
+		showEditor?: boolean;
+		showRestPip?: boolean | 'pip' | 'label';
+		/**
+		 * Whether to show a pip or label for every value. Possible values are:
+		 * - false all values in the Slider will not have a pip or label
+		 * - pip a pip (only) will be shown for all values
+		 * - label label (and pip) is shown on all values
+		 *
+		 * It is only available when slider is shown
+		 */
+		showAll?: boolean | 'pip' | 'label';
+		formatter?: (value: number, index: number, percent: number) => number | string;
+		onchange?: (id: string, value: ValueType) => void;
+	}
 
-	/**
-	 * Property ID
-	 */
-	export let id: string;
-
-	/**
-	 * Type of editor.
-	 * integer: show NumberInput element or slider. Slider is only shown if both (exclusive)minimum and (exclusive)maximum are set
-	 * number: show NumberInput element or slider. Slider is only shown if both (exclusive)minimum and (exclusive)maximum are set
-	 * string: show textbox
-	 * boolean: show toggle switch control
-	 */
-	export let type: 'integer' | 'number' | 'boolean' | 'string';
-
-	/**
-	 * Title of property
-	 */
-	export let title: string;
-
-	/**
-	 * Optional Description of property
-	 */
-	export let description: string = '';
-
-	/**
-	 * Optional. Fontawesome Icon class name. eg, 'fas fa-user fa-lg'
-	 */
-	export let icon = '';
-
-	/**
-	 * Value
-	 */
-	export let value: ValueType;
-
-	/**
-	 * Default value
-	 */
-	export let defaultValue: ValueType;
-
-	/**
-	 * Optional. Exclusive maximum value. n < exclusiveMaximum
-	 * it is only used when 'type' is either integer or number
-	 */
-	export let exclusiveMaximum: number | undefined = undefined;
-
-	/**
-	 * Optional. maximum value. n < maximum
-	 * if exclusiveMaximum is used, maximum will not be used.
-	 * it is only used when 'type' is either integer or number.
-	 */
-	export let maximum: number | undefined = undefined;
-
-	/**
-	 * Optional. Exclusive minimum value. n < exclusiveMinimum
-	 * it is only used when 'type' is either integer or number.
-	 */
-	export let exclusiveMinimum: number | undefined = undefined;
-
-	/**
-	 * Optional. minimum value. n < minimum
-	 * if exclusiveMinimum is used, minimum will not be used.
-	 * it is only used when 'type' is either integer or number.
-	 */
-	export let minimum: number | undefined = undefined;
-
-	/**
-	 * Optional. If true, show +/- prefix in tag. Only available for numeric data type.
-	 */
-	export let showPrefix = false;
-
-	/**
-	 * Optional. Unit name. It will be shown in tag if specified.
-	 */
-	export let unit = '';
-
-	/**
-	 * The state of either expanded or collapsed.
-	 */
-	export let isExpanded = false;
-
-	/**
-	 * If enabled, show manual text editor (only available when slider is used)
-	 */
-	export let showEditor = false;
-
-	export let showRestPip: boolean | 'pip' | 'label' = false;
-
-	/**
-	 * Whether to show a pip or label for every value. Possible values are:
-	 * - false all values in the Slider will not have a pip or label
-	 * - pip a pip (only) will be shown for all values
-	 * - label label (and pip) is shown on all values
-	 *
-	 * It is only available when slider is shown
-	 */
-	export let showAll: boolean | 'pip' | 'label' = false;
-
-	export let formatter: (value: number, index: number, percent: number) => number | string = (
-		value
-	) => {
-		return value;
-	};
+	let {
+		id,
+		type,
+		title,
+		description = '',
+		icon = '',
+		value = $bindable(),
+		defaultValue,
+		exclusiveMaximum = undefined,
+		maximum = undefined,
+		exclusiveMinimum = undefined,
+		minimum = undefined,
+		showPrefix = false,
+		unit = '',
+		isExpanded = $bindable(),
+		showEditor = false,
+		showRestPip = false,
+		showAll = false,
+		formatter = (value) => {
+			return value;
+		},
+		onchange = () => {}
+	}: Props = $props();
 
 	const DEFAULT_MINIMUM = -9999;
 	const DEFAULT_MAXIMUM = 9999;
 
-	let isHovered = false;
-	$: isActive = defaultValue !== value;
+	let isHovered = $state(false);
+	let isActive = $derived(defaultValue !== value);
 
 	const handleClear = () => {
 		value = defaultValue;
-		dispatch('change', {
-			id: id,
-			value: value
-		});
+		if (onchange) onchange(id, value);
 	};
 
 	const handleChanged = () => {
-		dispatch('change', {
-			id: id,
-			value: value
-		});
+		if (onchange) onchange(id, value);
 	};
 
-	const setSliderValue = debounce((e: { detail: { values: number[] } }) => {
-		value = e.detail.values[0];
+	const setSliderValue = debounce((values: number[]) => {
+		value = values[0];
 		handleChanged();
 	}, 300);
 
@@ -171,16 +168,16 @@
 		class="argument is-flex is-align-items-center p-2 pr-3"
 		role="menuitem"
 		tabindex="-1"
-		on:mouseenter={() => {
+		onmouseenter={() => {
 			isHovered = true;
 		}}
-		on:mouseleave={() => {
+		onmouseleave={() => {
 			isHovered = false;
 		}}
-		on:click={() => {
+		onclick={() => {
 			isExpanded = !isExpanded;
 		}}
-		on:keydown={handleEnterKey}
+		onkeydown={handleEnterKey}
 	>
 		<div class="stroke"></div>
 
@@ -229,20 +226,20 @@
 				{/if}
 			</span>
 			{#if defaultValue !== value}
-				<!-- svelte-ignore a11y-interactive-supports-focus -->
-				<!-- svelte-ignore a11y-missing-attribute -->
-				<!-- svelte-ignore a11y-missing-content -->
+				<!-- svelte-ignore a11y_interactive_supports_focus -->
+				<!-- svelte-ignore a11y_missing_attribute -->
 				<a
 					class="tag is-delete is-light {isActive || isExpanded
 						? 'is-info'
 						: isHovered
 							? 'is-light'
 							: ''}"
-					on:click={handleClear}
-					on:keydown={handleEnterKey}
+					onclick={handleClear}
+					onkeydown={handleEnterKey}
 					role="button"
 					data-sveltekit-preload-data="off"
 					data-sveltekit-preload-code="off"
+					aria-label="clear"
 				></a>
 			{/if}
 		</span>
@@ -257,7 +254,7 @@
 			{#if type === 'boolean'}
 				<div class="field">
 					<Switch
-						bind:toggled={value}
+						bind:toggled={value as boolean}
 						on:change={handleChanged}
 						showValue={true}
 						toggledText="Enable {title}"
@@ -272,14 +269,14 @@
 						{min}
 						{max}
 						{step}
-						bind:rest={showRestPip}
-						flost={true}
+						rest={showRestPip}
+						floatLabel={true}
 						first="label"
 						last="label"
-						values={[value]}
-						bind:all={showAll}
-						bind:showEditor
-						on:change={setSliderValue}
+						values={[value as number]}
+						all={showAll}
+						{showEditor}
+						onchange={setSliderValue}
 						{formatter}
 					/>
 				{:else if typeof value === 'number'}
@@ -288,11 +285,11 @@
 						minValue={min ?? DEFAULT_MINIMUM}
 						maxValue={max ?? DEFAULT_MAXIMUM}
 						{step}
-						on:change={handleChanged}
+						onchange={handleChanged}
 					/>
 				{/if}
 			{:else}
-				<input class="input" type="text" bind:value on:change={handleChanged} />
+				<input class="input" type="text" bind:value onchange={handleChanged} />
 			{/if}
 		</div>
 	{/if}
