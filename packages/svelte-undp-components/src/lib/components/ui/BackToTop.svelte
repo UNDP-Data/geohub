@@ -80,10 +80,6 @@
 		z-index: 999;
 		left: 50%;
 		transform: translateX(-50%);
-
-		&.is-rounded {
-			border-radius: 30px;
-		}
 	}
 
 	.back-to-top.hidden {
