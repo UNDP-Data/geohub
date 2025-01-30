@@ -40,6 +40,10 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 
   <button class="button is-link">Secondary color Button</button>
 
+  <button class="button is-link is-rounded">Primary color Button</button>
+
+  <button class="button is-loading is-link" disabled>Disabled color Button</button>
+
   <button class="button is-primary" disabled>Disabled color Button</button>
 
   <button class="button is-small">Small Button</button>
