@@ -205,8 +205,8 @@
 		$tableMenuShownStore = false;
 	};
 
-	const handleFilterInput = (e) => {
-		query = e.detail.value;
+	const handleFilterInput = (value: string) => {
+		query = value;
 		updateTable();
 	};
 
@@ -214,9 +214,7 @@
 		updateTable();
 	};
 
-	const handlePaginationClicked = async (e: { detail: { type: 'previous' | 'next' } }) => {
-		const type = e.detail.type;
-
+	const handlePaginationClicked = async (type: 'previous' | 'next') => {
 		const link = tableData?.links.find((l) => l.rel === type);
 		if (link) {
 			reload(link.href);
@@ -432,7 +430,7 @@
 					value={query}
 					open={true}
 					placeholder="Type keyword..."
-					on:change={handleFilterInput}
+					onchange={handleFilterInput}
 					{minSearchLength}
 					iconSize={16}
 					fontSize={6}
@@ -587,7 +585,7 @@
 							bind:totalPages={tableData.pages.totalPages}
 							bind:currentPage={tableData.pages.currentPage}
 							hidden={tableData.pages.totalPages <= 1}
-							on:clicked={handlePaginationClicked}
+							onclick={handlePaginationClicked}
 						/>
 					</div>
 				{/if}

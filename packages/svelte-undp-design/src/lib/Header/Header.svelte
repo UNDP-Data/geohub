@@ -1,28 +1,47 @@
 <script lang="ts">
 	import type { HeaderLink } from '$lib/interfaces';
 
-	export let region: string;
-	export let siteTitle: string;
-	export let url = 'https://undp.org';
-	export let logoUrl: string;
-	export let height = 75;
-	export let showProgressBar = false;
-	export let isPositionFixed = true;
-	export let links: HeaderLink[] = [];
-	export let progressBarSize: 'xsmall' | 'small' | 'medium' | 'large' = 'xsmall';
-	export let regionUrl = '';
-	export let showMobileMenu = false;
-	export let actionMenu:
-		| {
-				title: string;
-				placeholder: string;
-				showLanguageIcon: boolean;
-				links: HeaderLink[];
-		  }
-		| undefined = undefined;
+	interface Props {
+		region: string;
+		siteTitle: string;
+		url?: string;
+		logoUrl: string;
+		height?: number;
+		showProgressBar?: boolean;
+		isPositionFixed?: boolean;
+		links?: HeaderLink[];
+		progressBarSize?: 'xsmall' | 'small' | 'medium' | 'large';
+		regionUrl?: string;
+		showMobileMenu?: boolean;
+		actionMenu?:
+			| {
+					title: string;
+					placeholder: string;
+					showLanguageIcon: boolean;
+					links: HeaderLink[];
+			  }
+			| undefined;
+		customButton?: import('svelte').Snippet;
+	}
 
-	let showActionMenu = false;
-	let showActionMobileMenu = false;
+	let {
+		region,
+		siteTitle,
+		url = 'https://undp.org',
+		logoUrl,
+		height = $bindable(75),
+		showProgressBar = false,
+		isPositionFixed = true,
+		links = $bindable([]),
+		progressBarSize = 'xsmall',
+		regionUrl = '',
+		showMobileMenu = $bindable(false),
+		actionMenu = undefined,
+		customButton
+	}: Props = $props();
+
+	let showActionMenu = $state(false);
+	let showActionMobileMenu = $state(false);
 
 	const onKeyPressed = (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
@@ -32,8 +51,8 @@
 		}
 	};
 
-	let isMobileSubMenuShown = false;
-	let submenuLink: HeaderLink | undefined = undefined;
+	let isMobileSubMenuShown = $state(false);
+	let submenuLink: HeaderLink | undefined = $state(undefined);
 
 	const showMobileSubMenu = (link: HeaderLink) => {
 		submenuLink = link;
@@ -89,14 +108,14 @@
 													{link.title}
 												</a>
 											{:else}
-												<!-- svelte-ignore a11y-click-events-have-key-events -->
-												<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-												<!-- svelte-ignore a11y-no-static-element-interactions -->
-												<!-- svelte-ignore a11y-missing-attribute -->
+												<!-- svelte-ignore a11y_click_events_have_key_events -->
+												<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+												<!-- svelte-ignore a11y_no_static_element_interactions -->
+												<!-- svelte-ignore a11y_missing_attribute -->
 												<a
 													tabindex="0"
 													aria-expanded="true"
-													on:click={(e) => {
+													onclick={(e) => {
 														e.preventDefault();
 													}}
 												>
@@ -109,12 +128,12 @@
 														<li class="has-submenu {isLast ? 'edge' : ''}">
 															{#if child.callback}
 																{@const callback = child.callback}
-																<!-- svelte-ignore a11y-missing-attribute -->
+																<!-- svelte-ignore a11y_missing_attribute -->
 																<a
 																	role="button"
-																	on:click={() => callback(child.id)}
+																	onclick={() => callback(child.id)}
 																	tabindex="0"
-																	on:keydown={onKeyPressed}
+																	onkeydown={onKeyPressed}
 																>
 																	{child.title}
 																</a>
@@ -128,12 +147,12 @@
 																	<li class="">
 																		{#if grandchild.callback}
 																			{@const callback = grandchild.callback}
-																			<!-- svelte-ignore a11y-missing-attribute -->
+																			<!-- svelte-ignore a11y_missing_attribute -->
 																			<a
 																				role="button"
-																				on:click={() => callback(grandchild.id)}
+																				onclick={() => callback(grandchild.id)}
 																				tabindex="0"
-																				on:keydown={onKeyPressed}
+																				onkeydown={onKeyPressed}
 																				class={grandchild.linkType}
 																			>
 																				{grandchild.title}
@@ -165,12 +184,12 @@
 														<li class="">
 															{#if child.callback}
 																{@const callback = child.callback}
-																<!-- svelte-ignore a11y-missing-attribute -->
+																<!-- svelte-ignore a11y_missing_attribute -->
 																<a
 																	role="button"
-																	on:click={() => callback(child.id)}
+																	onclick={() => callback(child.id)}
 																	tabindex="0"
-																	on:keydown={onKeyPressed}
+																	onkeydown={onKeyPressed}
 																	class={child.linkType}
 																>
 																	{child.title}
@@ -206,12 +225,12 @@
 										<li data-menu-id={link.id}>
 											{#if link.callback}
 												{@const callback = link.callback}
-												<!-- svelte-ignore a11y-missing-attribute -->
+												<!-- svelte-ignore a11y_missing_attribute -->
 												<a
 													role="button"
-													on:click={() => callback(link.id)}
+													onclick={() => callback(link.id)}
 													tabindex="0"
-													on:keydown={onKeyPressed}
+													onkeydown={onKeyPressed}
 												>
 													{link.title}
 												</a>
@@ -240,7 +259,7 @@
 								class="blue {actionMenu.showLanguageIcon === true ? '' : 'icon-hidden'}"
 								aria-label={actionMenu.placeholder}
 								aria-expanded="false"
-								on:click={() => {
+								onclick={() => {
 									showActionMenu = !showActionMenu;
 								}}
 							>
@@ -258,14 +277,14 @@
 					<button
 						class="menu-hamburger {showMobileMenu ? 'is-active' : ''}"
 						aria-label="menu-icon"
-						on:click={() => (showMobileMenu = !showMobileMenu)}
+						onclick={() => (showMobileMenu = !showMobileMenu)}
 					>
-						<span class="hamburger-line line-top" />
-						<span class="hamburger-line line-middle" />
-						<span class="hamburger-line line-bottom" />
+						<span class="hamburger-line line-top"></span>
+						<span class="hamburger-line line-middle"></span>
+						<span class="hamburger-line line-bottom"></span>
 						Nav toggle
 					</button>
-					<div class="custom-button"><slot name="customButton" /></div>
+					<div class="custom-button">{@render customButton?.()}</div>
 				</div>
 				{#if links.length > 0}
 					<div class="mobile-nav {showMobileMenu ? 'show' : ''}">
@@ -283,10 +302,10 @@
 													role="button"
 													tabindex="0"
 													class="cta__link cta--space"
-													on:click={() => {
+													onclick={() => {
 														showMobileSubMenu(link);
 													}}
-													on:keydown={onKeyPressed}
+													onkeydown={onKeyPressed}
 													id={link.id}
 												>
 													{link.title}
@@ -300,11 +319,11 @@
 													role="button"
 													tabindex="0"
 													class="cta__link cta--space"
-													on:click={() => {
+													onclick={() => {
 														showMobileMenu = false;
 														callback(link.id);
 													}}
-													on:keydown={onKeyPressed}
+													onkeydown={onKeyPressed}
 													id={link.id}
 												>
 													{link.title}
@@ -333,11 +352,11 @@
 								</ul>
 								{#if actionMenu}
 									<div class="mobile-nav-options">
-										<!-- svelte-ignore a11y-invalid-attribute -->
+										<!-- svelte-ignore a11y_invalid_attribute -->
 										<a
 											href=""
 											class="mob-lang-switcher"
-											on:click={(e) => {
+											onclick={(e) => {
 												e.preventDefault();
 												showActionMobileMenu = true;
 											}}
@@ -407,7 +426,7 @@
 							</div>
 
 							<div class="cell mobile-sub-menu {isMobileSubMenuShown ? 'show' : ''}">
-								<button class="back-nav" on:click={hideMobileSubMenu}>
+								<button class="back-nav" onclick={hideMobileSubMenu}>
 									<svg
 										width="33"
 										height="17"
@@ -443,16 +462,17 @@
 																		<li>
 																			{#if grandchild.callback}
 																				{@const callback = grandchild.callback}
+																				<!-- svelte-ignore a11y_missing_attribute -->
 																				<a
 																					class="cta__link cta--space"
 																					role="button"
 																					tabindex="0"
-																					on:click={() => {
+																					onclick={() => {
 																						showMobileMenu = false;
 																						hideMobileSubMenu();
 																						callback(grandchild.id);
 																					}}
-																					on:keydown={onKeyPressed}
+																					onkeydown={onKeyPressed}
 																					id={grandchild.id}
 																				>
 																					{grandchild.title}
@@ -485,12 +505,12 @@
 																			class="cta__link cta--space"
 																			role="button"
 																			tabindex="0"
-																			on:click={() => {
+																			onclick={() => {
 																				showMobileMenu = false;
 																				hideMobileSubMenu();
 																				callback(child.id);
 																			}}
-																			on:keydown={onKeyPressed}
+																			onkeydown={onKeyPressed}
 																			id={child.id}
 																		>
 																			{child.title}
@@ -518,7 +538,7 @@
 							</div>
 							{#if actionMenu}
 								<div class="cell mob-sub-lang {showActionMobileMenu ? 'show' : ''}">
-									<button class="back-nav" on:click={hideActionMobileMenu}>
+									<button class="back-nav" onclick={hideActionMobileMenu}>
 										<svg
 											width="33"
 											height="17"
@@ -556,7 +576,7 @@
 				style="height:0.2rem!important;"
 				class="progress is-{progressBarSize} is-info"
 				max="100"
-			/>
+			></progress>
 		{/if}
 	</section>
 </header>

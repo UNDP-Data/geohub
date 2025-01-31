@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { filesize } from 'filesize';
 
-	export let url: string;
-	export let title = '';
+	interface Props {
+		url: string;
+		title?: string;
+	}
+
+	let { url = $bindable(), title = $bindable() }: Props = $props();
 	let extension = '';
 
 	const fileUrl = url.split('?')[0];
@@ -17,7 +21,7 @@
 		extension = fileExtensions[fileExtensions.length - 1].toLocaleUpperCase();
 	}
 
-	let fileFormat = extension;
+	let fileFormat = $state(extension);
 
 	const getFileSize = () => {
 		return new Promise<void>((resolve) => {
@@ -36,9 +40,11 @@
 		});
 	};
 
-	$: if (url) {
-		getFileSize();
-	}
+	$effect(() => {
+		if (url) {
+			getFileSize();
+		}
+	});
 </script>
 
 <div class="download-card">
@@ -52,7 +58,7 @@
 			</p>
 			<span class="download">
 				Download
-				<span class="download-animated"><i /></span>
+				<span class="download-animated"><i></i></span>
 			</span>
 		</div>
 	</a>

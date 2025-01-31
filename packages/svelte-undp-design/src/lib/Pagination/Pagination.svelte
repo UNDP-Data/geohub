@@ -1,10 +1,17 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	const dispatch = createEventDispatcher();
+	interface Props {
+		totalPages?: number;
+		currentPage?: number;
+		hidden?: boolean;
+		onclick?: (type: 'previous' | 'next') => void;
+	}
 
-	export let totalPages = 1;
-	export let currentPage = 1;
-	export let hidden = false;
+	let {
+		totalPages = $bindable(1),
+		currentPage = $bindable(1),
+		hidden = false,
+		onclick = () => {}
+	}: Props = $props();
 
 	const handleClicked = (type: 'previous' | 'next') => {
 		if (type === 'previous') {
@@ -14,33 +21,34 @@
 			if (currentPage === totalPages) return;
 			currentPage++;
 		}
-		dispatch('clicked', {
-			type: type
-		});
+		if (onclick) onclick(type);
 	};
-	const handleKeyDown = (event: KeyboardEvent) => {
-		if (event.key === 'Enter') {
-			dispatch('clicked');
+
+	const handleKeyDown = (e: KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			e.target.click();
 		}
 	};
 </script>
 
 <nav class="pagination" aria-label="Pagination" {hidden}>
 	<ul>
-		<!-- svelte-ignore a11y-role-supports-aria-props -->
+		<!-- svelte-ignore a11y_role_supports_aria_props_implicit -->
 		<li
 			class={currentPage === 1 ? 'disabled' : ''}
 			aria-disabled={currentPage === 1 ? 'true' : 'false'}
 		>
-			<!-- svelte-ignore a11y-missing-attribute -->
+			<!-- svelte-ignore a11y_missing_attribute -->
 			<a
 				role="button"
 				tabindex="0"
 				aria-current="true"
 				aria-label="Previous"
 				data-testid="previous"
-				on:click={() => handleClicked('previous')}
-				on:keydown={handleKeyDown}
+				onclick={() => handleClicked('previous')}
+				onkeydown={handleKeyDown}
 			>
 				Previous
 			</a>
@@ -51,19 +59,19 @@
 			of
 			<span><div aria-label={totalPages.toString()}>{totalPages}</div></span>
 		</li>
-		<!-- svelte-ignore a11y-role-supports-aria-props -->
+		<!-- svelte-ignore a11y_role_supports_aria_props_implicit -->
 		<li
 			class={currentPage === totalPages ? 'disabled' : ''}
 			aria-disabled={currentPage === totalPages ? 'true' : 'false'}
 		>
-			<!-- svelte-ignore a11y-missing-attribute -->
+			<!-- svelte-ignore a11y_missing_attribute -->
 			<a
 				role="button"
 				tabindex="0"
 				aria-label="Next"
 				data-testid="next"
-				on:click={() => handleClicked('next')}
-				on:keydown={handleKeyDown}
+				onclick={() => handleClicked('next')}
+				onkeydown={handleKeyDown}
 			>
 				Next
 			</a>

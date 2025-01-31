@@ -1,59 +1,62 @@
-import type { Meta, StoryObj } from '@storybook/svelte';
+<script lang="ts" module>
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import { fn } from '@storybook/test';
+	import Card from './Card.svelte';
 
-import Card from './Card.svelte';
+	const onselectFn = fn().mockName('onselect');
 
-// More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
-const meta = {
-	title: 'Components/Card',
-	component: Card,
-	tags: ['autodocs'],
-	argTypes: {
-		linkName: {
-			control: 'text',
-			description: 'Name of link',
-			defaultValue: 'READ MORE'
+	const { Story } = defineMeta({
+		title: 'Components/Card',
+		component: Card,
+		tags: ['autodocs'],
+		args: {
+			onselect: onselectFn()
 		},
-		url: {
-			control: 'text',
-			description: 'URL to link',
-			defaultValue: '#'
-		},
-		title: {
-			control: 'text',
-			description: 'Title of the post goes here and it’s two lines'
-		},
-		tag: {
-			control: 'text',
-			description: 'Content tag'
-		},
-		description: {
-			control: 'text',
-			description: 'Description of content'
-		},
-		isEmphasize: {
-			control: 'boolean',
-			description: 'If enabled, emphasize content by accent color.',
-			defaultValue: false
-		},
-		accent: {
-			control: 'select',
-			options: ['global', 'yellow', 'green', 'red', 'blue'],
-			description: 'accent color. global, yellow, red, blue, green is available',
-			defaultValue: 'global'
-		},
-		icon: {
-			type: 'string',
-			description: 'Optional. Fontawesome icon class name.'
+		argTypes: {
+			linkName: {
+				control: 'text',
+				description: 'Name of link',
+				defaultValue: 'READ MORE'
+			},
+			url: {
+				control: 'text',
+				description: 'URL to link',
+				defaultValue: '#'
+			},
+			title: {
+				control: 'text',
+				description: 'Title of the post goes here and it’s two lines'
+			},
+			tag: {
+				control: 'text',
+				description: 'Content tag'
+			},
+			description: {
+				control: 'text',
+				description: 'Description of content'
+			},
+			isEmphasize: {
+				control: 'boolean',
+				description: 'If enabled, emphasize content by accent color.',
+				defaultValue: false
+			},
+			accent: {
+				control: 'select',
+				options: ['global', 'yellow', 'green', 'red', 'blue'],
+				description: 'accent color. global, yellow, red, blue, green is available',
+				defaultValue: 'global'
+			},
+			icon: {
+				type: 'string',
+				description: 'Optional. Fontawesome icon class name.'
+			}
 		}
-	}
-} satisfies Meta<Card>;
+	});
+</script>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-// More on writing stories with args: https://storybook.js.org/docs/7.0/svelte/writing-stories/args
-export const Primary: Story = {
-	args: {
+<Story
+	name="Primary"
+	args={{
 		linkName: 'READ MORE',
 		url: '#',
 		title: 'Title of the post goes here and it’s two lines',
@@ -61,11 +64,12 @@ export const Primary: Story = {
 		description:
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus mollis pharetra ex, a laoreet purus vulputate eget.',
 		accent: 'global'
-	}
-};
+	}}
+/>
 
-export const Emphasize: Story = {
-	args: {
+<Story
+	name="Emphasize"
+	args={{
 		linkName: 'READ MORE',
 		url: '#',
 		title: 'Title of the post goes here and it’s two lines',
@@ -74,11 +78,12 @@ export const Emphasize: Story = {
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus mollis pharetra ex, a laoreet purus vulputate eget.',
 		accent: 'global',
 		isEmphasize: true
-	}
-};
+	}}
+/>
 
-export const AccentYellow: Story = {
-	args: {
+<Story
+	name="Accent Yellow"
+	args={{
 		linkName: 'READ MORE',
 		url: '#',
 		title: 'Title of the post goes here and it’s two lines',
@@ -86,11 +91,12 @@ export const AccentYellow: Story = {
 		description:
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus mollis pharetra ex, a laoreet purus vulputate eget.',
 		accent: 'yellow'
-	}
-};
+	}}
+/>
 
-export const AccentYellowEmphasized: Story = {
-	args: {
+<Story
+	name="Accent Yellow Emphasized"
+	args={{
 		linkName: 'READ MORE',
 		url: '#',
 		title: 'Title of the post goes here and it’s two lines',
@@ -99,11 +105,12 @@ export const AccentYellowEmphasized: Story = {
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus mollis pharetra ex, a laoreet purus vulputate eget.',
 		accent: 'yellow',
 		isEmphasize: true
-	}
-};
+	}}
+/>
 
-export const AccentGreen: Story = {
-	args: {
+<Story
+	name="Accent Green"
+	args={{
 		linkName: 'READ MORE',
 		url: '#',
 		title: 'Title of the post goes here and it’s two lines',
@@ -111,11 +118,12 @@ export const AccentGreen: Story = {
 		description:
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus mollis pharetra ex, a laoreet purus vulputate eget.',
 		accent: 'green'
-	}
-};
+	}}
+/>
 
-export const AccentGreenEmphasized: Story = {
-	args: {
+<Story
+	name="Accent Green Emphasized"
+	args={{
 		linkName: 'READ MORE',
 		url: '#',
 		title: 'Title of the post goes here and it’s two lines',
@@ -124,11 +132,12 @@ export const AccentGreenEmphasized: Story = {
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus mollis pharetra ex, a laoreet purus vulputate eget.',
 		accent: 'green',
 		isEmphasize: true
-	}
-};
+	}}
+/>
 
-export const AccentRed: Story = {
-	args: {
+<Story
+	name="Accent Red"
+	args={{
 		linkName: 'READ MORE',
 		url: '#',
 		title: 'Title of the post goes here and it’s two lines',
@@ -136,11 +145,12 @@ export const AccentRed: Story = {
 		description:
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus mollis pharetra ex, a laoreet purus vulputate eget.',
 		accent: 'red'
-	}
-};
+	}}
+/>
 
-export const AccentRedEmphasized: Story = {
-	args: {
+<Story
+	name="Accent Red Emphasized"
+	args={{
 		linkName: 'READ MORE',
 		url: '#',
 		title: 'Title of the post goes here and it’s two lines',
@@ -149,11 +159,12 @@ export const AccentRedEmphasized: Story = {
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus mollis pharetra ex, a laoreet purus vulputate eget.',
 		accent: 'red',
 		isEmphasize: true
-	}
-};
+	}}
+/>
 
-export const AccentBlue: Story = {
-	args: {
+<Story
+	name="Accent Blue"
+	args={{
 		linkName: 'READ MORE',
 		url: '#',
 		title: 'Title of the post goes here and it’s two lines',
@@ -161,11 +172,12 @@ export const AccentBlue: Story = {
 		description:
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus mollis pharetra ex, a laoreet purus vulputate eget.',
 		accent: 'blue'
-	}
-};
+	}}
+/>
 
-export const AccentBlueEmphasized: Story = {
-	args: {
+<Story
+	name="Accent Blue Emphasized"
+	args={{
 		linkName: 'READ MORE',
 		url: '#',
 		title: 'Title of the post goes here and it’s two lines',
@@ -174,11 +186,12 @@ export const AccentBlueEmphasized: Story = {
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus mollis pharetra ex, a laoreet purus vulputate eget.',
 		accent: 'blue',
 		isEmphasize: true
-	}
-};
+	}}
+/>
 
-export const TitleWithIcon: Story = {
-	args: {
+<Story
+	name="Title With Icon"
+	args={{
 		linkName: 'READ MORE',
 		url: '#',
 		title: 'Title of the post goes here and it’s two lines',
@@ -187,5 +200,5 @@ export const TitleWithIcon: Story = {
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus mollis pharetra ex, a laoreet purus vulputate eget.',
 		accent: 'global',
 		icon: 'fas fa-home'
-	}
-};
+	}}
+/>

@@ -369,7 +369,7 @@
 </svelte:head>
 <div class="field is-flex is-justify-content-space-between is-align-items-center" style="">
 	<span class="is-size-6 has-text-centered mx-1">One condition must be true</span>
-	<Switch bind:toggled={combineOperator} on:change={handleCombineOperatorChanged} />
+	<Switch bind:toggled={combineOperator} onchange={handleCombineOperatorChanged} />
 	<span class="is-size-6 has-text-centered mx-1">All conditions must be true</span>
 </div>
 

@@ -33,5 +33,5 @@
 <Checkbox
 	label="Apply a vertical gradient to the sides of polygons"
 	bind:checked={value}
-	on:clicked={setValue}
+	onclick={setValue}
 />

@@ -1,29 +1,42 @@
 <!-- https://design.undp.org/?path=/docs/components-ui-components-cards-content-card-with-image--with-image -->
 <script lang="ts">
 	import { Loader } from '$lib';
-	import { createEventDispatcher } from 'svelte';
+	import { once } from 'svelte/legacy';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		linkName?: string;
+		url?: string;
+		tag: string;
+		title: string;
+		image: string;
+		accent?: 'global' | 'yellow' | 'red' | 'green' | 'blue';
+		icon?: string;
+		width: number;
+		height: number;
+		onclick?: () => void;
+	}
 
-	export let linkName = 'READ MORE';
-	export let url = '#';
-	export let tag: string;
-	export let title: string;
-	export let image: string;
-	export let accent: 'global' | 'yellow' | 'red' | 'green' | 'blue' = 'global';
-	export let icon = '';
+	let {
+		linkName = 'READ MORE',
+		url = '#',
+		tag,
+		title,
+		image,
+		accent = 'global',
+		icon = '',
+		width,
+		height,
+		onclick = () => {}
+	}: Props = $props();
 
-	export let width: number;
-	export let height: number;
-
-	let imageLoaded = false;
+	let imageLoaded = $state(false);
 
 	const handleClicked = (e: { preventDefault: () => void }) => {
 		if (url) {
 			e.preventDefault();
 			return;
 		}
-		dispatch('click');
+		if (onclick) onclick();
 	};
 </script>
 
@@ -32,7 +45,7 @@
 		? ''
 		: 'hide-border-top'}"
 >
-	<a href={url} on:click|once={handleClicked}>
+	<a href={url} onclick={once(handleClicked)}>
 		{#if tag || icon}
 			<h6 class="" data-viewport="false">
 				{#if icon}
@@ -50,10 +63,10 @@
 				{width}
 				{height}
 				loading="lazy"
-				on:load={() => {
+				onload={() => {
 					imageLoaded = true;
 				}}
-				on:error={() => {
+				onerror={() => {
 					imageLoaded = true;
 				}}
 			/>

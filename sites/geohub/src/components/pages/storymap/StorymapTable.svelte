@@ -151,8 +151,8 @@
 				totalPages={storiesData.pages.totalPages}
 				currentPage={storiesData.pages.currentPage}
 				hidden={storiesData.pages.totalPages <= 1}
-				on:clicked={(e) => {
-					const url = storiesData.links?.find((l) => l.rel === e.detail.type)?.href;
+				onclick={(type: 'previous' | 'next') => {
+					const url = storiesData.links?.find((l) => l.rel === type)?.href;
 					if (!url) return;
 					handlePaginationClicked(url);
 				}}

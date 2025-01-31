@@ -82,7 +82,7 @@
 		allowHtml={true}
 		groupName="line-pattern-{layerId}"
 		isVertical={true}
-		on:change={setLineType}
+		onchange={setLineType}
 	/>
 </div>
 

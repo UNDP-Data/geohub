@@ -232,8 +232,8 @@
 							<Card
 								linkName="Explore more"
 								tag="Tool"
-								title={algo.title}
-								description={algo.description}
+								title={algo.title as string}
+								description={algo.description as string}
 								url="/tools?algorithm=rca"
 								accent="yellow"
 							/>
@@ -252,9 +252,9 @@
 							<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 								<Card
 									linkName="Explore more"
-									tag={sdgs?.length > 0 ? sdgs.join(', ') : 'Simulation'}
-									title={dataset.properties.name}
-									description={dataset.properties.description}
+									tag={sdgs && sdgs.length > 0 ? sdgs.join(', ') : 'Simulation'}
+									title={dataset.properties.name as string}
+									description={dataset.properties.description as string}
 									url={datasetUrl}
 									accent="yellow"
 								/>

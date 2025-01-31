@@ -1,24 +1,29 @@
 <script lang="ts">
 	import type { Breadcrumb } from '$lib/interfaces';
-	import { createEventDispatcher } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		breadcrumbs: Breadcrumb[];
+		fontSize?: 'small' | 'medium' | 'large';
+		disabled?: boolean;
+		onclick?: (args: { index: number; breadcrumb: Breadcrumb }) => void;
+	}
 
-	export let breadcrumbs: Breadcrumb[];
-	export let fontSize: 'small' | 'medium' | 'large' = 'medium';
-	export let disabled = false;
+	let { breadcrumbs, fontSize = 'medium', disabled = false, onclick = () => {} }: Props = $props();
 	const handleClicked = (index: number) => {
 		if (disabled === true) return;
 		if (!(breadcrumbs && breadcrumbs.length > 0)) return;
 		const breadcrumb = breadcrumbs[index];
-		dispatch('clicked', {
-			index,
-			breadcrumb
-		});
+		if (onclick)
+			onclick({
+				index,
+				breadcrumb
+			});
 	};
-	const handleKeyDown = (event: KeyboardEvent) => {
-		if (event.key === 'Enter') {
-			dispatch('clicked');
+	const handleKeyDown = (e: KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			e.target.click();
 		}
 	};
 </script>
@@ -38,10 +43,10 @@
 											: fontSize === 'medium'
 												? 'fa-1x'
 												: 'fa-2x'}"
-									/>
+									></i>
 								{:else if breadcrumb.icon.startsWith('fi')}
 									<!--Class for flag-icon CSS https://www.npmjs.com/package/flag-icons -->
-									<span class={breadcrumb.icon} />
+									<span class={breadcrumb.icon}></span>
 								{:else}
 									<img src={breadcrumb.icon} alt="{breadcrumb.name}_image" />
 								{/if}
@@ -57,14 +62,14 @@
 					</li>
 				{:else}
 					<li>
-						<!-- svelte-ignore a11y-missing-attribute -->
+						<!-- svelte-ignore a11y_missing_attribute -->
 						<a
 							class={disabled ? 'isDisabled' : ''}
 							aria-label={breadcrumb.name}
 							tabindex="0"
 							role="button"
-							on:click={() => handleClicked(index)}
-							on:keydown={handleKeyDown}
+							onclick={() => handleClicked(index)}
+							onkeydown={handleKeyDown}
 						>
 							<span class="icon-text">
 								<span class="icon">
@@ -75,7 +80,7 @@
 												: fontSize === 'medium'
 													? 'fa-1x'
 													: 'fa-2x'}"
-										/>
+										></i>
 									{:else}
 										<img src={breadcrumb.icon} alt="{breadcrumb.name}_image" />
 									{/if}

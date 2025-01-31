@@ -103,9 +103,7 @@
 		}
 	};
 
-	const handlePaginationClicked = async (e: { detail: { type: 'previous' | 'next' } }) => {
-		const type = e.detail.type;
-
+	const handlePaginationClicked = async (type: 'previous' | 'next') => {
 		const link = datasets?.links.find((l) => l.rel === type);
 		if (link) {
 			const href = new URL(link.href);
@@ -366,7 +364,7 @@
 									description={algo.description as string}
 									url=""
 									accent="yellow"
-									on:selected={() => {
+									onselect={() => {
 										handleToolSelected({
 											title: algo.title ?? name,
 											type: 'Tool',
@@ -418,7 +416,7 @@
 									description={algo.description as string}
 									url=""
 									accent="yellow"
-									on:selected={() => {
+									onselect={() => {
 										handleToolSelected({
 											title: algo.title ?? name,
 											type: 'Tool',
@@ -475,7 +473,7 @@
 							totalPages={datasets.pages.totalPages}
 							currentPage={datasets.pages.currentPage}
 							hidden={datasets.pages.totalPages <= 1}
-							on:clicked={handlePaginationClicked}
+							onclick={handlePaginationClicked}
 						/>
 					</div>
 				{:else}

@@ -146,7 +146,7 @@
 				<div class="mt-4 mb-2">
 					<CtaLink
 						label="READ MORE"
-						on:clicked={() => {
+						onclick={() => {
 							isFullDescription = true;
 						}}
 					/>

@@ -255,7 +255,7 @@
 				<div class="field">
 					<Switch
 						bind:toggled={value as boolean}
-						on:change={handleChanged}
+						onchange={handleChanged}
 						showValue={true}
 						toggledText="Enable {title}"
 						untoggledText="Disable {title}"

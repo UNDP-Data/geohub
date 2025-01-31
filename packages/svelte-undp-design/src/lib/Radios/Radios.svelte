@@ -1,18 +1,27 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import type { Radio } from '../interfaces';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		radios: Radio[];
+		groupName: string;
+		value: string;
+		isVertical?: boolean;
+		allowHtml?: boolean;
+		onchange?: () => void;
+	}
 
-	export let radios: Radio[];
-	export let groupName: string;
-	export let value: string;
-	export let isVertical = false;
-	export let allowHtml = false;
+	let {
+		radios = $bindable(),
+		groupName,
+		value = $bindable(),
+		isVertical = false,
+		allowHtml = false,
+		onchange = () => {}
+	}: Props = $props();
 
 	const handleRadioClicked = (val: string) => {
 		value = val;
-		dispatch('change');
+		if (onchange) onchange();
 	};
 </script>
 
@@ -26,7 +35,7 @@
 					bind:group={value}
 					value={radio.value}
 					data-testid={`radio-${radio.value}`}
-					on:click={() => {
+					onclick={() => {
 						handleRadioClicked(radio.value);
 					}}
 				/>

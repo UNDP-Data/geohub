@@ -26,12 +26,15 @@
 		 * Titiler alrgorithms endpoint URL
 		 */
 		algorithmsApi?: string;
+
+		onchange?: () => void;
 	}
 
 	let {
 		layerId = $bindable(),
 		algorithmId = $bindable(''),
-		algorithmsApi = $bindable('')
+		algorithmsApi = $bindable(''),
+		onchange = () => {}
 	}: Props = $props();
 
 	let algorithms: { [key: string]: RasterAlgorithm } = $state();
@@ -110,6 +113,7 @@
 		if (!(layerUrl && layerUrl.length > 0)) return;
 		const layerURL = new URL(layerUrl);
 		updateAlgoParams(layerURL);
+		if (onchange) onchange();
 	};
 
 	const initialized = async () => {

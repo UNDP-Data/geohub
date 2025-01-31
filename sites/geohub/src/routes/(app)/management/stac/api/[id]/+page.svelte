@@ -217,7 +217,7 @@
 					bind:value={query}
 					open={true}
 					placeholder="Type keyword..."
-					on:change={handleFilterInput}
+					onchange={handleFilterInput}
 					iconSize={24}
 					fontSize={5}
 					timeout={500}

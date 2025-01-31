@@ -187,9 +187,7 @@
 		}
 	};
 
-	const handlePaginationClicked = async (e: { detail: { type: 'previous' | 'next' } }) => {
-		const type = e.detail.type;
-
+	const handlePaginationClicked = async (type: 'previous' | 'next') => {
 		const link = datasets?.links.find((l) => l.rel === type);
 		if (link) {
 			const href = new URL(link.href);
@@ -439,7 +437,7 @@
 				bind:value={query}
 				open={true}
 				placeholder="Type keywords to explore datasets..."
-				on:change={handleFilterInput}
+				onchange={handleFilterInput}
 				iconSize={20}
 				fontSize={6}
 				timeout={SearchDebounceTime}
@@ -453,7 +451,7 @@
 				<Checkbox
 					label="Show starred only"
 					bind:checked={showFavourite}
-					on:clicked={handleFavouriteChanged}
+					onclick={handleFavouriteChanged}
 					disabled={isLoading}
 				/>
 			</div>
@@ -463,7 +461,7 @@
 			<Checkbox
 				label="Show satellite data only"
 				bind:checked={showSatellite}
-				on:clicked={handleSatelliteChanged}
+				onclick={handleSatelliteChanged}
 				disabled={isLoading}
 			/>
 		</div>
@@ -533,7 +531,7 @@
 											<Chips
 												label={continent}
 												showDelete={true}
-												on:delete={() => {
+												ondelete={() => {
 													handleContinentDeleted(continent);
 												}}
 											/>
@@ -581,7 +579,7 @@
 				<Checkbox
 					label="Match all conditions"
 					bind:checked={isOperatorTypeAnd}
-					on:clicked={handleOperatorChanged}
+					onclick={handleOperatorChanged}
 					disabled={isLoading}
 				/>
 			</div>
@@ -639,7 +637,7 @@
 					bind:totalPages={datasets.pages.totalPages}
 					bind:currentPage={datasets.pages.currentPage}
 					hidden={datasets.pages.totalPages <= 1}
-					on:clicked={handlePaginationClicked}
+					onclick={handlePaginationClicked}
 				/>
 			</div>
 		{:else}

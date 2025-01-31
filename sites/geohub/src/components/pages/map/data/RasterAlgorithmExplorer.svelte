@@ -303,7 +303,7 @@
 								description={algo.description ?? ''}
 								accent="yellow"
 								isEmphasize={true}
-								on:selected={() => {
+								onselect={() => {
 									handleAlgorithmSelected(name);
 								}}
 							/>
@@ -330,7 +330,7 @@
 									title={algo.title ?? name.toUpperCase()}
 									description={algo.description ?? ''}
 									isEmphasize={mode === 'select' && isSelected}
-									on:selected={() => {
+									onselect={() => {
 										handleAlgorithmSelected(name);
 									}}
 								/>

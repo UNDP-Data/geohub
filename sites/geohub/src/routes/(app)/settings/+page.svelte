@@ -497,7 +497,7 @@
 						{#snippet control()}
 							<div class="is-flex mt-5 help">
 								<Checkbox
-									on:clicked={() =>
+									onclick={() =>
 										(userSettings.DataPageIngestingJoinVectorTiles =
 											!userSettings.DataPageIngestingJoinVectorTiles)}
 									checked={!userSettings.DataPageIngestingJoinVectorTiles}
@@ -936,7 +936,7 @@
 									<Radios
 										groupName="LinePattern"
 										bind:radios={linePatterns}
-										bind:value={linePattern}
+										bind:value={linePattern as string}
 										allowHtml={true}
 										isVertical={true}
 									/>

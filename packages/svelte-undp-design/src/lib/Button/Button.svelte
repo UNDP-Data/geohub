@@ -1,25 +1,38 @@
 <!-- https://design.undp.org/?path=/docs/components-ui-components-buttons-buttons--buttons -->
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	const dispatch = createEventDispatcher();
+	interface Props {
+		title?: string;
+		isArrow?: boolean;
+		isPrimary?: boolean;
+		isDisabled?: boolean;
+		isDownload?: boolean;
+		isExternalLink?: boolean;
+		href?: string;
+		onclick?: () => void;
+	}
 
-	export let title = '';
-	export let isArrow = false;
-	export let isPrimary = true;
-	export let isDisabled = false;
-	export let isDownload = false;
-	export let isExternalLink = false;
-	export let href = '';
+	let {
+		title = '',
+		isArrow = false,
+		isPrimary = true,
+		isDisabled = false,
+		isDownload = false,
+		isExternalLink = false,
+		href = $bindable(''),
+		onclick = () => {}
+	}: Props = $props();
 
 	const handleClicked = () => {
 		if (!isDisabled) {
-			dispatch('clicked');
+			if (onclick) onclick();
 		}
 	};
 
 	const handleKeyDown = (event: KeyboardEvent) => {
 		if (!isDisabled && event.key === 'Enter') {
-			dispatch('clicked');
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			event.target.click();
 		}
 	};
 </script>
@@ -45,7 +58,7 @@
 		{/if}
 	</a>
 {:else}
-	<!-- svelte-ignore a11y-missing-attribute -->
+	<!-- svelte-ignore a11y_missing_attribute -->
 	<a
 		class="button button-{isPrimary ? 'primary' : 'secondary'} {isArrow
 			? 'button-arrow'
@@ -58,8 +71,8 @@
 		role="button"
 		alt={title}
 		tabindex="0"
-		on:keydown={handleKeyDown}
-		on:click={handleClicked}
+		onkeydown={handleKeyDown}
+		onclick={handleClicked}
 	>
 		{title}
 		{#if isDownload}

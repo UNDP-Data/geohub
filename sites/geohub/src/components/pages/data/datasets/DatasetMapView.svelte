@@ -170,7 +170,7 @@
 		<Checkbox
 			label="Hide global/satellite datasets from the map"
 			bind:checked={hideGlobal}
-			on:clicked={addDatasetsToMap}
+			onclick={addDatasetsToMap}
 		/>
 	</div>
 </div>
