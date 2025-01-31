@@ -1,5 +1,0 @@
----
-"@undp-data/svelte-undp-components": patch
----
-
-fix: fixed bug of showing undefined error in VectorSimulation

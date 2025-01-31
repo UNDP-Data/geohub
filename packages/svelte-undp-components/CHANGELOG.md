@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 2.0.1
+
+### Patch Changes
+
+- 125fffd: fix: fixed bug of showing undefined error in VectorSimulation
+
 ## 2.0.0
 
 ### Major Changes
