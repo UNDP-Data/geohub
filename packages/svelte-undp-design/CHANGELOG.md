@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 3.0.0
+
+### Major Changes
+
+- 26440c9: feat: migrate svelte-undp-design to svelte 5 (breaking change)
+
 ## 2.4.8
 
 ### Patch Changes
