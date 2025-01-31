@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.32
+
+### Patch Changes
+
+- 125fffd: fix: fixed bug of showing console error in datasetmap view
+
 ## 1.22.31
 
 ### Patch Changes
