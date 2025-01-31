@@ -30,6 +30,7 @@
 <script lang="ts">
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import { getLayerSourceUrl } from '$lib/util/getLayerSourceUrl.js';
+	import { loadMap } from '$lib/util/loadMap.js';
 	import { updateParamsInURL } from '$lib/util/updateParamsInUrl.js';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import type { FillLayerSpecification } from 'maplibre-gl';
@@ -81,6 +82,7 @@
 	const init = async () => {
 		isInitialized = false;
 		args = await loadArgumentsInDynamicLayers(decodeURI(datasetUrl));
+		await loadMap($map);
 		selectedArgs = getArgumentsInURL() || selectedArgs;
 		isInitialized = true;
 	};

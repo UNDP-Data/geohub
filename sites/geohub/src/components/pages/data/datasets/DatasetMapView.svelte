@@ -82,7 +82,7 @@
 			});
 			map.removeSource(mapSourceId);
 		}
-
+		if (!datasets) return;
 		const filteredDatasets: DatasetFeatureCollection = JSON.parse(JSON.stringify(datasets));
 		if (hideGlobal === true) {
 			filteredDatasets.features = filteredDatasets.features.filter((f) => {
