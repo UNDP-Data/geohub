@@ -214,7 +214,7 @@
 										toggledText="Tile boundaries is shown"
 										untoggledText="Tile boundaries is hidden"
 										showValue={true}
-										on:change={handleShowTileBoundaryChange}
+										onchange={handleShowTileBoundaryChange}
 									/>
 								</div>
 								<div>
@@ -223,7 +223,7 @@
 										toggledText="Collision Boxes is shown"
 										untoggledText="Collision Boxes is hidden"
 										showValue={true}
-										on:change={handleShowCollisionBoxes}
+										onchange={handleShowCollisionBoxes}
 									/>
 								</div>
 							</div>
@@ -237,7 +237,7 @@
 							{#snippet control()}
 								<div>
 									<StaticImageControl
-										bind:map
+										bind:map={map as Map}
 										show={true}
 										bind:style={styleUrl}
 										apiBase="{origin}/api"
