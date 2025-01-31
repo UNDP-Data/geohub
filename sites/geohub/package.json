@@ -44,7 +44,7 @@
 		"@azure/web-pubsub-client": "1.0.1",
 		"@carbon/charts-svelte": "1.22.0",
 		"@maplibre/maplibre-gl-geocoder": "^1.7.1",
-		"@maptiler/geocoding-control": "^1.4.1",
+		"@maptiler/geocoding-control": "^2.1.4",
 		"@neodrag/svelte": "^2.3.0",
 		"@sveltejs/adapter-node": "^5.2.12",
 		"@sveltejs/kit": "^2.16.1",
