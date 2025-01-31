@@ -568,7 +568,7 @@
 				Explore the beauty of Zanzibar and experience its rich culture and heritage.
 			</p>
 			<div class="explore-button">
-				<Button title="Explore Zanzibar" on:clicked={handleExploreClicked} isArrow={true} />
+				<Button title="Explore Zanzibar" onclick={handleExploreClicked} isArrow={true} />
 			</div>
 		</div>
 

@@ -160,7 +160,7 @@
 						<Chips
 							bind:label={tag.value}
 							showDelete={true}
-							on:delete={() => {
+							ondelete={() => {
 								handleDeleteTag(tag);
 							}}
 						/>

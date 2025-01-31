@@ -1,23 +1,37 @@
 <script lang="ts">
 	import { Loader } from '$lib';
-	import { createEventDispatcher } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		value?: string;
+		minSearchLength?: number;
+		open?: boolean;
+		placeholder?: string;
+		timeout?: number;
+		fontSize?: number;
+		iconSize?: number;
+		disabled?: boolean;
+		loading?: boolean;
+		// & and | will affect postgis query, it is relaced when user types
+		forbiddenCharacters?: RegExp;
+		onchange?: (value: string) => void;
+	}
 
-	export let value = '';
-	export let minSearchLength = 2;
-	export let open = false;
-	export let placeholder = 'type keywords to search';
-	export let timeout = 500;
-	export let fontSize = 4;
-	export let iconSize = 24;
-	export let disabled = false;
-	export let loading = false;
-	// & and | will affect postgis query, it is relaced when user types
-	export let forbiddenCharacters = /&+|\|+/g;
+	let {
+		value = $bindable(''),
+		minSearchLength = 2,
+		open = false,
+		placeholder = 'type keywords to search',
+		timeout = 500,
+		fontSize = 4,
+		iconSize = 24,
+		disabled = false,
+		loading = $bindable(false),
+		forbiddenCharacters = /&+|\|+/g,
+		onchange = () => {}
+	}: Props = $props();
 
-	let isExpanded = false;
-	let textElement: HTMLInputElement;
+	let isExpanded = $state(false);
+	let textElement: HTMLInputElement | undefined = $state();
 
 	const debounce = (fn: (...args: unknown[]) => void, ms = timeout) => {
 		let timeoutId: ReturnType<typeof setTimeout>;
@@ -29,22 +43,20 @@
 
 	const handleExpand = () => {
 		if (open) {
-			textElement.focus();
+			textElement?.focus();
 			return;
 		}
 
 		isExpanded = !isExpanded;
 
 		if (isExpanded) {
-			textElement.focus();
+			textElement?.focus();
 		}
 	};
 
 	const handleClear = () => {
 		value = '';
-		dispatch('change', {
-			value
-		});
+		if (onchange) onchange(value);
 	};
 
 	const handleTextInput = debounce(() => {
@@ -52,25 +64,25 @@
 			if (forbiddenCharacters.test(value)) {
 				value = value.replace(forbiddenCharacters, '');
 			}
-			dispatch('change', {
-				value
-			});
+			if (onchange) onchange(value);
 		}
 	}, timeout);
 
-	const handleKeyDown = (event: KeyboardEvent) => {
-		if (event.key === 'Enter') {
-			handleTextInput();
+	const handleKeyDown = (e: KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			e.target.click();
 		}
 	};
 </script>
 
 <div class="expand-search {open || isExpanded ? 'open' : ''}">
-	<button class="expand-button" on:click={handleExpand} {disabled}>
+	<button class="expand-button" onclick={handleExpand} {disabled}>
 		{#if loading}
 			<Loader size="small" />
 		{:else}
-			<div class="search-icon" style="width: {iconSize}px; height:{iconSize}px;" />
+			<div class="search-icon" style="width: {iconSize}px; height:{iconSize}px;"></div>
 		{/if}
 	</button>
 
@@ -82,15 +94,16 @@
 		bind:this={textElement}
 		{placeholder}
 		{disabled}
-		on:input={handleTextInput}
-		on:keydown={handleKeyDown}
+		oninput={handleTextInput}
+		onkeydown={handleKeyDown}
 	/>
 	<button
 		class="close-button {value.length >= minSearchLength ? 'show' : ''}"
-		on:click={handleClear}
+		onclick={handleClear}
 		{disabled}
+		aria-label="close"
 	>
-		<div class="close-icon" style="width: {iconSize}px; height:{iconSize}px;" />
+		<div class="close-icon" style="width: {iconSize}px; height:{iconSize}px;"></div>
 	</button>
 </div>
 

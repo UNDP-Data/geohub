@@ -235,7 +235,7 @@
 						<RasterAlgorithms
 							bind:layerId
 							bind:algorithmsApi
-							on:change={handleSelectAlgorithm}
+							onchange={handleSelectAlgorithm}
 							bind:algorithmId
 						/>
 					</div>

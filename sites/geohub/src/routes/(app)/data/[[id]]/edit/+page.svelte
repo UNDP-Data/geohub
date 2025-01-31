@@ -632,7 +632,7 @@
 									<Chips
 										label={provider.value}
 										showDelete={true}
-										on:delete={() => {
+										ondelete={() => {
 											providers = providers.filter((t) => t.value !== provider.value);
 										}}
 									/>
@@ -781,7 +781,7 @@
 										<Chips
 											label={country.value}
 											showDelete={true}
-											on:delete={() => {
+											ondelete={() => {
 												countries = countries.filter((t) => t.value !== country.value);
 											}}
 										/>
@@ -865,7 +865,7 @@
 									<Chips
 										label={unit.value}
 										showDelete={true}
-										on:delete={() => {
+										ondelete={() => {
 											units = units.filter((t) => t.value !== unit.value);
 										}}
 									/>
@@ -905,7 +905,7 @@
 									<Chips
 										label={year.value}
 										showDelete={true}
-										on:delete={() => {
+										ondelete={() => {
 											years = years.filter((t) => t.value !== year.value);
 										}}
 									/>
@@ -945,7 +945,7 @@
 									<Chips
 										label={resolution.value}
 										showDelete={true}
-										on:delete={() => {
+										ondelete={() => {
 											resolutions = resolutions.filter((t) => t.value !== resolution.value);
 										}}
 									/>
@@ -986,7 +986,7 @@
 									<Chips
 										label={granularity.value}
 										showDelete={true}
-										on:delete={() => {
+										ondelete={() => {
 											granularities = granularities.filter((t) => t.value !== granularity.value);
 										}}
 									/>
@@ -1026,7 +1026,7 @@
 									<Chips
 										label={theme.value}
 										showDelete={true}
-										on:delete={() => {
+										ondelete={() => {
 											themes = themes.filter((t) => t.value !== theme.value);
 										}}
 									/>
@@ -1063,7 +1063,7 @@
 									<Chips
 										label={sdg_target.value}
 										showDelete={true}
-										on:delete={() => {
+										ondelete={() => {
 											sdg_targets = sdg_targets.filter((t) => t.value !== sdg_target.value);
 										}}
 									/>

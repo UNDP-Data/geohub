@@ -526,7 +526,7 @@
 					onchangeColorMap={() => {
 						handleColorMapChanged('');
 					}}
-					on:changeIntervalValues={handleChangeIntervalValues}
+					onchangeIntervalValues={handleChangeIntervalValues}
 					readonly={false}
 				/>
 			{/each}

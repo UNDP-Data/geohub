@@ -1,11 +1,23 @@
 <script lang="ts">
-	export let placeholder: string;
-	export let label: string;
-	export let name: string;
-	export let value: string;
-	export let disabled: boolean = false;
-	export let formType: 'text' | 'tel' | 'password' | 'number' | 'date' = 'text';
-	export let errorMessage = '';
+	interface Props {
+		placeholder: string;
+		label: string;
+		name: string;
+		value: string;
+		disabled?: boolean;
+		formType?: 'text' | 'tel' | 'password' | 'number' | 'date';
+		errorMessage?: string;
+	}
+
+	let {
+		placeholder,
+		label,
+		name,
+		value = $bindable(),
+		disabled = false,
+		formType = 'text',
+		errorMessage = ''
+	}: Props = $props();
 </script>
 
 <label class={disabled ? 'disabled' : ''} for={formType}>{label}</label>

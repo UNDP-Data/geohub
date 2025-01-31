@@ -469,15 +469,12 @@
 			</div>
 		</div>
 	</div>
-	<Button
-		title="Customize Data"
-		isPrimary={false}
-		on:clicked={() => (showCustomizeDataModal = true)}
+	<Button title="Customize Data" isPrimary={false} onclick={() => (showCustomizeDataModal = true)}
 	></Button>
 	<Button
 		title="SIMULATE"
 		isPrimary={false}
-		on:clicked={openSimulateModal}
+		onclick={openSimulateModal}
 		isDisabled={!layerDetails.isDataLoaded}
 	></Button>
 </div>
@@ -728,14 +725,14 @@
 			<Button
 				title="Reset"
 				isPrimary={true}
-				on:clicked={() => {
+				onclick={() => {
 					resetSliders();
 				}}
 			></Button>
 			<Button
 				title="Apply"
 				isPrimary={false}
-				on:clicked={() => {
+				onclick={() => {
 					applySimulation();
 					closeSimulateModal();
 				}}
@@ -753,7 +750,7 @@
 					title={layerDetails.isDataLoaded ? 'Download' : 'NOT READY FOR DOWNLOAD'}
 					isPrimary={false}
 					isDisabled={!layerDetails.isDataLoaded}
-					on:clicked={() => downloadData($mapStore, index)}
+					onclick={() => downloadData($mapStore, index)}
 				></Button>
 			</div>
 			<div class="is-background-light p-4 is-flex is-flex-direction-column is-gap-1">
@@ -762,7 +759,7 @@
 					title="Upload"
 					isPrimary={false}
 					isDisabled={!layerDetails.isDataLoaded}
-					on:clicked={() => uploadData($mapStore, index)}
+					onclick={() => uploadData($mapStore, index)}
 				></Button>
 				{#if !layerDetails.isDataLoaded}
 					<div class="is-flex is-justify-content-center is-align-items-center">
@@ -790,7 +787,7 @@
 			<Button
 				title="Save"
 				isPrimary={false}
-				on:clicked={() => {
+				onclick={() => {
 					editLayerName(index, editLayerNameValue);
 					closeEditLayerNameModal();
 				}}
@@ -808,7 +805,7 @@
 			<Button
 				title="Save"
 				isPrimary={false}
-				on:clicked={() => {
+				onclick={() => {
 					updatePaintOfLayer($mapStore, index, colorMapName);
 					closeEditColorScaleModel();
 					colorGroups = getColorGroups();

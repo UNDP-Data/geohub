@@ -141,7 +141,7 @@
 			bind:value={query}
 			open={true}
 			placeholder="Type keywords..."
-			on:change={handleFilterInput}
+			onchange={handleFilterInput}
 			iconSize={20}
 			fontSize={6}
 			timeout={SearchDebounceTime}
@@ -168,7 +168,7 @@
 				<Checkbox
 					label="Show starred only"
 					bind:checked={onlyStar}
-					on:clicked={handleClickFavourite}
+					onclick={handleClickFavourite}
 				/>
 			</div>
 		{/if}

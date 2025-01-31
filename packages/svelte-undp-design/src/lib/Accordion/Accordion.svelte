@@ -1,8 +1,21 @@
 <script lang="ts">
-	export let headerTitle: string;
-	export let isExpanded = false;
-	export let fontSize: 'small' | 'normal' | 'medium' = 'normal';
-	export let headerIcon = '';
+	interface Props {
+		headerTitle: string;
+		isExpanded?: boolean;
+		fontSize?: 'small' | 'normal' | 'medium';
+		headerIcon?: string;
+		button?: import('svelte').Snippet;
+		content?: import('svelte').Snippet;
+	}
+
+	let {
+		headerTitle,
+		isExpanded = $bindable(false),
+		fontSize = 'normal',
+		headerIcon = '',
+		button,
+		content
+	}: Props = $props();
 </script>
 
 <ul class="accordion" aria-label="accordion">
@@ -12,7 +25,7 @@
 				tabindex="0"
 				aria-expanded={isExpanded}
 				class={`accordion-button ${isExpanded ? 'accordion--active' : ''}`}
-				on:click={() => {
+				onclick={() => {
 					isExpanded = !isExpanded;
 				}}
 			>
@@ -21,13 +34,13 @@
 					style="font-size:{fontSize === 'small' ? 0.75 : fontSize === 'medium' ? 1.5 : 1}rem"
 				>
 					{#if headerIcon}
-						<i class={headerIcon} />
+						<i class={headerIcon}></i>
 					{/if}
 					{headerTitle}
 				</p>
 			</button>
 			<div style="width:10%">
-				<slot name="button" />
+				{@render button?.()}
 			</div>
 		</div>
 		<div
@@ -35,7 +48,7 @@
 			aria-hidden={!isExpanded}
 			role="region"
 		>
-			<div class="accordion-content"><slot name="content" /></div>
+			<div class="accordion-content">{@render content?.()}</div>
 		</div>
 	</li>
 </ul>

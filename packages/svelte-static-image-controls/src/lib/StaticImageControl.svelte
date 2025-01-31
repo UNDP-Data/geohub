@@ -288,7 +288,7 @@
 						fontWeight="semibold"
 						buttons={orientationButtons}
 						bind:selected={selectedOrientation}
-						on:change={handlePageSizeChanged}
+						onchange={handlePageSizeChanged}
 					/>
 				</div>
 			{/snippet}
@@ -346,7 +346,7 @@
 						{ title: '@4x', value: 4 }
 					]}
 					bind:selected={options.ratio}
-					on:change={updateApiUrl}
+					onchange={updateApiUrl}
 				/>
 			</div>
 		{/snippet}
@@ -370,7 +370,7 @@
 							return { title: e, value: e };
 						})}
 						bind:selected={options.extension}
-						on:change={updateApiUrl}
+						onchange={updateApiUrl}
 					/>
 				</div>
 			{/snippet}

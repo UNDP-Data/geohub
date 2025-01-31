@@ -118,7 +118,7 @@
 			bind:value={query}
 			open={true}
 			{placeholder}
-			on:change={handleFilterInput}
+			onchange={handleFilterInput}
 			iconSize={16}
 			fontSize={6}
 			timeout={SearchDebounceTime}
@@ -140,7 +140,7 @@
 			bind:value={sortingColumn}
 			groupName="sortby"
 			isVertical={true}
-			on:change={handleSortingColumnChanged}
+			onchange={handleSortingColumnChanged}
 		/>
 	</PanelButton>
 
@@ -158,13 +158,13 @@
 			bind:value={queryType}
 			groupName="queryType"
 			isVertical={true}
-			on:change={handleQueryTypeChanged}
+			onchange={handleQueryTypeChanged}
 		/>
 		<p class="subtitle is-6 pb-0 pt-2 my-1">Geospatial filter</p>
 		<Checkbox
 			label="Filter by current map extent"
 			bind:checked={isFilterByBBox}
-			on:clicked={registerMapMovedEvent}
+			onclick={registerMapMovedEvent}
 		/>
 	</PanelButton>
 </div>

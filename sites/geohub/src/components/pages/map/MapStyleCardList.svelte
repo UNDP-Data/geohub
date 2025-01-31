@@ -150,7 +150,7 @@
 							{:else}
 								<CardWithImage
 									title={style.name}
-									on:click={() => {
+									onclick={() => {
 										handleSelect(style);
 									}}
 									url=""
@@ -176,8 +176,8 @@
 				totalPages={mapData.pages.totalPages}
 				currentPage={mapData.pages.currentPage}
 				hidden={mapData.pages.totalPages <= 1}
-				on:clicked={(e) => {
-					const url = mapData.links?.find((l) => l.rel === e.detail.type)?.href;
+				onclick={(type: 'previous' | 'next') => {
+					const url = mapData.links?.find((l) => l.rel === type)?.href;
 					if (!url) return;
 					handlePaginationClicked(url);
 				}}

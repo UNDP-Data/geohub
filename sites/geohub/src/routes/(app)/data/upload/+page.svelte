@@ -582,7 +582,7 @@
 				<div class="is-flex is-align-items-center is-justify-content-end help">
 					<Checkbox
 						disabled={!userIsSignedIn || isUploading}
-						on:clicked={() =>
+						onclick={() =>
 							(config.DataPageIngestingJoinVectorTiles = !config.DataPageIngestingJoinVectorTiles)}
 						checked={!config.DataPageIngestingJoinVectorTiles}
 						label="Every layer (Point, Line, Polygon) into its own file"

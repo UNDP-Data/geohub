@@ -1,84 +1,85 @@
-import type { Meta, StoryObj } from '@storybook/svelte';
+<script lang="ts" module>
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import Stats from './Stats.svelte';
 
-import Stats from './Stats.svelte';
-
-// More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
-const meta = {
-	title: 'Components/Stats',
-	component: Stats,
-	tags: ['autodocs'],
-	argTypes: {
-		card: {
-			description: 'StatsCard object. Stats information to show',
-			defaultValue: undefined
-		},
-		size: {
-			type: 'string',
-			description: 'Stats card size.',
-			defaultValue: 'medium',
-			control: { type: 'select' },
-			options: ['small', 'medium', 'large', 'x-large']
-		},
-		accent: {
-			type: 'string',
-			description: 'Accent color',
-			defaultValue: 'global',
-			control: { type: 'select' },
-			options: ['global', 'yellow', 'red', 'green', 'blue']
+	const { Story } = defineMeta({
+		title: 'Components/Stats',
+		component: Stats,
+		tags: ['autodocs'],
+		argTypes: {
+			card: {
+				description: 'StatsCard object. Stats information to show',
+				defaultValue: undefined
+			},
+			size: {
+				type: 'string',
+				description: 'Stats card size.',
+				defaultValue: 'medium',
+				control: { type: 'select' },
+				options: ['small', 'medium', 'large', 'x-large']
+			},
+			accent: {
+				type: 'string',
+				description: 'Accent color',
+				defaultValue: 'global',
+				control: { type: 'select' },
+				options: ['global', 'yellow', 'red', 'green', 'blue']
+			}
 		}
-	}
-} satisfies Meta<Stats>;
+	});
+</script>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-// More on writing stories with args: https://storybook.js.org/docs/7.0/svelte/writing-stories/args
-export const Primary: Story = {
-	args: {
-		card: {
-			stat: 35,
-			title: 'Percents, with very long subheader, spanning several lines',
-			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-		},
-		size: 'medium'
-	}
-};
-
-export const Small: Story = {
-	args: {
+<Story
+	name="Small"
+	args={{
 		card: {
 			stat: 35,
 			title: 'Percents, with very long subheader, spanning several lines',
 			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
 		},
 		size: 'small'
-	}
-};
+	}}
+/>
 
-export const Large: Story = {
-	args: {
+<Story
+	name="Medium"
+	args={{
+		card: {
+			stat: 35,
+			title: 'Percents, with very long subheader, spanning several lines',
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+		},
+		size: 'medium'
+	}}
+/>
+
+<Story
+	name="Large"
+	args={{
 		card: {
 			stat: 35,
 			title: 'Percents, with very long subheader, spanning several lines',
 			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
 		},
 		size: 'large'
-	}
-};
+	}}
+/>
 
-export const Xlarge: Story = {
-	args: {
+<Story
+	name="Xlarge"
+	args={{
 		card: {
 			stat: 35,
 			title: 'Percents, with very long subheader, spanning several lines',
 			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
 		},
 		size: 'x-large'
-	}
-};
+	}}
+/>
 
-export const Yellow: Story = {
-	args: {
+<Story
+	name="Yellow"
+	args={{
 		card: {
 			stat: 35,
 			title: 'Percents, with very long subheader, spanning several lines',
@@ -86,11 +87,12 @@ export const Yellow: Story = {
 		},
 		size: 'medium',
 		accent: 'yellow'
-	}
-};
+	}}
+/>
 
-export const Green: Story = {
-	args: {
+<Story
+	name="Green"
+	args={{
 		card: {
 			stat: 35,
 			title: 'Percents, with very long subheader, spanning several lines',
@@ -98,11 +100,12 @@ export const Green: Story = {
 		},
 		size: 'medium',
 		accent: 'green'
-	}
-};
+	}}
+/>
 
-export const Red: Story = {
-	args: {
+<Story
+	name="Red"
+	args={{
 		card: {
 			stat: 35,
 			title: 'Percents, with very long subheader, spanning several lines',
@@ -110,11 +113,12 @@ export const Red: Story = {
 		},
 		size: 'medium',
 		accent: 'red'
-	}
-};
+	}}
+/>
 
-export const Blue: Story = {
-	args: {
+<Story
+	name="Blue"
+	args={{
 		card: {
 			stat: 35,
 			title: 'Percents, with very long subheader, spanning several lines',
@@ -122,5 +126,5 @@ export const Blue: Story = {
 		},
 		size: 'medium',
 		accent: 'blue'
-	}
-};
+	}}
+/>

@@ -1,21 +1,22 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	interface Props {
+		label: string;
+		showDelete?: boolean;
+		ondelete?: (label: string) => void;
+	}
 
-	const dispatch = createEventDispatcher();
-
-	export let label: string;
-	export let showDelete = false;
+	let { label = $bindable(), showDelete = false, ondelete = () => {} }: Props = $props();
 
 	const handleClick = (e: { preventDefault: () => void }) => {
 		if (!showDelete) {
 			e.preventDefault();
 			return;
 		}
-		dispatch('delete', { label });
+		if (ondelete) ondelete(label);
 	};
 </script>
 
-<button class="chip {showDelete ? 'chip__cross' : ''}" type="button" on:click={handleClick}>
+<button class="chip {showDelete ? 'chip__cross' : ''}" type="button" onclick={handleClick}>
 	{label}
 </button>
 

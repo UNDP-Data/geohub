@@ -298,7 +298,7 @@
 										<div>
 											<Switch
 												bind:toggled={$activeChapterStore.cardHidden}
-												on:change={handleChange}
+												onchange={handleChange}
 												showValue={false}
 											/>
 										</div>
@@ -356,7 +356,7 @@
 										<div>
 											<Switch
 												bind:toggled={mapInteractive}
-												on:change={() => {
+												onchange={() => {
 													if (!$activeChapterStore) return;
 													$activeChapterStore.mapInteractive = mapInteractive;
 													handleChange();
@@ -402,7 +402,7 @@
 										<div>
 											<Switch
 												bind:toggled={showLegend}
-												on:change={() => {
+												onchange={() => {
 													if (!$activeChapterStore) return;
 													$activeChapterStore.showLegend = showLegend;
 													handleChange();
@@ -463,7 +463,7 @@
 										<div>
 											<Switch
 												bind:toggled={rotateAnimation}
-												on:change={() => {
+												onchange={() => {
 													if (!$activeChapterStore) return;
 													$activeChapterStore.rotateAnimation = rotateAnimation;
 													handleChange();

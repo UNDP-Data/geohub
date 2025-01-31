@@ -145,7 +145,7 @@
 						<Chips
 							label={iso3}
 							showDelete={true}
-							on:delete={() => {
+							ondelete={() => {
 								handleDeleteCountry(iso3);
 							}}
 						/>

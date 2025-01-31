@@ -275,7 +275,7 @@
 							<div>
 								<Switch
 									bind:toggled={mapConfig.hillshade}
-									on:change={handleHillshadeAndTerrainChanged}
+									onchange={handleHillshadeAndTerrainChanged}
 								/>
 							</div>
 						{/snippet}

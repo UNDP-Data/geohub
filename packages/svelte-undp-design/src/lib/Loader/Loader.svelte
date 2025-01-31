@@ -1,5 +1,9 @@
 <script lang="ts">
-	export let size: 'small' | 'medium' | 'large' = 'medium';
+	interface Props {
+		size?: 'small' | 'medium' | 'large';
+	}
+
+	let { size = 'medium' }: Props = $props();
 </script>
 
 <div
@@ -7,7 +11,7 @@
 	aria-busy="true"
 	aria-live="polite"
 	data-testid="loader"
-/>
+></div>
 
 <style lang="scss">
 	@use '../css/base-minimal.min.css';

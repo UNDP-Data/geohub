@@ -2,15 +2,19 @@
 	import type { CarouselContent } from '$lib/interfaces';
 	import Carousel from 'svelte-carousel';
 
-	export let contents: CarouselContent[] = [];
+	interface Props {
+		contents?: CarouselContent[];
+	}
 
-	let innerWidth: number;
+	let { contents = $bindable([]) }: Props = $props();
 
-	let initialPageIndex = 0;
-	let clientWidth = 0;
-	let pageProgress = 0;
+	let innerWidth: number = $state(0);
 
-	let carousel: Carousel;
+	let initialPageIndex = $state(0);
+	let clientWidth = $state(0);
+	let pageProgress = $state(0);
+
+	let carousel: Carousel | undefined = $state();
 
 	const handlePageChanged = (e) => {
 		const pageIndex: number = e.detail;
@@ -64,7 +68,7 @@
 						<p>{content.description}</p>
 						<a class="cta__link cta--space" href={content.linkUrl}>
 							{content.linkName}
-							<i />
+							<i></i>
 						</a>
 						<div class="slider-arrows">
 							<button
@@ -73,8 +77,8 @@
 								aria-label="Previous slide"
 								aria-controls="swiper-wrapper-b4b2bff5b29a5cd7"
 								aria-disabled="false"
-								on:click={() => {
-									carousel.goToPrev();
+								onclick={() => {
+									carousel?.goToPrev();
 								}}
 							>
 								<svg
@@ -109,8 +113,8 @@
 								aria-label="Next slide"
 								aria-controls="swiper-wrapper-b4b2bff5b29a5cd7"
 								aria-disabled="false"
-								on:click={() => {
-									carousel.goToNext();
+								onclick={() => {
+									carousel?.goToNext();
 								}}
 							>
 								<svg

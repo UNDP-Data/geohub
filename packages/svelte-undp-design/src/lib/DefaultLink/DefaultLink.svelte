@@ -1,12 +1,17 @@
 <script lang="ts">
-	export let href: string;
-	export let title: string;
-	export let target: string;
+	interface Props {
+		href: string;
+		title: string;
+		target?: string;
+		content?: import('svelte').Snippet;
+	}
+
+	let { href, title, target = '_blank', content }: Props = $props();
 </script>
 
 <a {href} {title} {target}>
 	{title}
-	<slot name="content" />
+	{@render content?.()}
 </a>
 
 <style lang="scss">

@@ -2,18 +2,26 @@
 <script lang="ts">
 	import type { FooterItem } from '$lib/interfaces';
 
-	export let logoUrl: string;
+	interface Props {
+		logoUrl: string;
+		footerItems?: {
+			[key: string]: FooterItem[];
+		};
+		isSimple?: boolean;
+		isInverted?: boolean;
+	}
 
-	export let footerItems: {
-		[key: string]: FooterItem[];
-	} = {};
-	export let isSimple = false;
-	export let isInverted = false;
+	let {
+		logoUrl,
+		footerItems = $bindable({}),
+		isSimple = false,
+		isInverted = false
+	}: Props = $props();
 
 	const currentYear = new Date().getFullYear();
-	let panelExpanded: { [key: string]: boolean } = {};
-	let innerWidth: number;
-	$: isMobile = innerWidth < 768 ? true : false;
+	let panelExpanded: { [key: string]: boolean } = $state({});
+	let innerWidth: number = $state(0);
+	let isMobile = $derived(innerWidth < 768 ? true : false);
 
 	const onKeyPressed = (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
@@ -35,7 +43,7 @@
 						<a href="https://www.undp.org">
 							<img src={logoUrl} alt="UNDP Logo" />
 						</a>
-						<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+						<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 						<h5 class="" tabindex="0" data-viewport="false">
 							United Nations
 							<br />
@@ -76,7 +84,7 @@
 			{#if isSimple}
 				<div class="grid-x footer-bottom">
 					<div class="cell medium-5">
-						<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+						<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 						<p tabindex="0">© {currentYear} United Nations Development Programme</p>
 					</div>
 					<div class="cell medium-6">
@@ -131,7 +139,7 @@
 										tabindex="0"
 										aria-controls={panelId}
 										aria-expanded={panelExpanded[itemId] && panelExpanded[itemId] === true}
-										on:click={() => {
+										onclick={() => {
 											if (!panelExpanded[itemId]) {
 												panelExpanded[itemId] = true;
 											} else {
@@ -156,12 +164,12 @@
 									>
 										{#each footerItems[pageTitle] as item}
 											{#if item.callback}
-												<!-- svelte-ignore a11y-missing-attribute -->
+												<!-- svelte-ignore a11y_missing_attribute -->
 												<a
 													role="button"
 													tabindex="0"
-													on:click={item.callback}
-													on:keydown={onKeyPressed}
+													onclick={item.callback}
+													onkeydown={onKeyPressed}
 													title={item.title}
 												>
 													{item.title}
@@ -227,7 +235,7 @@
 					</div>
 				</div>
 				<div class="footer-copyright">
-					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+					<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 					<p tabindex="0">© {currentYear} United Nations Development Programme</p>
 				</div>
 			{/if}

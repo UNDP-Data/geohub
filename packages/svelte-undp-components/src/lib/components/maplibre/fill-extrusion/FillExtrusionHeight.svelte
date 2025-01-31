@@ -207,7 +207,7 @@
 						toggledText="Logarithmic is enabled"
 						untoggledText="Logarithmic is disabled"
 						showValue={true}
-						on:change={handleExaggerationChanged}
+						onchange={handleExaggerationChanged}
 					/>
 				</div>
 			</div>

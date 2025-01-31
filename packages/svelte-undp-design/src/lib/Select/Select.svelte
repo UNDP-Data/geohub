@@ -1,21 +1,26 @@
 <script lang="ts">
 	import type { SelectItem } from '$lib/interfaces';
-	import { createEventDispatcher } from 'svelte';
 
-	const dispacth = createEventDispatcher();
+	interface Props {
+		placeholder: string;
+		items: SelectItem[];
+		selectedItem: SelectItem | undefined;
+		onselect?: (item: SelectItem) => void;
+	}
 
-	export let placeholder: string;
-	export let items: SelectItem[];
-	export let selectedItem: SelectItem | undefined;
+	let {
+		placeholder,
+		items = $bindable(),
+		selectedItem = $bindable(),
+		onselect = () => {}
+	}: Props = $props();
 
-	let isOpened = false;
+	let isOpened = $state(false);
 
 	const handleSelectItem = (item: SelectItem) => {
 		selectedItem = item;
 		isOpened = false;
-		dispacth('selected', {
-			item
-		});
+		if (onselect) onselect(item);
 	};
 
 	const handleKeyDown = (event: KeyboardEvent) => {
@@ -33,7 +38,7 @@
 		aria-haspopup="listbox"
 		aria-label="Select"
 		data-select-open=""
-		on:click={() => {
+		onclick={() => {
 			isOpened = !isOpened;
 		}}
 	>
@@ -50,10 +55,10 @@
 				tabindex="0"
 				data-value={item.value}
 				aria-selected={selectedItem === item ? true : false}
-				on:click={() => {
+				onclick={() => {
 					handleSelectItem(item);
 				}}
-				on:keydown={handleKeyDown}
+				onkeydown={handleKeyDown}
 			>
 				<span>{item.label}</span>
 			</li>

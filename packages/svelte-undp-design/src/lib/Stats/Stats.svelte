@@ -1,9 +1,13 @@
 <script lang="ts">
 	import type { StatsCard } from '$lib/interfaces';
 
-	export let card: StatsCard;
-	export let size: 'small' | 'medium' | 'large' | 'x-large' = 'medium';
-	export let accent: 'global' | 'yellow' | 'red' | 'green' | 'blue' = 'global';
+	interface Props {
+		card: StatsCard;
+		size?: 'small' | 'medium' | 'large' | 'x-large';
+		accent?: 'global' | 'yellow' | 'red' | 'green' | 'blue';
+	}
+
+	let { card = $bindable(), size = 'medium', accent = 'global' }: Props = $props();
 </script>
 
 <div class="stats-card {size} {accent === 'global' ? '' : `accent-${accent}`}">

@@ -397,7 +397,7 @@
 				{/if}
 
 				<div class="mt-auto mb-4 a-bb-1 pb-4">
-					<CtaLink label="Download" isArrow on:clicked={modalHandler} />
+					<CtaLink label="Download" isArrow onclick={modalHandler} />
 				</div>
 			{/if}
 		</div>

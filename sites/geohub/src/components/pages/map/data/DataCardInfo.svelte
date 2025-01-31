@@ -80,7 +80,7 @@
 				<br />
 				<CtaLink
 					label="READ MORE"
-					on:clicked={() => {
+					onclick={() => {
 						isFullDescription = true;
 					}}
 				/>

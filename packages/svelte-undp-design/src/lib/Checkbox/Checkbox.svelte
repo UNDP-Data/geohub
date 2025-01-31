@@ -1,17 +1,19 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		label: string;
+		checked?: boolean;
+		disabled?: boolean;
+		onclick?: () => void;
+	}
 
-	export let label: string;
-	export let checked = false;
-	export let disabled = false;
+	let { label, checked = $bindable(false), disabled = false, onclick = () => {} }: Props = $props();
 
 	let labelId = uuidv4();
 
 	const handleChecked = () => {
-		dispatch('clicked');
+		if (onclick) onclick();
 	};
 </script>
 
@@ -22,7 +24,7 @@
 		id={labelId}
 		type="checkbox"
 		bind:checked
-		on:click={handleChecked}
+		onclick={handleChecked}
 	/>
 	<label for={labelId}>
 		{label}
