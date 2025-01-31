@@ -20,13 +20,13 @@ install:
 
 build:
 	make install
-	npm run build build
+	npm run build
 
 dev:
 	npm run dev
 
 dockerbuild:
-	./scripts/docker-build.sh
+	docker compose build
 
 dockerrun:
-	./scripts/docker-run.sh
+	docker compose up
