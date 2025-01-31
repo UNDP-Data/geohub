@@ -270,7 +270,12 @@
 		<div>
 			<div bind:this={mapContainer} class="map" style="height: {sidebarHeight}px;">
 				<div class="overlay has-background-white p-2">
-					<FieldControl title="Static image URL" fontWeight="bold">
+					<FieldControl
+						title="Static image URL"
+						fontWeight="bold"
+						showHelp={true}
+						showHelpPopup={false}
+					>
 						{#snippet control()}
 							<div>
 								<CopyToClipboard bind:value={apiUrl} />
