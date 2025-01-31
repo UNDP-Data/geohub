@@ -1,5 +1,15 @@
 # geohub
 
+## 1.22.31
+
+### Patch Changes
+
+- 6befcd4: fix: update interfaces of using svelte-undp-components
+- 26440c9: fix: fixed interface where using svelte-undp-design
+- a6f2039: chore: updated dependencies for geohub
+- ebd18c3: chore: upgrade carbon/charts-svelte
+- de2eccf: chore: upgrade maptiler geocoder to v2
+
 ## 1.22.30
 
 ### Patch Changes

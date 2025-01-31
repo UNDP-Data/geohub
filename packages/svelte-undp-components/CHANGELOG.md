@@ -1,5 +1,18 @@
 # @undp-data/svelte-undp-components
 
+## 2.0.0
+
+### Major Changes
+
+- 6befcd4: feat: migrate components to svelte 5 (breaking change)
+
+### Patch Changes
+
+- 26440c9: fix: fixed interface where using svelte-undp-design
+- 2ee1359: chore: updated date-picker-svelte version
+- Updated dependencies [26440c9]
+  - @undp-data/svelte-undp-design@3.0.0
+
 ## 1.5.19
 
 ### Patch Changes

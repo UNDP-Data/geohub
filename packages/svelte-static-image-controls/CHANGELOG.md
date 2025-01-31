@@ -1,5 +1,18 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 3.0.3
+
+### Patch Changes
+
+- 6befcd4: fix: updated interfaces of using svelte-undp-components
+- 26440c9: fix: fixed interface where using svelte-undp-design
+- Updated dependencies [26440c9]
+- Updated dependencies [2ee1359]
+- Updated dependencies [26440c9]
+- Updated dependencies [6befcd4]
+  - @undp-data/svelte-undp-components@2.0.0
+  - @undp-data/svelte-undp-design@3.0.0
+
 ## 3.0.2
 
 ### Patch Changes
