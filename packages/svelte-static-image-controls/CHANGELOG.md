@@ -1,5 +1,14 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 3.0.5
+
+### Patch Changes
+
+- 0a235fa: fix: remove moduleResolution = nodenext from tsconfig.json
+- Updated dependencies [0a235fa]
+  - @undp-data/svelte-undp-components@2.0.2
+  - @undp-data/svelte-undp-design@3.0.1
+
 ## 3.0.4
 
 ### Patch Changes
