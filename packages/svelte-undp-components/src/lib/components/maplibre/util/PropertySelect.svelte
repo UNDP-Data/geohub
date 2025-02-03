@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { VectorLayerMetadata } from '$lib/interfaces/VectorLayerMetadata.js';
-	import type { VectorLayerTileStatLayer } from '$lib/interfaces/VectorLayerTileStatLayer.js';
-	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
-	import { clean } from '$lib/util/clean.js';
+	import type { VectorLayerMetadata } from '$lib/interfaces/VectorLayerMetadata';
+	import type { VectorLayerTileStatLayer } from '$lib/interfaces/VectorLayerTileStatLayer';
+	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
+	import { clean } from '$lib/util/clean';
 	import type { LayerSpecification, Map } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 

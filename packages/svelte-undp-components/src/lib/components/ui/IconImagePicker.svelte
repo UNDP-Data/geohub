@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
+	import { handleEnterKey } from '$lib/util/handleEnterKey';
 	import { onMount } from 'svelte';
 	import IconImagePickerCard from './IconImagePickerCard.svelte';
 	import type { IconImageType } from './IconImageSelector.svelte';

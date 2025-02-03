@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { clean } from './clean.js';
+import { clean } from './clean';
 
 describe('clean', () => {
 	it('should remove underscore characters', () => {

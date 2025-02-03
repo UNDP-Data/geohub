@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isInt } from './isInt.js';
+import { isInt } from './isInt';
 
 describe('isInt test', () => {
 	it('should return true if the value is integer', () => {

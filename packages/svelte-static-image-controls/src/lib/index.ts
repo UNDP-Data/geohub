@@ -1,8 +1,8 @@
 import MaplibreStaticImageControl from './MaplibreStaticImageControl.svelte';
 import StaticImageControl from './StaticImageControl.svelte';
 
-export * from './interface/index.js';
-export * from './constants/index.js';
-export * from './helpers/index.js';
+export * from './interface';
+export * from './constants';
+export * from './helpers';
 
 export { MaplibreStaticImageControl, StaticImageControl };

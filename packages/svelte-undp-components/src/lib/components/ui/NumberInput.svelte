@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isInt } from '$lib/util/isInt.js';
+	import { isInt } from '$lib/util/isInt';
 	import BigNumber from 'bignumber.js';
 
 	interface Props {

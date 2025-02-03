@@ -3,8 +3,8 @@
 </script>
 
 <script lang="ts">
-	import { IconImageSelector, type IconImageType } from '$lib/components/ui/index.js';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { IconImageSelector, type IconImageType } from '$lib/components/ui';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';

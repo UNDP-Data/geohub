@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { mm2pixel } from './mm2pixel.js';
+import { mm2pixel } from './mm2pixel';
 
 describe('mm2pixel conversion', () => {
 	it('1189mm and 96 DPI', () => {

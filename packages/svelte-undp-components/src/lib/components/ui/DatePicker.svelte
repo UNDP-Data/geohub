@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { initTippy, initTooltipTippy } from '$lib/util/initTippy.js';
+	import { initTippy, initTooltipTippy } from '$lib/util/initTippy';
 	import { DatePicker } from '@undp-data/date-picker-svelte';
 	import dayjs from 'dayjs';
 	import { onMount } from 'svelte';

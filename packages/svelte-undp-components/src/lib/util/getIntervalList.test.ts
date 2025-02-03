@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { getIntervalList } from './getIntervalList.js';
-import { getSampleFromInterval } from './getSampleFromInterval.js';
-import { ClassificationMethodTypes } from '$lib/constants/ClassificationMethod.js';
+import { getIntervalList } from './getIntervalList';
+import { getSampleFromInterval } from './getSampleFromInterval';
+import { ClassificationMethodTypes } from '$lib/constants/ClassificationMethod';
 
 describe('getIntervalList', () => {
 	it('should return an interval list : natural breaks', () => {

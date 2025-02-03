@@ -11,10 +11,9 @@
 	import debounce from 'debounce';
 	import type { Map } from 'maplibre-gl';
 	import { onMount, untrack } from 'svelte';
-	import { PageSizes, supportedExtensions } from './constants/index.js';
-	import { PageOrientations } from './constants/pageOrientations.js';
-	import { mm2pixel } from './helpers/index.js';
-	import type { ControlOptions } from './interface/ControlOptions.ts';
+	import { PageOrientations, PageSizes, supportedExtensions } from './constants';
+	import { mm2pixel } from './helpers';
+	import type { ControlOptions } from './interface/ControlOptions';
 
 	interface Props {
 		/**

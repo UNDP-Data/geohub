@@ -1,3 +1,3 @@
-export * from './map.js';
-export * from './storymapConfig.js';
-export * from './mapStyle.js';
+export * from './map';
+export * from './storymapConfig';
+export * from './mapStyle';

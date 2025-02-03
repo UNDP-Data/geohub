@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import type { StoryMapTemplate } from './interfaces/StoryMapTemplate.js';
-	import { STORYMAP_CONFIG_STORE_CONTEXT_KEY, type StoryMapConfigStore } from './stores/index.js';
+	import type { StoryMapTemplate } from './interfaces/StoryMapTemplate';
+	import { STORYMAP_CONFIG_STORE_CONTEXT_KEY, type StoryMapConfigStore } from './stores';
 
 	interface Props {
 		template?: StoryMapTemplate;

@@ -1,4 +1,4 @@
-import type { RasterTileMetadata } from '$lib/interfaces/RasterTileMetadata.js';
+import type { RasterTileMetadata } from '$lib/interfaces/RasterTileMetadata';
 
 /**
  * Get active band index number from RasterTileMetadata object

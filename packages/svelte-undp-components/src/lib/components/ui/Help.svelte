@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { initTooltipTippy } from '$lib/util/initTippy.js';
+	import { initTooltipTippy } from '$lib/util/initTippy';
 
 	interface Props {
 		maxWidth?: number;

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { StoryMap, type StoryMapTemplate } from '$lib/index.js';
-	import type { PageData } from './$types.js';
+	import { StoryMap, type StoryMapTemplate } from '$lib';
+	import type { PageData } from './$types';
 
 	interface Props {
 		data: PageData;

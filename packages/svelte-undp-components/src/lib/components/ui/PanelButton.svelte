@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { initTippy, initTooltipTippy } from '$lib/util/initTippy.js';
+	import { initTippy, initTooltipTippy } from '$lib/util/initTippy';
 
 	interface Props {
 		icon: string;

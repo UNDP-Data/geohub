@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ColorPicker from '$lib/components/ui/ColorPicker.svelte';
-	import { initTippy } from '$lib/util/initTippy.js';
+	import { initTippy } from '$lib/util/initTippy';
 	import chroma from 'chroma-js';
 	import type { RgbaColor } from 'svelte-awesome-color-picker';
 

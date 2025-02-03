@@ -6,9 +6,9 @@
 
 <script lang="ts">
 	import VectorValueClassification from '$lib/components/maplibre/util/VectorValueClassification.svelte';
-	import { ClassificationMethodTypes } from '$lib/constants/ClassificationMethod.js';
-	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { ClassificationMethodTypes } from '$lib/constants/ClassificationMethod';
+	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { hexToCSSFilter } from 'hex-to-css-filter';

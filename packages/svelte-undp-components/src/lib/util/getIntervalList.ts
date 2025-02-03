@@ -1,8 +1,8 @@
-import { ClassificationMethodTypes } from '$lib/constants/ClassificationMethod.js';
+import { ClassificationMethodTypes } from '$lib/constants/ClassificationMethod';
 import chroma from 'chroma-js';
 import { jenks } from 'simple-statistics';
-import { isInt } from './isInt.js';
-import { remapInputValue } from './remapInputValue.js';
+import { isInt } from './isInt';
+import { remapInputValue } from './remapInputValue';
 
 export const getIntervalList = (
 	classificationMethod: ClassificationMethodTypes,

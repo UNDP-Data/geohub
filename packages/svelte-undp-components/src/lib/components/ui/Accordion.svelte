@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { clean } from '$lib/util/clean.js';
-	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
-	import { initTooltipTippy } from '$lib/util/initTippy.js';
+	import { clean } from '$lib/util/clean';
+	import { handleEnterKey } from '$lib/util/handleEnterKey';
+	import { initTooltipTippy } from '$lib/util/initTippy';
 
 	interface Props {
 		title: string;

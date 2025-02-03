@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
-	import { initTippy } from '$lib/util/initTippy.js';
+	import { handleEnterKey } from '$lib/util/handleEnterKey';
+	import { initTippy } from '$lib/util/initTippy';
 	import chroma from 'chroma-js';
 	import { untrack } from 'svelte';
 	import ColorMapPickerCard, {

@@ -10,8 +10,8 @@
 
 <script lang="ts">
 	import ColorPicker from '$lib/components/ui/ColorPicker.svelte';
-	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
-	import { initTippy } from '$lib/util/initTippy.js';
+	import { handleEnterKey } from '$lib/util/handleEnterKey';
+	import { initTippy } from '$lib/util/initTippy';
 	import chroma from 'chroma-js';
 	import { onMount, untrack } from 'svelte';
 	import type { RgbaColor } from 'svelte-awesome-color-picker';

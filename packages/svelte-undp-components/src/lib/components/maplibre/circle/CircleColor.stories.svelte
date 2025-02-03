@@ -1,6 +1,6 @@
 <script lang="ts" module>
 	import VectorColorClassification from '$lib/components/maplibre/util/VectorColorClassification.svelte';
-	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
+	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata';
 	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import type { CircleLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
 	import Map from '../Map.svelte';

@@ -1,12 +1,12 @@
 <script lang="ts">
 	import FieldControl from '$lib/components/ui/FieldControl.svelte';
 	import PropertyEditor from '$lib/components/ui/PropertyEditor.svelte';
-	import type { RasterAlgorithm } from '$lib/interfaces/RasterAlgorithm.js';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
-	import { getLayerSourceUrl } from '$lib/util/getLayerSourceUrl.js';
-	import { getValueFromRasterTileUrl } from '$lib/util/getValueFromRasterTileUrl.js';
-	import { loadMap } from '$lib/util/loadMap.js';
-	import { updateParamsInURL } from '$lib/util/updateParamsInUrl.js';
+	import type { RasterAlgorithm } from '$lib/interfaces/RasterAlgorithm';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
+	import { getLayerSourceUrl } from '$lib/util/getLayerSourceUrl';
+	import { getValueFromRasterTileUrl } from '$lib/util/getValueFromRasterTileUrl';
+	import { loadMap } from '$lib/util/loadMap';
+	import { updateParamsInURL } from '$lib/util/updateParamsInUrl';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import type { RasterLayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';

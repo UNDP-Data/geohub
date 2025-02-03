@@ -9,7 +9,7 @@
 
 <script lang="ts">
 	import ColorPicker from '$lib/components/ui/ColorPicker.svelte';
-	import { initTippy } from '$lib/util/initTippy.js';
+	import { initTippy } from '$lib/util/initTippy';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { onMount } from 'svelte';

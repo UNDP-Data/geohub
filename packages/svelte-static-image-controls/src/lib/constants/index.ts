@@ -1,2 +1,3 @@
-export * from './supportedExtensions.js';
-export * from './pageSizes.js';
+export * from './supportedExtensions';
+export * from './pageSizes';
+export * from './pageOrientations';

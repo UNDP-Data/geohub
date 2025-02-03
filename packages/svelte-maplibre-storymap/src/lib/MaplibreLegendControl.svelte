@@ -77,7 +77,7 @@
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import { layerTypes } from './helpers.js';
+	import { layerTypes } from './helpers';
 
 	interface Props {
 		map: Map;

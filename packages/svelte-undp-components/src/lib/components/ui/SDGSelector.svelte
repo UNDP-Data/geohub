@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { initTippy } from '$lib/util/initTippy.js';
+	import { initTippy } from '$lib/util/initTippy';
 
 	interface Props {
 		selected?: number[];

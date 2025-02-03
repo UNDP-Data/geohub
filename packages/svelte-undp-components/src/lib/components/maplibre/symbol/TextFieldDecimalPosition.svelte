@@ -59,12 +59,12 @@
 
 <script lang="ts">
 	import NumberInput from '$lib/components/ui/NumberInput.svelte';
-	import type { VectorLayerTileStatAttribute } from '$lib/interfaces/VectorLayerTileStatAttribute.js';
-	import type { VectorLayerTileStatLayer } from '$lib/interfaces/VectorLayerTileStatLayer.js';
-	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
-	import { getPropertyValueFromExpression } from '$lib/util/getPropertyValueFromExpression.js';
-	import { isInt } from '$lib/util/isInt.js';
+	import type { VectorLayerTileStatAttribute } from '$lib/interfaces/VectorLayerTileStatAttribute';
+	import type { VectorLayerTileStatLayer } from '$lib/interfaces/VectorLayerTileStatLayer';
+	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
+	import { getPropertyValueFromExpression } from '$lib/util/getPropertyValueFromExpression';
+	import { isInt } from '$lib/util/isInt';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);

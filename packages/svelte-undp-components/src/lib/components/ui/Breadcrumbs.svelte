@@ -11,7 +11,7 @@
 </script>
 
 <script lang="ts">
-	import { handleEnterKey } from '$lib/index.js';
+	import { handleEnterKey } from '$lib/util/handleEnterKey';
 
 	interface Props {
 		/**
