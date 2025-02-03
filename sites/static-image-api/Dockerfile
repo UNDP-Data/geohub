@@ -6,8 +6,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV NODE_VERSION=22
 
 # https://github.com/maplibre/maplibre-native/tree/main/platform/linux#prerequisites
-RUN apt-get update
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y \
     curl \
     libcurl4-openssl-dev \
     libglfw3-dev \
@@ -22,35 +21,29 @@ RUN apt-get install -y \
     ninja-build \
     pkg-config \
     xvfb \
-    x11-utils
+    x11-utils && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+    
+RUN curl -Ls https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash && \
+    apt-get update && apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN curl -Ls https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash
-RUN apt-get update && apt-get install -y nodejs
+WORKDIR /app/src
 
-WORKDIR /app/tmp
+COPY package*.json ./
 
-COPY package*.json /app/
+RUN npm install -g npm && npm ci
 
-RUN npm install -g npm
-RUN npm ci
+COPY .  .
 
-COPY .  /app/tmp/.
-
-RUN npm run build
-RUN rm -rf node_modules
-RUN npm install --omit=dev
-RUN cp package.json build/.
-RUN mv node_modules build/.
-
-RUN cp entrypoint.sh ./build/.
-
-RUN cp -r /app/tmp/build/. /app/.
-RUN rm -rf /app/tmp/build
+RUN npm run build && \
+    cp package*.json entrypoint.sh /app/src/build/ && \
+    npm ci --omit=dev --prefix /app/src/build && \
+    mv /app/src/build/* /app/. && \
+    rm -rf /app/src
 
 WORKDIR /app
-
-COPY entrypoint.sh /app/entrypoint.sh
-
 ENV DISPLAY=:99
 EXPOSE 80
 
