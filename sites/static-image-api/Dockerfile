@@ -6,8 +6,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV NODE_VERSION=22
 
 # https://github.com/maplibre/maplibre-native/tree/main/platform/linux#prerequisites
-RUN apt-get update
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y \
     curl \
     libcurl4-openssl-dev \
     libglfw3-dev \
@@ -22,29 +21,29 @@ RUN apt-get install -y \
     ninja-build \
     pkg-config \
     xvfb \
-    x11-utils
-
-RUN curl -Ls https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash
-RUN apt-get update && apt-get install -y nodejs
+    x11-utils && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+    
+RUN curl -Ls https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash && \
+    apt-get update && apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app/src
 
-COPY package*.json /app/src
+COPY package*.json ./
 
-RUN npm install -g npm
-RUN npm ci
+RUN npm install -g npm && npm ci
 
-COPY .  /app/src/.
+COPY .  .
 
-RUN npm run build
-RUN cp package*.json /app/src/build && \
-    cp entrypoint.sh /app/src/build
-WORKDIR /app/src/build
-RUN npm install --omit=dev
+RUN npm run build && \
+    cp package*.json entrypoint.sh /app/src/build/ && \
+    npm ci --omit=dev --prefix /app/src/build && \
+    mv /app/src/build/* /app/. && \
+    rm -rf /app/src
+
 WORKDIR /app
-RUN mv /app/src/build/* /app/.
-RUN rm -rf /app/src
-
 ENV DISPLAY=:99
 EXPOSE 80
 
