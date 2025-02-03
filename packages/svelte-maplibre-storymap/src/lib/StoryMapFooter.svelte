@@ -2,7 +2,7 @@
 	import { marked } from 'marked';
 	import { getContext } from 'svelte';
 	import type { StoryMapTemplate } from './interfaces/StoryMapTemplate';
-	import { STORYMAP_CONFIG_STORE_CONTEXT_KEY, type StoryMapConfigStore } from './stores/index';
+	import { STORYMAP_CONFIG_STORE_CONTEXT_KEY, type StoryMapConfigStore } from './stores';
 
 	interface Props {
 		template?: StoryMapTemplate;
