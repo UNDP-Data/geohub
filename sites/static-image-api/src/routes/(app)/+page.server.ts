@@ -1,4 +1,4 @@
-import type { PageServerLoad } from './playground/$types';
+import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const title = ' GeoHub Static API';

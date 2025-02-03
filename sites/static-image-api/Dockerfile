@@ -27,29 +27,23 @@ RUN apt-get install -y \
 RUN curl -Ls https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash
 RUN apt-get update && apt-get install -y nodejs
 
-WORKDIR /app/tmp
+WORKDIR /app/src
 
-COPY package*.json /app/
+COPY package*.json /app/src
 
 RUN npm install -g npm
 RUN npm ci
 
-COPY .  /app/tmp/.
+COPY .  /app/src/.
 
 RUN npm run build
-RUN rm -rf node_modules
+RUN cp package*.json /app/src/build && \
+    cp entrypoint.sh /app/src/build
+WORKDIR /app/src/build
 RUN npm install --omit=dev
-RUN cp package.json build/.
-RUN mv node_modules build/.
-
-RUN cp entrypoint.sh ./build/.
-
-RUN cp -r /app/tmp/build/. /app/.
-RUN rm -rf /app/tmp/build
-
 WORKDIR /app
-
-COPY entrypoint.sh /app/entrypoint.sh
+RUN mv /app/src/build/* /app/.
+RUN rm -rf /app/src
 
 ENV DISPLAY=:99
 EXPOSE 80
