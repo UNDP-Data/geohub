@@ -49,6 +49,18 @@
 				title: 'API',
 				url: '/api'
 			}
+		],
+		GeoHub: [
+			{
+				title: 'Home',
+				url: 'https://geohub.data.undp.org'
+			}
+		],
+		'Data Futures Exchange': [
+			{
+				title: 'Home',
+				url: 'https://data.undp.org'
+			}
 		]
 	});
 

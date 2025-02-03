@@ -1,6 +1,6 @@
-import type { PageServerLoad } from './$types';
+import type { PageLoad } from './$types';
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageLoad = async ({ url }) => {
 	const title = ' GeoHub Static API';
 
 	const examples = [
