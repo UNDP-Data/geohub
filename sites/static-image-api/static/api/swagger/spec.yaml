@@ -10,41 +10,6 @@ servers:
   - url: /api
     description: Static Image API
 paths:
-  '/bounds/{lon},{lat},{zoom}/{width}x{height}':
-    parameters:
-      - $ref: '#/components/parameters/lon'
-      - $ref: '#/components/parameters/lat'
-      - $ref: '#/components/parameters/zoom'
-      - $ref: '#/components/parameters/width'
-      - $ref: '#/components/parameters/height'
-    get:
-      summary: Get bounds from center and zoom
-      tags:
-        - bounds
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  bounds:
-                    type: array
-                    items:
-                      type: number
-                required:
-                  - bounds
-              examples:
-                Example:
-                  value:
-                    bounds:
-                      - -210.9375
-                      - -80.17871349622823
-                      - 210.9375
-                      - 80.17871349622823
-      operationId: 'get-bounds-lon-,-lat-,-zoom-width-x-height'
-      description: Get bounds from center and zoom
   '/style/static/{bbox}/{width}x{height}.{format}':
     parameters:
       - $ref: '#/components/parameters/bbox'
