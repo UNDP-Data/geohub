@@ -1,4 +1,4 @@
-import { remapInputValue } from './remapInputValue.js';
+import { remapInputValue } from './remapInputValue';
 
 export const getSampleFromInterval = (
 	intervalStart: number,

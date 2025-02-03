@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
-	import { clean } from '$lib/util/clean.js';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
+	import { clean } from '$lib/util/clean';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 

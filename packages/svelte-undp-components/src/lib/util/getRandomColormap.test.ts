@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getRandomColormap } from './getRandomColormap.js';
+import { getRandomColormap } from './getRandomColormap';
 import {
 	SequentialColormaps,
 	DivergingColorMaps,

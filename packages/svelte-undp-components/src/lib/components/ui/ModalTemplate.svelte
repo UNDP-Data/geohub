@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
+	import { handleEnterKey } from '$lib/util/handleEnterKey';
 	import { fade } from 'svelte/transition';
 
 	interface Props {

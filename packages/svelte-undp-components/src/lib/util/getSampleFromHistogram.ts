@@ -1,4 +1,4 @@
-import { getSampleFromInterval } from './getSampleFromInterval.js';
+import { getSampleFromInterval } from './getSampleFromInterval';
 
 /**
  * get sampled values according to actual data distribution of histogram

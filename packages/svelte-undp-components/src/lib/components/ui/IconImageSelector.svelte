@@ -6,8 +6,8 @@
 </script>
 
 <script lang="ts">
-	import { clean } from '$lib/util/clean.js';
-	import { initTippy } from '$lib/util/initTippy.js';
+	import { clean } from '$lib/util/clean';
+	import { initTippy } from '$lib/util/initTippy';
 	import { onMount } from 'svelte';
 	import IconImagePicker from './IconImagePicker.svelte';
 

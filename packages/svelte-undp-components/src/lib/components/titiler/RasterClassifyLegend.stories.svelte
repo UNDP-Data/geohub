@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import type { RasterTileMetadata } from '$lib/interfaces/RasterTileMetadata.js';
+	import type { RasterTileMetadata } from '$lib/interfaces/RasterTileMetadata';
 	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 	import Map from '../maplibre/Map.svelte';

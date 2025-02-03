@@ -5,15 +5,15 @@
 	import {
 		ClassificationMethods,
 		ClassificationMethodTypes
-	} from '$lib/constants/ClassificationMethod.js';
-	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
-	import { checkVectorLayerHighlySkewed } from '$lib/util/checkVectorLayerHighlySkewed.js';
-	import { convertFunctionToExpression } from '$lib/util/convertFunctionToExpression.js';
-	import { getIntervalList } from '$lib/util/getIntervalList.js';
-	import { getSampleFromHistogram } from '$lib/util/getSampleFromHistogram.js';
-	import { getSampleFromInterval } from '$lib/util/getSampleFromInterval.js';
-	import { updateIntervalValues } from '$lib/util/updateIntervalValues.js';
+	} from '$lib/constants/ClassificationMethod';
+	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
+	import { checkVectorLayerHighlySkewed } from '$lib/util/checkVectorLayerHighlySkewed';
+	import { convertFunctionToExpression } from '$lib/util/convertFunctionToExpression';
+	import { getIntervalList } from '$lib/util/getIntervalList';
+	import { getSampleFromHistogram } from '$lib/util/getSampleFromHistogram';
+	import { getSampleFromInterval } from '$lib/util/getSampleFromInterval';
+	import { updateIntervalValues } from '$lib/util/updateIntervalValues';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount, untrack } from 'svelte';

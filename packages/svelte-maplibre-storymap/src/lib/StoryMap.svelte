@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { StoryMapConfig, StoryMapTemplate } from '$lib/interfaces/index.js';
+	import type { StoryMapConfig, StoryMapTemplate } from '$lib/interfaces';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import {
@@ -14,7 +14,7 @@
 	import { Protocol } from 'pmtiles';
 	import scrollama from 'scrollama';
 	import { onMount, setContext } from 'svelte';
-	import { setLayerOpacity } from './helpers.js';
+	import { setLayerOpacity } from './helpers';
 	import MaplibreLegendControl from './MaplibreLegendControl.svelte';
 	import {
 		createMapStore,
@@ -26,7 +26,7 @@
 		type MapStore,
 		type MapStyleStore,
 		type StoryMapConfigStore
-	} from './stores/index.js';
+	} from './stores';
 	import StoryMapChapter from './StoryMapChapter.svelte';
 	import StoryMapFooter from './StoryMapFooter.svelte';
 	import StoryMapHeader from './StoryMapHeader.svelte';

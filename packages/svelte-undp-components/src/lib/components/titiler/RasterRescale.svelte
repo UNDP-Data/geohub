@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Slider from '$lib/components/ui/Slider.svelte';
-	import type { BandMetadata, RasterTileMetadata } from '$lib/interfaces/RasterTileMetadata.js';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
-	import { getActiveBandIndex } from '$lib/util/getActiveBandIndex.js';
-	import { getValueFromRasterTileUrl } from '$lib/util/getValueFromRasterTileUrl.js';
-	import { isInt } from '$lib/util/isInt.js';
+	import type { BandMetadata, RasterTileMetadata } from '$lib/interfaces/RasterTileMetadata';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
+	import { getActiveBandIndex } from '$lib/util/getActiveBandIndex';
+	import { getValueFromRasterTileUrl } from '$lib/util/getValueFromRasterTileUrl';
+	import { isInt } from '$lib/util/isInt';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);

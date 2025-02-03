@@ -40,7 +40,7 @@
 	import { draggable, type DragOptions } from '@neodrag/svelte';
 	import { FloatingPanel } from '@undp-data/svelte-undp-components';
 	import StaticImageControl from './StaticImageControl.svelte';
-	import type { ControlOptions } from './interface/index.js';
+	import type { ControlOptions } from './interface';
 
 	interface Props {
 		/**

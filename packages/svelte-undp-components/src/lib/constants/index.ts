@@ -1,1 +1,1 @@
-export * from './ClassificationMethod.js';
+export * from './ClassificationMethod';

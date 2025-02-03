@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
+	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata';
 	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import type { SymbolLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
 	import Map from '../Map.svelte';

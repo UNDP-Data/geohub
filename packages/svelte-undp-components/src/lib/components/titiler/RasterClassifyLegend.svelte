@@ -26,22 +26,22 @@
 	import {
 		ClassificationMethods,
 		ClassificationMethodTypes
-	} from '$lib/constants/ClassificationMethod.js';
+	} from '$lib/constants/ClassificationMethod';
 	import type {
 		BandMetadata,
 		RasterLayerStats,
 		RasterTileMetadata
-	} from '$lib/interfaces/RasterTileMetadata.js';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
-	import { getActiveBandIndex } from '$lib/util/getActiveBandIndex.js';
-	import { getIntervalList } from '$lib/util/getIntervalList.js';
-	import { getLayerSourceUrl } from '$lib/util/getLayerSourceUrl.js';
-	import { getSampleFromHistogram } from '$lib/util/getSampleFromHistogram.js';
-	import { getSampleFromInterval } from '$lib/util/getSampleFromInterval.js';
-	import { getValueFromRasterTileUrl } from '$lib/util/getValueFromRasterTileUrl.js';
-	import { remapInputValue } from '$lib/util/remapInputValue.js';
-	import { updateIntervalValues } from '$lib/util/updateIntervalValues.js';
-	import { updateParamsInURL } from '$lib/util/updateParamsInUrl.js';
+	} from '$lib/interfaces/RasterTileMetadata';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
+	import { getActiveBandIndex } from '$lib/util/getActiveBandIndex';
+	import { getIntervalList } from '$lib/util/getIntervalList';
+	import { getLayerSourceUrl } from '$lib/util/getLayerSourceUrl';
+	import { getSampleFromHistogram } from '$lib/util/getSampleFromHistogram';
+	import { getSampleFromInterval } from '$lib/util/getSampleFromInterval';
+	import { getValueFromRasterTileUrl } from '$lib/util/getValueFromRasterTileUrl';
+	import { remapInputValue } from '$lib/util/remapInputValue';
+	import { updateIntervalValues } from '$lib/util/updateIntervalValues';
+	import { updateParamsInURL } from '$lib/util/updateParamsInUrl';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import type { RasterLayerSpecification } from 'maplibre-gl';

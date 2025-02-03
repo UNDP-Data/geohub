@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { updateIntervalValues } from './updateIntervalValues.js';
+import { updateIntervalValues } from './updateIntervalValues';
 import type { ColorMapRow } from '$lib/components/maplibre/util/LegendColorMapRow.svelte';
 
 describe('updateIntervalValues', () => {

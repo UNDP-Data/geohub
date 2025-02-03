@@ -1,6 +1,6 @@
 <script lang="ts">
 	import FieldControl from '$lib/components/ui/FieldControl.svelte';
-	import { createMapStore, MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { createMapStore, MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
 	import {
 		addProtocol,
 		GeolocateControl,

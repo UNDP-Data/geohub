@@ -8,7 +8,7 @@
 </script>
 
 <script lang="ts">
-	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
+	import { handleEnterKey } from '$lib/util/handleEnterKey';
 
 	interface Props {
 		isFullwidth?: boolean;

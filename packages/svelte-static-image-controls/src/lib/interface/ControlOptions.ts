@@ -1,5 +1,5 @@
-import type { ImageApiTypes } from './ImageApiTypes.ts';
-import type { PageOrientation } from './PageOrientation.js';
+import type { ImageApiTypes } from './ImageApiTypes';
+import type { PageOrientation } from './PageOrientation';
 
 export interface ControlOptions {
 	width?: number;

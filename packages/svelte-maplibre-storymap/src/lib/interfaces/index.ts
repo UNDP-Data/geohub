@@ -1,3 +1,3 @@
-export * from './StoryMapConfig.js';
-export * from './StoryMapChapter.js';
-export * from './StoryMapTemplate.js';
+export * from './StoryMapConfig';
+export * from './StoryMapChapter';
+export * from './StoryMapTemplate';

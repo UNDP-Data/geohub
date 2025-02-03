@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { handleEnterKey } from '$lib/util/index.js';
+	import { handleEnterKey } from '$lib/util/handleEnterKey';
 
 	interface Props {
 		show?: boolean;

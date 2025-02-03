@@ -1,4 +1,4 @@
-import type { StoryMapConfig } from '$lib/index.js';
+import type { StoryMapConfig } from '$lib';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {

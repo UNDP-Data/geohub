@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 	import MaplibreColorPicker from '../util/MaplibreColorPicker.svelte';

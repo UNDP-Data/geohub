@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getSampleFromInterval } from './getSampleFromInterval.js';
+import { getSampleFromInterval } from './getSampleFromInterval';
 
 describe('getSampleFromInterval', () => {
 	it('should have the length of the resulting array be equal to the numberOfItems', () => {

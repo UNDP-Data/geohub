@@ -23,7 +23,7 @@
 		map.addControl(new NavigationControl({}), 'top-right');
 		map.addControl(new ScaleControl({}), 'bottom-left');
 
-		map.addControl(new MaplibreCgazAdminControl(), 'top-left');
+		map.addControl(new MaplibreCgazAdminControl({}), 'top-left');
 	});
 </script>
 

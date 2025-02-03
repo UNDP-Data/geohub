@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isValidUrl } from '$lib/util/isValidUrl.js';
+	import { isValidUrl } from '$lib/util/isValidUrl';
 	import { copy } from 'svelte-copy';
 
 	interface Props {

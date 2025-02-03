@@ -14,9 +14,9 @@
 </script>
 
 <script lang="ts">
-	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
+	import { handleEnterKey } from '$lib/util/handleEnterKey';
 
-	import { initTooltipTippy } from '$lib/util/initTippy.js';
+	import { initTooltipTippy } from '$lib/util/initTippy';
 
 	interface Props {
 		button: MenuButtonType;

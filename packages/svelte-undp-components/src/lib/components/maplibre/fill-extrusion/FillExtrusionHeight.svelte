@@ -2,8 +2,8 @@
 	import PropertySelect from '$lib/components/maplibre/util/PropertySelect.svelte';
 	import FieldControl from '$lib/components/ui/FieldControl.svelte';
 	import Slider from '$lib/components/ui/Slider.svelte';
-	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
 	import { Switch } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { getContext } from 'svelte';

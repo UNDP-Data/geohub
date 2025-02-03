@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
+	import { handleEnterKey } from '$lib/util/handleEnterKey';
 	import { Switch } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import NumberInput from './NumberInput.svelte';

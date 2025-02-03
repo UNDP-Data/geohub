@@ -7,8 +7,8 @@
 </script>
 
 <script lang="ts">
-	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
-	import { initTippy, initTooltipTippy } from '$lib/util/initTippy.js';
+	import { handleEnterKey } from '$lib/util/handleEnterKey';
+	import { initTippy, initTooltipTippy } from '$lib/util/initTippy';
 	import { Chips } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { onMount, untrack } from 'svelte';
