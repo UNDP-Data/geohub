@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 2.0.3
+
+### Patch Changes
+
+- 6092700: fix: revert @undp-data/date-picker-svelte to v2.12.1 since it has reference error in geohub
+
 ## 2.0.2
 
 ### Patch Changes
