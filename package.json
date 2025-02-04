@@ -30,5 +30,10 @@
   "devDependencies": {
     "@changesets/cli": "^2.27.12",
     "lefthook": "^1.10.10"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "svelte-preprocess"
+    ]
   }
 }
