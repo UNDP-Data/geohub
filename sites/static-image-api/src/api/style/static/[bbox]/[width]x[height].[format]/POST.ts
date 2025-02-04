@@ -1,6 +1,5 @@
 import { error, z, type RouteModifier } from 'sveltekit-api';
 import { type RequestEvent } from '@sveltejs/kit';
-import type { StyleSpecification } from 'maplibre-gl';
 import { renderMapByBBOX } from '$lib/server/renderMapByBBOX';
 import { validateStyle } from '$lib/server/validateStyle';
 import type { extensionFormat } from '$lib/server/renderMap';
@@ -32,15 +31,10 @@ export const Modifier: RouteModifier = (c) => {
 	return c;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const CombinedSchema = Param.extend(Query.shape);
-type CombinedType = z.infer<typeof CombinedSchema>;
-
 export default async function (
-	input: CombinedType,
+	input: z.infer<typeof Query & typeof Param>,
 	{ url, request }: RequestEvent
 ): Promise<Response> {
-	console.log(input);
 	const bbox = input.bbox as string;
 	const width = Number(input.width);
 	const height = Number(input.height);
@@ -53,8 +47,7 @@ export default async function (
 		error(400, 'Unsupported format.');
 	}
 
-	const style: StyleSpecification = await request.json();
-	console.log(style);
+	const style = await request.json();
 	const errors = validateStyle(style);
 	if (errors.length) {
 		error(400, errors.join(', '));

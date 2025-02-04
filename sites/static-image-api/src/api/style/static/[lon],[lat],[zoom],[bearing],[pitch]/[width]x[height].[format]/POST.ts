@@ -33,21 +33,21 @@ export const Modifier: RouteModifier = (c) => {
 };
 
 export default async function (
-	param: z.infer<typeof Param>,
+	input: z.infer<typeof Query & typeof Param>,
 	{ url, request }: RequestEvent
 ): Promise<Response> {
-	const lon = Number(param.lon);
-	const lat = Number(param.lat);
-	const zoom = Number(param.zoom);
-	const bearing = Number(param.bearing);
-	const pitch = Number(param.pitch);
-	const width = Number(param.width);
-	const height = Number(param.height);
+	const lon = Number(input.lon);
+	const lat = Number(input.lat);
+	const zoom = Number(input.zoom);
+	const bearing = Number(input.bearing);
+	const pitch = Number(input.pitch);
+	const width = Number(input.width);
+	const height = Number(input.height);
 	const ratio = Number(url.searchParams.get('ratio') ?? '1');
 	if (!(ratio >= 1 && ratio <= 4)) {
 		error(400, 'ratio should be between 1 and 4.');
 	}
-	const format = param.format as extensionFormat;
+	const format = input.format as extensionFormat;
 	if (!['jpeg', 'png', 'webp'].includes(format)) {
 		error(400, 'Unsupported format.');
 	}
