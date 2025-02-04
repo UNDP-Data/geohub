@@ -26,6 +26,7 @@
 	},
 	"homepage": "https://github.com/UNDP-Data/geohub#readme",
 	"devDependencies": {
+		"@eslint/js": "^9.19.0",
 		"@storybook/addon-essentials": "^8.5.2",
 		"@storybook/addon-interactions": "^8.5.2",
 		"@storybook/addon-links": "^8.5.2",
