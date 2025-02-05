@@ -1,5 +1,12 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 1.0.6
+
+### Patch Changes
+
+- Updated dependencies [f70c8af]
+  - @undp-data/svelte-undp-components@2.0.4
+
 ## 1.0.5
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # geohub
 
+## 1.22.34
+
+### Patch Changes
+
+- c09a179: fix: fixed bug of importing maptiler geocoder in SSR.
+- 93b51ce: fix: switched the electricity forecast data (2021-2030) to v3 on Electricity Dashboard
+- f70c8af: fix: fixed bug of not showing scaled raster tile correctly. always use unscale=true for titiler now.
+
 ## 1.22.33
 
 ### Patch Changes
