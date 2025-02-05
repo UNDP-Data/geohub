@@ -108,23 +108,17 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 				}
 			}
 
-			const scales = this.metadata.scales;
-			let unscale = 'false';
-			if (scales?.length > 0 && scales[0] !== 1) {
-				unscale = 'true';
-			}
-
 			titilerApiUrlParams = {
 				rescale: rescale.join(','),
 				colormap_name: colormap,
-				unscale: unscale
+				unscale: 'true'
 			};
 
 			const algoId = this.dataset.properties?.tags?.find(
 				(t) => t.key === 'algorithm' && t.value === algorithmId
 			)?.value;
 			if (algoId) {
-				titilerApiUrlParams['algorithm'] = algoId;
+				titilerApiUrlParams['algorithm'] = algoId as string;
 			} else {
 				titilerApiUrlParams['bidx'] = this.bandIndex + 1;
 			}
@@ -210,7 +204,7 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 	};
 
 	public getMetadata = async (algorithmId?: string) => {
-		const metadataUrl = this.dataset.properties?.links?.find((l) => l.rel === 'info').href;
+		const metadataUrl = this.dataset.properties?.links?.find((l) => l.rel === 'info')?.href;
 		const product = this.dataset.properties.tags?.find((t) => t.key === 'product')?.value;
 		if (!metadataUrl) return this.metadata;
 		const res = await fetch(metadataUrl);
@@ -237,16 +231,10 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 			this.metadata.bounds = bounds;
 		}
 		if (this.metadata && this.metadata.band_metadata && this.metadata.band_metadata.length > 0) {
-			const scales = this.metadata.scales;
-			let unscale = 'false';
-			if (scales?.length > 0 && scales[0] !== 1) {
-				unscale = 'true';
-			}
-
 			const statUrl = new URL(
-				this.dataset.properties.links.find((l) => l.rel === 'statistics').href
+				this.dataset.properties.links?.find((l) => l.rel === 'statistics')?.href as string
 			);
-			statUrl.searchParams.set('unscale', unscale);
+			statUrl.searchParams.set('unscale', 'true');
 			statUrl.searchParams.set('histogram_bins', '10');
 			if (algorithmId) {
 				statUrl.searchParams.set('algorithm', algorithmId);
@@ -261,15 +249,16 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 				for (let i = 0; i < this.metadata.band_metadata.length; i++) {
 					const bandValue = this.metadata.band_metadata[i][0] as string;
 					const bandDetails = statistics[bandValue];
+					console.log(bandValue);
+					console.log(bandDetails);
 					if (bandDetails) {
 						const meta = this.metadata.band_metadata[i][1];
 						// use values from statistics api if info does not contain them
-						meta['STATISTICS_MAXIMUM'] = meta['STATISTICS_MAXIMUM'] ?? bandDetails.max;
-						meta['STATISTICS_MEAN'] = meta['STATISTICS_MEAN'] ?? bandDetails.mean;
-						meta['STATISTICS_MINIMUM'] = meta['STATISTICS_MINIMUM'] ?? bandDetails.min;
-						meta['STATISTICS_STDDEV'] = meta['STATISTICS_STDDEV'] ?? bandDetails.std;
-						meta['STATISTICS_VALID_PERCENT'] =
-							meta['STATISTICS_VALID_PERCENT'] ?? bandDetails.STATISTICS_VALID_PERCENT;
+						meta['STATISTICS_MAXIMUM'] = bandDetails.max;
+						meta['STATISTICS_MEAN'] = bandDetails.mean;
+						meta['STATISTICS_MINIMUM'] = bandDetails.min;
+						meta['STATISTICS_STDDEV'] = bandDetails.std;
+						meta['STATISTICS_VALID_PERCENT'] = bandDetails.valid_percent;
 						// use median from statistics api which is not included in info api
 						meta['STATISTICS_MEDIAN'] = bandDetails.median;
 					}
