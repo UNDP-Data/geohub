@@ -53,16 +53,10 @@ export class RasterTileData {
 			metadata.bounds = bounds;
 		}
 		if (metadata && metadata.band_metadata && metadata.band_metadata.length > 0) {
-			const scales = metadata.scales;
-			let unscale = 'false';
-			if (scales?.length > 0 && scales[0] !== 1) {
-				unscale = 'true';
-			}
-
 			const statUrl = new URL(
-				this.feature.properties.links.find((l) => l.rel === 'statistics').href
+				this.feature.properties.links?.find((l) => l.rel === 'statistics')?.href as string
 			);
-			statUrl.searchParams.set('unscale', unscale);
+			statUrl.searchParams.set('unscale', 'true');
 
 			const apiUrl = new URL(statUrl.href);
 			apiUrl.searchParams.set('histogram_bins', '10');
@@ -83,14 +77,11 @@ export class RasterTileData {
 					const bandDetails = statistics[bandValue];
 					if (bandDetails) {
 						const meta = metadata.band_metadata[i][1];
-						// use values from statistics api if info does not contain them
-						meta['STATISTICS_MAXIMUM'] = meta['STATISTICS_MAXIMUM'] ?? bandDetails.max;
-						meta['STATISTICS_MEAN'] = meta['STATISTICS_MEAN'] ?? bandDetails.mean;
-						meta['STATISTICS_MINIMUM'] = meta['STATISTICS_MINIMUM'] ?? bandDetails.min;
-						meta['STATISTICS_STDDEV'] = meta['STATISTICS_STDDEV'] ?? bandDetails.std;
-						meta['STATISTICS_VALID_PERCENT'] =
-							meta['STATISTICS_VALID_PERCENT'] ?? bandDetails.STATISTICS_VALID_PERCENT;
-
+						meta['STATISTICS_MAXIMUM'] = bandDetails.max;
+						meta['STATISTICS_MEAN'] = bandDetails.mean;
+						meta['STATISTICS_MINIMUM'] = bandDetails.min;
+						meta['STATISTICS_STDDEV'] = bandDetails.std;
+						meta['STATISTICS_VALID_PERCENT'] = bandDetails.valid_percent;
 						// use median from statistics api which is not included in info api
 						meta['STATISTICS_MEDIAN'] = bandDetails.median;
 					}
