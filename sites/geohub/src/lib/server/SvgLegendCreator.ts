@@ -61,7 +61,6 @@ export class SvgLegendCreator {
 				options.min = parseFloat(options.min);
 			}
 			minDecimalPlaces = getDecimalPlaces(options.min);
-			console.log(minDecimalPlaces);
 			if (minDecimalPlaces > 2) minDecimalPlaces = 2;
 		}
 		let maxDecimalPlaces = 0;
