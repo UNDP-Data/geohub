@@ -17,11 +17,11 @@
 </script>
 
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { page } from '$app/state';
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
 	import { downloadFile } from '$lib/helper';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
-	import { GeocodingControl } from '@maptiler/geocoding-control/maplibregl';
 	import '@maptiler/geocoding-control/style.css';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
@@ -104,8 +104,9 @@
 	let newColorExpression = $state(undefined);
 
 	let isTimeSliderActive = $state(false);
+	let isInitialized = $state(false);
 
-	onMount(() => {
+	onMount(async () => {
 		const promises = loadDatasets();
 		promises.hrea.then((datasets) => {
 			hrea.update(() => datasets);
@@ -138,17 +139,21 @@
 		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {});
 		map.addControl(styleSwitcher, 'bottom-left');
 
-		const apiKey = page.data.maptilerKey;
-		if (apiKey) {
-			const gc = new GeocodingControl({
-				apiKey: apiKey,
-				marker: true,
-				showFullGeometry: false,
-				showResultsWhileTyping: false,
-				collapsed: false
-			});
-			map.addControl(gc, 'top-left');
+		if (browser) {
+			const { GeocodingControl } = await import('@maptiler/geocoding-control/maplibregl');
+			const apiKey = page.data.maptilerKey;
+			if (apiKey) {
+				const gc = new GeocodingControl({
+					apiKey: apiKey,
+					marker: true,
+					showResultsWhileTyping: false,
+					collapsed: false
+				});
+				map.addControl(gc, 'top-left');
+			}
 		}
+
+		isInitialized = true;
 
 		map.on('load', () => {
 			const sky = new SkyControl();
@@ -407,16 +412,18 @@
 		<div>
 			<div class="map" id="map" bind:this={mapContainer}>
 				{#if map}
-					<TimeSliderControl
-						bind:this={timeSliderControl}
-						bind:map
-						bind:electricitySelected
-						bind:scaleColorList
-						bind:rasterColorMapName={colormapName}
-						bind:loadAdminLabels={showMapLabels}
-						bind:newColorExpression
-						bind:isActive={isTimeSliderActive}
-					/>
+					{#if isInitialized === true}
+						<TimeSliderControl
+							bind:this={timeSliderControl}
+							bind:map
+							bind:electricitySelected
+							bind:scaleColorList
+							bind:rasterColorMapName={colormapName}
+							bind:loadAdminLabels={showMapLabels}
+							bind:newColorExpression
+							bind:isActive={isTimeSliderActive}
+						/>
+					{/if}
 
 					<MaplibreStaticImageControl
 						bind:map
