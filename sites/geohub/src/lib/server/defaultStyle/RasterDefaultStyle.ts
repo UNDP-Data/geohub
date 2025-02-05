@@ -249,8 +249,6 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 				for (let i = 0; i < this.metadata.band_metadata.length; i++) {
 					const bandValue = this.metadata.band_metadata[i][0] as string;
 					const bandDetails = statistics[bandValue];
-					console.log(bandValue);
-					console.log(bandDetails);
 					if (bandDetails) {
 						const meta = this.metadata.band_metadata[i][1];
 						// use values from statistics api if info does not contain them
