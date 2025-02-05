@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { page } from '$app/state';
 	import LayerVisibilitySwitcher from '$components/pages/map/plugins/LayerVisibilitySwitcher.svelte';
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
@@ -23,7 +24,6 @@
 		type ProgressBarStore,
 		type SidebarWidthStore
 	} from '$stores';
-	import { GeocodingControl } from '@maptiler/geocoding-control/maplibregl';
 	import '@maptiler/geocoding-control/style.css';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
@@ -392,7 +392,7 @@
 		}
 	};
 
-	const mapInitialise = () => {
+	const mapInitialise = async () => {
 		if (!container) return;
 		mapOptions.container = container;
 		$map = new Map(mapOptions);
@@ -420,16 +420,18 @@
 
 		$map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
 
-		const apiKey = page.data.maptilerKey;
-		if (apiKey) {
-			const gc = new GeocodingControl({
-				apiKey: apiKey,
-				marker: true,
-				showResultsWhileTyping: false,
-				showFullGeometry: false,
-				collapsed: false
-			});
-			$map.addControl(gc, 'top-left');
+		if (browser) {
+			const { GeocodingControl } = await import('@maptiler/geocoding-control/maplibregl');
+			const apiKey = page.data.maptilerKey;
+			if (apiKey) {
+				const gc = new GeocodingControl({
+					apiKey: apiKey,
+					marker: true,
+					showResultsWhileTyping: false,
+					collapsed: false
+				});
+				$map.addControl(gc, 'top-left');
+			}
 		}
 
 		const adminOptions = AdminControlOptions;

@@ -145,7 +145,7 @@
 	}, 300);
 
 	const handleGeocodingSelected = (e) => {
-		const feature = e.detail;
+		const feature = e.detail.feature;
 		if (feature) {
 			locationMap?.flyTo({ center: feature.center, zoom: 12 });
 		}
