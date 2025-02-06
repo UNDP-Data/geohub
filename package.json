@@ -22,13 +22,18 @@
     "url": "https://github.com/UNDP-Data/geohub/issues"
   },
   "homepage": "https://github.com/UNDP-Data/geohub#readme",
-  "packageManager": "pnpm@9.15.5",
+  "packageManager": "pnpm@10.1.0",
   "engines": {
-    "pnpm": "^9.0.0"
+    "pnpm": "^10.0.0"
   },
   "type": "module",
   "devDependencies": {
     "@changesets/cli": "^2.27.12",
     "lefthook": "^1.10.10"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "svelte-preprocess"
+    ]
   }
 }

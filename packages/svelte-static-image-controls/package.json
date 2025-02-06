@@ -39,6 +39,7 @@
 		"svelte": "^4.0.0 || ^5.0.0"
 	},
 	"devDependencies": {
+		"@eslint/js": "^9.19.0",
 		"@sveltejs/adapter-auto": "^4.0.0",
 		"@sveltejs/kit": "^2.16.1",
 		"@sveltejs/package": "^2.3.9",
