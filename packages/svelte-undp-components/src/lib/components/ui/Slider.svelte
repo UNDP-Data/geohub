@@ -82,31 +82,40 @@
 		{#if values.length === 1}
 			<div class="is-flex is-justify-content-center inputs">
 				<NumberInput
-					bind:minValue={min}
-					bind:maxValue={max}
-					bind:step
-					bind:value={values[0]}
+					minValue={min}
+					maxValue={max}
+					{step}
+					value={values[0]}
 					size="small"
-					onchange={handleNumberChanged}
+					onchange={(value: number) => {
+						values[0] = value;
+						handleNumberChanged();
+					}}
 				/>
 			</div>
 		{:else if values.length === 2}
 			<div class="is-flex is-justify-content-space-evenly inputs">
 				<NumberInput
-					bind:minValue={min}
-					bind:maxValue={values[1]}
+					minValue={min}
+					maxValue={values[1]}
 					bind:step
-					bind:value={values[0]}
+					value={values[0]}
 					size="small"
-					onchange={handleNumberChanged}
+					onchange={(value: number) => {
+						values[0] = value;
+						handleNumberChanged();
+					}}
 				/>
 				<NumberInput
-					bind:minValue={values[0]}
-					bind:maxValue={max}
-					bind:step
-					bind:value={values[1]}
+					minValue={values[0]}
+					maxValue={max}
+					{step}
+					value={values[1]}
 					size="small"
-					onchange={handleNumberChanged}
+					onchange={(value: number) => {
+						values[1] = value;
+						handleNumberChanged();
+					}}
 				/>
 			</div>
 		{/if}

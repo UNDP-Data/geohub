@@ -56,14 +56,18 @@ export class SvgLegendCreator {
 		options?: SvgLegendCreatorOptions
 	) {
 		let minDecimalPlaces = 0;
-		if (options?.min && typeof options.min === 'string') {
-			options.min = parseFloat(options.min);
+		if (options?.min) {
+			if (typeof options.min === 'string') {
+				options.min = parseFloat(options.min);
+			}
 			minDecimalPlaces = getDecimalPlaces(options.min);
 			if (minDecimalPlaces > 2) minDecimalPlaces = 2;
 		}
 		let maxDecimalPlaces = 0;
-		if (options?.max && typeof options.max === 'string') {
-			options.max = parseFloat(options.max);
+		if (options?.max) {
+			if (typeof options.max === 'string') {
+				options.max = parseFloat(options.max);
+			}
 			maxDecimalPlaces = getDecimalPlaces(options.max);
 			if (maxDecimalPlaces > 2) maxDecimalPlaces = 2;
 		}

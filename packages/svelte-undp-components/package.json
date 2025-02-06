@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/svelte-undp-components",
-	"version": "2.0.2",
+	"version": "2.0.4",
 	"description": "It manages util functions and svelte components used in UNDP GeoHub",
 	"scripts": {
 		"dev": "vite dev",
@@ -90,7 +90,7 @@
 	"types": "./dist/index.d.ts",
 	"type": "module",
 	"dependencies": {
-		"@undp-data/date-picker-svelte": "^2.14.1",
+		"@undp-data/date-picker-svelte": "2.12.1",
 		"@undp-data/svelte-undp-design": "workspace:*",
 		"bignumber.js": "^9.1.2",
 		"chroma-js": "^3.1.2",

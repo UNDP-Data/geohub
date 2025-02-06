@@ -48,6 +48,7 @@
 	const getDefaultSliderValues = () => {
 		return [minValue === 2012 ? maxValue : minValue];
 	};
+
 	let rangeSliderValues = $state(getDefaultSliderValues());
 
 	const getHreaUrl = (y: number) => {
@@ -107,7 +108,12 @@
 			apiUrlParams.set('resampling', 'nearest');
 			apiUrlParams.set('return_mask', 'true');
 			if (electricitySelected == 'HREA') {
-				apiUrlParams.set('expression', `where(b1<0.8,0,1);`);
+				// checking if minValue is 2012 then set the expression to 0.8 else 0.6
+				// minValue being 2012 means the user selected Electricity estimate
+				// minValue being 2021 means the user selected Electricity Forecast
+				minValue === 2012
+					? apiUrlParams.set('expression', `where(b1<0.8,0,1);`)
+					: apiUrlParams.set('expression', `where(b1<0.6,0,1);`);
 				apiUrlParams.set('colormap', '{"0":[12, 12, 12,255],"1":[242, 166, 4,255]}');
 			}
 			if (electricitySelected == 'ML') {
