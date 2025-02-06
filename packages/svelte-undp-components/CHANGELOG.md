@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 2.0.4
+
+### Patch Changes
+
+- f70c8af: fix: fixed too much reactivity caused by binding props in Slider and RasterRescale components.
+
 ## 2.0.3
 
 ### Patch Changes
