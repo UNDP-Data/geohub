@@ -1,7 +1,50 @@
-FROM node:22 as build
+# build the entire application
+FROM node:22 AS app_build
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV DEBIAN_FRONTEND=dialog
+
+RUN npm install pnpm -g
+
+# Create app directory
+WORKDIR /app
+
+COPY package.json .
+COPY pnpm*.yaml .
+COPY packages/style-switcher/package.json packages/style-switcher/package.json
+COPY packages/svelte-undp-design/package.json packages/svelte-undp-design/package.json
+COPY packages/undp-bulma/package.json packages/undp-bulma/package.json
+COPY packages/cgaz-admin-tool/package.json packages/cgaz-admin-tool/package.json
+COPY packages/svelte-static-image-controls/package.json packages/svelte-static-image-controls/package.json
+COPY packages/svelte-maplibre-storymap/package.json packages/svelte-maplibre-storymap/package.json
+COPY packages/svelte-undp-components/package.json packages/svelte-undp-components/package.json
+COPY sites/geohub/package.json sites/geohub/package.json
+
+RUN pnpm install --frozen-lockfile
+
+COPY . .
+
+RUN pnpm build
+RUN cp ./sites/geohub/package.json ./sites/geohub/build/package.json
+
+# Build only geohub dependencies in node_modules
+FROM node:22 AS prod_build
+
+ENV NODE_ENV=production
+RUN npm install pnpm -g
+
+WORKDIR /app
+
+COPY package.json .
+COPY pnpm*.yaml .
+COPY packages packages
+COPY sites/geohub/package.json sites/geohub/package.json
+# delete pnpm-lock and add a setting to .npmrc, so pnpm deploy can work.
+RUN rm pnpm-lock.yaml
+RUN echo "inject-workspace-packages=true" > .npmrc
+RUN pnpm --filter=./sites/geohub --prod deploy /app/production_build
+
+# production image
+FROM gcr.io/distroless/nodejs22-debian12
 
 ARG PGTILESERV_API_ENDPOINT
 ARG TITILER_ENDPOINT
@@ -28,41 +71,10 @@ ARG SVELTE_UNDP_DESIGN_ENDPOINT
 ARG SVELTE_UNDP_COMPONENTS_ENDPOINT
 ARG MAPTILER_API_KEY
 
-RUN npm install pnpm -g
-
-# Create app directory
-WORKDIR /app
-
-COPY package.json .
-COPY pnpm-lock.yaml .
-COPY pnpm-workspace.yaml .
-COPY packages/style-switcher/package.json packages/style-switcher/package.json
-COPY packages/svelte-undp-design/package.json packages/svelte-undp-design/package.json
-COPY packages/undp-bulma/package.json packages/undp-bulma/package.json
-COPY packages/cgaz-admin-tool/package.json packages/cgaz-admin-tool/package.json
-COPY packages/svelte-static-image-controls/package.json packages/svelte-static-image-controls/package.json
-COPY packages/svelte-maplibre-storymap/package.json packages/svelte-maplibre-storymap/package.json
-COPY packages/svelte-undp-components/package.json packages/svelte-undp-components/package.json
-COPY sites/geohub/package.json sites/geohub/package.json
-
-RUN pnpm install --frozen-lockfile
-
-COPY . .
-
-RUN pnpm build
-
-# RUN rm -rf ./sites/geohub/node_modules
-RUN pnpm --filter="./sites/geohub" --prod deploy ./sites/geohub/production_build && \
-mv ./sites/geohub/production_build/node_modules ./sites/geohub/build/node_modules && \
-rm -rf ./sites/geohub/production_build && \
-cp ./sites/geohub/package.json ./sites/geohub/build/package.json
-
-# production image
-FROM gcr.io/distroless/nodejs20-debian12
-
 WORKDIR /geohub
 # copy build folder from build image
-COPY --from=build /app/sites/geohub/build /geohub
+COPY --from=app_build /app/sites/geohub/build/. /geohub/.
+COPY --from=prod_build /app/production_build/node_modules /geohub/node_modules
 
 EXPOSE 3000
 
