@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.35
+
+### Patch Changes
+
+- 0671874: refactor: merge electricity and ceei dashboards codes to (app) main folder
+
 ## 1.22.34
 
 ### Patch Changes
