@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { page } from '$app/state';
+	import Header from '$components/header/Header.svelte';
 	import { MapStyles } from '$lib/config/AppConfig';
-	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
+	import { createHeaderHeightStore, HEADER_HEIGHT_CONTEXT_KEY } from '$stores';
 	import '@maptiler/geocoding-control/style.css';
 	import { bbox } from '@turf/bbox';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
@@ -27,7 +28,7 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import pako from 'pako';
 	import * as pmtiles from 'pmtiles';
-	import { getContext, onMount, setContext } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 	import * as topojson from 'topojson-client';
 	import { read, utils } from 'xlsx';
 	import type { PageData } from './$types';
@@ -53,7 +54,9 @@
 	let countriesList: { label: string; value: string }[] = $state();
 	let selectedCountryFilter: string | null = $state(null);
 
-	const headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
+	const headerHeightStore = createHeaderHeightStore();
+	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
+
 	const mapStore = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, mapStore);
 
@@ -260,6 +263,16 @@
 		mapStore.update(() => map);
 	});
 </script>
+
+<svelte:head>
+	<style type="text/css">
+		html {
+			overflow-y: hidden !important;
+		}
+	</style>
+</svelte:head>
+
+<Header isPositionFixed={true} />
 
 <Sidebar
 	show={true}
