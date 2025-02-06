@@ -19,9 +19,10 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { page } from '$app/state';
+	import Header from '$components/header/Header.svelte';
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
 	import { downloadFile } from '$lib/helper';
-	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
+	import { createHeaderHeightStore, HEADER_HEIGHT_CONTEXT_KEY } from '$stores';
 	import '@maptiler/geocoding-control/style.css';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
@@ -35,6 +36,7 @@
 	import { CtaLink } from '@undp-data/svelte-undp-design';
 	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import {
+		addProtocol,
 		AttributionControl,
 		GeolocateControl,
 		Map,
@@ -42,7 +44,8 @@
 		ScaleControl
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
-	import { getContext, onMount, setContext } from 'svelte';
+	import { Protocol } from 'pmtiles';
+	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
 	import AnalyzeBivariate from './components/AnalyzeBivariate.svelte';
 	import Charts from './components/Charts.svelte';
@@ -66,7 +69,8 @@
 
 	const tippyTooltip = initTooltipTippy();
 
-	const headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
+	const headerHeightStore = createHeaderHeightStore();
+	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
 
 	const electricityDataType = createElectricityDataTypeStore();
 	setContext(ELECTRICITY_DATATYPE_CONTEXT_KEY, electricityDataType);
@@ -107,6 +111,9 @@
 	let isInitialized = $state(false);
 
 	onMount(async () => {
+		let protocol = new Protocol();
+		addProtocol('pmtiles', protocol.tile);
+
 		const promises = loadDatasets();
 		promises.hrea.then((datasets) => {
 			hrea.update(() => datasets);
@@ -313,6 +320,16 @@
 		return activeDashboard?.name !== 'analyse';
 	};
 </script>
+
+<svelte:head>
+	<style type="text/css">
+		html {
+			overflow-y: hidden !important;
+		}
+	</style>
+</svelte:head>
+
+<Header isPositionFixed={true} />
 
 <Sidebar
 	show={true}
