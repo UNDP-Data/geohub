@@ -41,11 +41,10 @@ jobs:
           cache: pnpm
 
       - name: install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --shamefully-hoist
 
       - name: build packages
-        run: |
-          pnpm build
+        run: pnpm build
 
       - name: Create Release Pull Request or Publish to npm
         uses: changesets/action@v1
