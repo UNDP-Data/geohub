@@ -97,7 +97,7 @@ const addLayer = (map: Map, layer: Layer) => {
 	const layers = get(layersStore);
 
 	layersStore.set([...layers, layer]);
-
+	console.log(get(layersStore));
 	map.addSource(layer.sourceId, layer.source);
 
 	map.once('sourcedata', (e) => {
@@ -426,7 +426,7 @@ export const uploadData = async (map: Map, index: number) => {
 				map.once('sourcedata', (e) => {
 					const waiting = () => {
 						if (e.sourceId === layers[index].sourceId && e.isSourceLoaded) {
-							layers[index].data = results.data;
+							layers[index].data = results.data as object[];
 							layersStore.set(layers);
 							applyDataSimulation(map, index, layers[index].sliders, layers[index].muliplierMap);
 							toast.push(`Map data for layer ${layers[index].name} has been updated`);

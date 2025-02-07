@@ -50,6 +50,12 @@
 	let colorGroups = $state(getColorGroups());
 
 	const openSimulateModal = () => {
+		if (layerDetails.sliders) {
+			sliders = [...layerDetails.sliders];
+		} else {
+			sliders = [...defaultSliders];
+		}
+
 		showSimulateModal = true;
 	};
 
@@ -78,7 +84,12 @@
 
 	const tippyTooltip = initTooltipTippy();
 
-	let sliders = $state([
+	const defaultSliders: {
+		id: number;
+		percentage: number;
+		label: string;
+		locked: boolean;
+	}[] = [
 		{ id: 1, percentage: 7.1429, label: 'Solar Power Potential', locked: false },
 		{ id: 2, percentage: 7.1429, label: 'Wind Speed', locked: false },
 		{ id: 3, percentage: 7.1429, label: 'Geothermal Power Potential', locked: false },
@@ -108,7 +119,9 @@
 			label: 'Fossil Fuel Share on Energy Capacity and Generation',
 			locked: false
 		}
-	]);
+	];
+
+	let sliders = $state(defaultSliders);
 
 	let pillarSliders = $state([
 		{ id: 1, percentage: 28.57, label: 'Potential', locked: false },
@@ -307,7 +320,7 @@
 			multiplierMap[slider.label] = multiplier;
 		});
 
-		applyDataSimulation($mapStore, index, sliders, multiplierMap);
+		applyDataSimulation($mapStore, index, $state.snapshot(sliders), multiplierMap);
 	};
 
 	const handleClicked = (callback: (index?: number) => unknown, index?: number) => () => {
