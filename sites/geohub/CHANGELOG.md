@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.36
+
+### Patch Changes
+
+- 28b87b3: chore: updated dependencies
+
 ## 1.22.35
 
 ### Patch Changes

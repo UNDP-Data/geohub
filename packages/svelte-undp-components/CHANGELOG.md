@@ -1,5 +1,13 @@
 # @undp-data/svelte-undp-components
 
+## 2.0.5
+
+### Patch Changes
+
+- 28b87b3: chore: updated dependencies
+- Updated dependencies [28b87b3]
+  - @undp-data/svelte-undp-design@3.0.2
+
 ## 2.0.4
 
 ### Patch Changes

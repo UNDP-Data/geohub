@@ -1,5 +1,11 @@
 # @undp-data/undp-bulma
 
+## 2.0.2
+
+### Patch Changes
+
+- 28b87b3: chore: updated dependencies
+
 ## 2.0.1
 
 ### Patch Changes

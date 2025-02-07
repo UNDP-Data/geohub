@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 2.0.11
+
+### Patch Changes
+
+- 28b87b3: chore: updated dependencies
+
 ## 2.0.9
 
 ### Patch Changes
