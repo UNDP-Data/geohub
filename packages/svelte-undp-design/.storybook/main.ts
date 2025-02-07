@@ -13,7 +13,7 @@ const config: StorybookConfig = {
 		options: {}
 	},
 	docs: {
-		autodocs: 'tag'
+		autodocs: true
 	},
 	staticDirs: ['../static'],
 	refs: {
@@ -25,6 +25,9 @@ const config: StorybookConfig = {
 			title: 'UNDP Design System',
 			url: 'https://design.undp.org/'
 		}
+	},
+	core: {
+		disableTelemetry: true
 	}
 };
 export default config;
