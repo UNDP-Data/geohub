@@ -1,5 +1,11 @@
 # @undp-data/cgaz-admin-tool
 
+## 0.0.12
+
+### Patch Changes
+
+- 28b87b3: chore: updated dependencies
+
 ## 0.0.11
 
 ### Patch Changes

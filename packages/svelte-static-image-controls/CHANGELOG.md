@@ -1,5 +1,15 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 3.0.8
+
+### Patch Changes
+
+- 28b87b3: chore: updated dependencies
+- Updated dependencies [28b87b3]
+  - @undp-data/svelte-undp-components@2.0.5
+  - @undp-data/svelte-undp-design@3.0.2
+  - @undp-data/undp-bulma@2.0.2
+
 ## 3.0.7
 
 ### Patch Changes
