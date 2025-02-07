@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.37
+
+### Patch Changes
+
+- c431709: fix: fixed bug of error of duplicate layer in CEEI dashboard.
+
 ## 1.22.36
 
 ### Patch Changes

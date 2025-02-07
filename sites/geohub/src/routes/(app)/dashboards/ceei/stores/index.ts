@@ -17,7 +17,12 @@ export interface Layer {
 	layer: AddLayerObject;
 	bounds: LngLatBoundsLike;
 	data: object[];
-	sliders?;
+	sliders?: {
+		id: number;
+		percentage: number;
+		label: string;
+		locked: boolean;
+	}[];
 	muliplierMap?: Map;
 	isVisible: boolean;
 	isMapLoaded: boolean;
