@@ -3,8 +3,8 @@ import { type RequestEvent } from '@sveltejs/kit';
 import type { StyleSpecification } from 'maplibre-gl';
 import { validateStyle } from '$lib/server/validateStyle';
 import type { extensionFormat } from '$lib/server/renderMap';
-import { Output as _Output, Query as _Query } from '$api/shared';
-import { Param as _Param } from './shared';
+import { Output as _Output, GetQuery as _Query } from '$api/shared';
+import { CommonParam as _Param } from '$api/shared';
 import { renderMapAuto } from '$lib/server/renderMapAuto';
 
 export const Output = _Output;
@@ -13,7 +13,7 @@ export const Param = _Param;
 
 export const Modifier: RouteModifier = (c) => {
 	c.summary = 'Static image with default location';
-	c.description = `et static image by default location in style.json automatically`;
+	c.description = `get static image by default location in style.json automatically`;
 	c.tags = ['auto'];
 	c.responses = {
 		200: {

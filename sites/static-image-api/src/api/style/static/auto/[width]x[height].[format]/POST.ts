@@ -3,12 +3,12 @@ import { type RequestEvent } from '@sveltejs/kit';
 import type { StyleSpecification } from 'maplibre-gl';
 import { validateStyle } from '$lib/server/validateStyle';
 import type { extensionFormat } from '$lib/server/renderMap';
-import { Output as _Output, Input as _Input, QueryRatioOnly } from '$api/shared';
-import { Param as _Param } from './shared';
+import { Output as _Output, Input as _Input, PostQuery as _Query } from '$api/shared';
+import { CommonParam as _Param } from '$api/shared';
 import { renderMapAuto } from '$lib/server/renderMapAuto';
 
 export const Output = _Output;
-export const Query = QueryRatioOnly;
+export const Query = _Query;
 export const Input = _Input;
 export const Param = _Param;
 

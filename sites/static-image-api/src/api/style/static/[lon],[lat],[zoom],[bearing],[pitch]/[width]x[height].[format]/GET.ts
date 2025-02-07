@@ -3,7 +3,7 @@ import { type RequestEvent } from '@sveltejs/kit';
 import type { StyleSpecification } from 'maplibre-gl';
 import { validateStyle } from '$lib/server/validateStyle';
 import type { extensionFormat } from '$lib/server/renderMap';
-import { Output as _Output, Query as _Query } from '$api/shared';
+import { Output as _Output, GetQuery as _Query } from '$api/shared';
 import { Param as _Param } from './shared';
 import { renderMapByCenterZoom } from '$lib/server/renderMapByCenterZoom';
 

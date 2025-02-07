@@ -7,10 +7,7 @@ export const Output = z
 	})
 	.describe('Static image binary data');
 
-export const Query = z.object({
-	url: z.string().describe('URL of style.json').openapi({
-		example: 'https:/dev.undpgeohub.org/api/mapstyle/style.json'
-	}),
+export const PostQuery = z.object({
 	ratio: z
 		.string()
 		// .enum(['1', '2', '3', '4'])
@@ -21,15 +18,21 @@ export const Query = z.object({
 		.describe('ratio. either 1 or 2 or 3 or 4. Default is 1')
 });
 
-export const QueryRatioOnly = z.object({
-	ratio: z
-		.string()
-		// .enum(['1', '2', '3', '4'])
-		.min(1)
-		.max(4)
-		.default('1')
-		.optional()
-		.describe('ratio. either 1 or 2 or 3 or 4. Default is 1')
+export const GetQuery = z
+	.object({
+		url: z.string().describe('URL of style.json').openapi({
+			example: 'https:/dev.undpgeohub.org/api/mapstyle/style.json'
+		})
+	})
+	.merge(PostQuery);
+
+export const CommonParam = z.object({
+	width: z.string().describe('image width (pixel)').openapi({ example: '300' }),
+	height: z.string().describe('image height (pixel)').openapi({ example: '200' }),
+	format: z
+		.enum(['jpeg', 'png', 'webp'])
+		.describe('Supported format (jpeg, png, webp)')
+		.openapi({ example: 'png' })
 });
 
 export const Input = z

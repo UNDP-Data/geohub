@@ -3,11 +3,11 @@ import { type RequestEvent } from '@sveltejs/kit';
 import { renderMapByBBOX } from '$lib/server/renderMapByBBOX';
 import { validateStyle } from '$lib/server/validateStyle';
 import type { extensionFormat } from '$lib/server/renderMap';
-import { Output as _Output, Input as _Input, QueryRatioOnly } from '$api/shared';
+import { Output as _Output, Input as _Input, PostQuery as _Query } from '$api/shared';
 import { Param as _Param } from './shared';
 
 export const Output = _Output;
-export const Query = QueryRatioOnly;
+export const Query = _Query;
 export const Input = _Input;
 export const Param = _Param;
 

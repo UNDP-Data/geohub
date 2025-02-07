@@ -32,7 +32,7 @@
 		},
 		{
 			id: 'header-link-geohub',
-			title: 'API',
+			title: 'DOCS',
 			href: '/api'
 		}
 	]);
@@ -46,7 +46,7 @@
 				url: '/'
 			},
 			{
-				title: 'API',
+				title: 'Documentation',
 				url: '/api'
 			}
 		],
@@ -105,7 +105,7 @@
 </svelte:head>
 
 <Header
-	region="SPATIAL DATA AND ANALYTICS"
+	region="DATA FUTURES EXCHANGE"
 	siteTitle="Static Image API"
 	url="/"
 	logoUrl="/assets/undp-images/undp-logo-blue.svg"

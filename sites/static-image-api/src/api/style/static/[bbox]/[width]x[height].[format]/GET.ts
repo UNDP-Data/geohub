@@ -4,7 +4,7 @@ import type { StyleSpecification } from 'maplibre-gl';
 import { renderMapByBBOX } from '$lib/server/renderMapByBBOX';
 import { validateStyle } from '$lib/server/validateStyle';
 import type { extensionFormat } from '$lib/server/renderMap';
-import { Output as _Output, Query as _Query } from '$api/shared';
+import { Output as _Output, GetQuery as _Query } from '$api/shared';
 import { Param as _Param } from './shared';
 
 export const Output = _Output;

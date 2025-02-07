@@ -5,6 +5,6 @@ export const Param = z.object({
 	height: z.string().describe('image height (pixel)').openapi({ example: '200' }),
 	format: z
 		.enum(['jpeg', 'png', 'webp'])
-		.describe('Supported format (jpeg, png, webp')
+		.describe('Supported format (jpeg, png, webp)')
 		.openapi({ example: 'png' })
 });
