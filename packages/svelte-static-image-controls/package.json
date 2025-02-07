@@ -41,28 +41,28 @@
 	"devDependencies": {
 		"@eslint/js": "^9.19.0",
 		"@sveltejs/adapter-auto": "^4.0.0",
-		"@sveltejs/kit": "^2.16.1",
-		"@sveltejs/package": "^2.3.9",
+		"@sveltejs/kit": "^2.17.1",
+		"@sveltejs/package": "^2.3.10",
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
 		"@testing-library/svelte": "^5.2.6",
-		"@typescript-eslint/eslint-plugin": "^8.21.0",
-		"@typescript-eslint/parser": "^8.21.0",
-		"eslint": "^9.18.0",
+		"@typescript-eslint/eslint-plugin": "^8.23.0",
+		"@typescript-eslint/parser": "^8.23.0",
+		"eslint": "^9.19.0",
 		"eslint-config-prettier": "^10.0.1",
 		"eslint-plugin-svelte": "^2.46.1",
 		"globals": "^15.14.0",
 		"pmtiles": "^4.2.1",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
-		"publint": "^0.3.2",
-		"svelte": "^5.19.2",
+		"publint": "^0.3.4",
+		"svelte": "^5.19.9",
 		"svelte-check": "^4.1.4",
 		"svelte-preprocess": "^6.0.3",
 		"tslib": "^2.8.1",
 		"typescript": "^5.7.3",
-		"typescript-eslint": "^8.21.0",
-		"vite": "^6.0.11",
-		"vitest": "^3.0.3"
+		"typescript-eslint": "^8.23.0",
+		"vite": "^6.1.0",
+		"vitest": "^3.0.5"
 	},
 	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",
@@ -74,6 +74,6 @@
 		"@undp-data/svelte-undp-design": "workspace:^",
 		"@undp-data/undp-bulma": "workspace:^",
 		"debounce": "^2.2.0",
-		"maplibre-gl": "^5.0.1"
+		"maplibre-gl": "^5.1.0"
 	}
 }
