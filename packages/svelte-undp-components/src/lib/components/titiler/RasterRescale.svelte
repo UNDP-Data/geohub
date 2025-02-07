@@ -18,9 +18,9 @@
 	}
 
 	let {
-		layerId = $bindable(),
-		metadata = $bindable(),
-		unit = $bindable(''),
+		layerId,
+		metadata,
+		unit = '',
 		rescale = $bindable(),
 		onchange = () => {}
 	}: Props = $props();
@@ -77,7 +77,7 @@
 
 {#if rescale && rescale.length > 0}
 	<Slider
-		bind:values={rescale}
+		values={rescale}
 		min={layerMin}
 		max={layerMax}
 		{step}

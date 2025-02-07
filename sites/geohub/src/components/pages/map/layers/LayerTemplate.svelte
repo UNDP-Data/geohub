@@ -410,13 +410,15 @@
 			delete mapStyle.sources[name];
 		}
 
+		const _layer: Layer = $state.snapshot(layer) as Layer;
+
 		const style: DashboardMapStyle = {
 			id: layer.id,
 			name: layer.name,
 			createdat: new Date().toString(),
 			updatedat: new Date().toString(),
 			style: mapStyle,
-			layers: [layer],
+			layers: [_layer],
 			access_level: AccessLevel.PRIVATE,
 			created_user: 'api',
 			updated_user: 'api',

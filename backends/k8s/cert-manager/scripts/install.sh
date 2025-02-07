@@ -2,7 +2,7 @@
 
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.9.1/cert-manager.yaml
 . scripts/.env
-envsubst < yaml/cloudflare-apitoken-secret.yaml | kubectl apply -f -
+envsubst < yaml/cloudflare-apikey-secret.yaml | kubectl apply -f -
 envsubst < yaml/zerossl-hmac-secret.yaml | kubectl apply -f -
 unset CLOUDFLARE_API_TOKEN
 unset ZEROSSL_HMAC_KEY

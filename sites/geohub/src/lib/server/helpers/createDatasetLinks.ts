@@ -84,7 +84,7 @@ export const createDatasetLinks = async (
 					type: 'application/json',
 					href: `${titilerUrl}/statistics?url=${b64EncodedUrl}&expression=${encodeURIComponent(
 						expression
-					)}&asset_as_band=true&unscale=false&resampling=nearest&reproject=nearest&max_size=1024&categorical=false&histogram_bins=8`
+					)}&asset_as_band=true&unscale=true&resampling=nearest&reproject=nearest&max_size=1024&categorical=false&histogram_bins=8`
 				});
 				feature.properties.links.push({
 					rel: 'bounds',
