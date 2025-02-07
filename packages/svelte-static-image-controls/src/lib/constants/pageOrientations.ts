@@ -1,3 +1,3 @@
-import type { PageOrientation } from '$lib/index.js';
+import type { PageOrientation } from '$lib/interface/PageOrientation';
 
 export const PageOrientations: PageOrientation[] = ['portrait', 'landscape'];

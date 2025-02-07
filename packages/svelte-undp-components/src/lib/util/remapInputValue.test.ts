@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { remapInputValue } from './remapInputValue.js';
+import { remapInputValue } from './remapInputValue';
 
 describe('remapInputValue', () => {
 	it('should remap with default scale (0 / 255)', () => {

@@ -1,9 +1,10 @@
-<script lang="ts" context="module">
-	import type { Meta } from '@storybook/svelte';
+<script lang="ts" module>
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import type { FillExtrusionLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
 	import Map from '../Map.svelte';
 	import FillExtrusionHeight from './FillExtrusionHeight.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/Maplibre/FillExtrusion/FillExtrusionHeight',
 		component: FillExtrusionHeight,
 		tags: ['autodocs'],
@@ -13,7 +14,7 @@
 				description: 'Layer ID to edit'
 			}
 		}
-	};
+	});
 
 	const title = 'Fill Extrusion Height Control';
 
@@ -290,15 +291,10 @@
 	};
 </script>
 
-<script lang="ts">
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-	import type { FillExtrusionLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
-</script>
-
-<Template let:args>
+{#snippet template(args)}
 	<Map {title} {source} {layer} zoom={3.68} center={[18.05, -7.41]} pitch={70} bearing={0}>
 		<FillExtrusionHeight {...args}></FillExtrusionHeight>
 	</Map>
-</Template>
+{/snippet}
 
-<Story name="Primary" args={{ layerId: layer.id, metadata: metadata }} />
+<Story name="Primary" args={{ layerId: layer.id, metadata: metadata }} children={template} />

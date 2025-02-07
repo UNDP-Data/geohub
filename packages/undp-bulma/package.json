@@ -1,9 +1,19 @@
 {
   "name": "@undp-data/undp-bulma",
-  "version": "1.1.2",
+  "version": "2.0.2",
   "description": "This package is to manage customised Bulma css for UNDP GeoHub",
   "type": "module",
   "main": "bulma.scss",
+  "exports": {
+    ".": {
+      "import": "./dist/undp-bulma.css",
+      "require": "./dist/undp-bulma.css"
+    },
+    "./dist/undp-bulma.css": {
+      "import": "./dist/undp-bulma.css",
+      "require": "./dist/undp-bulma.css"
+    }
+  },
   "files": [
     "dist",
     "!dist/**/*.js",
@@ -14,7 +24,9 @@
   "private": false,
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && copyfiles -u 2 'assets/sdgs/*' dist/assets/sdgs",
+    "build": "npm run package:scss && npm run package:copyassets",
+    "package:scss": "sass --load-path=node_modules bulma.scss dist/undp-bulma.css",
+    "package:copyassets": "copyfiles -u 2 'assets/sdgs/*' dist/assets/sdgs && copyfiles -u 2 'assets/fonts/*' dist/assets/fonts",
     "preview": "vite preview"
   },
   "repository": {
@@ -29,11 +41,11 @@
   "homepage": "https://github.com/UNDP-Data/geohub#readme",
   "devDependencies": {
     "copyfiles": "^2.4.1",
-    "typescript": "^5.6.2",
-    "vite": "^5.4.8"
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0"
   },
   "dependencies": {
-    "bulma": "^1.0.2",
-    "sass": "^1.79.4"
+    "bulma": "^1.0.3",
+    "sass": "^1.84.0"
   }
 }

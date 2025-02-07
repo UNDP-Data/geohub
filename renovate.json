@@ -6,38 +6,18 @@
     ":preserveSemverRanges",
     ":semanticCommitTypeAll(chore)"
   ],
-  "lockFileMaintenance": {
-    "enabled": true,
-    "automerge": true
-  },
   "packageRules": [
     {
-      "matchPackageNames": [
-        "@types/node",
-        "vite"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "pin",
-        "digest"
-      ]
+      "matchPackageNames": ["@types/node", "vite"],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"]
     },
     {
-      "matchDepTypes": [
-        "devDependencies"
-      ],
+      "matchDepTypes": ["devDependencies"],
       "automerge": true,
-      "matchPackageNames": [
-        "/lint/",
-        "/prettier/"
-      ]
+      "matchPackageNames": ["/lint/", "/prettier/"]
     },
     {
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
+      "matchUpdateTypes": ["minor", "patch"],
       "matchCurrentVersion": "!/^0/",
       "automerge": true
     }

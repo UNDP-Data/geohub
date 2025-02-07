@@ -11,25 +11,25 @@
 	let styles: StyleDefinition[] = [
 		{
 			title: 'Carto',
-			uri: 'https://unpkg.com/@undp-data/style@latest/dist/style.json',
+			uri: 'https://dev.undpgeohub.org/api/mapstyle/style.json',
 			image:
 				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://dev.undpgeohub.org/api/mapstyle/style.json&ratio=2'
 		},
 		{
 			title: 'Positron',
-			uri: 'https://unpkg.com/@undp-data/style@latest/dist/positron.json',
+			uri: 'https://dev.undpgeohub.org/api/mapstyle/positron.json',
 			image:
 				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://dev.undpgeohub.org/api/mapstyle/positron.json&ratio=2'
 		},
 		{
 			title: 'Dark',
-			uri: 'https://unpkg.com/@undp-data/style@latest/dist/dark.json',
+			uri: 'https://dev.undpgeohub.org/api/mapstyle/dark.json',
 			image:
 				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://dev.undpgeohub.org/api/mapstyle/dark.json&ratio=2'
 		},
 		{
 			title: 'Bing Aerial',
-			uri: 'https://unpkg.com/@undp-data/style@latest/dist/aerialstyle.json',
+			uri: 'https://dev.undpgeohub.org/api/mapstyle/aerialstyle.json',
 			image:
 				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://dev.undpgeohub.org/api/mapstyle/aerialstyle.json&ratio=2'
 		},
@@ -41,7 +41,7 @@
 		},
 		{
 			title: 'Blank',
-			uri: 'https://unpkg.com/@undp-data/style@latest/dist/blank.json',
+			uri: 'https://dev.undpgeohub.org/api/mapstyle/blank.json',
 			image:
 				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://dev.undpgeohub.org/api/mapstyle/blank.json&ratio=2'
 		}

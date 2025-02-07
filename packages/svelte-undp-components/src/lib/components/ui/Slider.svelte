@@ -1,45 +1,59 @@
 <script lang="ts">
 	import { debounce } from 'lodash-es';
-	import { createEventDispatcher } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 	import NumberInput from './NumberInput.svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		min: number;
+		max: number;
+		step?: number;
+		values: number[];
+		rest?: boolean | 'pip' | 'label';
+		disabled?: boolean;
+		floatLabel?: boolean;
+		pips?: boolean;
+		pipstep?: number;
+		all?: boolean | 'pip' | 'label';
+		first?: 'pip' | 'label' | false;
+		last?: 'pip' | 'label' | false;
+		prefix?: string;
+		suffix?: string;
+		range?: boolean | 'min' | 'max';
+		showEditor?: boolean;
+		formatter?: (value: number, index: number, percent: number) => number | string;
+		onchange?: (values: number[]) => void;
+	}
 
-	export let min: number;
-	export let max: number;
-	export let step = 1;
-	export let values: number[];
-	export let rest: boolean | 'pip' | 'label' = true;
-	export let disabled = false;
-	export let floatLabel = true;
-	export let pips = true;
-	export let pipstep = 1;
-	export let all: boolean | 'pip' | 'label' = false;
-	export let first: 'pip' | 'label' | false = 'label';
-	export let last: 'pip' | 'label' | false = 'label';
-	export let prefix = '';
-	export let suffix = '';
-	export let range: boolean | 'min' | 'max' = values.length > 1 ? true : false;
-	export let showEditor = false;
-
-	export let formatter: (value: number, index: number, percent: number) => number | string = (
-		value
-	) => {
-		return value;
-	};
+	let {
+		min = $bindable(),
+		max = $bindable(),
+		step = $bindable(1),
+		values = $bindable(),
+		rest = true,
+		disabled = $bindable(false),
+		floatLabel = true,
+		pips = true,
+		pipstep = $bindable(1),
+		all = false,
+		first = 'label',
+		last = 'label',
+		prefix = '',
+		suffix = '',
+		range = values.length > 1 ? true : false,
+		showEditor = false,
+		formatter = (value: number) => {
+			return value;
+		},
+		onchange = () => {}
+	}: Props = $props();
 
 	const setSliderValue = debounce((e: { detail: { values: number[] } }) => {
 		values = e.detail.values;
-		dispatch('change', {
-			values: values
-		});
+		if (onchange) onchange(values);
 	}, 300);
 
 	const handleNumberChanged = debounce(() => {
-		dispatch('change', {
-			values: values
-		});
+		if (onchange) onchange(values);
 	}, 300);
 </script>
 
@@ -64,35 +78,44 @@
 		{formatter}
 	/>
 
-	{#if showEditor}
+	{#if values && showEditor}
 		{#if values.length === 1}
 			<div class="is-flex is-justify-content-center inputs">
 				<NumberInput
-					bind:minValue={min}
-					bind:maxValue={max}
-					bind:step
-					bind:value={values[0]}
+					minValue={min}
+					maxValue={max}
+					{step}
+					value={values[0]}
 					size="small"
-					on:change={handleNumberChanged}
+					onchange={(value: number) => {
+						values[0] = value;
+						handleNumberChanged();
+					}}
 				/>
 			</div>
 		{:else if values.length === 2}
 			<div class="is-flex is-justify-content-space-evenly inputs">
 				<NumberInput
-					bind:minValue={min}
-					bind:maxValue={values[1]}
+					minValue={min}
+					maxValue={values[1]}
 					bind:step
-					bind:value={values[0]}
+					value={values[0]}
 					size="small"
-					on:change={handleNumberChanged}
+					onchange={(value: number) => {
+						values[0] = value;
+						handleNumberChanged();
+					}}
 				/>
 				<NumberInput
-					bind:minValue={values[0]}
-					bind:maxValue={max}
-					bind:step
-					bind:value={values[1]}
+					minValue={values[0]}
+					maxValue={max}
+					{step}
+					value={values[1]}
 					size="small"
-					on:change={handleNumberChanged}
+					onchange={(value: number) => {
+						values[1] = value;
+						handleNumberChanged();
+					}}
 				/>
 			</div>
 		{/if}

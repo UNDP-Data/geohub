@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	import type { Map, SymbolLayerSpecification } from 'maplibre-gl';
 	export const getDecimalPosition = (map: Map, layerId: string) => {
 		let decimalPosition = 1;
@@ -59,20 +59,22 @@
 
 <script lang="ts">
 	import NumberInput from '$lib/components/ui/NumberInput.svelte';
-	import type { VectorLayerTileStatAttribute } from '$lib/interfaces/VectorLayerTileStatAttribute.js';
-	import type { VectorLayerTileStatLayer } from '$lib/interfaces/VectorLayerTileStatLayer.js';
-	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
-	import { getPropertyValueFromExpression } from '$lib/util/getPropertyValueFromExpression.js';
-	import { isInt } from '$lib/util/isInt.js';
-	import { createEventDispatcher, getContext } from 'svelte';
-
-	const dispatch = createEventDispatcher();
+	import type { VectorLayerTileStatAttribute } from '$lib/interfaces/VectorLayerTileStatAttribute';
+	import type { VectorLayerTileStatLayer } from '$lib/interfaces/VectorLayerTileStatLayer';
+	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
+	import { getPropertyValueFromExpression } from '$lib/util/getPropertyValueFromExpression';
+	import { isInt } from '$lib/util/isInt';
+	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
-	export let metadata: VectorTileMetadata;
+	interface Props {
+		layerId: string;
+		metadata: VectorTileMetadata;
+	}
+
+	let { layerId = $bindable(), metadata = $bindable() }: Props = $props();
 
 	const propertyName = 'text-field';
 
@@ -83,7 +85,7 @@
 	};
 
 	let style = getLayerStyle();
-	let decimalPosition = getDecimalPosition($map, layerId);
+	let decimalPosition = $state(getDecimalPosition($map, layerId));
 
 	const setDecimalPosition = () => {
 		const layer = $map.getLayer(layerId);
@@ -120,9 +122,6 @@
 
 	const handleChanged = () => {
 		setDecimalPosition();
-		dispatch('change', {
-			decimalPosition
-		});
 	};
 </script>
 
@@ -131,5 +130,5 @@
 	minValue={1}
 	maxValue={10}
 	step={1}
-	on:change={handleChanged}
+	onchange={handleChanged}
 />

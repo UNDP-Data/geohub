@@ -1,13 +1,24 @@
 <script lang="ts">
-	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { handleEnterKey } from '$lib/util/handleEnterKey';
+	import { onMount } from 'svelte';
 	import IconImagePickerCard from './IconImagePickerCard.svelte';
 	import type { IconImageType } from './IconImageSelector.svelte';
 	import type { Tab } from './Tabs.svelte';
 	import Tabs from './Tabs.svelte';
 
-	export let images: IconImageType[] = [];
-	export let selected: string;
+	interface Props {
+		images?: IconImageType[];
+		selected: string;
+		onselect?: (selected: string) => void;
+		onclose?: () => void;
+	}
+
+	let {
+		images = $bindable([]),
+		selected = $bindable(),
+		onselect = () => {},
+		onclose = () => {}
+	}: Props = $props();
 
 	const iconGroupRanges = [
 		{
@@ -24,12 +35,14 @@
 		}
 	];
 
-	let tabs: Tab[] = iconGroupRanges.map((type) => {
-		return { label: type.id, id: type.id } as Tab;
-	});
+	let tabs: Tab[] = $state(
+		iconGroupRanges.map((type) => {
+			return { label: type.id, id: type.id } as Tab;
+		})
+	);
 
-	let activeIconGroupId = iconGroupRanges[0].id;
-	let iconGroupsByLetter: { id: string; values: IconImageType[] }[] = [];
+	let activeIconGroupId = $state(iconGroupRanges[0].id);
+	let iconGroupsByLetter: { id: string; values: IconImageType[] }[] = $state([]);
 
 	onMount(async () => {
 		iconGroupsByLetter = await getIconGroupsByLetter();
@@ -42,15 +55,13 @@
 		}
 	});
 
-	const dispatch = createEventDispatcher();
-
 	const handleIconClick = (alt: string) => {
 		selected = alt;
-		dispatch('select', { alt });
+		if (onselect) onselect(alt);
 	};
 
 	const handleClosePopup = () => {
-		dispatch('close');
+		if (onclose) onclose();
 	};
 
 	const getIconGroupsByLetter = async () => {
@@ -93,10 +104,11 @@
 	<Tabs
 		bind:tabs
 		bind:activeTab={activeIconGroupId}
-		on:tabChange={(e) => (activeIconGroupId = e.detail)}
+		onchange={(tab: string) => (activeIconGroupId = tab)}
 		fontWeight="semibold"
 	/>
-	<button class="delete close is-radiusless" on:click={handleClosePopup}></button>
+	<button class="delete close is-radiusless" onclick={handleClosePopup} aria-label="delete"
+	></button>
 
 	<div class="card-icon">
 		{#each iconGroupsByLetter as iconGroup}
@@ -105,8 +117,8 @@
 					<div
 						role="button"
 						tabindex="0"
-						on:keydown={handleEnterKey}
-						on:click={() => {
+						onkeydown={handleEnterKey}
+						onclick={() => {
 							handleIconClick(spriteImage.alt);
 						}}
 						title="Icon Picker Card"

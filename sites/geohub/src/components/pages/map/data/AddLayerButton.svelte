@@ -1,22 +1,25 @@
 <script lang="ts">
-	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { handleEnterKey, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { createEventDispatcher } from 'svelte';
-	const dispatch = createEventDispatcher();
 
-	export let isIconButton = false;
-	export let title = '';
-	export let isLoading = false;
+	interface Props {
+		isIconButton?: boolean;
+		title?: string;
+		isLoading?: boolean;
+		onclick?: () => void;
+	}
+
+	let {
+		isIconButton = false,
+		title = '',
+		isLoading = $bindable(false),
+		onclick = () => {}
+	}: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();
 
 	const handleClicked = () => {
-		dispatch('clicked');
-	};
-	const handleKeyDown = (event: KeyboardEvent) => {
-		if (event.key === 'Enter') {
-			dispatch('clicked');
-		}
+		if (onclick) onclick();
 	};
 </script>
 
@@ -30,12 +33,12 @@
 			class="button-icon has-text-grey-dark fa-stack"
 			role="button"
 			tabindex="0"
-			on:keydown={handleKeyDown}
-			on:click={handleClicked}
+			onkeydown={handleEnterKey}
+			onclick={handleClicked}
 			use:tippyTooltip={{ content: 'Add this dataset to the map' }}
 		>
-			<i class="fa-solid fa-layer-group fa-stack-xl" />
-			<i class="fab fa-plus fa-sm fa-stack-1x" />
+			<i class="fa-solid fa-layer-group fa-stack-xl"></i>
+			<i class="fab fa-plus fa-sm fa-stack-1x"></i>
 		</span>
 	{/if}
 {:else}
@@ -43,7 +46,7 @@
 		class="button is-primary is-uppercase has-text-weight-bold is-fullwidth {isLoading
 			? 'is-loading'
 			: ''}"
-		on:click={handleClicked}
+		onclick={handleClicked}
 	>
 		{title}
 	</button>

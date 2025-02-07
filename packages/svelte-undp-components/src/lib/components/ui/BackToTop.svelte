@@ -1,11 +1,20 @@
 <script lang="ts">
 	import { BROWSER } from 'esm-env';
 
-	export let top = '0px';
-	export let showOnPx = 150;
-	export let hidden = true;
-	export let timeToHidden = 5000;
-	let isHover = false;
+	interface Props {
+		top?: string;
+		showOnPx?: number;
+		hidden?: boolean;
+		timeToHidden?: number;
+	}
+
+	let {
+		top = $bindable('0px'),
+		showOnPx = $bindable(150),
+		hidden = $bindable(true),
+		timeToHidden = $bindable(5000)
+	}: Props = $props();
+	let isHover = $state(false);
 	let timeoutId: number | undefined;
 
 	function goTop() {
@@ -42,16 +51,16 @@
 	}
 </script>
 
-<svelte:window on:scrollend={handleOnScrollEnd} />
+<svelte:window onscrollend={handleOnScrollEnd} />
 
 <button
 	class="button is-rounded {isHover ? 'is-link' : ''} back-to-top"
 	style="top: {top};"
-	on:click={goTop}
-	on:mouseenter={() => {
+	onclick={goTop}
+	onmouseenter={() => {
 		isHover = true;
 	}}
-	on:mouseleave={() => {
+	onmouseleave={() => {
 		isHover = false;
 	}}
 	class:hidden

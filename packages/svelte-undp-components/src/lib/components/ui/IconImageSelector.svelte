@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	export interface IconImageType {
 		src: string;
 		alt: string;
@@ -6,24 +6,32 @@
 </script>
 
 <script lang="ts">
-	import { clean } from '$lib/util/clean.js';
-	import { initTippy } from '$lib/util/initTippy.js';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { clean } from '$lib/util/clean';
+	import { initTippy } from '$lib/util/initTippy';
+	import { onMount } from 'svelte';
 	import IconImagePicker from './IconImagePicker.svelte';
 
 	const tippy = initTippy({
 		appendTo: document.body
 	});
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
-	export let selected: string;
-	export let images: IconImageType[] = [];
-	export let readonly = false;
+	interface Props {
+		selected: string;
+		images?: IconImageType[];
+		readonly?: boolean;
+		onselect?: (selected: IconImageType) => void;
+	}
 
-	const dispatch = createEventDispatcher();
+	let {
+		selected = $bindable(),
+		images = $bindable([]),
+		readonly = $bindable(false),
+		onselect = () => {}
+	}: Props = $props();
 
 	let showDialog = false;
-	let iconImage = '';
+	let iconImage = $state('');
 
 	onMount(() => {
 		iconImage = getIconImageSrc(selected) as string;
@@ -51,11 +59,11 @@
 		showDialog = !showDialog;
 	};
 
-	const handleSelect = (event: CustomEvent) => {
-		selected = event.detail.alt;
+	const handleSelect = (alt: string) => {
+		selected = alt;
 		iconImage = getIconImageSrc(selected) as string;
 		const icon = images.find((img) => img.alt === selected);
-		dispatch('select', icon);
+		if (onselect) onselect(icon as IconImageType);
 	};
 </script>
 
@@ -77,7 +85,7 @@
 
 {#if !readonly}
 	<div class="tooltip pb-2" data-testid="tooltip" bind:this={tooltipContent}>
-		<IconImagePicker bind:images on:select={handleSelect} on:close={handleClose} bind:selected />
+		<IconImagePicker bind:images onselect={handleSelect} onclose={handleClose} bind:selected />
 	</div>
 {/if}
 

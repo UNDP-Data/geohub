@@ -8,20 +8,30 @@
 		Layer,
 		LayerCreationInfo,
 		StacAsset,
+		StacDataLayer,
 		StacItemFeature
 	} from '$lib/types';
 	import { Accordion, clean, type RasterTileMetadata } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { Map, NavigationControl, Popup, type LngLatLike } from 'maplibre-gl';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import Time from 'svelte-time';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		stacId: string;
+		url: string;
+		collectionUrl: string;
+		height?: number;
+		onDataAdded?: (layers: StacDataLayer[]) => void;
+	}
 
-	export let stacId: string;
-	export let url: string;
-	export let collectionUrl: string;
-	export let height = 0;
+	let {
+		stacId = $bindable(),
+		url = $bindable(),
+		collectionUrl = $bindable(),
+		height = $bindable(0),
+		onDataAdded = () => {}
+	}: Props = $props();
 
 	const metadataProps = [
 		'platform',
@@ -41,42 +51,27 @@
 		'view:sun_elevation'
 	];
 
-	let expanded: { [key: string]: boolean } = {};
+	let expanded: { [key: string]: boolean } = $state({});
 	// to allow only an accordion to be expanded
-	let expandedDatasetId: string;
-	$: {
-		let expandedDatasets = Object.keys(expanded).filter(
-			(key) => expanded[key] === true && key !== expandedDatasetId
-		);
-		if (expandedDatasets.length > 0) {
-			expandedDatasetId = expandedDatasets[0];
-			Object.keys(expanded)
-				.filter((key) => key !== expandedDatasetId)
-				.forEach((key) => {
-					expanded[key] = false;
-				});
-			expanded[expandedDatasets[0]] = true;
-		}
-	}
+	let expandedDatasetId: string = $state('');
 
-	let isInitialising: Promise<StacItemFeature>;
-	let itemFeature: StacItemFeature;
-	let selectedAssetName: string;
+	let isInitialising: Promise<StacItemFeature> = $state();
+	let itemFeature: StacItemFeature = $state();
+	let selectedAssetName: string = $state();
 
 	let rasterTile: RasterTileData;
-	let metadata: RasterTileMetadata;
-	let isRgbTile = false;
-	let selectedBand = '';
+	let metadata: RasterTileMetadata = $state();
+	let isRgbTile = $state(false);
+	let selectedBand = $state('');
 	let layerData: LayerCreationInfo;
 
-	let mapContainer: HTMLDivElement;
+	let mapContainer: HTMLDivElement = $state();
 	let map: Map;
-	let innerHeight: number;
-	$: mapHeight = height > 0 ? height : innerHeight * 0.6;
-	let isLoading = false;
+	let innerHeight: number = $state();
+	let isLoading = $state(false);
 
-	let popup: Popup | undefined;
-	let popupContainer: HTMLDivElement;
+	let popup: Popup | undefined = $state();
+	let popupContainer: HTMLDivElement = $state();
 	let datasetFeature: DatasetFeature;
 
 	onMount(() => {
@@ -94,10 +89,6 @@
 		const json: StacItemFeature = await res.json();
 		return json;
 	};
-
-	$: if (mapContainer) {
-		initialiseMap();
-	}
 
 	const initialiseMap = () => {
 		const center = [
@@ -287,13 +278,31 @@
 				dataset: datasetFeature,
 				colorMapName: data.colormap_name
 			};
-			dispatch('dataAdded', {
-				layers: [data]
-			});
+			if (onDataAdded) onDataAdded([data]);
 		} finally {
 			isLoading = false;
 		}
 	};
+	$effect(() => {
+		let expandedDatasets = Object.keys(expanded).filter(
+			(key) => expanded[key] === true && key !== expandedDatasetId
+		);
+		if (expandedDatasets.length > 0) {
+			expandedDatasetId = expandedDatasets[0];
+			Object.keys(expanded)
+				.filter((key) => key !== expandedDatasetId)
+				.forEach((key) => {
+					expanded[key] = false;
+				});
+			expanded[expandedDatasets[0]] = true;
+		}
+	});
+	let mapHeight = $derived(height > 0 ? height : innerHeight * 0.6);
+	$effect(() => {
+		if (mapContainer) {
+			initialiseMap();
+		}
+	});
 </script>
 
 <svelte:window bind:innerHeight />
@@ -310,122 +319,128 @@
 		)}
 		{#if metaparams.length > 0}
 			<Accordion title="metadata" bind:isExpanded={expanded['metadata']}>
-				<div class="p-4" slot="content">
-					<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-						<thead>
-							<tr>
-								<th>Parameter</th>
-								<th>Value</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each metadataProps as prop}
-								{@const value = itemFeature.properties[prop]}
-								{#if value}
-									<tr>
-										<td>{clean(prop)}</td>
-										<td>
-											<p class="is-size-6">
-												{#if prop === 'datetime'}
-													<Time timestamp={value} format="HH:mm, MM/DD/YYYY" />
-												{:else}
-													{value}
-												{/if}
-											</p>
-										</td>
-									</tr>
-								{/if}
-							{/each}
-						</tbody>
-					</table>
-				</div>
+				{#snippet content()}
+					<div class="p-4">
+						<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+							<thead>
+								<tr>
+									<th>Parameter</th>
+									<th>Value</th>
+								</tr>
+							</thead>
+							<tbody>
+								{#each metadataProps as prop}
+									{@const value = itemFeature.properties[prop]}
+									{#if value}
+										<tr>
+											<td>{clean(prop)}</td>
+											<td>
+												<p class="is-size-6">
+													{#if prop === 'datetime'}
+														<Time timestamp={value} format="HH:mm, MM/DD/YYYY" />
+													{:else}
+														{value}
+													{/if}
+												</p>
+											</td>
+										</tr>
+									{/if}
+								{/each}
+							</tbody>
+						</table>
+					</div>
+				{/snippet}
 			</Accordion>
 		{/if}
 
 		{#if viewparams.length > 0}
 			<Accordion title="View geometry" bind:isExpanded={expanded['view:geometry']}>
-				<div class="p-4" slot="content">
-					<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-						<thead>
-							<tr>
-								<th>Parameter</th>
-								<th>Value</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each viewgeometryProps as prop}
-								{@const value = itemFeature.properties[prop]}
-								{#if value}
-									<tr>
-										<td>{clean(prop.replace('view:', ''))}</td>
-										<td>
-											<p class="is-size-6">
-												{value}
-											</p>
-										</td>
-									</tr>
-								{/if}
-							{/each}
-						</tbody>
-					</table>
-				</div>
+				{#snippet content()}
+					<div class="p-4">
+						<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+							<thead>
+								<tr>
+									<th>Parameter</th>
+									<th>Value</th>
+								</tr>
+							</thead>
+							<tbody>
+								{#each viewgeometryProps as prop}
+									{@const value = itemFeature.properties[prop]}
+									{#if value}
+										<tr>
+											<td>{clean(prop.replace('view:', ''))}</td>
+											<td>
+												<p class="is-size-6">
+													{value}
+												</p>
+											</td>
+										</tr>
+									{/if}
+								{/each}
+							</tbody>
+						</table>
+					</div>
+				{/snippet}
 			</Accordion>
 		{/if}
 
 		<Accordion title="Preview map" bind:isExpanded={expanded['preview']}>
-			<div class="p-4" slot="content">
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Please select an asset</label>
-					<div class="control">
-						<div class="select is-link is-fullwidth">
-							<select
-								bind:value={selectedAssetName}
-								on:change={handleSelectAsset}
-								disabled={isLoading}
-							>
-								{#if Object.keys(itemFeature.assets).length > 1}
-									<option value="">Select an asset</option>
-								{/if}
-								{#each Object.keys(itemFeature.assets) as assetName}
-									{@const asset = itemFeature.assets[assetName]}
-									<!-- it is preferred to use `image/tiff; application=geotiff; profile=cloud-optimized` to check asset type,
-									but we found some of COG from some STAC server, they don't put `profile=cloud-optimized`.
-									So I removed profile from validation. -->
-									{#if asset.type.indexOf('image/tiff; application=geotiff') !== -1}
-										<option value={assetName}>{asset.title ? asset.title : assetName}</option>
-									{/if}
-								{/each}
-							</select>
-						</div>
-					</div>
-				</div>
-
-				{#if metadata && !isRgbTile}
-					{@const asset = itemFeature.assets[selectedAssetName]}
-					{@const bands = getBandDescription(asset)}
+			{#snippet content()}
+				<div class="p-4">
 					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label">Please select a raster band</label>
+						<!-- svelte-ignore a11y_label_has_associated_control -->
+						<label class="label">Please select an asset</label>
 						<div class="control">
-							<RasterBandSelectbox
-								bind:metadata
-								bind:selectedBand
-								bandsDetail={bands}
-								on:change={handleBandSelected}
-								disabled={isLoading}
-							/>
+							<div class="select is-link is-fullwidth">
+								<select
+									bind:value={selectedAssetName}
+									onchange={handleSelectAsset}
+									disabled={isLoading}
+								>
+									{#if Object.keys(itemFeature.assets).length > 1}
+										<option value="">Select an asset</option>
+									{/if}
+									{#each Object.keys(itemFeature.assets) as assetName}
+										{@const asset = itemFeature.assets[assetName]}
+										<!-- it is preferred to use `image/tiff; application=geotiff; profile=cloud-optimized` to check asset type,
+										but we found some of COG from some STAC server, they don't put `profile=cloud-optimized`.
+										So I removed profile from validation. -->
+										{#if asset.type.indexOf('image/tiff; application=geotiff') !== -1}
+											<option value={assetName}>{asset.title ? asset.title : assetName}</option>
+										{/if}
+									{/each}
+								</select>
+							</div>
 						</div>
 					</div>
-				{/if}
 
-				<div class="assets-explorer mt-1" style="height: {mapHeight}px;">
-					<div bind:this={mapContainer} class="map"></div>
-					{#if isLoading}
-						<div class="loader-container"><Loader size="large" /></div>
+					{#if metadata && !isRgbTile}
+						{@const asset = itemFeature.assets[selectedAssetName]}
+						{@const bands = getBandDescription(asset)}
+						<div class="field">
+							<!-- svelte-ignore a11y_label_has_associated_control -->
+							<label class="label">Please select a raster band</label>
+							<div class="control">
+								<RasterBandSelectbox
+									bind:metadata
+									bind:selectedBand
+									bandsDetail={bands}
+									onchange={handleBandSelected}
+									disabled={isLoading}
+								/>
+							</div>
+						</div>
 					{/if}
+
+					<div class="assets-explorer mt-1" style="height: {mapHeight}px;">
+						<div bind:this={mapContainer} class="map"></div>
+						{#if isLoading}
+							<div class="loader-container"><Loader size="large" /></div>
+						{/if}
+					</div>
 				</div>
-			</div>
+			{/snippet}
 		</Accordion>
 	{/if}
 {/await}
@@ -435,7 +450,7 @@
 		{#if popup}
 			<button
 				class="button is-primary is-uppercase has-text-weight-bold {isLoading ? 'is-loading' : ''}"
-				on:click={handleShowOnMap}
+				onclick={handleShowOnMap}
 				disabled={isLoading}
 			>
 				Show it on map

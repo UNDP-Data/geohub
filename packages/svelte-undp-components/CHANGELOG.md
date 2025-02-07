@@ -1,5 +1,72 @@
 # @undp-data/svelte-undp-components
 
+## 2.0.5
+
+### Patch Changes
+
+- 28b87b3: chore: updated dependencies
+- Updated dependencies [28b87b3]
+  - @undp-data/svelte-undp-design@3.0.2
+
+## 2.0.4
+
+### Patch Changes
+
+- f70c8af: fix: fixed too much reactivity caused by binding props in Slider and RasterRescale components.
+
+## 2.0.3
+
+### Patch Changes
+
+- 6092700: fix: revert @undp-data/date-picker-svelte to v2.12.1 since it has reference error in geohub
+
+## 2.0.2
+
+### Patch Changes
+
+- 0a235fa: fix: remove moduleResolution = nodenext from tsconfig.json
+- Updated dependencies [0a235fa]
+  - @undp-data/svelte-undp-design@3.0.1
+
+## 2.0.1
+
+### Patch Changes
+
+- 125fffd: fix: fixed bug of showing undefined error in VectorSimulation
+
+## 2.0.0
+
+### Major Changes
+
+- 6befcd4: feat: migrate components to svelte 5 (breaking change)
+
+### Patch Changes
+
+- 26440c9: fix: fixed interface where using svelte-undp-design
+- 2ee1359: chore: updated date-picker-svelte version
+- Updated dependencies [26440c9]
+  - @undp-data/svelte-undp-design@3.0.0
+
+## 1.5.19
+
+### Patch Changes
+
+- Updated dependencies [0ae54db]
+  - @undp-data/svelte-undp-design@2.4.8
+
+## 1.5.18
+
+### Patch Changes
+
+- 1ac4d94: chore: updated monorepo package dependencies
+- 905236f: fix: export defaultHaloWidth from TextHaloWidth component
+- a038e3d: chore: upgrade maplibre to v5
+- 8e7812f: fix: changed <p> to <div> in FieldControl to wrap slot.
+- a2662a7: fix: switched vitePreprocess to sveltePreprocess becauseb of svelte-package hang
+- Updated dependencies [1ac4d94]
+- Updated dependencies [a2662a7]
+  - @undp-data/svelte-undp-design@2.4.7
+
 ## 1.5.17
 
 ### Patch Changes

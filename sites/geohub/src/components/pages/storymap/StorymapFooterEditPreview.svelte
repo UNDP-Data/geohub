@@ -8,10 +8,14 @@
 	} from '@undp-data/svelte-maplibre-storymap';
 	import { getContext, onMount } from 'svelte';
 
-	export let width = '100%';
+	interface Props {
+		width?: string;
+	}
+
+	let { width = $bindable('100%') }: Props = $props();
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
-	let template_id: StoryMapTemplate;
+	let template_id: StoryMapTemplate = $state('light');
 
 	onMount(() => {
 		template_id = ($configStore as StoryMapConfig).template_id as StoryMapTemplate;

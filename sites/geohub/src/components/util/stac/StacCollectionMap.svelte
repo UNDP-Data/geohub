@@ -12,6 +12,7 @@
 		StacCatalog,
 		StacCatalogBreadcrumb,
 		StacCollection,
+		StacDataLayer,
 		StacItemFeature,
 		TableViewType
 	} from '$lib/types';
@@ -31,62 +32,72 @@
 		type MapMouseEvent,
 		type RasterLayerSpecification
 	} from 'maplibre-gl';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import Time from 'svelte-time';
 	import { v4 as uuidv4 } from 'uuid';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		stacId: string;
+		collectionUrl?: string;
+		url: string;
+		links?: Link[];
+		onDataAdded?: (layers: StacDataLayer[]) => void;
+		onSelected?: (breadcrumb: StacCatalogBreadcrumb) => void;
+	}
 
-	export let stacId: string;
-	export let collectionUrl = '';
-	export let url: string;
-	export let links: Link[] = [];
+	let {
+		stacId = $bindable(),
+		collectionUrl = $bindable(''),
+		url = $bindable(),
+		links = $bindable([]),
+		onDataAdded = () => {},
+		onSelected = () => {}
+	}: Props = $props();
 
-	let stacCollections: StacCollection[] = [];
-	let stacItems: StacItemFeature[] = [];
-	let stacCatalogs: StacCatalog[] = [];
+	let stacCollections: StacCollection[] = $state([]);
+	let stacItems: StacItemFeature[] = $state([]);
+	let stacCatalogs: StacCatalog[] = $state([]);
 
-	let viewType: TableViewType = 'map';
+	let viewType: TableViewType = $state('map');
 
-	let totalPages = 0;
-	let currentPage = 0;
+	let totalPages = $state(0);
+	let currentPage = $state(0);
 	let numberOfItemsPerPage = 15;
 	let sourceIds: string[] = [];
 	let startIndex = 0;
 	let endIndex = 0;
 
 	// progress bar
-	let showProgressBar = false;
-	let maxProgress = 0;
-	let currentProgress = 0;
+	let showProgressBar = $state(false);
+	let maxProgress = $state(0);
+	let currentProgress = $state(0);
 
-	let mapContainer: HTMLDivElement;
+	let mapContainer: HTMLDivElement = $state();
 	let map: Map;
 	let height = 0;
-	let innerHeight: number;
-	$: mapHeight = height > 0 ? height : innerHeight * 0.6;
+	let innerHeight: number = $state();
 
 	let popup: Popup | undefined;
-	let popupContainer: HTMLDivElement;
-	let popedFeature: MapGeoJSONFeature;
-	let popedFeatures: MapGeoJSONFeature[];
+	let popupContainer: HTMLDivElement = $state();
+	let popedFeature: MapGeoJSONFeature = $state();
+	let popedFeatures: MapGeoJSONFeature[] = $state();
 	let hoveredFeatures: MapGeoJSONFeature[] = [];
 
-	let sceneType: 'scene' | 'mosaic' = 'scene';
-	let isItemView = false;
-	let clickedFeatures: MapGeoJSONFeature[] = [];
-	let itemFeature: StacItemFeature;
-	let selectedAssetName: string;
-	let isLoading = false;
+	let sceneType: 'scene' | 'mosaic' = $state('scene');
+	let isItemView = $state(false);
+	let clickedFeatures: MapGeoJSONFeature[] = $state([]);
+	let itemFeature: StacItemFeature = $state();
+	let selectedAssetName: string = $state();
+	let isLoading = $state(false);
 	let rasterTile: RasterTileData;
-	let metadata: RasterTileMetadata;
-	let isRgbTile = false;
-	let selectedBand = '';
+	let metadata: RasterTileMetadata = $state();
+	let isRgbTile = $state(false);
+	let selectedBand = $state('');
 	let layerData: LayerCreationInfo;
 	let datasetFeature: DatasetFeature;
-	let popupMapContainer: HTMLDivElement;
+	let popupMapContainer: HTMLDivElement = $state();
 	let popupMap: Map;
-	let serverError = false;
+	let serverError = $state(false);
 
 	const initialiseMap = () => {
 		map = new Map({
@@ -407,16 +418,13 @@
 			dataUrl: feature.properties.url,
 			type: feature.properties.type
 		};
-		dispatch('selected', data);
+		if (onSelected) onSelected(data);
 	};
 
 	onMount(() => {
 		initialiseMap();
 		map.once('load', initialise);
 	});
-
-	$: viewType, handleViewTypeChanged();
-	$: sceneType, loadItems(false);
 
 	const handleViewTypeChanged = () => {
 		if (viewType === 'list') {
@@ -425,7 +433,7 @@
 	};
 
 	const handleTableCollectionClicked = (data: StacCatalogBreadcrumb) => {
-		dispatch('selected', data);
+		if (onSelected) onSelected(data);
 	};
 
 	const getDatetime = (item: StacItemFeature) => {
@@ -464,7 +472,7 @@
 			datasetFeature = await res.json();
 
 			rasterTile = new RasterTileData(datasetFeature);
-			metadata = await rasterTile.getMetadata();
+			metadata = (await rasterTile.getMetadata()) as RasterTileMetadata;
 			isRgbTile = metadata?.colorinterp ? isRgbRaster(metadata.colorinterp) : false;
 			if (isRgbTile) {
 				initialisePopupMap();
@@ -509,7 +517,7 @@
 	};
 
 	const getBandDescription = (asset: StacAsset) => {
-		const bands = [];
+		const bands: { name: string; description: string }[] = [];
 		if (asset['eo:bands']) {
 			asset['eo:bands'].forEach((b) => {
 				bands.push({
@@ -521,7 +529,7 @@
 			asset['raster:bands'].forEach((b) => {
 				bands.push({
 					name: b.name,
-					description: b.description
+					description: b.description as string
 				});
 			});
 		}
@@ -543,14 +551,12 @@
 
 		data.geohubLayer = {
 			id: data.layer.id,
-			name: datasetFeature.properties.name,
+			name: datasetFeature.properties.name as string,
 			info: data.metadata,
 			dataset: datasetFeature,
 			colorMapName: data.colormap_name
 		};
-		dispatch('dataAdded', {
-			layers: [data]
-		});
+		if (onDataAdded) onDataAdded([data]);
 	};
 
 	const getViewTypes = () => {
@@ -560,6 +566,7 @@
 		}
 		return items;
 	};
+	let mapHeight = $derived(height > 0 ? height : innerHeight * 0.6);
 </script>
 
 <svelte:window bind:innerHeight />
@@ -596,13 +603,20 @@
 							{ title: 'Mosaic', icon: 'fa-solid fa-grip', value: 'mosaic' }
 						]}
 						bind:selected={sceneType}
+						onchange={() => {
+							loadItems(false);
+						}}
 					/>
 				</div>
 			{/if}
 
 			<div class="pl-1 is-flex is-justify-content-flex-end">
 				{#key stacCatalogs}
-					<SegmentButtons buttons={getViewTypes()} bind:selected={viewType} />
+					<SegmentButtons
+						buttons={getViewTypes()}
+						bind:selected={viewType}
+						onchange={handleViewTypeChanged}
+					/>
 				{/key}
 			</div>
 		</div>
@@ -621,12 +635,7 @@
 </div>
 
 <div class="is-flex is-justify-content-center pt-1">
-	<Pagination
-		bind:totalPages
-		bind:currentPage
-		on:clicked={loadNextItems}
-		hidden={totalPages <= 1}
-	/>
+	<Pagination bind:totalPages bind:currentPage onclick={loadNextItems} hidden={totalPages <= 1} />
 </div>
 
 <div class="list-explorer" hidden={viewType !== 'list'}>
@@ -658,7 +667,7 @@
 							<td>
 								<button
 									class="button is-link is-uppercase has-text-weight-bold"
-									on:click={() => {
+									onclick={() => {
 										handleTableCollectionClicked({
 											title: catalog.title,
 											dataUrl: selfUrl,
@@ -684,7 +693,7 @@
 							<td>
 								<button
 									class="button is-link is-uppercase has-text-weight-bold"
-									on:click={() => {
+									onclick={() => {
 										handleTableCollectionClicked({
 											title: title,
 											dataUrl: selfUrl,
@@ -720,7 +729,7 @@
 								<td>
 									<button
 										class="button is-link is-uppercase has-text-weight-bold"
-										on:click={() => {
+										onclick={() => {
 											handleTableCollectionClicked({
 												title: title,
 												dataUrl: selfUrl,
@@ -745,16 +754,16 @@
 				<ul>
 					{#each popedFeatures as f, index}
 						<li class={popedFeature === f ? 'is-active' : ''}>
-							<!-- svelte-ignore a11y-missing-attribute -->
+							<!-- svelte-ignore a11y_missing_attribute -->
 							<a
 								role="tab"
 								tabindex="0"
 								data-sveltekit-preload-data="off"
 								data-sveltekit-preload-code="off"
-								on:click={() => {
+								onclick={() => {
 									popedFeature = f;
 								}}
-								on:keydown={handleEnterKey}
+								onkeydown={handleEnterKey}
 							>
 								{index + 1}
 							</a>
@@ -774,7 +783,7 @@
 
 				<button
 					class="button is-primary is-uppercase has-text-weight-bold"
-					on:click={() => {
+					onclick={() => {
 						handleExploreCollection(popedFeature);
 					}}
 				>
@@ -793,13 +802,13 @@
 	{:else if clickedFeatures.length > 1}
 		{#if itemFeature?.assets}
 			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<!-- svelte-ignore a11y_label_has_associated_control -->
 				<label class="label">Please select an asset</label>
 				<div class="control">
 					<div class="select is-link is-fullwidth">
 						<select
 							bind:value={selectedAssetName}
-							on:change={handleSelectAsset}
+							onchange={handleSelectAsset}
 							disabled={isLoading}
 						>
 							{#if Object.keys(itemFeature.assets).length > 1}
@@ -825,7 +834,7 @@
 				{@const asset = itemFeature.assets[selectedAssetName]}
 				{@const bands = getBandDescription(asset)}
 				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<!-- svelte-ignore a11y_label_has_associated_control -->
 					<label class="label">Please select a raster band</label>
 					<div class="control">
 						<RasterBandSelectbox
@@ -833,7 +842,7 @@
 							bind:selectedBand
 							bandsDetail={bands}
 							disabled={isLoading}
-							on:change={handleBandSelected}
+							onchange={handleBandSelected}
 						/>
 					</div>
 				</div>
@@ -852,7 +861,7 @@
 
 			<button
 				class="mt-2 button is-primary is-uppercase has-text-weight-bold is-fullwidth"
-				on:click={handleShowMosaic}
+				onclick={handleShowMosaic}
 				disabled={isLoading}
 			>
 				Show selected items

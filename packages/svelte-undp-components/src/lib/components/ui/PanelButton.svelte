@@ -1,30 +1,40 @@
 <script lang="ts">
-	import { initTippy, initTooltipTippy } from '$lib/util/initTippy.js';
+	import { initTippy, initTooltipTippy } from '$lib/util/initTippy';
 
-	export let icon: string;
-	export let iconDisabled = '';
-	export let width: string;
-	export let tooltip: string;
-	export let disabled = false;
-	export let isShow = false;
-	export let hideBorder = true;
+	interface Props {
+		icon: string;
+		iconDisabled?: string;
+		width: string;
+		tooltip: string;
+		disabled?: boolean;
+		hideBorder?: boolean;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		icon,
+		iconDisabled = '',
+		width = '300px',
+		tooltip = '',
+		disabled = $bindable(),
+		hideBorder = true,
+		children
+	}: Props = $props();
 
 	const tippy = initTippy({
 		placement: 'bottom-end',
 		onShow(instance) {
-			isShow = true;
 			instance.popper.querySelector('.close')?.addEventListener('click', () => {
 				instance.hide();
 			});
 		},
 		onHide(instance) {
-			isShow = false;
 			instance.popper.querySelector('.close')?.removeEventListener('click', () => {
 				instance.hide();
 			});
 		}
 	});
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
 	const tippyTooltip = initTooltipTippy();
 </script>
@@ -34,15 +44,16 @@
 		class="panel-button {hideBorder ? 'border-hidden' : ''} button"
 		{disabled}
 		use:tippy={{ content: tooltipContent }}
+		aria-label="show tooltip"
 	>
 		<span class="icon is-small">
-			<i class={disabled && iconDisabled ? iconDisabled : icon} />
+			<i class={disabled && iconDisabled ? iconDisabled : icon}></i>
 		</span>
 	</button>
 
 	<div class="tooltip" data-testid="tooltip" style="width: {width}" bind:this={tooltipContent}>
 		<div class="panel container p-2" style="width: {width}">
-			<slot />
+			{@render children?.()}
 		</div>
 	</div>
 </div>

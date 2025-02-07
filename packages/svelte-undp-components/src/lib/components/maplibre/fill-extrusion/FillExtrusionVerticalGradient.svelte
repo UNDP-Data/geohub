@@ -1,11 +1,15 @@
 <script lang="ts">
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
 	import { Checkbox } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
+	interface Props {
+		layerId: string;
+	}
+
+	let { layerId = $bindable() }: Props = $props();
 
 	let defaultValue = true;
 	let propertyName = 'fill-extrusion-vertical-gradient';
@@ -15,7 +19,7 @@
 		return value as boolean;
 	};
 
-	let value = getValue();
+	let value = $state(getValue());
 
 	onMount(() => {
 		setValue();
@@ -29,5 +33,5 @@
 <Checkbox
 	label="Apply a vertical gradient to the sides of polygons"
 	bind:checked={value}
-	on:clicked={setValue}
+	onclick={setValue}
 />

@@ -4,19 +4,28 @@
 	} from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 	import type { DatasetFeature } from '$lib/types';
 	import { handleEnterKey, initTooltipTippy } from '@undp-data/svelte-undp-components';
-	import { createEventDispatcher } from 'svelte';
-
-	const dispatch = createEventDispatcher();
 
 	const tippyTooltip = initTooltipTippy();
 
-	let innerHeight: number;
+	let innerHeight: number = $state(0);
 
-	export let feature: DatasetFeature;
+	interface Props {
+		feature: DatasetFeature;
+		isIconButton?: boolean;
+		title?: string;
+		showDialog?: boolean;
+		onadd?: (layerSpec: AlgorithmLayerSpec) => void;
+	}
 
-	export let isIconButton = false;
-	export let title = 'Explore tools';
-	export let showDialog = false;
+	let {
+		feature = $bindable(),
+		isIconButton = $bindable(false),
+		title = 'Explore tools',
+		showDialog = $bindable(false),
+		onadd = (layerSpec) => {
+			console.log(layerSpec);
+		}
+	}: Props = $props();
 
 	const handleClicked = () => {
 		showDialog = true;
@@ -24,11 +33,6 @@
 
 	const handleCloseDialog = () => {
 		showDialog = false;
-	};
-
-	const handleAlgorithmSelected = (e) => {
-		let layerSpec: AlgorithmLayerSpec = e.detail;
-		dispatch('added', layerSpec);
 	};
 </script>
 
@@ -39,8 +43,8 @@
 		class="button-icon icon is-small has-text-grey-dark mr-2"
 		role="button"
 		tabindex="0"
-		on:keydown={handleEnterKey}
-		on:click={handleClicked}
+		onkeydown={handleEnterKey}
+		onclick={handleClicked}
 		use:tippyTooltip={{ content: 'Explore tools for advanced analytics' }}
 	>
 		<i class="fa-solid fa-screwdriver-wrench"></i>
@@ -48,22 +52,22 @@
 {:else}
 	<button
 		class="button is-link has-text-weight-bold is-uppercase is-fullwidth"
-		on:click={handleClicked}
+		onclick={handleClicked}
 	>
 		{title}
 	</button>
 {/if}
 
 <div class="modal {showDialog ? 'is-active' : ''}">
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-	<div class="modal-background" role="dialog" on:click={handleCloseDialog}></div>
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+	<div class="modal-background" role="dialog" onclick={handleCloseDialog}></div>
 	<div class="modal-content p-2">
-		<button class="delete is-large" aria-label="close" on:click={handleCloseDialog}></button>
+		<button class="delete is-large" aria-label="close" onclick={handleCloseDialog}></button>
 
 		{#if showDialog}
 			<div class="p-4">
-				<RasterAlgorithmExplorer bind:feature on:added={handleAlgorithmSelected} />
+				<RasterAlgorithmExplorer bind:feature onAdded={onadd} />
 			</div>
 		{/if}
 	</div>

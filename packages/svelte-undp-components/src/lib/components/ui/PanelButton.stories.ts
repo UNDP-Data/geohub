@@ -29,11 +29,6 @@ const meta = {
 			description: 'If true, the control will be disabled',
 			defaultValue: false
 		},
-		isShow: {
-			type: 'boolean',
-			description: 'If true, the panel popup will be shown',
-			defaultValue: false
-		},
 		hideBorder: {
 			type: 'boolean',
 			description: 'If true, hide border of the button. Default is true',

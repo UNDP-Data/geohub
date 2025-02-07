@@ -264,7 +264,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 
 	if (!is_superuser) {
 		const dp = new DatasetPermissionManager(id, user_email);
-		const permission = await dp.getBySignedUser(client);
+		const permission = await dp.getBySignedUser();
 		if (!(permission && permission > Permission.READ)) {
 			const domain = user_email ? getDomainFromEmail(user_email) : undefined;
 			const access_level: AccessLevel = dataset.properties.access_level;

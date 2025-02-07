@@ -1,9 +1,11 @@
-<script lang="ts" context="module">
-	import type { Meta } from '@storybook/svelte';
+<script lang="ts" module>
+	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata';
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import type { SymbolLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
 	import Map from '../Map.svelte';
 	import IconSize from './IconSize.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Symbol/IconSize',
 		component: IconSize,
 		tags: ['autodocs'],
@@ -13,7 +15,7 @@
 				description: 'Layer ID to edit'
 			}
 		}
-	};
+	});
 
 	const title = 'Icon Size Control';
 
@@ -692,17 +694,11 @@
 	};
 </script>
 
-<script lang="ts">
-	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-	import type { SymbolLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
-</script>
-
-<Template let:args>
+{#snippet template(args)}
 	<Map {title} {source} {layer} center={[30.4082, -1.9975]} zoom={10}>
 		<IconSize {...args}></IconSize>
 	</Map>
-</Template>
+{/snippet}
 
 <Story
 	name="Primary"
@@ -713,4 +709,5 @@
 		defaultColor: layer.paint?.['icon-color'],
 		apiOrigin: 'https://dev.undpgeohub.org'
 	}}
+	children={template}
 />

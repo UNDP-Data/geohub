@@ -1,13 +1,17 @@
 <script lang="ts">
 	import MaplibreSlider from '$lib/components/maplibre/util/MaplibreSlider.svelte';
 
-	export let layerId: string;
+	interface Props {
+		layerId: string;
+	}
 
-	let defaultValue = 0;
-	let maxValue = 1;
-	let minValue = -1;
-	let propertyName = 'raster-contrast';
-	let stepValue = 0.1;
+	let { layerId = $bindable() }: Props = $props();
+
+	let defaultValue = $state(0);
+	let maxValue = $state(1);
+	let minValue = $state(-1);
+	let propertyName = $state('raster-contrast');
+	let stepValue = $state(0.1);
 </script>
 
 <MaplibreSlider

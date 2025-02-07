@@ -1,17 +1,25 @@
 <script lang="ts">
-	import { handleEnterKey } from '$lib/util/index.js';
+	import { handleEnterKey } from '$lib/util/handleEnterKey';
 
-	export let show = false;
-	export let showText = 'Hide details';
-	export let hideText = 'Show details';
+	interface Props {
+		show?: boolean;
+		showText?: string;
+		hideText?: string;
+	}
+
+	let {
+		show = $bindable(),
+		showText = 'Hide details',
+		hideText = 'Show details'
+	}: Props = $props();
 </script>
 
 <span
 	class="details"
 	role="button"
 	tabindex="0"
-	on:click={() => (show = !show)}
-	on:keydown={handleEnterKey}
+	onclick={() => (show = !show)}
+	onkeydown={handleEnterKey}
 >
 	{#if show}
 		{showText}

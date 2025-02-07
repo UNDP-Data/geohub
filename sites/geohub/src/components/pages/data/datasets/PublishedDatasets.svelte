@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { goto, replaceState } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import {
 		AccessLevel,
@@ -27,61 +27,52 @@
 	import DatasetMapView from './DatasetMapView.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
 
-	export let datasets: DatasetFeatureCollection | undefined;
-	export let showMyData = false;
-
-	let expanded: { [key: string]: boolean } = {};
-	let expandedDatasetId: string;
-	$: {
-		let expandedDatasets = Object.keys(expanded).filter(
-			(key) => expanded[key] === true && key !== expandedDatasetId
-		);
-		if (expandedDatasets.length > 0) {
-			expandedDatasetId = expandedDatasets[0];
-			Object.keys(expanded)
-				.filter((key) => key !== expandedDatasetId)
-				.forEach((key) => {
-					expanded[key] = false;
-				});
-			expanded[expandedDatasets[0]] = true;
-		}
+	interface Props {
+		datasets: DatasetFeatureCollection | undefined;
+		showMyData?: boolean;
+		button?: import('svelte').Snippet;
 	}
 
-	let isLoading = false;
+	let { datasets = $bindable(), showMyData = $bindable(false), button }: Props = $props();
 
-	const config: UserConfig = $page.data.config;
+	let isLoading = $state(false);
 
-	let viewType: TableViewType =
-		($page.url.searchParams.get('viewType') as TableViewType) ?? config.DataPageTableViewType;
+	const config: UserConfig = page.data.config;
 
-	let limit = $page.url.searchParams.get('limit') ?? `${config.DataPageSearchLimit}`;
-	let offset = $page.url.searchParams.get('offset') ?? 0;
-	let sortby = $page.url.searchParams.get('sortby') ?? config.DataPageSortingColumn;
-	let query = $page.url.searchParams.get('query') ?? '';
+	let viewType: TableViewType = $state(
+		(page.url.searchParams.get('viewType') as TableViewType) ?? config.DataPageTableViewType
+	);
+
+	let limit = $state(page.url.searchParams.get('limit') ?? `${config.DataPageSearchLimit}`);
+	let offset = page.url.searchParams.get('offset') ?? 0;
+	let sortby = $state(page.url.searchParams.get('sortby') ?? config.DataPageSortingColumn);
+	let query = $state(page.url.searchParams.get('query') ?? '');
 	let queryType: 'and' | 'or' =
-		($page.url.searchParams.get('queryoperator') as 'and' | 'or') ??
+		(page.url.searchParams.get('queryoperator') as 'and' | 'or') ??
 		config.DataPageSearchQueryOperator;
 	let operatorType: 'and' | 'or' =
-		($page.url.searchParams.get('operator') as 'and' | 'or') ??
-		$page.data.config.DataPageTagSearchOperator;
-	let isOperatorTypeAnd = operatorType === 'and';
+		(page.url.searchParams.get('operator') as 'and' | 'or') ??
+		page.data.config.DataPageTagSearchOperator;
+	let isOperatorTypeAnd = $state(operatorType === 'and');
 
-	const _level = $page.url.searchParams.get('accesslevel');
-	let accessLevel: AccessLevel = _level
-		? (Number(_level) as AccessLevel)
-		: $page.data.session
-			? AccessLevel.ALL
-			: AccessLevel.PUBLIC;
+	const _level = page.url.searchParams.get('accesslevel');
+	let accessLevel: AccessLevel = $state(
+		_level
+			? (Number(_level) as AccessLevel)
+			: page.data.session
+				? AccessLevel.ALL
+				: AccessLevel.PUBLIC
+	);
 
-	let showFavourite = $page.url.searchParams.get('staronly') === 'true' ? true : false;
-	let showSatellite = $page.url.searchParams.get('type') === 'stac' ? true : false;
-	let hideGlobal: boolean;
+	let showFavourite = $state(page.url.searchParams.get('staronly') === 'true' ? true : false);
+	let showSatellite = $state(page.url.searchParams.get('type') === 'stac' ? true : false);
+	let hideGlobal: boolean = $state(false);
 
-	let searchedApiUrl: string = $page.url.href;
-	let showAdvancedSearch = false;
+	let searchedApiUrl: string = $state(page.url.href);
+	let showAdvancedSearch = $state(false);
 
 	const getTagsFromUrl = (key: 'sdg_goal' | 'country' | 'algorithm') => {
-		const values = $page.url.searchParams.getAll(key);
+		const values = page.url.searchParams.getAll(key);
 		const tags: Tag[] = [];
 		values?.forEach((value) => {
 			tags.push({
@@ -94,12 +85,12 @@
 
 	const getContinentsFromUrl = () => {
 		const key = 'continent';
-		const continents = $page.url.searchParams.getAll(key) ?? [];
+		const continents = page.url.searchParams.getAll(key) ?? [];
 		return continents;
 	};
 
 	let selectedSDGs: Tag[] = getTagsFromUrl('sdg_goal');
-	let selectedContinents: string[] = getContinentsFromUrl();
+	let selectedContinents: string[] = $state(getContinentsFromUrl());
 	let selectedCountries: Tag[] = getTagsFromUrl('country');
 
 	const reload = debounce(async (url: URL) => {
@@ -168,8 +159,8 @@
 	};
 
 	const handleLimitChanged = async () => {
-		const currentLimit = $page.url.searchParams.get('limit')
-			? $page.url.searchParams.get('limit')
+		const currentLimit = page.url.searchParams.get('limit')
+			? page.url.searchParams.get('limit')
 			: `${config.DataPageSearchLimit}`;
 		if (currentLimit && currentLimit !== limit) {
 			offset = '0';
@@ -196,9 +187,7 @@
 		}
 	};
 
-	const handlePaginationClicked = async (e: { detail: { type: 'previous' | 'next' } }) => {
-		const type = e.detail.type;
-
+	const handlePaginationClicked = async (type: 'previous' | 'next') => {
 		const link = datasets?.links.find((l) => l.rel === type);
 		if (link) {
 			const href = new URL(link.href);
@@ -209,7 +198,7 @@
 	const handleAccessLevelChanged = async () => {
 		offset = 0;
 
-		const href = new URL($page.url);
+		const href = new URL(page.url);
 		href.searchParams.set('offset', `${offset}`);
 		if (accessLevel === AccessLevel.ALL) {
 			href.searchParams.delete('accesslevel');
@@ -223,7 +212,7 @@
 	const handleFavouriteChanged = async () => {
 		showFavourite = !showFavourite;
 
-		const href = new URL($page.url);
+		const href = new URL(page.url);
 
 		href.searchParams.delete('limit');
 		href.searchParams.delete('offset');
@@ -240,7 +229,7 @@
 	const handleSatelliteChanged = async () => {
 		showSatellite = !showSatellite;
 
-		const href = new URL($page.url);
+		const href = new URL(page.url);
 
 		href.searchParams.delete('limit');
 		href.searchParams.delete('offset');
@@ -255,7 +244,7 @@
 	};
 
 	const updateSDGtags = async () => {
-		const apiUrl = $page.url;
+		const apiUrl = page.url;
 		apiUrl.searchParams.delete('sdg_goal');
 		selectedSDGs?.forEach((t) => {
 			apiUrl.searchParams.append(t.key, t.value as string);
@@ -268,8 +257,7 @@
 		return selectedSDGs.map((s) => parseInt(s.value as string));
 	};
 
-	const handleSDGtagChanged = async (e: { detail: { sdgs: number[] } }) => {
-		const sdgs = e.detail.sdgs as number[];
+	const handleSDGtagChanged = async (sdgs: number[]) => {
 		selectedSDGs = [
 			...sdgs.map((v: number) => {
 				return {
@@ -288,7 +276,7 @@
 
 	const getTags = (key: string) => {
 		let selectedTags: Tag[] = [];
-		const values = $page.url.searchParams.getAll(key);
+		const values = page.url.searchParams.getAll(key);
 		values.forEach((v) => {
 			if (selectedTags.find((t) => t.key === key && t.value === v)) return;
 
@@ -300,10 +288,8 @@
 		return selectedTags;
 	};
 
-	const handleTagChanged = async (e: { detail: { key: string; selected: Tag[] } }) => {
-		const key: string = e.detail.key;
-		const selected: Tag[] = e.detail.selected;
-		const apiUrl = $page.url;
+	const handleTagChanged = async (selected: Tag[], key: string) => {
+		const apiUrl = page.url;
 		apiUrl.searchParams.delete(key);
 		selected?.forEach((t) => {
 			apiUrl.searchParams.append(t.key, t.value as string);
@@ -315,7 +301,7 @@
 		const filtered = selectedContinents.filter((s) => s !== name);
 		selectedContinents = [...filtered];
 
-		const apiUrl = $page.url;
+		const apiUrl = page.url;
 		apiUrl.searchParams.delete('continent');
 		selectedContinents?.forEach((t) => {
 			apiUrl.searchParams.append('continent', t);
@@ -324,13 +310,12 @@
 		reload(apiUrl);
 	};
 
-	const handleCountryChanged = async (e: { detail: { selected: Country[] } }) => {
-		const countries: Country[] = e.detail.selected;
+	const handleCountryChanged = async (countries: Country[]) => {
 		selectedCountries = countries.map((c) => {
 			return { key: 'country', value: c.iso_3 } as Tag;
 		});
 
-		const apiUrl = $page.url;
+		const apiUrl = page.url;
 		apiUrl.searchParams.delete('country');
 		selectedCountries?.forEach((t) => {
 			apiUrl.searchParams.append('country', t.value as string);
@@ -339,35 +324,35 @@
 		reload(apiUrl);
 	};
 
-	const handleViewTypeChanged = (e: { detail: { value: TableViewType } }) => {
-		viewType = e.detail.value;
+	const handleViewTypeChanged = (value: string | number) => {
+		viewType = value as TableViewType;
 
-		const apiUrl = new URL($page.url);
+		const apiUrl = new URL(page.url);
 		apiUrl.searchParams.set('viewType', viewType);
 		replaceState(apiUrl, '');
 	};
 
 	const handleOperatorChanged = async () => {
 		operatorType = isOperatorTypeAnd ? 'or' : 'and';
-		const apiUrl = new URL($page.url);
+		const apiUrl = new URL(page.url);
 		apiUrl.searchParams.delete('operator');
 		apiUrl.searchParams.set('operator', operatorType);
 		reload(apiUrl);
 	};
 
-	let isReseted = false;
+	let isReseted = $state(false);
 	const handleResetFilter = async () => {
-		const apiUrl = new URL(`${$page.url.origin}${$page.url.pathname}${$page.url.hash}`);
+		const apiUrl = new URL(`${page.url.origin}${page.url.pathname}${page.url.hash}`);
 		limit = `${config.DataPageSearchLimit}`;
 		offset = 0;
 		sortby = config.DataPageSortingColumn;
 		query = '';
 		queryType = config.DataPageSearchQueryOperator;
-		operatorType = $page.data.config.DataPageTagSearchOperator;
+		operatorType = page.data.config.DataPageTagSearchOperator;
 		isOperatorTypeAnd = operatorType === 'and';
 		showFavourite = false;
 		showSatellite = false;
-		accessLevel = $page.data.session ? AccessLevel.PRIVATE : AccessLevel.PUBLIC;
+		accessLevel = AccessLevel.ALL;
 		selectedContinents = [];
 		apiUrl.searchParams.delete('continent');
 
@@ -376,57 +361,63 @@
 	};
 
 	onMount(() => {
-		const apiUrl = new URL($page.url);
+		const apiUrl = new URL(page.url);
 		reload(apiUrl);
 	});
 </script>
 
 <section class="header-content columns is-flex is-flex-wrap-wrap">
 	<div class="column is-12-mobile is-2 mt-auto p-0 pl-2">
-		<slot name="button" />
+		{@render button?.()}
 	</div>
 	<div
 		class="column is-12-mobile is-flex is-align-items-center is-justify-content-flex-end is-flex-wrap-wrap p-0"
 	>
 		<div class="mr-2">
 			<FieldControl title="Limits" showHelp={false}>
-				<div slot="control">
-					<div class="select mt-auto">
-						<select bind:value={limit} on:change={handleLimitChanged} disabled={isLoading}>
-							{#each LimitOptions as limit}
-								<option value={`${limit}`}>{limit}</option>
-							{/each}
-						</select>
+				{#snippet control()}
+					<div>
+						<div class="select mt-auto">
+							<select bind:value={limit} onchange={handleLimitChanged} disabled={isLoading}>
+								{#each LimitOptions as limit}
+									<option value={`${limit}`}>{limit}</option>
+								{/each}
+							</select>
+						</div>
 					</div>
-				</div>
+				{/snippet}
 			</FieldControl>
 		</div>
 		<div class="mr-2">
 			<FieldControl title="Sort results" showHelp={false}>
-				<div slot="control">
-					<div class="select mt-auto">
-						<select bind:value={sortby} on:change={handleSortbyChanged} disabled={isLoading}>
-							{#each DatasetSortingColumns as option}
-								<option value={option.value}>{option.label}</option>
-							{/each}
-						</select>
+				{#snippet control()}
+					<div>
+						<div class="select mt-auto">
+							<select bind:value={sortby} onchange={handleSortbyChanged} disabled={isLoading}>
+								{#each DatasetSortingColumns as option}
+									<option value={option.value}>{option.label}</option>
+								{/each}
+							</select>
+						</div>
 					</div>
-				</div>
+				{/snippet}
 			</FieldControl>
 		</div>
 		<div>
 			<FieldControl title="View as" showHelp={false}>
-				<div slot="control">
-					<SegmentButtons
-						buttons={[
-							{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
-							{ title: 'List', icon: 'fa-solid fa-list', value: 'list' },
-							{ title: 'Map', icon: 'fa-solid fa-map', value: 'map' }
-						]}
-						bind:selected={viewType}
-						on:change={handleViewTypeChanged}
-					/>
-				</div>
+				{#snippet control()}
+					<div>
+						<SegmentButtons
+							buttons={[
+								{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
+								{ title: 'List', icon: 'fa-solid fa-list', value: 'list' },
+								{ title: 'Map', icon: 'fa-solid fa-map', value: 'map' }
+							]}
+							bind:selected={viewType}
+							onchange={handleViewTypeChanged}
+						/>
+					</div>
+				{/snippet}
 			</FieldControl>
 		</div>
 	</div>
@@ -436,7 +427,7 @@
 	<div class="column is-3">
 		<button
 			class="button is-light has-text-weight-bold is-uppercase is-fullwidth"
-			on:click={handleResetFilter}
+			onclick={handleResetFilter}
 		>
 			reset filter
 		</button>
@@ -446,7 +437,7 @@
 				bind:value={query}
 				open={true}
 				placeholder="Type keywords to explore datasets..."
-				on:change={handleFilterInput}
+				onchange={handleFilterInput}
 				iconSize={20}
 				fontSize={6}
 				timeout={SearchDebounceTime}
@@ -455,12 +446,12 @@
 			/>
 		</div>
 
-		{#if $page.data.session}
+		{#if page.data.session}
 			<div class="py-2">
 				<Checkbox
 					label="Show starred only"
 					bind:checked={showFavourite}
-					on:clicked={handleFavouriteChanged}
+					onclick={handleFavouriteChanged}
 					disabled={isLoading}
 				/>
 			</div>
@@ -470,50 +461,56 @@
 			<Checkbox
 				label="Show satellite data only"
 				bind:checked={showSatellite}
-				on:clicked={handleSatelliteChanged}
+				onclick={handleSatelliteChanged}
 				disabled={isLoading}
 			/>
 		</div>
 
-		{#if $page.data.session}
+		{#if page.data.session}
 			<div class="pt-2 pb-1">
 				<FieldControl title="Access Level" showHelp={false}>
-					<div slot="control">
-						<AccessLevelSwitcher
-							bind:accessLevel
-							on:change={handleAccessLevelChanged}
-							isSegmentButton={false}
-							disabled={isLoading}
-						/>
-					</div>
+					{#snippet control()}
+						<div>
+							<AccessLevelSwitcher
+								bind:accessLevel
+								onchange={handleAccessLevelChanged}
+								isSegmentButton={false}
+								disabled={isLoading}
+							/>
+						</div>
+					{/snippet}
 				</FieldControl>
 			</div>
 		{/if}
 		<div class="py-1">
 			<FieldControl title="SDGs" isFirstCharCapitalized={false} showHelp={false}>
-				<div slot="control">
-					{#if browser}
-						{#key isReseted}
-							<SdgSelector
-								selected={getSdgNumbers()}
-								on:select={handleSDGtagChanged}
-								isFullWidth={true}
-							/>
-						{/key}
-					{/if}
-				</div>
+				{#snippet control()}
+					<div>
+						{#if browser}
+							{#key isReseted}
+								<SdgSelector
+									selected={getSdgNumbers()}
+									onselect={handleSDGtagChanged}
+									isFullWidth={true}
+								/>
+							{/key}
+						{/if}
+					</div>
+				{/snippet}
 			</FieldControl>
 		</div>
 
 		<div class="py-1">
 			<FieldControl title="Countries" isFirstCharCapitalized={false} showHelp={false}>
-				<div slot="control">
-					{#if browser}
-						{#key isReseted}
-							<CountrySelector selected={getCountryCodes()} on:select={handleCountryChanged} />
-						{/key}
-					{/if}
-				</div>
+				{#snippet control()}
+					<div>
+						{#if browser}
+							{#key isReseted}
+								<CountrySelector selected={getCountryCodes()} onselect={handleCountryChanged} />
+							{/key}
+						{/if}
+					</div>
+				{/snippet}
 			</FieldControl>
 		</div>
 
@@ -525,23 +522,25 @@
 					isFirstCharCapitalized={false}
 					showHelp={false}
 				>
-					<div slot="control">
-						<div class="flex is-flex-wrap-wrap pb-2">
-							{#key selectedContinents}
-								{#each selectedContinents as continent}
-									<span class="pl-1">
-										<Chips
-											label={continent}
-											showDelete={true}
-											on:delete={() => {
-												handleContinentDeleted(continent);
-											}}
-										/>
-									</span>
-								{/each}
-							{/key}
+					{#snippet control()}
+						<div>
+							<div class="flex is-flex-wrap-wrap pb-2">
+								{#key selectedContinents}
+									{#each selectedContinents as continent}
+										<span class="pl-1">
+											<Chips
+												label={continent}
+												showDelete={true}
+												ondelete={() => {
+													handleContinentDeleted(continent);
+												}}
+											/>
+										</span>
+									{/each}
+								{/key}
+							</div>
 						</div>
-					</div>
+					{/snippet}
 				</FieldControl>
 			</div>
 		{/if}
@@ -557,19 +556,21 @@
 			{#each [{ key: 'provider', title: 'DataProviders' }, { key: 'year', title: 'Year' }, { key: 'resolution', title: 'Resolution' }, { key: 'theme', title: 'Theme' }, { key: 'granularity', title: 'Admin level' }] as tagKey}
 				<div class="py-1">
 					<FieldControl title={tagKey.title} isFirstCharCapitalized={false} showHelp={false}>
-						<div slot="control">
-							{#if browser}
-								{#key isReseted}
-									<TagSelector
-										key={tagKey.key}
-										selected={getTags(tagKey.key)}
-										bind:apiUrl={searchedApiUrl}
-										on:select={handleTagChanged}
-										placeholder="Type {tagKey.title}..."
-									/>
-								{/key}
-							{/if}
-						</div>
+						{#snippet control()}
+							<div>
+								{#if browser}
+									{#key isReseted}
+										<TagSelector
+											key={tagKey.key}
+											selected={getTags(tagKey.key)}
+											bind:apiUrl={searchedApiUrl}
+											onselect={handleTagChanged}
+											placeholder="Type {tagKey.title}..."
+										/>
+									{/key}
+								{/if}
+							</div>
+						{/snippet}
 					</FieldControl>
 				</div>
 			{/each}
@@ -578,13 +579,13 @@
 				<Checkbox
 					label="Match all conditions"
 					bind:checked={isOperatorTypeAnd}
-					on:clicked={handleOperatorChanged}
+					onclick={handleOperatorChanged}
 					disabled={isLoading}
 				/>
 			</div>
 			<button
 				class="button is-light has-text-weight-bold is-uppercase is-fullwidth"
-				on:click={handleResetFilter}
+				onclick={handleResetFilter}
 			>
 				reset filter
 			</button>
@@ -611,7 +612,7 @@
 						</thead>
 						<tbody>
 							{#each datasets.features as feature}
-								<PublishedDatasetRow bind:feature />
+								<PublishedDatasetRow {feature} />
 							{/each}
 						</tbody>
 					</table>
@@ -636,7 +637,7 @@
 					bind:totalPages={datasets.pages.totalPages}
 					bind:currentPage={datasets.pages.currentPage}
 					hidden={datasets.pages.totalPages <= 1}
-					on:clicked={handlePaginationClicked}
+					onclick={handlePaginationClicked}
 				/>
 			</div>
 		{:else}

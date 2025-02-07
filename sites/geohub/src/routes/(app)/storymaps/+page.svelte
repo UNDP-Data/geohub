@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { goto, replaceState } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import StorymapTable from '$components/pages/storymap/StorymapTable.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import {
@@ -22,43 +22,50 @@
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
 
-	let storiesData: StorymapsData | undefined;
+	let { data }: Props = $props();
 
-	let breadcrumbs: BreadcrumbPage[] = [
+	let storiesData: StorymapsData | undefined = $state();
+
+	let breadcrumbs: BreadcrumbPage[] = $state([
 		{ title: 'home', url: '/' },
-		{ title: 'storymaps', url: $page.url.href }
-	];
+		{ title: 'storymaps', url: page.url.href }
+	]);
 
 	enum TabNames {
 		STORYMAP = 'Storymaps',
 		MY_STORYMAP = 'My storymaps'
 	}
 
-	let tabs: Tab[] = [];
-	let activeTab: string;
-	const hash = $page.url.hash;
+	let tabs: Tab[] = $state([]);
+	let activeTab: string = $state('');
+	const hash = page.url.hash;
 
-	let query = $page.url.searchParams.get('query') ?? '';
+	let query = $state(page.url.searchParams.get('query') ?? '');
 
-	const _limit = $page.url.searchParams.get('limit');
-	let limit = _limit ? Number(_limit) : data.config.StorymapPageSearchLimit;
-	let offset = Number($page.url.searchParams.get('offset'));
+	const _limit = page.url.searchParams.get('limit');
+	let limit = $state(_limit ? Number(_limit) : data.config.StorymapPageSearchLimit);
+	let offset = Number(page.url.searchParams.get('offset'));
 
-	const _level = $page.url.searchParams.get('accesslevel');
-	let accessLevel: AccessLevel = _level
-		? (Number(_level) as AccessLevel)
-		: $page.data.session
-			? AccessLevel.ALL
-			: AccessLevel.PUBLIC;
+	const _level = page.url.searchParams.get('accesslevel');
+	let accessLevel: AccessLevel = $state(
+		_level
+			? (Number(_level) as AccessLevel)
+			: page.data.session
+				? AccessLevel.ALL
+				: AccessLevel.PUBLIC
+	);
 
-	const _onlyStar = $page.url.searchParams.get('staronly') || 'false';
-	let onlyStar = _onlyStar.toLowerCase() === 'true';
+	const _onlyStar = page.url.searchParams.get('staronly') || 'false';
+	let onlyStar = $state(_onlyStar.toLowerCase() === 'true');
 
-	let viewType: TableViewType =
-		($page.url.searchParams.get('viewType') as TableViewType) ||
-		data.config.StorymapPageTableViewType;
+	let viewType: TableViewType = $state(
+		(page.url.searchParams.get('viewType') as TableViewType) ||
+			data.config.StorymapPageTableViewType
+	);
 
 	const getSortByFromUrl = (url: URL) => {
 		const sortByValue = url.searchParams.get('sortby');
@@ -70,17 +77,16 @@
 		}
 	};
 
-	let sortby = getSortByFromUrl($page.url) ?? data.config.MapPageSortingColumn;
+	let sortby = $state(getSortByFromUrl(page.url) ?? data.config.MapPageSortingColumn);
 
-	const handlePaginationClicked = async (e) => {
-		const apiUrl = e.detail.url;
+	const handlePaginationClicked = async (apiUrl: URL) => {
 		await reload(apiUrl);
 	};
 
 	const handleAccessLevelChanged = async () => {
 		offset = 0;
 
-		const apiUrl = new URL($page.url.toString());
+		const apiUrl = new URL(page.url.toString());
 		apiUrl.searchParams.set('offset', `${offset}`);
 		if (accessLevel === AccessLevel.ALL) {
 			apiUrl.searchParams.delete('accesslevel');
@@ -94,7 +100,7 @@
 	const handleClickFavourite = async () => {
 		onlyStar = !onlyStar;
 
-		const apiUrl = new URL($page.url.toString());
+		const apiUrl = new URL(page.url.toString());
 		offset = 0;
 		apiUrl.searchParams.set('offset', `${offset}`);
 
@@ -110,7 +116,7 @@
 	const handleSortbyChanged = async () => {
 		offset = 0;
 
-		const apiUrl = new URL($page.url.toString());
+		const apiUrl = new URL(page.url.toString());
 		apiUrl.searchParams.set('offset', `${offset}`);
 		apiUrl.searchParams.set('sortby', sortby);
 
@@ -118,7 +124,7 @@
 	};
 
 	const handleLimitChanged = async () => {
-		const apiUrl = new URL($page.url.toString());
+		const apiUrl = new URL(page.url.toString());
 		const currentLimit = apiUrl.searchParams.get('limit')
 			? Number(apiUrl.searchParams.get('limit'))
 			: undefined;
@@ -140,7 +146,7 @@
 	};
 
 	const handleFilterInput = async () => {
-		const apiUrl = new URL($page.url.toString());
+		const apiUrl = new URL(page.url.toString());
 		offset = 0;
 		apiUrl.searchParams.set('offset', `${offset}`);
 
@@ -172,8 +178,9 @@
 			}
 		}
 
-		if (url.search !== $page.url.search) {
-			goto(url, { replaceState: true, noScroll: true, keepFocus: true, invalidateAll: false });
+		if (url.search !== page.url.search) {
+			const pageUrl = `/storymaps${url.search}`;
+			goto(pageUrl, { replaceState: true, noScroll: true, keepFocus: true, invalidateAll: false });
 		}
 
 		const res = await fetch(`/api/storymaps${url.search}`);
@@ -182,10 +189,10 @@
 		storiesData = stories;
 	};
 
-	const handleViewTypeChanged = (e: { detail: { value: TableViewType } }) => {
-		viewType = e.detail.value;
+	const handleViewTypeChanged = (value: string | number) => {
+		viewType = value as TableViewType;
 
-		const apiUrl = new URL($page.url);
+		const apiUrl = new URL(page.url);
 		apiUrl.searchParams.set('viewType', viewType);
 		replaceState(apiUrl, '');
 	};
@@ -194,7 +201,7 @@
 		if (tabs.length > 0) {
 			activeTab = (hash ? tabs.find((t) => t.id === hash)?.id : tabs[0].id) as string;
 
-			const apiUrl = new URL($page.url);
+			const apiUrl = new URL(page.url);
 			if (activeTab === '#storymaps') {
 				apiUrl.searchParams.delete('mydata');
 			} else {
@@ -204,14 +211,12 @@
 		}
 	};
 
-	const handleTabChanged = async (e) => {
-		const active = e.detail.activeTab;
-
-		const apiUrl = new URL($page.url);
+	const handleTabChanged = async (activeTab: string) => {
+		const apiUrl = new URL(page.url);
 		offset = 0;
 		apiUrl.searchParams.set('offset', `${offset}`);
 
-		if (active === '#storymaps') {
+		if (activeTab === '#storymaps') {
 			apiUrl.searchParams.delete('mydata');
 		} else {
 			apiUrl.searchParams.set('mydata', 'true');
@@ -236,7 +241,7 @@
 		loadActiveTab();
 
 		if (!data.session) {
-			const apiUrl = new URL($page.url);
+			const apiUrl = new URL(page.url);
 			reload(apiUrl);
 		}
 	});
@@ -247,7 +252,7 @@
 	bind:breadcrumbs
 	bind:tabs
 	bind:activeTab
-	on:tabChanged={handleTabChanged}
+	onTabChange={handleTabChanged}
 />
 
 <div class="mx-6 my-4">
@@ -263,42 +268,48 @@
 		>
 			<div class="mr-2">
 				<FieldControl title="Limits" showHelp={false}>
-					<div slot="control">
-						<div class="select mt-auto">
-							<select bind:value={limit} on:change={handleLimitChanged}>
-								{#each LimitOptions as limit}
-									<option value={limit}>{limit}</option>
-								{/each}
-							</select>
+					{#snippet control()}
+						<div>
+							<div class="select mt-auto">
+								<select bind:value={limit} onchange={handleLimitChanged}>
+									{#each LimitOptions as limit}
+										<option value={limit}>{limit}</option>
+									{/each}
+								</select>
+							</div>
 						</div>
-					</div>
+					{/snippet}
 				</FieldControl>
 			</div>
 			<div class="mr-2">
 				<FieldControl title="Sort results" showHelp={false}>
-					<div slot="control">
-						<div class="select mt-auto">
-							<select bind:value={sortby} on:change={handleSortbyChanged}>
-								{#each StorymapSortingColumns as option}
-									<option value={option.value}>{option.label}</option>
-								{/each}
-							</select>
+					{#snippet control()}
+						<div>
+							<div class="select mt-auto">
+								<select bind:value={sortby} onchange={handleSortbyChanged}>
+									{#each StorymapSortingColumns as option}
+										<option value={option.value}>{option.label}</option>
+									{/each}
+								</select>
+							</div>
 						</div>
-					</div>
+					{/snippet}
 				</FieldControl>
 			</div>
 			<div>
 				<FieldControl title="View as" showHelp={false}>
-					<div slot="control">
-						<SegmentButtons
-							buttons={[
-								{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
-								{ title: 'List', icon: 'fa-solid fa-list', value: 'list' }
-							]}
-							bind:selected={viewType}
-							on:change={handleViewTypeChanged}
-						/>
-					</div>
+					{#snippet control()}
+						<div>
+							<SegmentButtons
+								buttons={[
+									{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
+									{ title: 'List', icon: 'fa-solid fa-list', value: 'list' }
+								]}
+								bind:selected={viewType}
+								onchange={handleViewTypeChanged}
+							/>
+						</div>
+					{/snippet}
 				</FieldControl>
 			</div>
 		</div>
@@ -311,7 +322,7 @@
 					bind:value={query}
 					open={true}
 					placeholder="Type keywords..."
-					on:change={handleFilterInput}
+					onchange={handleFilterInput}
 					iconSize={20}
 					fontSize={6}
 					timeout={SearchDebounceTime}
@@ -320,16 +331,18 @@
 				/>
 			</div>
 
-			{#if $page.data.session}
+			{#if page.data.session}
 				<div class="py-2">
 					<FieldControl title="Access Level" showHelp={false}>
-						<div slot="control">
-							<AccessLevelSwitcher
-								bind:accessLevel
-								on:change={handleAccessLevelChanged}
-								isSegmentButton={false}
-							/>
-						</div>
+						{#snippet control()}
+							<div>
+								<AccessLevelSwitcher
+									bind:accessLevel
+									onchange={handleAccessLevelChanged}
+									isSegmentButton={false}
+								/>
+							</div>
+						{/snippet}
 					</FieldControl>
 				</div>
 
@@ -337,13 +350,13 @@
 					<Checkbox
 						label="Show starred only"
 						bind:checked={onlyStar}
-						on:clicked={handleClickFavourite}
+						onclick={handleClickFavourite}
 					/>
 				</div>
 			{/if}
 		</div>
 		<div class="column">
-			<StorymapTable bind:storiesData bind:viewType on:reload={handlePaginationClicked} />
+			<StorymapTable bind:storiesData bind:viewType onReload={handlePaginationClicked} />
 		</div>
 	</div>
 </div>

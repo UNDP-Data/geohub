@@ -1,12 +1,20 @@
 <script lang="ts">
 	import { marked } from 'marked';
 	import { getContext } from 'svelte';
-	import type { StoryMapTemplate } from './interfaces/StoryMapTemplate.js';
-	import { STORYMAP_CONFIG_STORE_CONTEXT_KEY, type StoryMapConfigStore } from './stores/index.js';
+	import type { StoryMapTemplate } from './interfaces/StoryMapTemplate';
+	import { STORYMAP_CONFIG_STORE_CONTEXT_KEY, type StoryMapConfigStore } from './stores';
 
-	export let template: StoryMapTemplate = 'light';
-	export let size: 'small' | 'normal' = 'normal';
-	export let height = 0;
+	interface Props {
+		template?: StoryMapTemplate;
+		size?: 'small' | 'normal';
+		height?: number;
+	}
+
+	let {
+		template = $bindable('light'),
+		size = $bindable('normal'),
+		height = $bindable(0)
+	}: Props = $props();
 
 	let config: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 </script>
@@ -21,6 +29,6 @@
 {/if}
 
 <style lang="scss">
-	@import '$lib/css/light/footer.scss';
-	@import '$lib/css/dark/footer.scss';
+	@import './css/light/footer.scss';
+	@import './css/dark/footer.scss';
 </style>

@@ -1,19 +1,27 @@
-<script lang="ts" context="module">
-	let images: IconImageType[] = [];
+<script lang="ts" module>
+	let images: IconImageType[] = $state([]);
 </script>
 
 <script lang="ts">
-	import { IconImageSelector, type IconImageType } from '$lib/components/ui/index.js';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { IconImageSelector, type IconImageType } from '$lib/components/ui';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
-	export let readonly = false;
-	export let apiOrigin = '';
+	interface Props {
+		layerId: string;
+		readonly?: boolean;
+		apiOrigin?: string;
+	}
+
+	let {
+		layerId = $bindable(),
+		readonly = $bindable(false),
+		apiOrigin = $bindable('')
+	}: Props = $props();
 
 	const propertyName = 'icon-image';
 	const style = $map
@@ -27,7 +35,7 @@
 		return undefined;
 	};
 
-	let selected = getIconImage(style);
+	let selected = $state(getIconImage(style));
 
 	const updateLegend = () => {
 		if (!$map.getLayer(layerId)) return;
@@ -43,8 +51,7 @@
 		return images;
 	};
 
-	const handleSelect = (e: { detail: IconImageType }) => {
-		const item = e.detail;
+	const handleSelect = (item: IconImageType) => {
 		selected = item.alt;
 		updateLegend();
 	};
@@ -55,5 +62,5 @@
 		<Loader size="small" />
 	</div>
 {:then}
-	<IconImageSelector bind:images bind:selected bind:readonly on:select={handleSelect} />
+	<IconImageSelector bind:images bind:selected bind:readonly onselect={handleSelect} />
 {/await}

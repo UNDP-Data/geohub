@@ -1,5 +1,24 @@
 # @undp-data/cgaz-admin-tool
 
+## 0.0.12
+
+### Patch Changes
+
+- 28b87b3: chore: updated dependencies
+
+## 0.0.11
+
+### Patch Changes
+
+- 0a235fa: fix: remove moduleResolution = nodenext from tsconfig.json
+
+## 0.0.10
+
+### Patch Changes
+
+- 1ac4d94: chore: updated monorepo package dependencies
+- a038e3d: chore: upgrade maplibre to v5
+
 ## 0.0.9
 
 ### Patch Changes

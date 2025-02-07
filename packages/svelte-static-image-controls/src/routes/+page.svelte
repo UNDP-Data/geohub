@@ -1,23 +1,25 @@
 <script lang="ts">
 	import { MaplibreStaticImageControl } from '$lib';
-	import type { ControlOptions } from '$lib/interface/index.js';
+	import type { ControlOptions } from '$lib/interface';
 	import { CopyToClipboard } from '@undp-data/svelte-undp-components';
-	import '@undp-data/undp-bulma/dist/style.css';
+	import '@undp-data/undp-bulma/dist/undp-bulma.css';
 	import { addProtocol, Map, NavigationControl, ScaleControl } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
 
-	let mapContainer: HTMLDivElement;
+	let mapContainer: HTMLDivElement | undefined = $state();
 
-	let map: Map;
+	let map: Map | undefined = $state();
 
-	let styleUrl = 'https://dev.undpgeohub.org/api/mapstyle/style.json';
+	let styleUrl = $state('https://dev.undpgeohub.org/api/mapstyle/style.json');
+	const getDefaultStyleUrl = () => {
+		return styleUrl;
+	};
+	let loadedUrl = $state(getDefaultStyleUrl());
+	let apiUrl = $state('');
 
-	let loadedUrl = styleUrl;
-	let apiUrl = '';
-
-	let options: ControlOptions = {
+	let options: ControlOptions = $state({
 		width: 300,
 		height: 200,
 		bbox: [-180, -90, 180, 90],
@@ -31,9 +33,10 @@
 		extension: 'webp',
 		pageSize: 'custom',
 		orientation: 'portrait'
-	};
+	});
 
 	const initMap = () => {
+		if (!mapContainer) return;
 		let protocol = new pmtiles.Protocol();
 		addProtocol('pmtiles', protocol.tile);
 
@@ -50,6 +53,7 @@
 		map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
 
 		map.on('load', () => {
+			if (!map) return;
 			map.resize();
 		});
 	};
@@ -58,8 +62,8 @@
 		initMap();
 	});
 
-	const handleUrlChanged = (e: { detail: { url: string } }) => {
-		apiUrl = e.detail.url;
+	const handleUrlChanged = (url: string) => {
+		apiUrl = url;
 	};
 
 	const handleClickLoad = () => {
@@ -69,18 +73,18 @@
 </script>
 
 <div class="field m-1">
-	<!-- svelte-ignore a11y-label-has-associated-control -->
+	<!-- svelte-ignore a11y_label_has_associated_control -->
 	<label class="label">Style URL</label>
 	<div class="control">
 		<div class="is-flex">
 			<input class="input" bind:value={styleUrl} />
-			<button class="button is-link ml-1" on:click={handleClickLoad}>Load</button>
+			<button class="button is-link ml-1" onclick={handleClickLoad}>Load</button>
 		</div>
 	</div>
 </div>
 
 <div class="field m-1">
-	<!-- svelte-ignore a11y-label-has-associated-control -->
+	<!-- svelte-ignore a11y_label_has_associated_control -->
 	<label class="label">Static image URL</label>
 	<div class="control">
 		<CopyToClipboard bind:value={apiUrl} />
@@ -95,7 +99,7 @@
 			bind:style={loadedUrl}
 			apiBase="https://staticimage.undpgeohub.org/api"
 			bind:options
-			on:change={handleUrlChanged}
+			onchange={handleUrlChanged}
 			hiddenApiTypes={false}
 		/>
 	{/if}

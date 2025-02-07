@@ -1,5 +1,94 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 3.0.8
+
+### Patch Changes
+
+- 28b87b3: chore: updated dependencies
+- Updated dependencies [28b87b3]
+  - @undp-data/svelte-undp-components@2.0.5
+  - @undp-data/svelte-undp-design@3.0.2
+  - @undp-data/undp-bulma@2.0.2
+
+## 3.0.7
+
+### Patch Changes
+
+- Updated dependencies [f70c8af]
+  - @undp-data/svelte-undp-components@2.0.4
+
+## 3.0.6
+
+### Patch Changes
+
+- Updated dependencies [6092700]
+  - @undp-data/svelte-undp-components@2.0.3
+
+## 3.0.5
+
+### Patch Changes
+
+- 0a235fa: fix: remove moduleResolution = nodenext from tsconfig.json
+- Updated dependencies [0a235fa]
+  - @undp-data/svelte-undp-components@2.0.2
+  - @undp-data/svelte-undp-design@3.0.1
+
+## 3.0.4
+
+### Patch Changes
+
+- Updated dependencies [125fffd]
+  - @undp-data/svelte-undp-components@2.0.1
+
+## 3.0.3
+
+### Patch Changes
+
+- 6befcd4: fix: updated interfaces of using svelte-undp-components
+- 26440c9: fix: fixed interface where using svelte-undp-design
+- Updated dependencies [26440c9]
+- Updated dependencies [2ee1359]
+- Updated dependencies [26440c9]
+- Updated dependencies [6befcd4]
+  - @undp-data/svelte-undp-components@2.0.0
+  - @undp-data/svelte-undp-design@3.0.0
+
+## 3.0.2
+
+### Patch Changes
+
+- Updated dependencies [092b444]
+  - @undp-data/undp-bulma@2.0.1
+  - @undp-data/svelte-undp-components@1.5.19
+  - @undp-data/svelte-undp-design@2.4.8
+
+## 3.0.1
+
+### Patch Changes
+
+- Updated dependencies [0ae54db]
+  - @undp-data/svelte-undp-design@2.4.8
+  - @undp-data/svelte-undp-components@1.5.19
+
+## 3.0.0
+
+### Major Changes
+
+- dbd2da0: chore: migrate to svelte 5 for static api control.
+
+### Patch Changes
+
+- a038e3d: chore: upgrade maplibre to v5
+- Updated dependencies [1ac4d94]
+- Updated dependencies [905236f]
+- Updated dependencies [a038e3d]
+- Updated dependencies [8e7812f]
+- Updated dependencies [a2662a7]
+- Updated dependencies [1ac4d94]
+  - @undp-data/svelte-undp-components@1.5.18
+  - @undp-data/svelte-undp-design@2.4.7
+  - @undp-data/undp-bulma@2.0.0
+
 ## 2.0.41
 
 ### Patch Changes

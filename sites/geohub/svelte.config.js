@@ -1,5 +1,5 @@
 import adapter from '@sveltejs/adapter-node';
-import preprocess from 'svelte-preprocess';
+import { sveltePreprocess } from 'svelte-preprocess';
 import { resolve } from 'path';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
@@ -9,7 +9,7 @@ const pkg = JSON.parse(json);
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	preprocess: preprocess({}),
+	preprocess: sveltePreprocess({}),
 	kit: {
 		adapter: adapter({
 			out: 'build',
@@ -40,6 +40,13 @@ const config = {
 		if (warningCodeToIgnore.includes(warning.code)) return;
 
 		defaultHandler(warning);
+	},
+
+	// this is required because CEEI code (layerHelper.ts) using svelte 4 component with new syntax
+	compilerOptions: {
+		compatibility: {
+			componentApi: 4
+		}
 	}
 };
 

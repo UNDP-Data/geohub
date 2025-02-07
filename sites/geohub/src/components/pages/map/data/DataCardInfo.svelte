@@ -5,13 +5,21 @@
 	import type { RasterTileMetadata, VectorTileMetadata } from '@undp-data/svelte-undp-components';
 	import { CtaLink, Download } from '@undp-data/svelte-undp-design';
 	import { marked } from 'marked';
-	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		feature: DatasetFeature;
+		metadata?: RasterTileMetadata | VectorTileMetadata;
+		children?: import('svelte').Snippet;
+		onStarDeleted?: () => void;
+	}
 
-	export let feature: DatasetFeature = undefined;
-	export let metadata: RasterTileMetadata | VectorTileMetadata = undefined;
+	let {
+		feature = $bindable(),
+		metadata = $bindable(),
+		children,
+		onStarDeleted = () => {}
+	}: Props = $props();
 
 	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
 
@@ -21,23 +29,25 @@
 
 	const unit = tags?.find((t) => t.key === 'unit')?.value;
 
-	let attribution = createAttributionFromTags(tags);
-	$: if (metadata) {
-		if (!is_raster) {
-			const vectorInfo = metadata as VectorTileMetadata;
-			if (vectorInfo.attribution) {
-				attribution = vectorInfo.attribution;
+	let attribution = $state(createAttributionFromTags(tags));
+	$effect(() => {
+		if (metadata) {
+			if (!is_raster) {
+				const vectorInfo = metadata as VectorTileMetadata;
+				if (vectorInfo.attribution) {
+					attribution = vectorInfo.attribution;
+				}
 			}
 		}
-	}
+	});
 
-	let isFullDescription = false;
+	let isFullDescription = $state(false);
 	let descriptionLength = 100;
 
 	const downloadUrl = feature.properties.links?.find((l) => l.rel === 'download')?.href;
 
-	const handleStarDeleted = (e) => {
-		dispatch('starDeleted', e.detail);
+	const handleStarDeleted = () => {
+		if (onStarDeleted) onStarDeleted();
 	};
 </script>
 
@@ -47,20 +57,20 @@
 		<div class="card-title is-flex is-flex-direction-row is-align-content-center">
 			<p class="title is-5 has-text-left pr-2">{feature.properties.name}</p>
 		</div>
-		{#if !(stacType && ['cog', 'mosaicjson'].includes(stacType))}
+		{#if !(stacType && ['cog', 'mosaicjson'].includes(stacType as string))}
 			<div class="star py-2">
 				<Star
-					bind:id={feature.properties.id}
-					bind:isStar={feature.properties.is_star}
+					bind:id={feature.properties.id as string}
+					bind:isStar={feature.properties.is_star as boolean}
 					bind:no_stars={feature.properties.no_stars}
-					on:starDeleted={handleStarDeleted}
+					ondelete={handleStarDeleted}
 					table="datasets"
 				/>
 			</div>
 		{/if}
-		<slot />
+		{@render children?.()}
 		<div class="description has-text-justified">
-			{#if !isFullDescription}
+			{#if !isFullDescription && feature.properties.description}
 				{#if feature.properties.description.length < 100}
 					<!-- eslint-disable svelte/no-at-html-tags -->
 					{@html marked(feature.properties.description)}
@@ -70,7 +80,7 @@
 				<br />
 				<CtaLink
 					label="READ MORE"
-					on:clicked={() => {
+					onclick={() => {
 						isFullDescription = true;
 					}}
 				/>
@@ -80,36 +90,19 @@
 					<p><b>Description: </b>{@html marked(feature.properties.description)}</p>
 				{/if}
 				<p>
-					<b>License: </b>{feature.properties.license?.length > 0
+					<b>License: </b>{feature.properties.license && feature.properties.license.length > 0
 						? feature.properties.license
 						: 'License not specified'}
 				</p>
 				{#if metadata}
-					{#if metadata['band_metadata']}
-						{#if metadata['band_metadata'][0][1]?.RepresentationType}
+					{@const bandmeta = (metadata as RasterTileMetadata)['band_metadata']}
+					{#if bandmeta}
+						{#if bandmeta[0][1]?.RepresentationType}
 							<p>
 								<b>Representation Type: </b>
-								{metadata['band_metadata'][0][1].RepresentationType}
+								{bandmeta[0][1].RepresentationType}
 							</p>
 						{/if}
-						<!-- {#if metadata['band_metadata'][0][1]?.STATISTICS_MINIMUM}
-              <p><b>Minimum value: </b> {metadata['band_metadata'][0][1].STATISTICS_MINIMUM}</p>
-            {/if}
-            {#if metadata['band_metadata'][0][1]?.STATISTICS_MAXIMUM}
-              <p><b>Maximum value: </b> {metadata['band_metadata'][0][1].STATISTICS_MAXIMUM}</p>
-            {/if}
-            {#if metadata['band_metadata'][0][1]?.STATISTICS_MEAN}
-              <p><b>Mean value: </b> {metadata['band_metadata'][0][1].STATISTICS_MEAN}</p>
-            {/if}
-            {#if metadata['band_metadata'][0][1]?.STATISTICS_MEDIAN}
-              <p><b>Median value: </b> {metadata['band_metadata'][0][1].STATISTICS_MEDIAN}</p>
-            {/if}
-            {#if metadata['band_metadata'][0][1]?.STATISTICS_STDDEV}
-              <p><b>STDDev value: </b> {metadata['band_metadata'][0][1].STATISTICS_STDDEV}</p>
-            {/if}
-            {#if metadata['band_metadata'][0][1]?.STATISTICS_VALID_PERCENT}
-              <p><b>Valid percent: </b> {metadata['band_metadata'][0][1].STATISTICS_VALID_PERCENT}</p>
-            {/if} -->
 					{/if}
 				{/if}
 				{#if unit}

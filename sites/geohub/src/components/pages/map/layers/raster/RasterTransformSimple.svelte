@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	interface RasterExpression {
 		band: string;
 		operator?: string;
@@ -36,13 +36,17 @@
 
 	const tippyTooltip = initTooltipTippy();
 
-	export let layer: Layer;
+	interface Props {
+		layer: Layer;
+	}
 
-	let info: RasterTileMetadata = layer.info;
-	let initialStep: number;
-	let layerMin: number;
-	let layerMax: number;
-	let expression: RasterExpression;
+	let { layer = $bindable() }: Props = $props();
+
+	let info: RasterTileMetadata = layer.info as RasterTileMetadata;
+	let initialStep: number | undefined = $state();
+	let layerMin: number | undefined = $state();
+	let layerMax: number | undefined = $state();
+	let expression: RasterExpression | undefined = $state();
 
 	onMount(() => {
 		setLayerStats().then(() => {
@@ -186,177 +190,186 @@
 
 {#if initialStep}
 	<Wizard bind:initialStep>
-		<Step num={1} let:nextStep>
-			<div
-				class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
-			>
-				<div>
-					<button
-						on:click={nextStep}
-						class="button is-primary is-small is-uppercase has-text-weight-bold"
-					>
-						ADD
-					</button>
-				</div>
-			</div>
-			<div class="mt-2">
-				<Notification type="info" showCloseButton={false}>
-					Create an <b>expression</b> and tranform the current layer's pixels values based on
-					whether they <b>satisfy</b> or
-					<b>not</b>
-					a <b>condition</b>.
-				</Notification>
-			</div>
-		</Step>
-		<Step num={2} let:nextStep let:prevStep let:setStep>
-			<div
-				class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
-			>
-				<button
-					on:click={prevStep}
-					title="move back to start"
-					class="button is-link is-small is-uppercase has-text-weight-bold"
+		<Step num={1}>
+			{#snippet children({ nextStep })}
+				<div
+					class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
 				>
-					<i class="fa fa-angles-left" /> &nbsp;Back
-				</button>
-
-				<button
-					on:click={() => {
-						setStep(1);
-						resetExpression();
-					}}
-					class="button is-link is-small is-uppercase has-text-weight-bold"
-				>
-					Cancel
-				</button>
-			</div>
-
-			<div class="mt-2">
-				<Notification type="info" showCloseButton={false}>
-					show only pixels whose value is {expression.operatorLabel ?? ''}
-				</Notification>
-			</div>
-
-			<div class="grid mt-2">
-				{#each RasterComparisonOperators as operator}
-					{@const isVisible = !operator.disabled}
-					{#if isVisible}
+					<div>
 						<button
-							class="button {operator.value === expression.operator ? 'is-success' : 'is-info'}"
-							on:click={() => {
-								expression = {
-									...expression,
-									operator: operator.value,
-									operatorLabel: operator.text
-								};
-								nextStep();
-							}}
-							title={operator.text}
-							use:tippyTooltip={{ content: operator.label }}
+							onclick={nextStep}
+							class="button is-primary is-small is-uppercase has-text-weight-bold"
 						>
-							<div class="is-flex is-justify-content-center">
-								<span class="has-text-white-ter has-text-weight-bold is-size-4"
-									>{operator.symbol}</span
-								>
-							</div>
+							ADD
 						</button>
-					{/if}
-				{/each}
-			</div>
-		</Step>
-		<Step num={3} let:nextStep let:prevStep let:setStep>
-			<div
-				class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
-			>
-				<button
-					on:click={prevStep}
-					title="Operator categories"
-					class="button is-link is-small is-uppercase has-text-weight-bold"
-				>
-					<i class="fa fa-angles-left" /> &nbsp;Operator
-				</button>
-
-				<button
-					on:click={() => {
-						resetExpression();
-						setStep(1);
-					}}
-					class="button is-link is-small is-uppercase has-text-weight-bold"
-				>
-					Cancel
-				</button>
-			</div>
-
-			<div class="mt-2">
-				<Notification type="info" showCloseButton={false}>
-					show only pixels whose value is {expression.operatorLabel ?? ''}
-					{expression.value[0] ?? ''}
-				</Notification>
-			</div>
-
-			<div class="container mt-2">
-				<Slider
-					bind:values={expression.value}
-					min={layerMin}
-					max={layerMax}
-					step={getSliderStep()}
-					range={expression?.operator
-						? ['>', '>='].includes(expression.operator)
-							? 'max'
-							: ['<', '<='].includes(expression.operator)
-								? 'min'
-								: false
-						: false}
-					first="label"
-					last="label"
-					rest={false}
-					showEditor={true}
-				/>
-			</div>
-
-			{#if $rescaleStore?.length === 2 && ($rescaleStore[0] !== layerMin || $rescaleStore[1] !== layerMax)}
+					</div>
+				</div>
 				<div class="mt-2">
-					<Notification type="warning" showCloseButton={false}>
-						Rescale values ({$rescaleStore.join(', ')}) are removed when this transform is applied.
+					<Notification type="info" showCloseButton={false}>
+						Create an <b>expression</b> and tranform the current layer's pixels values based on
+						whether they <b>satisfy</b> or
+						<b>not</b>
+						a <b>condition</b>.
 					</Notification>
 				</div>
-			{/if}
-
-			<button
-				on:click={() => {
-					nextStep();
-					applyExpression();
-				}}
-				disabled={expression?.operator && expression?.value ? false : true}
-				class="button is-primary is-small is-uppercase has-text-weight-bold mt-2"
-			>
-				Apply
-			</button>
+			{/snippet}
 		</Step>
-		<Step num={4} let:setStep>
-			<div
-				class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
-			>
-				<div class="dropdown is-hoverable">
-					{#if expression}
-						<div class="tags has-addons is-centered">
-							<div class="tag is-info is-dark is-small">{`${expression.band}`}</div>
-							<div class="tag is-danger is-dark is-small">{expression.operator}</div>
-							<div class="tag is-success is-dark is-small">{expression.value[0]}</div>
-						</div>
-					{/if}
+		<Step num={2}>
+			{#snippet children({ nextStep, prevStep, setStep })}
+				<div
+					class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
+				>
+					<button
+						onclick={prevStep}
+						title="move back to start"
+						class="button is-link is-small is-uppercase has-text-weight-bold"
+					>
+						<i class="fa fa-angles-left"></i> &nbsp;Back
+					</button>
+
+					<button
+						onclick={() => {
+							setStep(1);
+							resetExpression();
+						}}
+						class="button is-link is-small is-uppercase has-text-weight-bold"
+					>
+						Cancel
+					</button>
 				</div>
 
-				<button
-					on:click={() => {
-						removeExpression();
-						setStep(1);
-					}}
-					class="button is-primary is-small is-uppercase has-text-weight-bold ml-auto"
+				<div class="mt-2">
+					<Notification type="info" showCloseButton={false}>
+						show only pixels whose value is {expression.operatorLabel ?? ''}
+					</Notification>
+				</div>
+
+				<div class="grid mt-2">
+					{#each RasterComparisonOperators as operator}
+						{@const isVisible = !operator.disabled}
+						{#if isVisible}
+							<button
+								class="button {operator.value === expression.operator ? 'is-success' : 'is-info'}"
+								onclick={() => {
+									expression = {
+										...expression,
+										operator: operator.value,
+										operatorLabel: operator.text
+									};
+									nextStep();
+								}}
+								title={operator.text}
+								use:tippyTooltip={{ content: operator.label }}
+							>
+								<div class="is-flex is-justify-content-center">
+									<span class="has-text-white-ter has-text-weight-bold is-size-4"
+										>{operator.symbol}</span
+									>
+								</div>
+							</button>
+						{/if}
+					{/each}
+				</div>
+			{/snippet}
+		</Step>
+		<Step num={3}>
+			{#snippet children({ nextStep, prevStep, setStep })}
+				<div
+					class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
 				>
-					Clear filter
+					<button
+						onclick={prevStep}
+						title="Operator categories"
+						class="button is-link is-small is-uppercase has-text-weight-bold"
+					>
+						<i class="fa fa-angles-left"></i> &nbsp;Operator
+					</button>
+
+					<button
+						onclick={() => {
+							resetExpression();
+							setStep(1);
+						}}
+						class="button is-link is-small is-uppercase has-text-weight-bold"
+					>
+						Cancel
+					</button>
+				</div>
+
+				<div class="mt-2">
+					<Notification type="info" showCloseButton={false}>
+						show only pixels whose value is {expression.operatorLabel ?? ''}
+						{expression.value[0] ?? ''}
+					</Notification>
+				</div>
+
+				<div class="container mt-2">
+					<Slider
+						bind:values={expression.value as number[]}
+						min={layerMin as number}
+						max={layerMax as number}
+						step={getSliderStep()}
+						range={expression?.operator
+							? ['>', '>='].includes(expression.operator)
+								? 'max'
+								: ['<', '<='].includes(expression.operator)
+									? 'min'
+									: false
+							: false}
+						first="label"
+						last="label"
+						rest={false}
+						showEditor={true}
+					/>
+				</div>
+
+				{#if $rescaleStore?.length === 2 && ($rescaleStore[0] !== layerMin || $rescaleStore[1] !== layerMax)}
+					<div class="mt-2">
+						<Notification type="warning" showCloseButton={false}>
+							Rescale values ({$rescaleStore.join(', ')}) are removed when this transform is
+							applied.
+						</Notification>
+					</div>
+				{/if}
+
+				<button
+					onclick={() => {
+						nextStep();
+						applyExpression();
+					}}
+					disabled={expression?.operator && expression?.value ? false : true}
+					class="button is-primary is-small is-uppercase has-text-weight-bold mt-2"
+				>
+					Apply
 				</button>
-			</div>
+			{/snippet}
+		</Step>
+		<Step num={4}>
+			{#snippet children({ setStep })}
+				<div
+					class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
+				>
+					<div class="dropdown is-hoverable">
+						{#if expression}
+							<div class="tags has-addons is-centered">
+								<div class="tag is-info is-dark is-small">{`${expression.band}`}</div>
+								<div class="tag is-danger is-dark is-small">{expression.operator}</div>
+								<div class="tag is-success is-dark is-small">{expression.value[0]}</div>
+							</div>
+						{/if}
+					</div>
+
+					<button
+						onclick={() => {
+							removeExpression();
+							setStep(1);
+						}}
+						class="button is-primary is-small is-uppercase has-text-weight-bold ml-auto"
+					>
+						Clear filter
+					</button>
+				</div>
+			{/snippet}
 		</Step>
 	</Wizard>
 {/if}

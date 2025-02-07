@@ -1,5 +1,5 @@
-<script lang="ts" context="module">
-	import type { StacCollection } from '$lib/types';
+<script lang="ts" module>
+	import type { StacCollection, StacDataLayer } from '$lib/types';
 
 	export interface ToolsBreadcrumb extends BreadcrumbPage {
 		type?: 'Tools' | 'Tool' | 'Dataset';
@@ -12,7 +12,7 @@
 
 <script lang="ts">
 	import { goto, replaceState } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import PublishedDatasetRow from '$components/pages/data/datasets/PublishedDatasetRow.svelte';
 	import { algorithmCategory } from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
@@ -25,8 +25,7 @@
 		Notification,
 		getRandomColormap,
 		type BreadcrumbPage,
-		type RasterAlgorithm,
-		type RasterTileMetadata
+		type RasterAlgorithm
 	} from '@undp-data/svelte-undp-components';
 	import { Card, Loader, Pagination } from '@undp-data/svelte-undp-design';
 	import type {
@@ -40,20 +39,23 @@
 	import { v4 as uuidv4 } from 'uuid';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
 
-	let isLoading = false;
-	let datasets: DatasetFeatureCollection;
+	let { data }: Props = $props();
+
+	let isLoading = $state(false);
+	let datasets: DatasetFeatureCollection | undefined = $state();
 	let algorithms = data.algorithms;
-	let breadcrumbs: ToolsBreadcrumb[] = [
+	let breadcrumbs: ToolsBreadcrumb[] = $state([
 		{ title: 'home', url: '/' },
 		{ title: 'Tools', type: 'Tools' }
-	];
+	]);
 
 	let terrainAlgoIds = ['contours', 'hillshade', 'terrainrgb', 'terrarium'];
 
-	const handleBreadcrumbClicked = (e) => {
-		const page: ToolsBreadcrumb = e.detail;
+	const handleBreadcrumbClicked = (page: BreadcrumbPage) => {
 		if (breadcrumbs?.length > 0) {
 			const pageIndex = breadcrumbs.findIndex((p) => p.title === page.title);
 			breadcrumbs = [...breadcrumbs.slice(0, pageIndex + 1)];
@@ -72,8 +74,7 @@
 		}
 	};
 
-	const handleDatasetSelected = async (e) => {
-		const dataset: DatasetFeature = e.detail;
+	const handleDatasetSelected = async (dataset: DatasetFeature) => {
 		const dataType = dataset.properties.tags?.find((t) => t.key === 'type')?.value;
 		const algoBreadcrumb = breadcrumbs[breadcrumbs.length - 1];
 		if (dataType === 'stac') {
@@ -84,7 +85,7 @@
 			breadcrumbs = [
 				...breadcrumbs,
 				{
-					title: dataset.properties.name,
+					title: dataset.properties.name as string,
 					type: 'Dataset',
 					dataset: dataset,
 					stacCollection: collection,
@@ -94,14 +95,16 @@
 			];
 		} else {
 			// azure data
-			await azureDataAddedToMap(algoBreadcrumb.algorithmId, algoBreadcrumb.algorithm, dataset);
+			await azureDataAddedToMap(
+				algoBreadcrumb.algorithmId as string,
+				algoBreadcrumb.algorithm as RasterAlgorithm,
+				dataset
+			);
 		}
 	};
 
-	const handlePaginationClicked = async (e: { detail: { type: 'previous' | 'next' } }) => {
-		const type = e.detail.type;
-
-		const link = datasets.links.find((l) => l.rel === type);
+	const handlePaginationClicked = async (type: 'previous' | 'next') => {
+		const link = datasets?.links.find((l) => l.rel === type);
 		if (link) {
 			const href = new URL(link.href);
 			const res = await fetch(href);
@@ -110,16 +113,22 @@
 	};
 
 	const getAlgoTileUrl = (id: string, feature: DatasetFeature) => {
-		const urlString = feature.properties.links.find((l) => l.rel === 'tiles').href;
+		const urlString = feature.properties.links?.find((l) => l.rel === 'tiles')?.href;
+		if (!urlString) return '';
 		const tileUrl = new URL(urlString);
 		const algoUrl = new URL(`${tileUrl.origin}${tileUrl.pathname}`);
-		algoUrl.searchParams.set('url', tileUrl.searchParams.get('url'));
+		algoUrl.searchParams.set('url', tileUrl.searchParams.get('url') as string);
 		algoUrl.searchParams.set('algorithm', id);
 
 		const algo = algorithms[id];
 		// exclude hillshade to use colormap
 		if (!['hillshade'].includes(id)) {
-			if (algo.outputs.min?.length > 0 && algo.outputs.max?.length > 0) {
+			if (
+				algo.outputs.min &&
+				algo.outputs.min?.length > 0 &&
+				algo.outputs.max &&
+				algo.outputs.max?.length > 0
+			) {
 				const rescale = [algo.outputs.min, algo.outputs.max];
 				algoUrl.searchParams.set('rescale', rescale.join(','));
 			}
@@ -157,7 +166,7 @@
 		let source: RasterDEMSourceSpecification | RasterSourceSpecification;
 		let colormap_name = '';
 
-		let encoding: 'terrarium' | 'mapbox' | 'custom';
+		let encoding: 'terrarium' | 'mapbox' | 'custom' | undefined = undefined;
 		switch (algorithmId) {
 			case 'terrarium':
 			case 'terrainrgb':
@@ -171,7 +180,7 @@
 					type: 'raster-dem',
 					tiles: [algoUrl],
 					encoding,
-					bounds: metadata.bounds as [number, number, number, number],
+					bounds: metadata?.bounds as [number, number, number, number],
 					attribution: attribution
 				} as RasterDEMSourceSpecification;
 
@@ -197,7 +206,7 @@
 					type: 'raster',
 					tiles: [algoUrl],
 					attribution: attribution,
-					bounds: metadata.bounds as [number, number, number, number]
+					bounds: metadata?.bounds as [number, number, number, number]
 				} as RasterSourceSpecification;
 
 				colormap_name = new URL(algoUrl).searchParams.get('colormap_name') ?? '';
@@ -218,22 +227,23 @@
 		}
 
 		const mapUrl = await addDataToLocalStorage(
-			$page.url,
+			page.url,
 			(layers: Layer[], style: StyleSpecification, styleId: string) => {
 				if (algorithm.outputs.unit) {
-					dataset.properties.tags.push({
+					dataset.properties.tags?.push({
 						key: 'unit',
 						value: algorithm.outputs.unit
 					});
 				}
-
-				metadata.active_band_no = Object.keys(metadata.stats)[0];
+				if (metadata && metadata.stats) {
+					metadata.active_band_no = Object.keys(metadata.stats)[0];
+				}
 
 				// add layer to local storage
 				layers = [
 					{
 						id: layerId,
-						name: dataset.properties.name,
+						name: dataset.properties.name as string,
 						info: metadata,
 						dataset: dataset,
 						colorMapName: colormap_name
@@ -261,25 +271,10 @@
 		goto(mapUrl.url, { invalidateAll: true });
 	};
 
-	const stacDataAddedToMap = async (e: {
-		detail: {
-			layers: [
-				{
-					geohubLayer: Layer;
-					layer: RasterLayerSpecification;
-					source: RasterSourceSpecification;
-					sourceId: string;
-					metadata: RasterTileMetadata;
-					colormap: string;
-				}
-			];
-		};
-	}) => {
+	const stacDataAddedToMap = async (dataArray: StacDataLayer[]) => {
 		const mapUrl = await addDataToLocalStorage(
-			$page.url,
+			page.url,
 			(layers: Layer[], style: StyleSpecification, styleId: string) => {
-				let dataArray = e.detail.layers;
-
 				for (const data of dataArray) {
 					layers = [data.geohubLayer, ...layers];
 
@@ -304,7 +299,7 @@
 	};
 
 	onMount(() => {
-		const algoId = $page.url.searchParams.get('algorithm');
+		const algoId = page.url.searchParams.get('algorithm');
 		if (algoId && data.algorithms[algoId]) {
 			const defaultAlgo = data.algorithms[algoId];
 			handleToolSelected({
@@ -313,7 +308,7 @@
 				algorithmId: algoId,
 				algorithm: defaultAlgo
 			});
-			const pageUrl = $page.url;
+			const pageUrl = page.url;
 			pageUrl.searchParams.delete('algorithm');
 			replaceState(pageUrl, '');
 		}
@@ -323,7 +318,7 @@
 <HeroHeader
 	title="Tools and add-ons"
 	bind:breadcrumbs
-	on:breadcrumbClicked={handleBreadcrumbClicked}
+	onBreadcrumbClick={handleBreadcrumbClicked}
 />
 
 <div class="m-6 tools">
@@ -365,11 +360,11 @@
 								<Card
 									linkName="Explore datasets"
 									tag="Tool"
-									title={algo.title}
-									description={algo.description}
+									title={algo.title as string}
+									description={algo.description as string}
 									url=""
 									accent="yellow"
-									on:selected={() => {
+									onselect={() => {
 										handleToolSelected({
 											title: algo.title ?? name,
 											type: 'Tool',
@@ -387,9 +382,9 @@
 
 					<div class="columns is-multiline is-mobile">
 						{#each data.datasets.features as dataset}
-							{@const datasetUrl = dataset.properties.links.find((l) => l.rel === 'dataset')?.href}
+							{@const datasetUrl = dataset.properties.links?.find((l) => l.rel === 'dataset')?.href}
 							{@const sdgs = dataset.properties.tags
-								.filter((t) => t.key === 'sdg_goal')
+								?.filter((t) => t.key === 'sdg_goal')
 								.map((t) => Number(t.value))
 								.sort((a, b) => a - b)
 								.map((v) => `SDG${v}`)}
@@ -397,9 +392,9 @@
 								<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 									<Card
 										linkName="Explore Dataset"
-										tag={sdgs?.length > 0 ? sdgs.join(', ') : 'Simulation'}
-										title={dataset.properties.name}
-										description={dataset.properties.description}
+										tag={sdgs && sdgs.length > 0 ? sdgs.join(', ') : 'Simulation'}
+										title={dataset.properties.name as string}
+										description={dataset.properties.description as string}
 										url={datasetUrl}
 										accent="yellow"
 									/>
@@ -417,11 +412,11 @@
 								<Card
 									linkName="Explore datasets"
 									tag={algorithmCategory[name.toLowerCase()] ?? 'geohub'}
-									title={algo.title}
-									description={algo.description}
+									title={algo.title as string}
+									description={algo.description as string}
 									url=""
 									accent="yellow"
-									on:selected={() => {
+									onselect={() => {
 										handleToolSelected({
 											title: algo.title ?? name,
 											type: 'Tool',
@@ -436,9 +431,9 @@
 				{/if}
 			{:else if page.type === 'Tool'}
 				<div class="pb-4">
-					<p class="is-size-6 has-text-weight-bold">{page.algorithm.title ?? page.algorithmId}</p>
+					<p class="is-size-6 has-text-weight-bold">{page.algorithm?.title ?? page.algorithmId}</p>
 
-					{#if page.algorithm.description}
+					{#if page.algorithm?.description}
 						<p class="is-size-6">{page.algorithm.description}</p>
 					{/if}
 				</div>
@@ -447,7 +442,7 @@
 					<div class="is-flex is-justify-content-center my-4">
 						<Loader />
 					</div>
-				{:else if datasets?.pages?.totalCount > 0}
+				{:else if datasets?.pages && datasets.pages.totalCount > 0}
 					<p class="is-size-6 has-text-weight-bold pb-4">Select a dataset to apply the tool</p>
 
 					<div class="table-container">
@@ -465,9 +460,9 @@
 							<tbody>
 								{#each datasets.features as feature}
 									<PublishedDatasetRow
-										bind:feature
+										{feature}
 										dispatchEvent={true}
-										on:selected={handleDatasetSelected}
+										onselect={handleDatasetSelected}
 									/>
 								{/each}
 							</tbody>
@@ -478,7 +473,7 @@
 							totalPages={datasets.pages.totalPages}
 							currentPage={datasets.pages.currentPage}
 							hidden={datasets.pages.totalPages <= 1}
-							on:clicked={handlePaginationClicked}
+							onclick={handlePaginationClicked}
 						/>
 					</div>
 				{:else}
@@ -486,27 +481,31 @@
 				{/if}
 			{:else if page.type === 'Dataset'}
 				<div class="pb-4">
-					<p class="is-size-6 has-text-weight-bold">{page.algorithm.title ?? page.algorithmId}</p>
+					<p class="is-size-6 has-text-weight-bold">{page.algorithm?.title ?? page.algorithmId}</p>
 
-					{#if page.algorithm.description}
+					{#if page.algorithm?.description}
 						<p class="is-size-6">{page.algorithm.description}</p>
 					{/if}
 				</div>
-				{#if page.dataset.properties.tags.find((t) => t.key === 'stacApiType')?.value === 'catalog'}
+				{#if page.dataset?.properties.tags?.find((t) => t.key === 'stacApiType')?.value === 'catalog'}
 					<StacCatalogTool
-						bind:collection={page.stacCollection}
+						bind:collection={page.stacCollection as StacCollection}
 						bind:collectionUrl={page.dataset.properties.url}
 						bind:dataset={page.dataset}
-						selectedTool={{ algorithm: page.algorithm, algorithmId: page.algorithmId }}
-						on:dataAdded={stacDataAddedToMap}
+						selectedTool={{
+							algorithm: page.algorithm as RasterAlgorithm,
+							algorithmId: page.algorithmId as string
+						}}
+						onDataAdded={stacDataAddedToMap}
 					/>
 				{:else}
 					<StacApiExplorer
-						bind:selectedTool={page.algorithm}
-						collection={page.dataset.properties.tags.find((t) => t.key === 'collection')?.value}
-						stacId={page.dataset.properties.tags.find((t) => t.key === 'stac')?.value}
-						on:dataAdded={stacDataAddedToMap}
-						bind:dataset={page.dataset}
+						bind:selectedTool={page.algorithm as RasterAlgorithm}
+						collection={page.dataset?.properties.tags?.find((t) => t.key === 'collection')
+							?.value as string}
+						stacId={page.dataset?.properties.tags?.find((t) => t.key === 'stac')?.value as string}
+						onDataAdded={stacDataAddedToMap}
+						bind:dataset={page.dataset as DatasetFeature}
 					/>
 				{/if}
 			{/if}

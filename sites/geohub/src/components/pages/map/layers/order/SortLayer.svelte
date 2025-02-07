@@ -5,18 +5,27 @@
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, getContext } from 'svelte';
-
-	const dispatch = createEventDispatcher();
+	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layer: LayerSpecification;
-	export let relativeLayers: { [key: string]: string } = {};
+	interface Props {
+		layer: LayerSpecification;
+		relativeLayers?: { [key: string]: string };
+		onchange?: () => void;
+	}
+
+	let {
+		layer = $bindable(),
+		relativeLayers = $bindable({}),
+		onchange = () => {}
+	}: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();
 
-	$: layerTitle = relativeLayers && relativeLayers[layer.id] ? relativeLayers[layer.id] : layer.id;
+	let layerTitle = $derived(
+		relativeLayers && relativeLayers[layer.id] ? relativeLayers[layer.id] : layer.id
+	);
 
 	const getLayerIndex = () => {
 		const layers = $map?.getStyle()?.layers;
@@ -39,8 +48,8 @@
 		return index === layers.length - 1;
 	};
 
-	let isFirstLater = checkIsFirstLayer();
-	let isLastLayer = checkIsLastLayer();
+	let isFirstLater = $state(checkIsFirstLayer());
+	let isLastLayer = $state(checkIsLastLayer());
 
 	const moveBefore = () => {
 		const currentIndex = getLayerIndex();
@@ -49,7 +58,7 @@
 		$map.moveLayer(layer.id, beforeLayerId);
 		isFirstLater = checkIsFirstLayer();
 		isLastLayer = checkIsLastLayer();
-		dispatch('layerOrderChanged');
+		if (onchange) onchange();
 	};
 
 	const handleKeydownMoveBefore = (e: KeyboardEvent) => {
@@ -65,7 +74,7 @@
 		$map.moveLayer(afterLayerId, layer.id);
 		isFirstLater = checkIsFirstLayer();
 		isLastLayer = checkIsLastLayer();
-		dispatch('layerOrderChanged');
+		if (onchange) onchange();
 	};
 
 	const handleKeydownmoveAfter = (e: KeyboardEvent) => {
@@ -77,7 +86,7 @@
 
 <div class="layer-container" style="cursor:'grab'};">
 	<span class="draggable-icon" use:tippyTooltip={{ content: 'Drag to change order' }}>
-		<i class="fa-solid fa-grip-vertical" />
+		<i class="fa-solid fa-grip-vertical"></i>
 	</span>
 	<div class="layer-name">
 		{layerTitle}
@@ -92,10 +101,10 @@
 				role="button"
 				class="sort-button"
 				use:tippyTooltip={{ content: 'Bring backward in map' }}
-				on:click={moveBefore}
-				on:keydown={handleKeydownMoveBefore}
+				onclick={moveBefore}
+				onkeydown={handleKeydownMoveBefore}
 			>
-				<i class="fa-solid fa-sort-up" />
+				<i class="fa-solid fa-sort-up"></i>
 			</span>
 		{/if}
 		{#if !isLastLayer}
@@ -104,10 +113,10 @@
 				role="button"
 				class="sort-button"
 				use:tippyTooltip={{ content: 'Bring forward in map' }}
-				on:click={moveAfter}
-				on:keydown={handleKeydownmoveAfter}
+				onclick={moveAfter}
+				onkeydown={handleKeydownmoveAfter}
 			>
-				<i class="fa-solid fa-sort-down" />
+				<i class="fa-solid fa-sort-down"></i>
 			</span>
 		{/if}
 	</div>

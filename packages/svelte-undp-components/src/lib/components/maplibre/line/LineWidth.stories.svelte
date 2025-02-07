@@ -1,9 +1,10 @@
-<script lang="ts" context="module">
-	import type { Meta } from '@storybook/svelte';
+<script lang="ts" module>
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import type { LineLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
 	import Map from '../Map.svelte';
 	import VectorValueClassification from '../util/VectorValueClassification.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Line/LineWidth',
 		component: VectorValueClassification,
 		tags: ['autodocs'],
@@ -13,7 +14,7 @@
 				description: 'Layer ID to edit'
 			}
 		}
-	};
+	});
 
 	const title = 'Line size Control';
 
@@ -275,16 +276,11 @@
 	};
 </script>
 
-<script lang="ts">
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-	import type { LineLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
-</script>
-
-<Template let:args>
+{#snippet template(args)}
 	<Map {title} {source} {layer}>
 		<VectorValueClassification {...args}></VectorValueClassification>
 	</Map>
-</Template>
+{/snippet}
 
 <Story
 	name="Primary"
@@ -306,4 +302,5 @@
 		classificationMethod: 'n',
 		numberOfRandomSamplingPoints: 1000
 	}}
+	children={template}
 />

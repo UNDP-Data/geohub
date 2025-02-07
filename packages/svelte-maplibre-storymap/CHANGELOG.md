@@ -1,5 +1,82 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 1.0.7
+
+### Patch Changes
+
+- 28b87b3: chore: updated dependencies
+- Updated dependencies [28b87b3]
+  - @undp-data/svelte-undp-components@2.0.5
+  - @undp-data/svelte-undp-design@3.0.2
+
+## 1.0.6
+
+### Patch Changes
+
+- Updated dependencies [f70c8af]
+  - @undp-data/svelte-undp-components@2.0.4
+
+## 1.0.5
+
+### Patch Changes
+
+- Updated dependencies [6092700]
+  - @undp-data/svelte-undp-components@2.0.3
+
+## 1.0.4
+
+### Patch Changes
+
+- 0a235fa: fix: remove moduleResolution = nodenext from tsconfig.json
+- Updated dependencies [0a235fa]
+  - @undp-data/svelte-undp-components@2.0.2
+  - @undp-data/svelte-undp-design@3.0.1
+
+## 1.0.3
+
+### Patch Changes
+
+- Updated dependencies [125fffd]
+  - @undp-data/svelte-undp-components@2.0.1
+
+## 1.0.2
+
+### Patch Changes
+
+- Updated dependencies [26440c9]
+- Updated dependencies [2ee1359]
+- Updated dependencies [26440c9]
+- Updated dependencies [6befcd4]
+  - @undp-data/svelte-undp-components@2.0.0
+  - @undp-data/svelte-undp-design@3.0.0
+
+## 1.0.1
+
+### Patch Changes
+
+- Updated dependencies [0ae54db]
+  - @undp-data/svelte-undp-design@2.4.8
+  - @undp-data/svelte-undp-components@1.5.19
+
+## 1.0.0
+
+### Major Changes
+
+- a2662a7: chore: migrate storymap client components to svelte 5.
+
+### Patch Changes
+
+- 8ef8cdf: fix: add pmtiles protocol at the StoryMap component inside.
+- a038e3d: chore: upgrade maplibre to v5
+- ff3b0b4: fix: fixed bug of not setting default location in storymap if users do not customise.
+- Updated dependencies [1ac4d94]
+- Updated dependencies [905236f]
+- Updated dependencies [a038e3d]
+- Updated dependencies [8e7812f]
+- Updated dependencies [a2662a7]
+  - @undp-data/svelte-undp-components@1.5.18
+  - @undp-data/svelte-undp-design@2.4.7
+
 ## 0.4.13
 
 ### Patch Changes

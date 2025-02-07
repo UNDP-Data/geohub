@@ -1,22 +1,33 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { toast } from '@zerodevx/svelte-toast';
 	import millify from 'millify';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		id: string;
+		isStar: boolean;
+		isCompact?: boolean;
+		table?: 'datasets' | 'style' | 'storymaps';
+		no_stars?: number;
+		size?: 'small' | 'normal' | 'medium' | 'large';
+		ondelete?: () => void;
+	}
 
-	export let id: string;
-	export let isStar: boolean;
-	export let isCompact = false;
-	export let table: 'datasets' | 'style' | 'storymaps' = 'datasets';
-	export let no_stars = -1;
-	export let size: 'small' | 'normal' | 'medium' | 'large' = 'small';
-	let isLoading = false;
+	let {
+		id = $bindable(),
+		isStar = $bindable(),
+		isCompact = $bindable(false),
+		table = 'datasets',
+		no_stars = $bindable(-1),
+		size = 'small',
+		ondelete = () => {}
+	}: Props = $props();
+	let isLoading = $state(false);
 
-	let starLoading: Promise<number>;
+	let starLoading: Promise<number> | undefined = $state();
 
 	onMount(() => {
 		if (no_stars === -1) {
@@ -44,9 +55,7 @@
 		if (isStar) {
 			// delete star
 			await updateStar('DELETE');
-			dispatch('starDeleted', {
-				dataset_id: id
-			});
+			if (ondelete) ondelete();
 		} else {
 			// add star
 			await updateStar('POST');
@@ -64,18 +73,18 @@
 </script>
 
 {#if !isCompact}
-	{#if $page.data.session}
+	{#if page.data.session}
 		<button
 			class="button is-{size} is-uppercase has-text-weight-bold"
-			on:click={handleClicked}
-			on:keydown={handleEnterKey}
+			onclick={handleClicked}
+			onkeydown={handleEnterKey}
 			disabled={isLoading}
 		>
 			<span class="icon is-small">
 				{#if isStar}
-					<i class="fa-solid fa-star" style="color:#fccf03" />
+					<i class="fa-solid fa-star" style="color:#fccf03"></i>
 				{:else}
-					<i class="fa-regular fa-star" />
+					<i class="fa-regular fa-star"></i>
 				{/if}
 			</span>
 			<span>
@@ -94,7 +103,7 @@
 	{:else}
 		<button class="button is-{size}" disabled>
 			<span class="icon">
-				<i class="fa-solid fa-star" style="color:#fccf03" />
+				<i class="fa-solid fa-star" style="color:#fccf03"></i>
 			</span>
 			<span class="star-container-no-login">
 				Star
@@ -109,15 +118,15 @@
 {:else}
 	<button
 		class="star-button"
-		on:click={handleClicked}
-		on:keydown={handleEnterKey}
-		disabled={!$page.data.session ? true : isLoading}
+		onclick={handleClicked}
+		onkeydown={handleEnterKey}
+		disabled={!page.data.session ? true : isLoading}
 	>
 		<span class="icon">
 			{#if isStar}
-				<i class="fa-solid fa-star fa-lg" style="color:#fccf03" />
+				<i class="fa-solid fa-star fa-lg" style="color:#fccf03"></i>
 			{:else}
-				<i class="fa-regular fa-star fa-lg" />
+				<i class="fa-regular fa-star fa-lg"></i>
 			{/if}
 		</span>
 	</button>

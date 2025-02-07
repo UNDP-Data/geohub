@@ -2,11 +2,27 @@
 	import { VectorFilterOperators } from '$lib/config/AppConfig';
 	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 
-	import { createEventDispatcher } from 'svelte';
+	interface Props {
+		currentSelectedOperation?: string;
+		stringProperty?: boolean;
+		numberProperty?: boolean;
+		onchange?: (operation: string) => void;
+		ondisableTags?: () => void;
+		onenableTags?: () => void;
+		onclick?: () => void;
+	}
 
-	export let currentSelectedOperation = '';
-	export let stringProperty = false;
-	export let numberProperty = false;
+	let {
+		currentSelectedOperation = $bindable(''),
+		stringProperty = $bindable(false),
+		numberProperty = $bindable(false),
+		onchange = (operation) => {
+			console.log(operation);
+		},
+		ondisableTags = () => {},
+		onenableTags = () => {},
+		onclick = () => {}
+	}: Props = $props();
 
 	const operationOptions = VectorFilterOperators.filter((el) => {
 		if (stringProperty && ['>', '<'].includes(el.value)) return false;
@@ -14,19 +30,23 @@
 		return true;
 	});
 
-	const dispatch = createEventDispatcher();
-
-	$: currentSelectedOperation, handleOperationChange();
 	const handleOperationChange = () => {
 		if (currentSelectedOperation === '==' || currentSelectedOperation === '!=') {
-			dispatch('disableTags');
+			if (ondisableTags) {
+				ondisableTags();
+			}
 		} else {
-			dispatch('enableTags');
+			if (onenableTags) {
+				onenableTags();
+			}
 		}
-		dispatch('change', {
-			operation: currentSelectedOperation
-		});
+		if (onchange) {
+			onchange(currentSelectedOperation);
+		}
 	};
+	$effect(() => {
+		handleOperationChange();
+	});
 </script>
 
 <div class="fixed-grid has-3-cols">
@@ -38,10 +58,10 @@
 					class="card grid-item p-0 m-0 is-clickable {operation.disabled ? 'disabled' : null} "
 					role="button"
 					tabindex="0"
-					on:keydown={handleEnterKey}
-					on:click={() => {
+					onkeydown={handleEnterKey}
+					onclick={() => {
 						operation.disabled ? null : (currentSelectedOperation = operation.value);
-						operation.disabled ? null : dispatch('click');
+						operation.disabled ? null : onclick();
 					}}
 				>
 					<div
@@ -57,7 +77,7 @@
 						>
 							{#if currentSelectedOperation === operation.value}
 								<span class="icon">
-									<i class="fa-solid fa-check" />
+									<i class="fa-solid fa-check"></i>
 								</span>
 							{/if}
 							{operation.label}

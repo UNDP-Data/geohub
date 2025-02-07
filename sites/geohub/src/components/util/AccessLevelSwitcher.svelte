@@ -1,33 +1,43 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { AcceptedOrganisationDomains, AccessLevel } from '$lib/config/AppConfig';
 	import { getDomainFromEmail } from '$lib/helper';
 	import { SegmentButtons, type SegmentButton } from '@undp-data/svelte-undp-components';
-	import { createEventDispatcher } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		accessLevel: AccessLevel;
+		disableOrganisation?: boolean;
+		disablePublic?: boolean;
+		size?: 'small' | 'normal' | 'medium' | 'large';
+		disabled?: boolean;
+		/**
+		 * Segment button or select box
+		 */
+		isSegmentButton?: boolean;
+		onchange?: () => void;
+	}
 
-	export let accessLevel: AccessLevel;
-	export let disableOrganisation = false;
-	export let disablePublic = false;
-	export let size: 'small' | 'normal' | 'medium' | 'large' = 'normal';
-	export let disabled = false;
-	/**
-	 * Segment button or select box
-	 */
-	export let isSegmentButton = true;
+	let {
+		accessLevel = $bindable(),
+		disableOrganisation = $bindable(false),
+		disablePublic = $bindable(false),
+		size = $bindable('normal'),
+		disabled = $bindable(false),
+		isSegmentButton = $bindable(true),
+		onchange = () => {}
+	}: Props = $props();
 
-	let userName: string = $page.data.session?.user.name;
-	let email = $page.data.session?.user.email;
+	let userName: string = page.data.session?.user.name as string;
+	let email = page.data.session?.user.email;
 	let domain: string | undefined = email ? getDomainFromEmail(email) : undefined;
 
-	const handleAccessLevelClicked = (e) => {
-		accessLevel = e.detail.value;
-		dispatch('change');
+	const handleAccessLevelClicked = (value: string | number) => {
+		accessLevel = value as AccessLevel;
+		if (onchange) onchange();
 	};
 
 	const handleSelectClicked = () => {
-		dispatch('change');
+		if (onchange) onchange();
 	};
 
 	const getSegmentButtons = () => {
@@ -65,12 +75,12 @@
 				<SegmentButtons
 					buttons={getSegmentButtons()}
 					bind:selected={accessLevel}
-					bind:size
-					on:change={handleAccessLevelClicked}
+					{size}
+					onchange={handleAccessLevelClicked}
 				/>
 			{:else}
 				<div class="select is-fullwidth">
-					<select bind:value={accessLevel} on:change={handleSelectClicked}>
+					<select bind:value={accessLevel} onchange={handleSelectClicked}>
 						<option value={AccessLevel.ALL}>All</option>
 						{#each getSegmentButtons() as item}
 							<option value={item.value}>{item.title}</option>

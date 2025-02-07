@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto, replaceState } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import DataCategoryCardList from '$components/pages/map/data/DataCategoryCardList.svelte';
 	import TextFilter from '$components/pages/map/data/TextFilter.svelte';
 	import { DataCategories } from '$lib/config/AppConfig';
@@ -19,31 +19,39 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	let isLoading = false;
+	let isLoading = $state(false);
 
-	export let contentHeight: number;
-	let optionsHeight = 41.5;
+	interface Props {
+		contentHeight: number;
+	}
 
-	$: totalHeight = contentHeight - optionsHeight;
+	let { contentHeight = $bindable() }: Props = $props();
+	let optionsHeight = $state(41.5);
 
-	let containerDivElement: HTMLDivElement;
+	let totalHeight = $derived(contentHeight - optionsHeight);
 
-	let query = $page.url.searchParams.get('query') ?? '';
+	let containerDivElement: HTMLDivElement | undefined = $state();
 
-	let DataItemFeatureCollection: DatasetFeatureCollection;
+	let query = $state(page.url.searchParams.get('query') ?? '');
 
-	let isFavouriteSearch = false;
+	let DataItemFeatureCollection: DatasetFeatureCollection | undefined = $state();
 
-	let bcQuery = $page.url.searchParams.get('breadcrumbs') ?? 'Home';
-	let breadcrumbs: Breadcrumb[] = bcQuery.split(',').map((b) => {
-		return { name: b, url: '', icon: '' };
-	});
+	let isFavouriteSearch = $state(false);
+
+	let bcQuery = page.url.searchParams.get('breadcrumbs') ?? 'Home';
+	let breadcrumbs: Breadcrumb[] = $state(
+		bcQuery.split(',').map((b) => {
+			return { name: b, url: '', icon: '' };
+		})
+	);
 	const excludedMenu = ['Favourite', 'My data'];
 
-	let expanded: { [key: string]: boolean } = {};
+	let isInitialized = false;
+
+	let expanded: { [key: string]: boolean } = $state({});
 	// to allow only an accordion to be expanded
-	let expandedDatasetId: string;
-	$: {
+	let expandedDatasetId: string = $state('');
+	$effect(() => {
 		let expandedDatasets = Object.keys(expanded).filter(
 			(key) => expanded[key] === true && key !== expandedDatasetId
 		);
@@ -56,9 +64,10 @@
 				});
 			expanded[expandedDatasets[0]] = true;
 		}
-	}
+	});
 
 	const fetchNextDatasets = async (url: string) => {
+		if (!containerDivElement) return;
 		try {
 			// change cursor and disable scroll
 			containerDivElement.style.cursor = 'wait';
@@ -76,11 +85,10 @@
 		}
 	};
 
-	const handleCategorySelected = async (e) => {
+	const handleCategorySelected = async (category: Breadcrumb) => {
 		try {
 			isLoading = true;
-			const category = e.detail.category;
-			const apiUrl = $page.url;
+			const apiUrl = page.url;
 			const breadcrumbsValue = apiUrl.searchParams.get('breadcrumbs');
 			const bcs = breadcrumbsValue ? breadcrumbsValue.split(',') : ['Home'];
 			bcs.push(category.name);
@@ -93,19 +101,16 @@
 			}
 
 			if (category.url.startsWith('/api/datasets')) {
-				const apiUrl = new URL(
-					`/api/datasets${$page.url.search}${$page.url.hash}`,
-					$page.url.origin
-				);
-				const categoryUrl = new URL(`${$page.url.origin}${$page.url.pathname}${category.url}`);
+				const apiUrl = new URL(`/api/datasets${page.url.search}${page.url.hash}`, page.url.origin);
+				const categoryUrl = new URL(`${page.url.origin}${page.url.pathname}${category.url}`);
 				for (const key of categoryUrl.searchParams.keys()) {
 					const value = categoryUrl.searchParams.get(key);
-					if (apiUrl.searchParams.get(key) !== value) {
+					if (value && apiUrl.searchParams.get(key) !== value) {
 						apiUrl.searchParams.set(key, value);
-						$page.url.searchParams.set(key, value);
+						page.url.searchParams.set(key, value);
 					}
 				}
-				replaceState($page.url, '');
+				replaceState(page.url, '');
 				await reload(apiUrl);
 			} else {
 				await goto(apiUrl, {
@@ -118,21 +123,17 @@
 		}
 	};
 
-	const handleTagChanged = async (e) => {
-		const url = new URL(e.detail.url);
-		const apiUrl = new URL(`/api/datasets${url.search}${url.hash}`, $page.url.origin);
-		await reload(apiUrl);
-	};
-
-	const handleFilterChanged = async (e) => {
+	const handleFilterChanged = async (urlstring: string) => {
 		clearDatasets();
-		const url = new URL(e.detail.url);
-		replaceState(url, '');
+		const url = new URL(urlstring);
+		if (isInitialized) {
+			replaceState(url, '');
+		}
 		if (breadcrumbs.length <= 1 && query?.length === 0) {
 			return;
 		}
 
-		const apiUrl = new URL(`/api/datasets${url.search}${url.hash}`, $page.url.origin);
+		const apiUrl = new URL(`/api/datasets${url.search}${url.hash}`, page.url.origin);
 		await reload(apiUrl);
 	};
 
@@ -140,7 +141,7 @@
 		try {
 			isLoading = true;
 
-			const config: UserConfig = $page.data.config;
+			const config: UserConfig = page.data.config;
 
 			const queryoperator = url.searchParams.get('queryoperator');
 			if (!queryoperator) {
@@ -164,6 +165,8 @@
 			}
 			url.searchParams.set('limit', limit);
 
+			isFavouriteSearch = url.searchParams.get('staronly')?.toLowerCase() === 'true';
+
 			const res = await fetch(url);
 			DataItemFeatureCollection = await res.json();
 		} finally {
@@ -179,7 +182,7 @@
 		clearDatasets();
 		isFavouriteSearch = false;
 
-		let apiUrl = $page.url;
+		let apiUrl = page.url;
 		apiUrl.searchParams.delete('query');
 		apiUrl.searchParams.delete('sdg_goal');
 		apiUrl.searchParams.delete('type');
@@ -224,7 +227,7 @@
 
 	let clearFiltertext = () => {
 		query = '';
-		const url = $page.url;
+		const url = page.url;
 		url.searchParams.delete('query');
 		replaceState(url, '');
 	};
@@ -251,7 +254,7 @@
 		} else {
 			if (
 				lastBreadcrumb.name === 'Home' ||
-				(category && !category.url.startsWith('/api/datasets'))
+				(category && category.url && !category.url.startsWith('/api/datasets'))
 			) {
 				return false;
 			}
@@ -261,8 +264,12 @@
 
 	onMount(() => {
 		if (isDatasetLoading()) {
-			const url = new URL(`/api/datasets${$page.url.search}${$page.url.hash}`, $page.url.origin);
-			reload(url);
+			const url = new URL(`/api/datasets${page.url.search}${page.url.hash}`, page.url.origin);
+			reload(url).then(() => {
+				isInitialized = true;
+			});
+		} else {
+			isInitialized = true;
 		}
 	});
 </script>
@@ -273,8 +280,7 @@
 		bind:map={$map}
 		bind:query
 		disabled={isLoading}
-		on:tagchange={handleTagChanged}
-		on:change={handleFilterChanged}
+		onchange={handleFilterChanged}
 	/>
 
 	<div class="my-2 ml-1 mr-2">
@@ -282,16 +288,16 @@
 			<ul>
 				{#each breadcrumbs as page, index}
 					<li class={index === breadcrumbs.length - 1 ? 'is-active' : ''}>
-						<!-- svelte-ignore a11y-missing-attribute -->
+						<!-- svelte-ignore a11y_missing_attribute -->
 						<a
 							class={isLoading ? 'disabled' : ''}
 							role="button"
 							tabindex="0"
-							on:click={() => {
+							onclick={() => {
 								if (index === breadcrumbs.length - 1) return;
 								handleBreadcrumpClicked(page);
 							}}
-							on:keydown={handleEnterKey}
+							onkeydown={handleEnterKey}
 							data-sveltekit-preload-data="off"
 							data-sveltekit-preload-code="off"
 						>
@@ -338,7 +344,7 @@
 						{#each DataItemFeatureCollection.features as feature}
 							<DataCard
 								{feature}
-								bind:isExpanded={expanded[feature.properties.id]}
+								bind:isExpanded={expanded[feature.properties.id as string]}
 								bind:isStarOnly={isFavouriteSearch}
 							/>
 						{/each}
@@ -361,7 +367,7 @@
 				{:then items}
 					<DataCategoryCardList
 						categories={items}
-						on:selected={handleCategorySelected}
+						onselect={handleCategorySelected}
 						bind:breadcrumbs
 					/>
 				{/await}

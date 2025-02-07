@@ -1,14 +1,16 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	const dispatch = createEventDispatcher();
-
 	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 	import type { Breadcrumb } from '@undp-data/svelte-undp-design';
 
-	export let category: Breadcrumb;
+	interface Props {
+		category: Breadcrumb;
+		onclick?: () => void;
+	}
+
+	let { category, onclick = () => {} }: Props = $props();
 
 	const handleClick = () => {
-		dispatch('clicked');
+		if (onclick) onclick();
 	};
 </script>
 
@@ -17,14 +19,14 @@
 		class="container p-2 is-flex is-flex-direction-column is-justify-content-center"
 		role="button"
 		tabindex="0"
-		on:click={handleClick}
-		on:keydown={handleEnterKey}
+		onclick={handleClick}
+		onkeydown={handleEnterKey}
 	>
 		<figure class="category image center is-64x64">
 			{#if category.icon.startsWith('fa')}
-				<i class="{category.icon} fa-4x" />
+				<i class="{category.icon} fa-4x"></i>
 			{:else if category.icon.startsWith('fi')}
-				<span class={category.icon} />
+				<span class={category.icon}></span>
 			{:else if category.icon.startsWith('sdg')}
 				<span class="icon is-large sdg-icon">
 					<i class={category.icon}></i>

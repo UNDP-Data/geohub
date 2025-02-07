@@ -28,12 +28,12 @@
 	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
 	const tableMenuShownStore: EditingMenuShownStore = getContext(TABLE_MENU_SHOWN_CONTEXT_KEY);
 
-	let vectorSourceLayer: string | undefined = undefined;
-	let layerOpacity = 1;
+	let vectorSourceLayer: string | undefined = $state(undefined);
+	let layerOpacity = $state(1);
 
 	const tippy = initTippy({});
 	const tippyTooltip = initTooltipTippy();
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
 	const getLayerOpacity = () => {
 		if (!map) return 0;
@@ -108,8 +108,7 @@
 		map.setLayoutProperty(layerId, 'visibility', visibility);
 	};
 
-	const handleOpacityChanged = (e: { detail: { values: number[] } }) => {
-		const values = e.detail.values;
+	const handleOpacityChanged = (values: number[]) => {
 		const opacity = values[0] / 100;
 		updateOpacity(opacity);
 	};
@@ -165,12 +164,12 @@
 
 {#if $editingLayerStore}
 	<div class="layer-editor">
-		<FloatingPanel title={$editingLayerStore.name} on:close={handleClose}>
+		<FloatingPanel title={$editingLayerStore.name} onclose={handleClose}>
 			<div class="field has-addons" style="border-bottom: 1px solid #EDEFF0;">
 				<p class="control">
 					<button
 						class="button menu-button"
-						on:click={handleZoomToLayer}
+						onclick={handleZoomToLayer}
 						use:tippyTooltip={{
 							content: `Zoom to layer`
 						}}
@@ -184,7 +183,7 @@
 					<p class="control">
 						<button
 							class="button menu-button"
-							on:click={handleShowTable}
+							onclick={handleShowTable}
 							use:tippyTooltip={{
 								content: `${$tableMenuShownStore === true ? 'Hide' : 'Show'} table`
 							}}
@@ -198,7 +197,7 @@
 				<p class="control">
 					<button
 						class="button menu-button"
-						on:click={handleVisibilityChanged}
+						onclick={handleVisibilityChanged}
 						use:tippyTooltip={{
 							content: `Change layer visibility`
 						}}
@@ -232,7 +231,7 @@
 								rest={false}
 								pips={true}
 								suffix="%"
-								on:change={handleOpacityChanged}
+								onchange={handleOpacityChanged}
 							/>
 						{/key}
 					</div>
@@ -241,7 +240,7 @@
 
 			{#if $editingLayerStore.dataset?.properties.is_raster === true}
 				<RasterLayer bind:layer={$editingLayerStore} />
-			{:else}
+			{:else if $editingLayerStore.dataset?.properties.is_raster === false}
 				<VectorLayer bind:layer={$editingLayerStore} />
 			{/if}
 		</FloatingPanel>

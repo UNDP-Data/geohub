@@ -1,5 +1,5 @@
 import type { StyleSpecification } from 'maplibre-gl';
-import type { StoryMapChapter } from './StoryMapChapter.js';
+import type { StoryMapChapter } from './StoryMapChapter';
 
 export interface StoryMapConfig {
 	/**

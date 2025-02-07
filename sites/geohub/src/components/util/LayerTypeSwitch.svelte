@@ -4,15 +4,22 @@
 		type SegmentButton,
 		type VectorLayerTileStatLayer
 	} from '@undp-data/svelte-undp-components';
-	import { createEventDispatcher } from 'svelte';
+	import { untrack } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		layer: VectorLayerTileStatLayer;
+		layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle';
+		size?: 'small' | 'normal' | 'medium' | 'large';
+		onchange?: (type: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle') => void;
+	}
 
-	export let layer: VectorLayerTileStatLayer;
-	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle';
-	export let size: 'small' | 'normal' | 'medium' | 'large' = 'normal';
+	let {
+		layer = $bindable(),
+		layerType = $bindable(),
+		size = $bindable('normal'),
+		onchange = () => {}
+	}: Props = $props();
 
-	$: layer, setDefaultLayerType();
 	const setDefaultLayerType = () => {
 		if (!layer) return;
 		if (['linestring', 'multilinestring'].includes(layer.geometry.toLowerCase())) {
@@ -26,9 +33,9 @@
 		}
 	};
 
-	let symbolVectorType: 'point' | 'heatmap' = 'point';
+	let symbolVectorType: 'point' | 'heatmap' = $state('point');
 
-	let symbolVectorTypes: SegmentButton[] = [
+	let symbolVectorTypes: SegmentButton[] = $state([
 		{
 			title: 'Point',
 			value: 'point'
@@ -41,10 +48,10 @@
 			title: 'Circle',
 			value: 'circle'
 		}
-	];
+	]);
 
-	let polygonVectorType: 'polygon' | 'linestring' = 'polygon';
-	let polygonVectorTypes: SegmentButton[] = [
+	let polygonVectorType: 'polygon' | 'linestring' = $state('polygon');
+	let polygonVectorTypes: SegmentButton[] = $state([
 		{
 			title: 'Polygon',
 			value: 'polygon'
@@ -57,10 +64,8 @@
 			title: 'Line',
 			value: 'linestring'
 		}
-	];
+	]);
 
-	$: symbolVectorType, setLayerType();
-	$: polygonVectorType, setLayerType();
 	const setLayerType = () => {
 		if (!layer) return;
 		if (['point', 'multipoint'].includes(layer.geometry.toLowerCase())) {
@@ -68,18 +73,33 @@
 		} else if (['polygon', 'multipolygon'].includes(layer.geometry.toLowerCase())) {
 			layerType = polygonVectorType;
 		}
-		dispatch('change', {
-			type: layerType
-		});
+		if (onchange) onchange(layerType);
 	};
+	$effect(() => {
+		if (layer) {
+			untrack(() => {
+				setDefaultLayerType();
+			});
+		}
+	});
 </script>
 
 {#if layer.geometry.toLowerCase().indexOf('line') === -1}
 	<p class="subtitle is-6 m-0 p-0 pb-1">Select layer type before adding layer.</p>
 
 	{#if layer.geometry.toLowerCase().indexOf('point') > -1}
-		<SegmentButtons bind:buttons={symbolVectorTypes} bind:selected={symbolVectorType} {size} />
+		<SegmentButtons
+			bind:buttons={symbolVectorTypes}
+			bind:selected={symbolVectorType}
+			{size}
+			onchange={setLayerType}
+		/>
 	{:else}
-		<SegmentButtons bind:buttons={polygonVectorTypes} bind:selected={polygonVectorType} {size} />
+		<SegmentButtons
+			bind:buttons={polygonVectorTypes}
+			bind:selected={polygonVectorType}
+			{size}
+			onchange={setLayerType}
+		/>
 	{/if}
 {/if}

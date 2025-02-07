@@ -1,17 +1,24 @@
 <script lang="ts">
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
-	export let fontJsonUrl = 'https://fonts.undpgeohub.org/fonts.json';
+	interface Props {
+		layerId: string;
+		fontJsonUrl?: string;
+	}
+
+	let {
+		layerId = $bindable(),
+		fontJsonUrl = $bindable('https://fonts.undpgeohub.org/fonts.json')
+	}: Props = $props();
 
 	const propertyName = 'text-font';
 	const defaultValue = 'Open Sans Regular';
 
-	let fonts: string[] = [];
+	let fonts: string[] = $state([]);
 
 	onMount(async () => {
 		const res = await fetch(fontJsonUrl);
@@ -22,20 +29,22 @@
 		.getStyle()
 		.layers.filter((layer: LayerSpecification) => layer.id === layerId)[0];
 
-	let value =
+	let value = $state(
 		style.layout && style.layout[propertyName]?.length > 0
 			? style.layout[propertyName][0]
-			: defaultValue;
-
-	$: value, setValue();
+			: defaultValue
+	);
 
 	const setValue = () => {
 		map.setLayoutProperty(layerId, propertyName, [value]);
 	};
+	onMount(() => {
+		setValue();
+	});
 </script>
 
 <div class="select is-fullwidth">
-	<select bind:value>
+	<select bind:value onchange={setValue}>
 		{#each fonts as font}
 			<option value={font}>{font}</option>
 		{/each}

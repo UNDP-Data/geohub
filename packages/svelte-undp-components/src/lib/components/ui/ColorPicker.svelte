@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { debounce } from 'lodash-es';
-	import { createEventDispatcher } from 'svelte';
 	import ColorPicker, { ChromeVariant, type RgbaColor } from 'svelte-awesome-color-picker';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		color: RgbaColor;
+		onchange?: (color: RgbaColor) => void;
+	}
 
-	export let color: RgbaColor;
+	let { color = $bindable(), onchange = () => {} }: Props = $props();
 
 	const changeColor = debounce((e) => {
 		const newRgba: RgbaColor = e.detail.color.rgba;
@@ -18,7 +20,7 @@
 			return;
 		}
 		color = newRgba;
-		dispatch('changeColor');
+		if (onchange) onchange(color);
 	}, 300);
 </script>
 

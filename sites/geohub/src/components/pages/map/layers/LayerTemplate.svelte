@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { getLayerStyle } from '$lib/helper';
-	import type { Layer, VectorLayerSpecification } from '$lib/types';
+	import type { LegendLayer } from '$lib/server/helpers';
+	import type { DashboardMapStyle, Layer, VectorLayerSpecification } from '$lib/types';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
@@ -21,14 +22,16 @@
 		MAPSTORE_CONTEXT_KEY,
 		ModalNotification,
 		ModalTemplate,
+		Notification,
 		OpacityEditor,
 		type MapStore,
 		type RasterTileMetadata,
 		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import type { LngLatBoundsLike, RasterLayerSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -37,23 +40,34 @@
 	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
 	const tableMenuShownStore: EditingMenuShownStore = getContext(TABLE_MENU_SHOWN_CONTEXT_KEY);
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		layer: Layer;
+		showEditButton?: boolean;
+		isExpanded?: boolean;
+		ontoggled?: (layerId: string, isExpanded: boolean) => void;
+		onchange?: () => void;
+	}
 
-	export let layer: Layer;
-	export let showEditButton = false;
+	let {
+		layer = $bindable(),
+		showEditButton = $bindable(false),
+		isExpanded = $bindable(layer.isExpanded),
+		ontoggled = (layerId, isExpanded) => {
+			console.log(layerId, isExpanded);
+		},
+		onchange = () => {}
+	}: Props = $props();
 
-	let showDropdown = false;
-	let showRenameDialog = false;
-	let inputLayerTitle = layer.name;
+	let showDropdown = $state(false);
+	let showRenameDialog = $state(false);
+	let inputLayerTitle = $state(layer.name);
 
-	let layerOpacity = 1;
+	let layerOpacity = $state(1);
 
 	if (!('isExpanded' in layer)) {
 		layer.isExpanded = true;
 	}
-
-	export let isExpanded = layer.isExpanded;
-	let isDeleteDialogVisible = false;
+	let isDeleteDialogVisible = $state(false);
 
 	const accessLevel = layer.dataset?.properties.access_level ?? AccessLevel.PUBLIC;
 	const existLayerInMap = $map.getStyle().layers.find((l) => l.id === layer.id) ? true : false;
@@ -91,13 +105,11 @@
 		button.click();
 	};
 
-	$: isExpanded, handleToggleChanged();
 	const handleToggleChanged = () => {
 		layer.isExpanded = isExpanded;
-		dispatch('toggled', {
-			layerId: layer.id,
-			isExpanded: isExpanded
-		});
+		if (ontoggled) {
+			ontoggled(layer.id, isExpanded);
+		}
 	};
 
 	const handleShowOnlyThisLayer = () => {
@@ -125,12 +137,13 @@
 		});
 	};
 
-	let isLayerChanged = false;
+	let isLayerChanged = $state(false);
 
 	const handleLayerStyleChanged = debounce(() => {
 		if (!$editingLayerStore) return;
 		if ($editingLayerStore.id !== layer.id) return;
 		isLayerChanged = !isLayerChanged;
+		getLegend();
 	}, 300);
 
 	const handleEditLayer = () => {
@@ -151,7 +164,7 @@
 			// open new layer editor or close it
 			$editingMenuShownStore = !$editingMenuShownStore;
 
-			if (!$editingMenuShownStore) {
+			if ($editingMenuShownStore === false) {
 				$map.off('styledata', handleLayerStyleChanged);
 				editingLayerStore.set(undefined);
 			} else {
@@ -162,39 +175,43 @@
 	};
 
 	const handleDeleted = () => {
+		$map.off('styledata', handleLayerStyleChanged);
 		const layerId = layer.id;
 		isDeleteDialogVisible = false;
+		// setTimeout(() => {
+		// const layer = $layerListStore.filter((item) => item.id === layerId)[0];
+		const delSourceId = getLayerStyle($map, layer.id).source;
+		if (layer.children && layer.children.length > 0) {
+			layer.children.forEach((child) => {
+				if ($map.getLayer(child.id)) {
+					$map.removeLayer(child.id);
+				}
+			});
+			layer.children = [];
+		}
+		$layerListStore = $layerListStore.filter((item) => item.id !== layerId);
+		if ($map.getLayer(layerId)) {
+			$map.removeLayer(layerId);
+		}
+		const layerListforDelSource = $layerListStore.filter(
+			(item) => getLayerStyle($map, item.id).source === delSourceId
+		);
+		if (layerListforDelSource.length === 0) {
+			$map.removeSource(delSourceId);
+		}
 
-		setTimeout(() => {
-			const layer = $layerListStore.filter((item) => item.id === layerId)[0];
-			const delSourceId = getLayerStyle($map, layer.id).source;
-			if (layer.children && layer.children.length > 0) {
-				layer.children.forEach((child) => {
-					if ($map.getLayer(child.id)) {
-						$map.removeLayer(child.id);
-					}
-				});
-				layer.children = [];
-			}
-			$layerListStore = $layerListStore.filter((item) => item.id !== layerId);
-			if ($map.getLayer(layerId)) {
-				$map.removeLayer(layerId);
-			}
-			const layerListforDelSource = $layerListStore.filter(
-				(item) => getLayerStyle($map, item.id).source === delSourceId
-			);
-			if (layerListforDelSource.length === 0) {
-				$map.removeSource(delSourceId);
-			}
-
-			$tableMenuShownStore = false;
-			$editingMenuShownStore = false;
-			editingLayerStore.set(undefined);
-		}, 200);
+		$tableMenuShownStore = false;
+		$editingMenuShownStore = false;
+		editingLayerStore.set(undefined);
+		if (onchange) {
+			onchange();
+		}
+		// }, 200);
 	};
 
 	const getLayerOpacity = () => {
 		if (!map) return 0;
+		if (!layer) return 0;
 		const style = $map.getStyle();
 		const l = style?.layers?.find((l) => l.id === layer.id);
 		if (!l) return 0;
@@ -276,10 +293,10 @@
 	};
 
 	const handleDuplicateLayer = () => {
+		$map.off('styledata', handleLayerStyleChanged);
 		$tableMenuShownStore = false;
 		$editingMenuShownStore = false;
 		editingLayerStore.set(undefined);
-
 		const newStyle = $map.getStyle();
 
 		// copied Layer object
@@ -360,6 +377,9 @@
 					}
 				}
 			}
+			if (onchange) {
+				onchange();
+			}
 		}
 
 		$map.setStyle(newStyle);
@@ -373,12 +393,61 @@
 		}
 	};
 
+	const getLegend = async () => {
+		const mapStyle = $map.getStyle();
+
+		let layerIds = [layer.id];
+		if (layer.children && layer.children.length > 0) {
+			layerIds = [...layerIds, ...layer.children.map((l) => l.id)];
+		}
+
+		mapStyle.layers = mapStyle.layers.filter((l) => layerIds.includes(l.id));
+		const sourceIds = mapStyle.layers.map((l) => {
+			return 'source' in l ? l['source'] : undefined;
+		});
+		for (const name of Object.keys(mapStyle.sources)) {
+			if (sourceIds.includes(name)) continue;
+			delete mapStyle.sources[name];
+		}
+
+		const _layer: Layer = $state.snapshot(layer) as Layer;
+
+		const style: DashboardMapStyle = {
+			id: layer.id,
+			name: layer.name,
+			createdat: new Date().toString(),
+			updatedat: new Date().toString(),
+			style: mapStyle,
+			layers: [_layer],
+			access_level: AccessLevel.PRIVATE,
+			created_user: 'api',
+			updated_user: 'api',
+			no_stars: 0,
+			is_star: false,
+			links: []
+		};
+
+		legend = undefined;
+
+		const res = await fetch(`/api/style/legend?width=328px`, {
+			method: 'POST',
+			body: JSON.stringify(style)
+		});
+		const json: LegendLayer[] = await res.json();
+		legend = json[0];
+		return legend;
+	};
+
+	let legend: LegendLayer | undefined = $state(undefined);
+
 	onMount(() => {
 		layerOpacity = getLayerOpacity();
 
 		$map.on('styledata', () => {
 			layerOpacity = getLayerOpacity();
 		});
+
+		getLegend();
 	});
 </script>
 
@@ -387,149 +456,172 @@
 	bind:isExpanded
 	isSelected={$editingLayerStore?.id === layer.id}
 	showHoveredColor={true}
+	ontoggle={handleToggleChanged}
 >
-	<div class="accordion-content is-flex is-align-items-center" slot="buttons">
-		{#if accessLevel !== AccessLevel.PUBLIC}
-			<div
-				class="button menu-button pl-2 pr-3 py-0"
-				use:tippyTooltip={{
-					content: `This dataset has limited data accesibility. It only has ${
-						accessLevel === AccessLevel.PRIVATE ? 'private' : 'organisation'
-					} access.`
-				}}
-			>
-				<span class="icon is-small">
-					<span class="icon is-small material-symbols-outlined header-icon"> info </span>
-				</span>
-			</div>
-		{/if}
-
-		{#if existLayerInMap}
-			{#if showEditButton}
-				<button
-					class="button menu-button hidden-mobile px-3 py-0"
-					on:click={handleEditLayer}
-					use:tippyTooltip={{ content: 'Edit the settings on how the layer is visualised.' }}
+	{#snippet buttons()}
+		<div class="accordion-content is-flex is-align-items-center">
+			{#if accessLevel !== AccessLevel.PUBLIC}
+				<div
+					class="button menu-button pl-2 pr-3 py-0"
+					use:tippyTooltip={{
+						content: `This dataset has limited data accesibility. It only has ${
+							accessLevel === AccessLevel.PRIVATE ? 'private' : 'organisation'
+						} access.`
+					}}
 				>
-					<span class="icon is-small material-symbols-outlined header-icon"> tune </span>
-				</button>
+					<span class="icon is-small">
+						<span class="icon is-small material-symbols-outlined header-icon"> info </span>
+					</span>
+				</div>
 			{/if}
 
-			<OpacityEditor
-				bind:opacity={layerOpacity}
-				showOpacity={false}
-				on:change={handleVisibilityChanged}
-			/>
-
-			<div
-				role="button"
-				tabindex="0"
-				class="download-dropdown dropdown is-right {showDropdown ? 'is-active' : ''}"
-				on:mouseenter={() => {
-					showDropdown = true;
-				}}
-				on:mouseleave={() => {
-					showDropdown = false;
-				}}
-			>
-				<div class="dropdown-trigger">
+			{#if existLayerInMap}
+				{#if showEditButton}
 					<button
-						class="button menu-button menu-button-{layer.id} pl-3 pr-0 py-0"
-						aria-haspopup="true"
-						aria-controls="dropdown-menu"
-						on:click={() => {
-							showDropdown = !showDropdown;
-						}}
+						class="button menu-button hidden-mobile px-3 py-0"
+						onclick={handleEditLayer}
+						use:tippyTooltip={{ content: 'Edit the settings on how the layer is visualised.' }}
 					>
-						<span class="icon is-small material-symbols-outlined header-icon"> more_horiz </span>
+						<span class="icon is-small material-symbols-outlined header-icon"> tune </span>
 					</button>
-				</div>
-				<div class="dropdown-menu" id="dropdown-menu" role="menu">
-					<div class="dropdown-content">
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a
-							class="dropdown-item"
-							role="button"
-							tabindex="0"
-							on:click={handleZoomToLayer}
-							on:keydown={handleEnterKey}
+				{/if}
+
+				<OpacityEditor
+					bind:opacity={layerOpacity}
+					showOpacity={false}
+					onchange={handleVisibilityChanged}
+				/>
+
+				<div
+					role="button"
+					tabindex="0"
+					class="download-dropdown dropdown is-right {showDropdown ? 'is-active' : ''}"
+					onmouseenter={() => {
+						showDropdown = true;
+					}}
+					onmouseleave={() => {
+						showDropdown = false;
+					}}
+				>
+					<div class="dropdown-trigger">
+						<button
+							class="button menu-button menu-button-{layer.id} pl-3 pr-0 py-0"
+							aria-haspopup="true"
+							aria-controls="dropdown-menu"
+							onclick={() => {
+								showDropdown = !showDropdown;
+							}}
 						>
-							<span class="is-flex">
-								<span class="icon mr-2 material-symbols-outlined"> zoom_in_map </span>
-								<span>Zoom to layer</span>
-							</span>
-						</a>
-
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a
-							class="dropdown-item"
-							role="button"
-							tabindex="0"
-							on:click={handleShowOnlyThisLayer}
-							on:keydown={handleEnterKey}
-						>
-							<span class="is-flex">
-								<span class="icon mr-2 material-symbols-outlined"> disabled_visible </span>
-								<span>Show only this layer</span>
-							</span>
-						</a>
-
-						{#if showEditButton}
-							<!-- svelte-ignore a11y-missing-attribute -->
+							<span class="icon is-small material-symbols-outlined header-icon"> more_horiz </span>
+						</button>
+					</div>
+					<div class="dropdown-menu" id="dropdown-menu" role="menu">
+						<div class="dropdown-content">
+							<!-- svelte-ignore a11y_missing_attribute -->
 							<a
 								class="dropdown-item"
 								role="button"
 								tabindex="0"
-								on:click={handleLayerNameDialogOpened}
-								on:keydown={handleEnterKey}
+								onclick={handleZoomToLayer}
+								onkeydown={handleEnterKey}
 							>
 								<span class="is-flex">
-									<span class="icon mr-2 material-symbols-outlined"> edit </span>
-									<span>Rename layer title</span>
+									<span class="icon mr-2 material-symbols-outlined"> zoom_in_map </span>
+									<span>Zoom to layer</span>
 								</span>
 							</a>
 
-							<!-- svelte-ignore a11y-missing-attribute -->
+							<!-- svelte-ignore a11y_missing_attribute -->
 							<a
 								class="dropdown-item"
 								role="button"
 								tabindex="0"
-								on:click={handleDuplicateLayer}
-								on:keydown={handleEnterKey}
+								onclick={handleShowOnlyThisLayer}
+								onkeydown={handleEnterKey}
 							>
 								<span class="is-flex">
-									<span class="icon mr-2 material-symbols-outlined"> content_copy </span>
-									<span>Duplicate layer</span>
+									<span class="icon mr-2 material-symbols-outlined"> disabled_visible </span>
+									<span>Show only this layer</span>
 								</span>
 							</a>
 
-							<!-- svelte-ignore a11y-missing-attribute -->
-							<a
-								class="dropdown-item"
-								role="button"
-								tabindex="0"
-								on:click={() => {
-									clickMenuButton();
-									isDeleteDialogVisible = true;
-								}}
-								on:keydown={handleEnterKey}
-							>
-								<span class="is-flex">
-									<span class="icon mr-2 material-symbols-outlined"> delete </span>
-									<span>Delete layer</span>
-								</span>
-							</a>
-						{/if}
+							{#if showEditButton}
+								<!-- svelte-ignore a11y_missing_attribute -->
+								<a
+									class="dropdown-item"
+									role="button"
+									tabindex="0"
+									onclick={handleLayerNameDialogOpened}
+									onkeydown={handleEnterKey}
+								>
+									<span class="is-flex">
+										<span class="icon mr-2 material-symbols-outlined"> edit </span>
+										<span>Rename layer title</span>
+									</span>
+								</a>
+
+								<!-- svelte-ignore a11y_missing_attribute -->
+								<a
+									class="dropdown-item"
+									role="button"
+									tabindex="0"
+									onclick={handleDuplicateLayer}
+									onkeydown={handleEnterKey}
+								>
+									<span class="is-flex">
+										<span class="icon mr-2 material-symbols-outlined"> content_copy </span>
+										<span>Duplicate layer</span>
+									</span>
+								</a>
+
+								<!-- svelte-ignore a11y_missing_attribute -->
+								<a
+									class="dropdown-item"
+									role="button"
+									tabindex="0"
+									onclick={() => {
+										clickMenuButton();
+										isDeleteDialogVisible = true;
+									}}
+									onkeydown={handleEnterKey}
+								>
+									<span class="is-flex">
+										<span class="icon mr-2 material-symbols-outlined"> delete </span>
+										<span>Delete layer</span>
+									</span>
+								</a>
+							{/if}
+						</div>
 					</div>
 				</div>
-			</div>
+			{/if}
+		</div>
+	{/snippet}
+	{#snippet content()}
+		{@const existLayerInMap = $map?.getStyle()?.layers?.find((l) => l.id === layer.id)
+			? true
+			: false}
+		{#if existLayerInMap}
+			{#if !legend}
+				<div class="is-flex is-justify-content-center">
+					<Loader size="small" />
+				</div>
+			{:else if legend.legend}
+				{#if legend.legend.startsWith('http') || legend.legend.startsWith('https')}
+					<img src={legend.legend} alt={legend.name} />
+				{:else}
+					<div class="legend">
+						<!-- eslint-disable svelte/no-at-html-tags -->
+						{@html legend.legend}
+					</div>
+				{/if}
+			{/if}
+		{:else}
+			<Notification type="warning" showCloseButton={false}>
+				You have no permission to access this dataset
+			</Notification>
 		{/if}
-	</div>
-	<div slot="content">
-		{#key isLayerChanged}
-			<slot name="content" />
-		{/key}
-	</div>
+	{/snippet}
 </Accordion>
 
 {#if existLayerInMap}
@@ -537,10 +629,10 @@
 		{#if isDeleteDialogVisible}
 			<ModalNotification
 				bind:dialogOpen={isDeleteDialogVisible}
-				on:cancel={() => {
+				oncancel={() => {
 					isDeleteDialogVisible = false;
 				}}
-				on:continue={handleDeleted}
+				oncontinue={handleDeleted}
 				title="Delete Layer"
 				message="Are you sure you want to delete this layer?"
 				target={clean(layer.name)}
@@ -551,30 +643,36 @@
 
 		{#if showRenameDialog}
 			<ModalTemplate title="Rename layer title" bind:show={showRenameDialog}>
-				<div slot="content">
-					<FieldControl title="Layer title" showHelp={false}>
-						<div slot="control">
-							<input
-								class="input {inputLayerTitle.trim().length === 0 ? 'is-danger' : ''}"
-								type="text"
-								placeholder="Add layer title"
-								bind:value={inputLayerTitle}
-							/>
-							{#if inputLayerTitle.trim().length === 0}
-								<span class="help is-danger"> Please name this layer. </span>
-							{/if}
-						</div>
-					</FieldControl>
-				</div>
-				<div slot="buttons">
-					<button
-						class="button is-link is-uppercase has-text-weight-bold"
-						disabled={inputLayerTitle.length === 0 || inputLayerTitle === layer.name}
-						on:click={handleLayerNameChanged}
-					>
-						apply
-					</button>
-				</div>
+				{#snippet content()}
+					<div>
+						<FieldControl title="Layer title" showHelp={false}>
+							{#snippet control()}
+								<div>
+									<input
+										class="input {inputLayerTitle.trim().length === 0 ? 'is-danger' : ''}"
+										type="text"
+										placeholder="Add layer title"
+										bind:value={inputLayerTitle}
+									/>
+									{#if inputLayerTitle.trim().length === 0}
+										<span class="help is-danger"> Please name this layer. </span>
+									{/if}
+								</div>
+							{/snippet}
+						</FieldControl>
+					</div>
+				{/snippet}
+				{#snippet buttons()}
+					<div>
+						<button
+							class="button is-link is-uppercase has-text-weight-bold"
+							disabled={inputLayerTitle.length === 0 || inputLayerTitle === layer.name}
+							onclick={handleLayerNameChanged}
+						>
+							apply
+						</button>
+					</div>
+				{/snippet}
 			</ModalTemplate>
 		{/if}
 	{/if}
@@ -607,5 +705,10 @@
 		.header-icon {
 			font-size: 20px;
 		}
+	}
+
+	.legend {
+		max-height: 250px;
+		overflow-y: auto;
 	}
 </style>

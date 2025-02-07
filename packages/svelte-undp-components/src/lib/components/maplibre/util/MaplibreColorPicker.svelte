@@ -1,35 +1,40 @@
 <script lang="ts">
 	import ColorPicker from '$lib/components/ui/ColorPicker.svelte';
-	import { initTippy } from '$lib/util/initTippy.js';
+	import { initTippy } from '$lib/util/initTippy';
 	import chroma from 'chroma-js';
-	import { createEventDispatcher } from 'svelte';
 	import type { RgbaColor } from 'svelte-awesome-color-picker';
 
 	const tippy = initTippy({
 		appendTo: document.body
 	});
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		rgba?: string;
+		width?: string;
+		readonly?: boolean;
+		onchange?: (color: string) => void;
+	}
 
-	export let rgba = `rgba(0,0,0,1)`;
-	export let width: string = '';
-	export let readonly = false;
+	let {
+		rgba = $bindable(`rgba(0,0,0,1)`),
+		width = $bindable(''),
+		readonly = $bindable(false),
+		onchange = () => {}
+	}: Props = $props();
 
-	let color: RgbaColor = {
+	let color: RgbaColor = $state({
 		r: chroma(rgba).rgba()[0],
 		g: chroma(rgba).rgba()[1],
 		b: chroma(rgba).rgba()[2],
 		a: chroma(rgba).rgba()[3]
-	};
-	let colorStyle = '';
+	});
+	let colorStyle = $state('');
 
 	const setColor = () => {
 		rgba = chroma.rgb(color.r, color.g, color.b).alpha(color.a).css();
 		colorStyle = `height: 32px; width:${width ? `${width}` : '100%'}; background: ${rgba};`;
-		dispatch('change', {
-			color: rgba
-		});
+		if (onchange) onchange(rgba);
 	};
 	setColor();
 </script>
@@ -42,11 +47,12 @@
 		data-testid="color-palette"
 		style={colorStyle}
 		use:tippy={{ content: tooltipContent }}
+		aria-label="color-picker"
 	>
 	</button>
 
 	<div class="tooltip" data-testid="tooltip" bind:this={tooltipContent}>
-		<ColorPicker bind:color on:changeColor={setColor} />
+		<ColorPicker bind:color onchange={setColor} />
 	</div>
 {/if}
 

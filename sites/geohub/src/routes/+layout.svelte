@@ -1,26 +1,32 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
+	import type { Snippet } from 'svelte';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+		children?: Snippet;
+	}
 
-	let title = data.title;
-	let content = data.content;
-	let site_name = data.site_name;
-	let site_description = data.site_description;
-	let socialImage = data.socialImage;
-	let ogUrl = data.ogUrl;
+	let { data = $bindable(), children }: Props = $props();
+
+	let title = $state(data.title);
+	let content = $state(data.content);
+	let site_name = $state(data.site_name);
+	let site_description = $state(data.site_description);
+	let socialImage = $state(data.socialImage);
+	let ogUrl = $state(data.ogUrl);
 
 	afterNavigate(() => {
 		if (browser) {
-			title = $page.data.title;
-			content = $page.data.content;
-			site_name = $page.data.site_name;
-			site_description = $page.data.site_description;
-			socialImage = $page.data.socialImage;
-			ogUrl = $page.data.ogUrl;
+			title = page.data.title;
+			content = page.data.content;
+			site_name = page.data.site_name;
+			site_description = page.data.site_description;
+			socialImage = page.data.socialImage;
+			ogUrl = page.data.ogUrl;
 		}
 	});
 </script>
@@ -58,8 +64,8 @@
 	</style>
 </svelte:head>
 
-<slot />
+{@render children?.()}
 
 <style global lang="scss">
-	@import '@undp-data/undp-bulma/dist/style.css';
+	@import '@undp-data/undp-bulma/dist/undp-bulma.css';
 </style>

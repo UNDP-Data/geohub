@@ -1,27 +1,36 @@
 <script lang="ts">
-	import type { StoryMapChapter, StoryMapTemplate } from '$lib/interfaces/index.js';
+	import type { StoryMapChapter, StoryMapTemplate } from '$lib/interfaces';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { marked } from 'marked';
-	import { getContext } from 'svelte';
-	import { layerTypes } from './helpers.js';
-	import { STORYMAP_MAPSTORE_CONTEXT_KEY, type MapStore } from './stores/map.js';
-	import { STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY, type MapStyleStore } from './stores/mapStyle.js';
+	import { getContext, untrack } from 'svelte';
+	import { layerTypes } from './helpers';
+	import { STORYMAP_MAPSTORE_CONTEXT_KEY, type MapStore } from './stores/map';
+	import { STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY, type MapStyleStore } from './stores/mapStyle';
 	import {
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		type StoryMapConfigStore
-	} from './stores/storymapConfig.js';
+	} from './stores/storymapConfig';
 
-	export let chapter: StoryMapChapter;
-	export let activeId = '';
-	export let template: StoryMapTemplate = 'light';
-	export let size: 'small' | 'normal' = 'normal';
+	interface Props {
+		chapter: StoryMapChapter;
+		activeId?: string;
+		template?: StoryMapTemplate;
+		size?: 'small' | 'normal';
+	}
+
+	let {
+		chapter = $bindable(),
+		activeId = $bindable(''),
+		template = $bindable('light'),
+		size = $bindable('normal')
+	}: Props = $props();
 
 	// stores should be set at the parent component
 	let mapStore: MapStore = getContext(STORYMAP_MAPSTORE_CONTEXT_KEY);
 	let mapStyleStore: MapStyleStore = getContext(STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY);
 	let config: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 
-	$: isLast = $config.chapters[$config.chapters.length - 1]?.id === chapter.id;
+	let isLast = $derived($config.chapters[$config.chapters.length - 1]?.id === chapter.id);
 
 	const setChapterConfig = async () => {
 		if (!$mapStore) return;
@@ -116,7 +125,13 @@
 		}
 	};
 
-	$: activeId, setChapterConfig();
+	$effect(() => {
+		if (activeId !== undefined) {
+			untrack(() => {
+				setChapterConfig();
+			});
+		}
+	});
 </script>
 
 <section
@@ -152,6 +167,6 @@
 </section>
 
 <style lang="scss">
-	@import '$lib/css/light/chapter.scss';
-	@import '$lib/css/dark/chapter.scss';
+	@import './css/light/chapter.scss';
+	@import './css/dark/chapter.scss';
 </style>

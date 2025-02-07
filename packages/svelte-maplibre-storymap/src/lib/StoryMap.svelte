@@ -1,8 +1,9 @@
 <script lang="ts">
-	import type { StoryMapConfig, StoryMapTemplate } from '$lib/interfaces/index.js';
+	import type { StoryMapConfig, StoryMapTemplate } from '$lib/interfaces';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import {
+		addProtocol,
 		AttributionControl,
 		Map,
 		NavigationControl,
@@ -10,29 +11,41 @@
 		type StyleSpecification
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
+	import { Protocol } from 'pmtiles';
 	import scrollama from 'scrollama';
 	import { onMount, setContext } from 'svelte';
-	import { setLayerOpacity } from './helpers.js';
+	import { setLayerOpacity } from './helpers';
 	import MaplibreLegendControl from './MaplibreLegendControl.svelte';
 	import {
-		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
-		STORYMAP_MAPSTORE_CONTEXT_KEY,
-		STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY,
 		createMapStore,
 		createMapStyleStore,
 		createStoryMapConfigStore,
+		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
+		STORYMAP_MAPSTORE_CONTEXT_KEY,
+		STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY,
 		type MapStore,
 		type MapStyleStore,
 		type StoryMapConfigStore
-	} from './stores/index.js';
+	} from './stores';
 	import StoryMapChapter from './StoryMapChapter.svelte';
 	import StoryMapFooter from './StoryMapFooter.svelte';
 	import StoryMapHeader from './StoryMapHeader.svelte';
 
-	export let config: StoryMapConfig;
-	export let template: StoryMapTemplate = 'light';
-	export let marginTop = 0;
-	export let compactAttribution = true;
+	interface Props {
+		config: StoryMapConfig;
+		template?: StoryMapTemplate;
+		marginTop?: number;
+		compactAttribution?: boolean;
+		footer?: import('svelte').Snippet;
+	}
+
+	let {
+		config = $bindable(),
+		template = $bindable('light'),
+		marginTop = $bindable(0),
+		compactAttribution = $bindable(true),
+		footer = $bindable()
+	}: Props = $props();
 
 	const tippyTooltip = initTooltipTippy({
 		placement: 'left',
@@ -43,30 +56,37 @@
 	$configStore = config;
 	setContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY, configStore);
 
-	let mapContainer: HTMLDivElement;
+	let mapContainer: HTMLDivElement | undefined = $state();
 	let mapStore: MapStore = createMapStore();
 	setContext(STORYMAP_MAPSTORE_CONTEXT_KEY, mapStore);
 
-	let activeId = '';
-	let activeStyleId = '';
-	let activeStyleOrigin = '';
-	let legendPosition: ControlPosition = 'bottom-left';
-	let showLegend = false;
+	let activeId = $state('');
+	let activeStyleId = $state('');
+	let activeStyleOrigin = $state('');
+	let legendPosition: ControlPosition = $state('bottom-left');
+	let showLegend = $state(false);
 
 	let navigationControl: NavigationControl;
 
 	let currentStyle: MapStyleStore = createMapStyleStore();
 	setContext(STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY, currentStyle);
 
-	let slideIndex = 0;
-	let scrollY = 0;
-	let innerWidth = 0;
-	let slideProgressHeight = 0;
+	let slideIndex = $state(0);
+	let scrollY = $state(0);
+	let innerWidth = $state(0);
+	let slideProgressHeight = $state(0);
 
 	// collapse legend for small screen device
-	$: isLegendExpanded = innerWidth < 768 ? false : true;
+	let isLegendExpanded = $state(false);
+	$effect(() => {
+		isLegendExpanded = innerWidth < 768 ? false : true;
+	});
 
 	onMount(async () => {
+		let protocol = new Protocol();
+		addProtocol('pmtiles', protocol.tile);
+
+		if (!mapContainer) return;
 		const styleInfo = getStyleInfo(config.style);
 		if (styleInfo) {
 			activeStyleId = styleInfo.id;
@@ -223,6 +243,7 @@
 	};
 
 	const handleScrollToIndex = debounce(async (index: number) => {
+		if (!$mapStore) return;
 		slideIndex = index;
 		if (index === 0) {
 			scrollTo('header');
@@ -234,10 +255,21 @@
 			} else {
 				style = $configStore.style;
 			}
-			const center = config.location.center ?? (style.center as [number, number]) ?? [0, 0];
-			const zoom = config.location.zoom ?? style.zoom ?? 0;
-			const bearing = config.location.bearing ?? style.bearing ?? 0;
-			const pitch = config.location.pitch ?? style.pitch ?? 0;
+
+			const isCustomisedLocationAvailable =
+				$configStore.location.center && $configStore.location.center[0] !== null;
+
+			const center = isCustomisedLocationAvailable
+				? $configStore.location.center
+				: ((style.center as [number, number]) ?? [0, 0]);
+			const zoom = isCustomisedLocationAvailable ? $configStore.location.zoom : (style.zoom ?? 0);
+			const bearing = isCustomisedLocationAvailable
+				? ($configStore.location.bearing ?? 0)
+				: (style.bearing ?? 0);
+			const pitch = isCustomisedLocationAvailable
+				? ($configStore.location.pitch ?? 0)
+				: (style.pitch ?? 0);
+
 			$mapStore.setBearing(bearing);
 			$mapStore.setPitch(pitch);
 			$mapStore.flyTo({ center: center, zoom: zoom });
@@ -249,7 +281,7 @@
 	}, 300);
 </script>
 
-<svelte:window bind:innerWidth bind:scrollY on:scrollend={handleOnScrollEnd} />
+<svelte:window bind:innerWidth bind:scrollY onscrollend={handleOnScrollEnd} />
 
 <div class="storymap-main" style="margin-top: {marginTop}px; ">
 	<div class="story">
@@ -257,7 +289,7 @@
 
 		{#if $mapStore}
 			{#each config.chapters as chapter}
-				<StoryMapChapter bind:chapter bind:activeId bind:template />
+				<StoryMapChapter {chapter} bind:activeId bind:template />
 			{/each}
 		{/if}
 	</div>
@@ -295,18 +327,20 @@
 						<button
 							class="progress-button {slideIndex === 0 ? 'is-active' : ''}"
 							use:tippyTooltip={{ content: config.title }}
-							on:click={() => {
+							onclick={() => {
 								handleScrollToIndex(0);
 							}}
+							aria-label={config.title}
 						>
 						</button>
 						{#each config.chapters as ch, index}
 							<button
 								class="progress-button {slideIndex === index + 1 ? 'is-active' : ''}"
 								use:tippyTooltip={{ content: ch.title }}
-								on:click={() => {
+								onclick={() => {
 									handleScrollToIndex(index + 1);
 								}}
+								aria-label={ch.title}
 							>
 							</button>
 						{/each}
@@ -320,7 +354,7 @@
 		<StoryMapFooter bind:template />
 	{/if}
 
-	<slot name="footer" />
+	{@render footer?.()}
 </div>
 
 <style lang="scss">

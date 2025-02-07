@@ -4,19 +4,23 @@
 	import type { DatasetFeature } from '$lib/types';
 	import { Card, CardWithImage } from '@undp-data/svelte-undp-design';
 
-	export let feature: DatasetFeature;
-	export let width = 265;
-	export let height = 150;
+	interface Props {
+		feature: DatasetFeature;
+		width?: number;
+		height?: number;
+	}
 
-	const isStac = feature.properties.tags.find((t) => t.key === 'type')?.value === 'stac';
-	const sdgs = feature.properties.tags.filter((t) => t.key === 'sdg_goal')?.map((t) => t.value);
+	let { feature = $bindable(), width = $bindable(265), height = $bindable(150) }: Props = $props();
+
+	const isStac = feature.properties.tags?.find((t) => t.key === 'type')?.value === 'stac';
+	const sdgs = feature.properties.tags?.filter((t) => t.key === 'sdg_goal')?.map((t) => t.value);
 
 	const previewUrl = feature.properties.links?.find((l) => l.rel === 'preview')?.href;
 
 	const getTag = () => {
-		return sdgs.length > 0
+		return sdgs && sdgs.length > 0
 			? `${sdgs
-					.sort((a, b) => parseInt(a) - parseInt(b))
+					.sort((a, b) => parseInt(a as string) - parseInt(b as string))
 					.slice(0, 2)
 					.map((sdg) => `SDG${sdg}`)
 					.join(', ')}${sdgs.length > 3 ? '...' : ''}`
@@ -28,8 +32,8 @@
 
 {#if isStac}
 	<Card
-		title={feature.properties.name}
-		description={feature.properties.description}
+		title={feature.properties.name as string}
+		description={feature.properties.description as string}
 		url="/data/{feature.properties.id}"
 		tag="Satellite"
 		accent={feature.properties.access_level === AccessLevel.PRIVATE
@@ -41,10 +45,10 @@
 {:else}
 	{@const accessIcon = getAccessLevelIcon(feature.properties.access_level, true)}
 	<CardWithImage
-		title={feature.properties.name}
+		title={feature.properties.name as string}
 		url="/data/{feature.properties.id}"
 		tag={getTag()}
-		image={previewUrl.replace('{width}', `${width}`).replace('{height}', `${height}`)}
+		image={previewUrl?.replace('{width}', `${width}`).replace('{height}', `${height}`) as string}
 		{width}
 		{height}
 		accent={feature.properties.access_level === AccessLevel.PRIVATE

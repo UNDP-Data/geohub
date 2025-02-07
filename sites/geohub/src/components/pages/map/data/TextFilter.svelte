@@ -1,24 +1,35 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { DatasetSortingColumns, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { PanelButton } from '@undp-data/svelte-undp-components';
 	import { Checkbox, Radios, SearchExpand, type Radio } from '@undp-data/svelte-undp-design';
 	import type { Map } from 'maplibre-gl';
-	import { createEventDispatcher } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	const config: UserConfig = page.data.config;
 
-	const config: UserConfig = $page.data.config;
+	interface Props {
+		disabled: boolean;
+		map: Map;
+		placeholder: string;
+		query?: string;
+		onchange?: (url: string) => void;
+	}
 
-	export let disabled: boolean;
-	export let map: Map;
-	export let placeholder: string;
-	export let query = $page.url.searchParams.get('query') ?? '';
-	let queryType: 'and' | 'or' =
-		($page.url.searchParams.get('queryoperator') as 'and' | 'or') ??
-		config.DatasetSearchQueryOperator;
-	let queryTypes: Radio[] = [
+	let {
+		disabled = $bindable(),
+		map = $bindable(),
+		placeholder,
+		query = $bindable(page.url.searchParams.get('query') ?? ''),
+		onchange = (url) => {
+			console.log(url);
+		}
+	}: Props = $props();
+	let queryType: 'and' | 'or' = $state(
+		(page.url.searchParams.get('queryoperator') as 'and' | 'or') ??
+			config.DatasetSearchQueryOperator
+	);
+	let queryTypes: Radio[] = $state([
 		{
 			label: 'Match all words typed',
 			value: 'and'
@@ -27,37 +38,36 @@
 			label: 'Match at least a word typed',
 			value: 'or'
 		}
-	];
+	]);
 
-	let sortingColumn: string = $page.url.searchParams.get('sortby') ?? config.DatasetSortingColumn;
+	let sortingColumn: string = $state(
+		page.url.searchParams.get('sortby') ?? config.DatasetSortingColumn
+	);
 
-	const bboxString = $page.url.searchParams.get('bbox');
+	const bboxString = page.url.searchParams.get('bbox');
 	const bboxArray = bboxString?.split(',').map((v) => Number(v));
-	let bbox: [number, number, number, number] = bboxString
-		? (bboxArray as [number, number, number, number])
-		: undefined;
+	let bbox: [number, number, number, number] | undefined = $state(
+		bboxString ? (bboxArray as [number, number, number, number]) : undefined
+	);
 
-	let isFilterByBBox: boolean = bboxString ? true : false;
-
-	$: queryType, handleQueryTypeChanged();
-	$: sortingColumn, handleSortingColumnChanged();
+	let isFilterByBBox: boolean = $state(bboxString ? true : false);
 
 	const handleSortingColumnChanged = () => {
-		const apiUrl = $page.url;
+		const apiUrl = page.url;
 		apiUrl.searchParams.delete('sortby');
 		apiUrl.searchParams.set('sortby', sortingColumn);
 		fireChangeEvent(apiUrl);
 	};
 
 	const handleQueryTypeChanged = () => {
-		const apiUrl = $page.url;
+		const apiUrl = page.url;
 		apiUrl.searchParams.delete('queryoperator');
 		apiUrl.searchParams.set('queryoperator', queryType);
 		fireChangeEvent(apiUrl);
 	};
 
 	const handleFilterInput = () => {
-		const apiUrl = $page.url;
+		const apiUrl = page.url;
 		apiUrl.searchParams.delete('query');
 		if (query.length > 0) {
 			apiUrl.searchParams.set('query', query);
@@ -66,12 +76,8 @@
 	};
 
 	const fireChangeEvent = (url: URL) => {
-		dispatch('change', {
-			url: url.toString()
-		});
+		if (onchange) onchange(url.toString());
 	};
-
-	$: isFilterByBBox, registerMapMovedEvent();
 
 	const registerMapMovedEvent = async () => {
 		if (!map) return;
@@ -81,7 +87,7 @@
 		} else {
 			map.off('moveend', handleMapMoved);
 			bbox = undefined;
-			const apiUrl = $page.url;
+			const apiUrl = page.url;
 			apiUrl.searchParams.delete('bbox');
 			fireChangeEvent(apiUrl);
 		}
@@ -98,7 +104,7 @@
 				bounds.getNorthEast().lng,
 				bounds.getNorthEast().lat
 			];
-			const apiUrl = $page.url;
+			const apiUrl = page.url;
 			apiUrl.searchParams.delete('bbox');
 			apiUrl.searchParams.set('bbox', bbox.join(','));
 			fireChangeEvent(apiUrl);
@@ -112,7 +118,7 @@
 			bind:value={query}
 			open={true}
 			{placeholder}
-			on:change={handleFilterInput}
+			onchange={handleFilterInput}
 			iconSize={16}
 			fontSize={6}
 			timeout={SearchDebounceTime}
@@ -134,6 +140,7 @@
 			bind:value={sortingColumn}
 			groupName="sortby"
 			isVertical={true}
+			onchange={handleSortingColumnChanged}
 		/>
 	</PanelButton>
 
@@ -151,9 +158,14 @@
 			bind:value={queryType}
 			groupName="queryType"
 			isVertical={true}
+			onchange={handleQueryTypeChanged}
 		/>
 		<p class="subtitle is-6 pb-0 pt-2 my-1">Geospatial filter</p>
-		<Checkbox label="Filter by current map extent" bind:checked={isFilterByBBox} />
+		<Checkbox
+			label="Filter by current map extent"
+			bind:checked={isFilterByBBox}
+			onclick={registerMapMovedEvent}
+		/>
 	</PanelButton>
 </div>
 

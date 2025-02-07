@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { updateIntervalValues } from './updateIntervalValues.js';
+import { updateIntervalValues } from './updateIntervalValues';
 import type { ColorMapRow } from '$lib/components/maplibre/util/LegendColorMapRow.svelte';
 
 describe('updateIntervalValues', () => {
@@ -13,12 +13,10 @@ describe('updateIntervalValues', () => {
 		];
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
-		const event: CustomEvent = {
-			detail: {
-				index: 0,
-				id: 'end',
-				value: 5
-			}
+		const event = {
+			index: 0,
+			id: 'end',
+			value: 5
 		};
 		const result = updateIntervalValues(event, colorMapRows);
 		await expect(result).toEqual([

@@ -7,29 +7,38 @@
 		Layer,
 		LayerCreationInfo,
 		StacAsset,
-		StacCollection
+		StacCollection,
+		StacDataLayer
 	} from '$lib/types';
 	import {
 		FieldControl,
 		Notification,
 		type RasterAlgorithm
 	} from '@undp-data/svelte-undp-components';
-	import { createEventDispatcher } from 'svelte';
 	import StacCatalogDatePicker from './StacCatalogDatePicker.svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		collectionUrl: string;
+		collection: StacCollection;
+		dataset?: DatasetFeature;
+		selectedTool: { algorithmId: string; algorithm: RasterAlgorithm };
+		onDataAdded?: (layers: StacDataLayer[]) => void;
+	}
 
-	export let collectionUrl: string;
-	export let collection: StacCollection;
-	export let dataset: DatasetFeature = undefined;
-	export let selectedTool: { algorithmId: string; algorithm: RasterAlgorithm };
+	let {
+		collectionUrl = $bindable(),
+		collection = $bindable(),
+		dataset = $bindable(),
+		selectedTool = $bindable(),
+		onDataAdded = () => {}
+	}: Props = $props();
 
-	let isAdding = false;
-	let errorMessage = '';
+	let isAdding = $state(false);
+	let errorMessage = $state('');
 
-	let selectedAssets: { [key: number]: StacAsset } = {};
+	let selectedAssets: { [key: number]: StacAsset } = $state({});
 
-	let selectedDates: { [key: number]: Date } = {};
+	let selectedDates: { [key: number]: Date } = $state({});
 
 	const handleDateSelected = (date: Date, index: number) => {
 		const isFirstBand =
@@ -152,10 +161,7 @@
 				dataset: feature,
 				colorMapName: data.colormap_name
 			};
-
-			dispatch('dataAdded', {
-				layers: [data]
-			});
+			if (onDataAdded) onDataAdded([data]);
 		} catch (err) {
 			console.error(err);
 			errorMessage = err.message;
@@ -168,59 +174,64 @@
 {#if dataset}
 	{#if selectedTool}
 		<FieldControl title="Select input data" showHelpPopup={false}>
-			<div slot="control">
-				{#if selectedTool.algorithm.inputs.bands}
-					{#each selectedTool.algorithm.inputs.bands as band, index}
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label">{band.title} ({band.required ? 'Required' : 'Optional'})</label>
-							<div class="control">
-								<StacCatalogDatePicker
-									bind:collectionUrl
-									bind:collection
-									bind:selectedAsset={selectedAssets[index]}
-									bind:selectedDate={selectedDates[index]}
-									bind:algorithm={selectedTool.algorithm}
-									bandIndex={index}
-									on:assetChanged={(e) => {
-										selectedAssets[index] = e.detail.asset;
-										selectedAssets = { ...selectedAssets };
-									}}
-									on:dateChanged={(e) => {
-										handleDateSelected(e.detail.date, index);
-									}}
-								/>
+			{#snippet control()}
+				<div>
+					{#if selectedTool.algorithm.inputs.bands}
+						{#each selectedTool.algorithm.inputs.bands as band, index}
+							<div class="field">
+								<!-- svelte-ignore a11y_label_has_associated_control -->
+								<label class="label">{band.title} ({band.required ? 'Required' : 'Optional'})</label
+								>
+								<div class="control">
+									<StacCatalogDatePicker
+										bind:collectionUrl
+										bind:collection
+										bind:selectedAsset={selectedAssets[index]}
+										bind:selectedDate={selectedDates[index]}
+										bind:algorithm={selectedTool.algorithm}
+										bandIndex={index}
+										onAssetChanged={(asset: StacAsset) => {
+											selectedAssets[index] = asset;
+											selectedAssets = { ...selectedAssets };
+										}}
+										onDateChanged={(date: Date) => {
+											handleDateSelected(date, index);
+										}}
+									/>
+								</div>
+								<p class="help is-success">{band.description}</p>
 							</div>
-							<p class="help is-success">{band.description}</p>
-						</div>
-					{/each}
-				{:else}
-					{#each listOfbands(selectedTool.algorithm.inputs.nbands) as bandNo}
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label">Input Band {bandNo}</label>
-							<div class="control">
-								<StacCatalogDatePicker
-									bind:collectionUrl
-									bind:collection
-									bind:selectedAsset={selectedAssets[bandNo]}
-									bind:selectedDate={selectedDates[bandNo]}
-									bind:algorithm={selectedTool.algorithm}
-									bandIndex={bandNo - 1}
-									on:assetChanged={(e) => {
-										selectedAssets[bandNo] = e.detail.asset;
-										selectedAssets = { ...selectedAssets };
-									}}
-									on:dateChanged={(e) => {
-										handleDateSelected(e.detail.date, bandNo);
-									}}
-								/>
+						{/each}
+					{:else}
+						{#each listOfbands(selectedTool.algorithm.inputs.nbands) as bandNo}
+							<div class="field">
+								<!-- svelte-ignore a11y_label_has_associated_control -->
+								<label class="label">Input Band {bandNo}</label>
+								<div class="control">
+									<StacCatalogDatePicker
+										bind:collectionUrl
+										bind:collection
+										bind:selectedAsset={selectedAssets[bandNo]}
+										bind:selectedDate={selectedDates[bandNo]}
+										bind:algorithm={selectedTool.algorithm}
+										bandIndex={bandNo - 1}
+										onAssetChanged={(asset: StacAsset) => {
+											selectedAssets[bandNo] = asset;
+											selectedAssets = { ...selectedAssets };
+										}}
+										onDateChanged={(date: Date) => {
+											handleDateSelected(date, bandNo);
+										}}
+									/>
+								</div>
 							</div>
-						</div>
-					{/each}
-				{/if}
-			</div>
-			<div slot="help">{selectedTool.algorithm.description}</div>
+						{/each}
+					{/if}
+				</div>
+			{/snippet}
+			{#snippet help()}
+				<div>{selectedTool.algorithm.description}</div>
+			{/snippet}
 		</FieldControl>
 	{/if}
 
@@ -251,7 +262,7 @@
 					? 'is-loading'
 					: ''}"
 				disabled={isDuplicated || !isAllSelected || isAdding}
-				on:click={handleClickAdd}>Add to map</button
+				onclick={handleClickAdd}>Add to map</button
 			>
 		{/if}
 	{/key}

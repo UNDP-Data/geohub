@@ -1,5 +1,74 @@
 # geohub
 
+## 1.22.36
+
+### Patch Changes
+
+- 28b87b3: chore: updated dependencies
+
+## 1.22.35
+
+### Patch Changes
+
+- 0671874: refactor: merge electricity and ceei dashboards codes to (app) main folder
+
+## 1.22.34
+
+### Patch Changes
+
+- c09a179: fix: fixed bug of importing maptiler geocoder in SSR.
+- 93b51ce: fix: switched the electricity forecast data (2021-2030) to v3 on Electricity Dashboard
+- f70c8af: fix: fixed bug of not showing scaled raster tile correctly. always use unscale=true for titiler now.
+
+## 1.22.33
+
+### Patch Changes
+
+- 6092700: fix: revert @undp-data/date-picker-svelte to v2.12.1 since it has reference error in geohub
+
+## 1.22.32
+
+### Patch Changes
+
+- 125fffd: fix: fixed bug of showing console error in datasetmap view
+
+## 1.22.31
+
+### Patch Changes
+
+- 6befcd4: fix: update interfaces of using svelte-undp-components
+- 26440c9: fix: fixed interface where using svelte-undp-design
+- a6f2039: chore: updated dependencies for geohub
+- ebd18c3: chore: upgrade carbon/charts-svelte
+- de2eccf: chore: upgrade maptiler geocoder to v2
+
+## 1.22.30
+
+### Patch Changes
+
+- 0ae54db: fix: fixed vector table searching behaviour
+
+## 1.22.29
+
+### Patch Changes
+
+- 1ac4d94: chore: updated monorepo package dependencies
+- 6d68c1e: chore: use named import of sveltePreprocess
+- dbd2da0: chore: migrate to svelte 5 for static api control.
+- 13aa269: chore: migrated some map components to svelte 5, and fixed reactivity bug in LayerList
+- 0124b84: fix: fixed bug of not showing no of stars correctly for map and data page.
+- 905236f: chore: migrated storymap components to svelte 5
+- 6004be7: fix: fixed bug of adding layer in map editor. and migrated some map editor components to svelte 5
+- a038e3d: chore: upgrade maplibre to v5
+- b2a44b5: chore: migrating data tab components of map editor to svelte 5
+- a2662a7: chore: migrate storymap client components to svelte 5.
+- 8e7812f: chore: migrate STAC related components and MiniMap to svelte 5
+- 0124b84: fix: fixed bug of not updating layer list when new layer is added to layer tab.
+- 905236f: fix: fixed storymap pagination bug.
+- aad7a9a: fix: fixed bug of when layer is deleted.
+- 39057e9: chore: update dependencies of svelte to v5.
+- ff3b0b4: fix: fixed bug of not setting default location in storymap if users do not customise.
+
 ## 1.22.28
 
 ### Patch Changes

@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
 
-	let breadcrumbs: BreadcrumbPage[] = [
+	let breadcrumbs: BreadcrumbPage[] = $state([
 		{ title: 'home', url: '/' },
-		{ title: 'management', url: $page.url.href }
-	];
+		{ title: 'management', url: page.url.href }
+	]);
 </script>
 
 <HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />

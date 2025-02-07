@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { FontJsonUrl } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
@@ -14,24 +14,34 @@
 		getTextFieldDataType
 	} from '@undp-data/svelte-undp-components';
 	import type { SymbolLayerSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
-	let config: UserConfig = $page.data.config;
+	let config: UserConfig = page.data.config;
 
-	export let layer: Layer;
-	export let onlyNumberFields: boolean;
+	interface Props {
+		layer: Layer;
+		onlyNumberFields: boolean;
+		onchange: (textFieldValue: string) => void;
+	}
 
-	const dispatch = createEventDispatcher();
+	let {
+		layer = $bindable(),
+		onlyNumberFields = $bindable(),
+		onchange = (textFieldValue) => {
+			console.log(textFieldValue);
+		}
+	}: Props = $props();
+
 	const layerId = layer.id;
 	const propertyName = 'text-field';
-	let textFieldValue: string = undefined;
+	let textFieldValue: string = $state('');
 	let metadata = layer.info as VectorTileMetadata;
 
 	let style = getLayerStyle($map, layer.id);
-	let showEmptyFields = true;
+	let showEmptyFields = $state(true);
 
 	onMount(() => {
 		textFieldValue = getPropertyValueFromExpression(style, propertyName);
@@ -164,9 +174,9 @@
 				map.setPaintProperty(layerId, 'text-halo-width', undefined);
 			}
 		}
-		dispatch('change', {
-			textFieldValue
-		});
+		if (onchange) {
+			onchange(textFieldValue);
+		}
 	};
 </script>
 
@@ -177,5 +187,5 @@
 	{layerId}
 	parentId={layer.parentId}
 	{metadata}
-	on:select={setTextField}
+	onselect={setTextField}
 />

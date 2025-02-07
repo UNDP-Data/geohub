@@ -1,13 +1,17 @@
 <script lang="ts">
 	import MaplibreSlider from '$lib/components/maplibre/util/MaplibreSlider.svelte';
 
-	export let layerId: string;
+	interface Props {
+		layerId: string;
+	}
 
-	let defaultValue = 1;
-	let maxValue = 5;
-	let minValue = 0;
-	let propertyName = 'heatmap-intensity';
-	let stepValue = 0.1;
+	let { layerId = $bindable() }: Props = $props();
+
+	let defaultValue = $state(1);
+	let maxValue = $state(5);
+	let minValue = $state(0);
+	let propertyName = $state('heatmap-intensity');
+	let stepValue = $state(0.1);
 </script>
 
 <MaplibreSlider

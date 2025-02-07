@@ -1,23 +1,35 @@
 <script lang="ts">
 	import Slider from '$lib/components/ui/Slider.svelte';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
+	interface Props {
+		layerId: string;
+		defaultValue: number;
+		maxValue: number;
+		minValue: number;
+		propertyName: string;
+		propertyType?: 'paint' | 'layout';
+		stepValue: number;
+		suffix?: string;
+		onchange?: (value: number) => void;
+	}
 
-	export let defaultValue: number;
-	export let maxValue: number;
-	export let minValue: number;
-	export let propertyName: string;
-	export let propertyType: 'paint' | 'layout' = 'paint';
-	export let stepValue: number;
-	export let suffix = '';
-
-	const dispatch = createEventDispatcher();
+	let {
+		layerId = $bindable(),
+		defaultValue = $bindable(),
+		maxValue = $bindable(),
+		minValue = $bindable(),
+		propertyName = $bindable(),
+		propertyType = $bindable('paint'),
+		stepValue = $bindable(),
+		suffix = $bindable(''),
+		onchange = () => {}
+	}: Props = $props();
 
 	const style = $map
 		.getStyle()
@@ -36,9 +48,7 @@
 		return Number(value);
 	};
 
-	let values = [getValue()];
-
-	$: values, setValue();
+	let values = $state([getValue()]);
 
 	const setValue = debounce(() => {
 		const newStyle = JSON.parse(JSON.stringify(style));
@@ -52,11 +62,12 @@
 		} else {
 			map.setLayoutProperty(layerId, propertyName, values[0]);
 		}
-
-		dispatch('change', {
-			value: values[0]
-		});
+		if (onchange) onchange(values[0]);
 	}, 300);
+
+	onMount(() => {
+		setValue();
+	});
 </script>
 
 <Slider
@@ -69,4 +80,5 @@
 	last="label"
 	rest={false}
 	{suffix}
+	onchange={setValue}
 />

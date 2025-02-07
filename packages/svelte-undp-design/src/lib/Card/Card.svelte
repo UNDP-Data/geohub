@@ -1,22 +1,33 @@
 <!-- https://design.undp.org/?path=/docs/components-ui-components-cards-content-card-without-image-without-emphasize--docs -->
 <script lang="ts">
 	import { marked } from 'marked';
-	import { createEventDispatcher } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		linkName?: string;
+		url?: string;
+		tag?: string;
+		title: string;
+		description: string;
+		isEmphasize?: boolean;
+		accent?: 'global' | 'yellow' | 'red' | 'green' | 'blue';
+		icon?: string;
+		onselect?: () => void;
+	}
 
-	export let linkName = 'READ MORE';
-	export let url = '#';
-	export let tag = '';
-	export let title: string;
-	export let description: string;
-
-	export let isEmphasize = false;
-	export let accent: 'global' | 'yellow' | 'red' | 'green' | 'blue' = 'global';
-	export let icon = '';
+	let {
+		linkName = 'READ MORE',
+		url = '#',
+		tag = '',
+		title,
+		description,
+		isEmphasize = false,
+		accent = 'global',
+		icon = '',
+		onselect = () => {}
+	}: Props = $props();
 
 	const handleClicked = () => {
-		dispatch('selected');
+		if (onselect) onselect();
 	};
 </script>
 
@@ -25,7 +36,7 @@
 		? ''
 		: `accent-${accent}`} {tag || icon ? '' : 'hide-border-top'}"
 >
-	<a href={url} on:click={handleClicked}>
+	<a href={url} onclick={handleClicked}>
 		{#if tag || icon}
 			<h6 class="" data-viewport="false">
 				{#if icon}

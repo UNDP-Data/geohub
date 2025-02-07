@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import DatasetPreview from '$components/pages/data/datasets/DatasetPreview.svelte';
 	import PublishedDatasetDeleteDialog from '$components/pages/data/datasets/PublishedDatasetDeleteDialog.svelte';
 	import UserPermission, {
@@ -29,39 +29,38 @@
 		isRgbRaster,
 		removeSasTokenFromDatasetUrl
 	} from '$lib/helper';
-	import type { DatasetFeature, Layer } from '$lib/types';
+	import type { DatasetFeature, Layer, StacDataLayer } from '$lib/types';
 	import {
 		CopyToClipboard,
 		FieldControl,
 		handleEnterKey,
 		HeroHeader,
 		type BreadcrumbPage,
-		type RasterTileMetadata,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { filesize } from 'filesize';
-	import type {
-		RasterLayerSpecification,
-		RasterSourceSpecification,
-		StyleSpecification
-	} from 'maplibre-gl';
+	import type { StyleSpecification } from 'maplibre-gl';
 	import { marked } from 'marked';
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time/Time.svelte';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
 
-	let feature: DatasetFeature = data.feature;
+	let { data }: Props = $props();
 
-	let breadcrumbs: BreadcrumbPage[] = [
+	let feature: DatasetFeature = $state(data.feature);
+
+	let breadcrumbs: BreadcrumbPage[] = $state([
 		{ title: 'home', url: '/' },
 		{ title: 'datasets', url: '/data' },
-		{ title: feature.properties.name, url: $page.url.href }
-	];
+		{ title: data.feature.properties.name as string, url: page.url.href }
+	]);
 
-	let tabs: Tab[] = [
+	let tabs: Tab[] = $state([
 		{
 			id: `#${TabNames.INFO}`,
 			label: TabNames.INFO
@@ -70,15 +69,15 @@
 			id: `#${TabNames.LINKS}`,
 			label: `Share ${TabNames.LINKS}`
 		}
-	];
+	]);
 
-	let activeTab: string = `#${TabNames.INFO}`;
+	let activeTab: string = $state(`#${TabNames.INFO}`);
 
-	let confirmDeleteDialogVisible = false;
+	let confirmDeleteDialogVisible = $state(false);
 
-	const accessIcon = getAccessLevelIcon(feature.properties.access_level, true);
+	const accessIcon = getAccessLevelIcon(data.feature.properties.access_level, true);
 
-	const links = feature.properties.links;
+	const links = data.feature.properties.links;
 	const datasetApi = links?.find((l) => l.rel === 'self')?.href;
 	const downloadUrl = links?.find((l) => l.rel === 'download')?.href;
 	const infoUrl = links?.find((l) => l.rel === 'info')?.href;
@@ -90,12 +89,12 @@
 	const previewUrl = links?.find((l) => l.rel === 'preview')?.href;
 	const previewStyleUrl = links?.find((l) => l.rel === 'stylejson')?.href;
 	const fgbUrls = links?.filter((l) => l.rel.startsWith('flatgeobuf'));
-	let selectedFgbLayer = fgbUrls && fgbUrls.length > 0 ? fgbUrls[0].rel : '';
+	let selectedFgbLayer = $state(fgbUrls && fgbUrls.length > 0 ? fgbUrls[0].rel : '');
 
-	let isStac = feature.properties.tags?.find((t) => t.key === 'type' && t.value === 'stac');
+	let isStac = data.feature.properties.tags?.find((t) => t.key === 'type' && t.value === 'stac');
 	let isRgbTile = false;
 
-	const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
+	const tags: [{ key: string; value: string }] = data.feature.properties.tags as unknown as [
 		{ key: string; value: string }
 	];
 	const sdgs = tags
@@ -107,25 +106,10 @@
 	const granularity = tags?.filter((t) => t.key === 'granularity')?.map((t) => t.value);
 	const resolution = tags?.filter((t) => t.key === 'resolution')?.map((t) => t.value);
 
-	const dataAddedToMap = async (e: {
-		detail: {
-			layers: [
-				{
-					geohubLayer: Layer;
-					layer: RasterLayerSpecification;
-					source: RasterSourceSpecification;
-					sourceId: string;
-					metadata: RasterTileMetadata;
-					colormap: string;
-				}
-			];
-		};
-	}) => {
+	const dataAddedToMap = async (dataArray: StacDataLayer[]) => {
 		const mapUrl = await addDataToLocalStorage(
-			$page.url,
+			page.url,
 			(layers: Layer[], style: StyleSpecification, styleId: string) => {
-				let dataArray = e.detail.layers;
-
 				for (const data of dataArray) {
 					layers = [data.geohubLayer, ...layers];
 
@@ -152,11 +136,11 @@
 	const checkRgbTile = async () => {
 		const rasterTile = new RasterTileData(feature);
 		const rasterInfo = await rasterTile.getMetadata();
-		isRgbTile = isRgbRaster(rasterInfo.colorinterp);
+		isRgbTile = isRgbRaster(rasterInfo.colorinterp as string[]);
 	};
 
 	onMount(async () => {
-		if (feature.properties.permission >= Permission.READ) {
+		if (feature.properties.permission && feature.properties.permission >= Permission.READ) {
 			tabs = [
 				...tabs.filter((t) => t.id !== `#${TabNames.LINKS}`),
 				{
@@ -178,34 +162,34 @@
 				tabs = [...tabs];
 			}
 		}
-		let hash = $page.url.hash;
+		let hash = page.url.hash;
 		activeTab = hash.length > 0 && tabs.find((t) => t.id === hash) ? hash : `#${TabNames.INFO}`;
 	});
 
-	const handleAlgorithmSelected = async (e) => {
-		let layerSpec: AlgorithmLayerSpec = e.detail;
-
+	const handleAlgorithmSelected = async (layerSpec: AlgorithmLayerSpec) => {
 		const rasterTile = new RasterTileData(feature);
 		const rasterInfo = await rasterTile.getMetadata(layerSpec.algorithmId);
 		const metadata = rasterInfo;
 
 		if (layerSpec.algorithm.outputs.unit) {
-			feature.properties.tags.push({
+			feature.properties.tags?.push({
 				key: 'unit',
 				value: layerSpec.algorithm.outputs.unit
 			});
 		}
 
-		metadata.active_band_no = Object.keys(metadata.stats)[0];
+		if (metadata && metadata.stats) {
+			metadata.active_band_no = Object.keys(metadata.stats)[0];
+		}
 
 		const mapUrl = await addDataToLocalStorage(
-			$page.url,
+			page.url,
 			(layers: Layer[], style: StyleSpecification, styleId: string) => {
 				// add layer to local storage
 				layers = [
 					{
 						id: layerSpec.layerId,
-						name: feature.properties.name,
+						name: feature.properties.name as string,
 						info: metadata,
 						dataset: feature,
 						colorMapName: layerSpec.colormap_name
@@ -258,7 +242,7 @@
 </script>
 
 <HeroHeader
-	title={feature.properties.name}
+	title={feature.properties.name as string}
 	icon={accessIcon}
 	bind:breadcrumbs
 	bind:tabs
@@ -288,10 +272,10 @@
 					{#if feature.properties.permission > Permission.WRITE}
 						<button
 							class="button is-link is-outlined is-uppercase has-text-weight-bold"
-							on:click={() => {
+							onclick={() => {
 								confirmDeleteDialogVisible = true;
 							}}
-							on:keydown={handleEnterKey}
+							onkeydown={handleEnterKey}
 						>
 							Unpublish
 						</button>
@@ -299,9 +283,9 @@
 				{/if}
 
 				<Star
-					bind:id={feature.properties.id}
-					bind:isStar={feature.properties.is_star}
-					bind:no_stars={feature.properties.no_stars}
+					bind:id={feature.properties.id as string}
+					bind:isStar={feature.properties.is_star as boolean}
+					bind:no_stars={feature.properties.no_stars as number}
 					table="datasets"
 					size="normal"
 				/>
@@ -311,44 +295,51 @@
 		<div class="columns">
 			<div class="column is-10 is-flex is-flex-direction-column">
 				<FieldControl title="Title" fontWeight="bold" showHelp={false}>
-					<div slot="control">
-						<p>{feature.properties.name}</p>
-					</div>
+					{#snippet control()}
+						<div>
+							<p>{feature.properties.name}</p>
+						</div>
+					{/snippet}
 				</FieldControl>
 				<FieldControl title="Description" fontWeight="bold" showHelp={false}>
-					<div slot="control">
-						<!-- eslint-disable svelte/no-at-html-tags -->
-						{@html marked(feature.properties.description)}
-					</div>
+					{#snippet control()}
+						<div>
+							<!-- eslint-disable svelte/no-at-html-tags -->
+							{@html marked(feature.properties.description as string)}
+						</div>
+					{/snippet}
 				</FieldControl>
 
 				<FieldControl title="Preview" fontWeight="bold" showHelp={false}>
-					<div slot="control">
-						{#if isStac}
-							{@const stacId = feature.properties.tags.find((t) => t.key === 'stac').value}
-							{@const urlparts = feature.properties.url.split('/')}
-							{@const collection = urlparts[urlparts.length - 2]}
-							{@const isCatalog =
-								feature.properties.tags.find((t) => t.key === 'stacApiType')?.value === 'catalog'}
+					{#snippet control()}
+						<div>
+							{#if isStac}
+								{@const stacId = feature.properties.tags?.find((t) => t.key === 'stac')?.value}
+								{@const urlparts = feature.properties.url.split('/')}
+								{@const collection = urlparts[urlparts.length - 2]}
+								{@const isCatalog =
+									feature.properties.tags?.find((t) => t.key === 'stacApiType')?.value ===
+									'catalog'}
 
-							{#if isCatalog}
-								<StacCatalogExplorer
-									{stacId}
-									bind:dataset={feature}
-									on:dataAdded={dataAddedToMap}
-								/>
+								{#if isCatalog}
+									<StacCatalogExplorer
+										stacId={stacId as string}
+										bind:dataset={feature}
+										onDataAdded={dataAddedToMap}
+									/>
+								{:else}
+									<StacApiExplorer
+										bind:dataset={feature}
+										stacId={stacId as string}
+										{collection}
+										onDataAdded={dataAddedToMap}
+									/>
+								{/if}
 							{:else}
-								<StacApiExplorer
-									bind:dataset={feature}
-									{stacId}
-									{collection}
-									on:dataAdded={dataAddedToMap}
-								/>
+								<DatasetPreview bind:feature />
 							{/if}
-						{:else}
-							<DatasetPreview bind:feature />
-						{/if}
-					</div>
+						</div>
+					{/snippet}
 				</FieldControl>
 			</div>
 
@@ -360,154 +351,190 @@
 						fontWeight="bold"
 						showHelp={false}
 					>
-						<div slot="control">
-							<div class="sdg-grid">
-								{#each sdgs as sdg}
-									<span class="icon is-large">
-										<i class="sdg-{sdg.value}"></i>
-									</span>
-								{/each}
+						{#snippet control()}
+							<div>
+								<div class="sdg-grid">
+									{#each sdgs as sdg}
+										<span class="icon is-large">
+											<i class="sdg-{sdg.value}"></i>
+										</span>
+									{/each}
+								</div>
 							</div>
-						</div>
+						{/snippet}
 					</FieldControl>
 				{/if}
 				<FieldControl title="License" fontWeight="bold" showHelp={false}>
-					<div slot="control">
-						{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
-					</div>
+					{#snippet control()}
+						<div>
+							{feature.properties.license && feature.properties.license?.length > 0
+								? feature.properties.license
+								: 'No license'}
+						</div>
+					{/snippet}
 				</FieldControl>
 
 				<FieldControl title="Access level" fontWeight="bold" showHelp={false}>
-					<div slot="control">
-						{#if feature.properties.access_level === AccessLevel.PUBLIC}
-							Public
-						{:else if feature.properties.access_level === AccessLevel.PRIVATE}
-							Private
-						{:else}
-							{@const domain = getDomainFromEmail(feature.properties.created_user)}
-							{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain).name}
-							{org.toUpperCase()}
-						{/if}
-					</div>
+					{#snippet control()}
+						<div>
+							{#if feature.properties.access_level === AccessLevel.PUBLIC}
+								Public
+							{:else if feature.properties.access_level === AccessLevel.PRIVATE}
+								Private
+							{:else}
+								{@const domain = getDomainFromEmail(feature.properties.created_user as string)}
+								{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain)?.name}
+								{org?.toUpperCase()}
+							{/if}
+						</div>
+					{/snippet}
 				</FieldControl>
 
 				<FieldControl title="Source" fontWeight="bold" showHelp={false}>
-					<div slot="control">
-						<!-- eslint-disable svelte/no-at-html-tags -->
-						{@html attribution}
-					</div>
+					{#snippet control()}
+						<div>
+							<!-- eslint-disable svelte/no-at-html-tags -->
+							{@html attribution}
+						</div>
+					{/snippet}
 				</FieldControl>
 
 				{#if unit}
 					<FieldControl title="Unit" fontWeight="bold" showHelp={false}>
-						<div slot="control">
-							{unit}
-						</div>
+						{#snippet control()}
+							<div>
+								{unit}
+							</div>
+						{/snippet}
 					</FieldControl>
 				{/if}
 
 				{#if year?.length > 0}
 					<FieldControl title="Year" fontWeight="bold" showHelp={false}>
-						<div slot="control">
-							{year.join(', ')}
-						</div>
+						{#snippet control()}
+							<div>
+								{year.join(', ')}
+							</div>
+						{/snippet}
 					</FieldControl>
 				{/if}
 
 				{#if granularity?.length > 0}
 					<FieldControl title="Admin Level" fontWeight="bold" showHelp={false}>
-						<div slot="control">
-							{granularity.join(', ')}
-						</div>
+						{#snippet control()}
+							<div>
+								{granularity.join(', ')}
+							</div>
+						{/snippet}
 					</FieldControl>
 				{/if}
 
 				{#if resolution?.length > 0}
 					<FieldControl title="Resolution" fontWeight="bold" showHelp={false}>
-						<div slot="control">
-							{resolution.join(', ')}
-						</div>
+						{#snippet control()}
+							<div>
+								{resolution.join(', ')}
+							</div>
+						{/snippet}
 					</FieldControl>
 				{/if}
 
 				<FieldControl title="Created by" fontWeight="bold" showHelp={false}>
-					<div class="wordwrap" slot="control">
-						{feature.properties.created_user}
-					</div>
+					{#snippet control()}
+						<div class="wordwrap">
+							{feature.properties.created_user}
+						</div>
+					{/snippet}
 				</FieldControl>
 
 				<FieldControl title="Created at" fontWeight="bold" showHelp={false}>
-					<div slot="control">
-						<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
-					</div>
+					{#snippet control()}
+						<div>
+							<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
+						</div>
+					{/snippet}
 				</FieldControl>
 
 				<FieldControl title="Updated by" fontWeight="bold" showHelp={false}>
-					<div class="wordwrap" slot="control">
-						{feature.properties.updated_user}
-					</div>
+					{#snippet control()}
+						<div class="wordwrap">
+							{feature.properties.updated_user}
+						</div>
+					{/snippet}
 				</FieldControl>
 
 				<FieldControl title="Updated at" fontWeight="bold" showHelp={false}>
-					<div slot="control">
-						<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
-					</div>
+					{#snippet control()}
+						<div>
+							<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
+						</div>
+					{/snippet}
 				</FieldControl>
 
 				{#if downloadUrl}
 					{@const filePath = new URL(downloadUrl).pathname.split('/')}
 					<FieldControl title="Dataset" fontWeight="bold" showHelp={false}>
-						<div slot="control">
-							{#await getFileSize(downloadUrl) then bytes}
-								<div class="is-flex is-align-content-center">
-									<DefaultLink
-										href={downloadUrl}
-										title={`${filePath[filePath.length - 1].split('.')[1].toUpperCase()} ${bytes}`}
-										target=""
-									>
-										<i slot="content" class="fas fa-download has-text-primary pl-2"></i>
-									</DefaultLink>
-								</div>
-							{/await}
-						</div>
+						{#snippet control()}
+							<div>
+								{#await getFileSize(downloadUrl) then bytes}
+									<div class="is-flex is-align-content-center">
+										<DefaultLink
+											href={downloadUrl}
+											title={`${filePath[filePath.length - 1].split('.')[1].toUpperCase()} ${bytes}`}
+											target=""
+										>
+											{#snippet content()}
+												<i class="fas fa-download has-text-primary pl-2"></i>
+											{/snippet}
+										</DefaultLink>
+									</div>
+								{/await}
+							</div>
+						{/snippet}
 					</FieldControl>
 				{/if}
 
 				{#if fgbUrls && fgbUrls.length > 0}
 					{@const fgbUrl = fgbUrls[0].href}
 					<FieldControl title="Flatgeobuf" fontWeight="bold" showHelp={false}>
-						<div slot="control">
-							{#if fgbUrls.length === 1}
-								{#await getFileSize(fgbUrl) then bytes}
-									<div class="is-flex is-align-content-center">
-										<DefaultLink href={fgbUrl} title={`Flatgeobuf ${bytes}`} target="">
-											<i slot="content" class="fas fa-download has-text-primary pl-2"></i>
-										</DefaultLink>
+						{#snippet control()}
+							<div>
+								{#if fgbUrls.length === 1}
+									{#await getFileSize(fgbUrl) then bytes}
+										<div class="is-flex is-align-content-center">
+											<DefaultLink href={fgbUrl} title={`Flatgeobuf ${bytes}`} target="">
+												{#snippet content()}
+													<i class="fas fa-download has-text-primary pl-2"></i>
+												{/snippet}
+											</DefaultLink>
+										</div>
+									{/await}
+								{:else}
+									<div class="select mb-2">
+										<select bind:value={selectedFgbLayer}>
+											{#each fgbUrls as url}
+												{@const layer = url.rel.split('-')[1]}
+												<option value={url.rel}>{layer}</option>
+											{/each}
+										</select>
 									</div>
-								{/await}
-							{:else}
-								<div class="select mb-2">
-									<select bind:value={selectedFgbLayer}>
-										{#each fgbUrls as url}
-											{@const layer = url.rel.split('-')[1]}
-											<option value={url.rel}>{layer}</option>
-										{/each}
-									</select>
-								</div>
-								{#if selectedFgbLayer}
-									{@const fgbUrl = fgbUrls.find((x) => x.rel === selectedFgbLayer)?.href}
-									{#if fgbUrl}
-										{#await getFileSize(fgbUrl) then bytes}
-											<div class="is-flex is-align-content-center">
-												<DefaultLink href={fgbUrl} title={`Flatgeobuf ${bytes}`} target="">
-													<i slot="content" class="fas fa-download has-text-primary pl-2"></i>
-												</DefaultLink>
-											</div>
-										{/await}
+									{#if selectedFgbLayer}
+										{@const fgbUrl = fgbUrls.find((x) => x.rel === selectedFgbLayer)?.href}
+										{#if fgbUrl}
+											{#await getFileSize(fgbUrl) then bytes}
+												<div class="is-flex is-align-content-center">
+													<DefaultLink href={fgbUrl} title={`Flatgeobuf ${bytes}`} target="">
+														{#snippet content()}
+															<i class="fas fa-download has-text-primary pl-2"></i>
+														{/snippet}
+													</DefaultLink>
+												</div>
+											{/await}
+										{/if}
 									{/if}
 								{/if}
-							{/if}
-						</div>
+							</div>
+						{/snippet}
 					</FieldControl>
 				{/if}
 			</div>
@@ -516,11 +543,11 @@
 
 	{#if feature.properties.is_raster && !isStac}
 		<div hidden={activeTab !== `#${TabNames.TOOLS}`}>
-			<RasterAlgorithmExplorer bind:feature on:added={handleAlgorithmSelected} />
+			<RasterAlgorithmExplorer bind:feature onAdded={handleAlgorithmSelected} />
 		</div>
 	{/if}
 
-	{#if $page.data.session}
+	{#if page.data.session}
 		<div hidden={activeTab !== `#${TabNames.PERMISSIONS}`}>
 			<UserPermission api={new DatasetPermissionAPI(feature)} />
 		</div>
@@ -537,10 +564,14 @@
 					showHelp={true}
 					showHelpPopup={false}
 				>
-					<div slot="control">
-						<CopyToClipboard value={datasetApi} />
-					</div>
-					<div slot="help"><a href="/api" target="_blank">Learn more about GeoHub API</a></div>
+					{#snippet control()}
+						<div>
+							<CopyToClipboard value={datasetApi} />
+						</div>
+					{/snippet}
+					{#snippet help()}
+						<div><a href="/api" target="_blank">Learn more about GeoHub API</a></div>
+					{/snippet}
 				</FieldControl>
 			{/if}
 			{#if previewUrl}
@@ -551,10 +582,14 @@
 					showHelp={true}
 					showHelpPopup={false}
 				>
-					<div slot="control">
-						<CopyToClipboard value={previewUrl} />
-					</div>
-					<div slot="help">{`Please replace {width} and {height} to pixel values`}</div>
+					{#snippet control()}
+						<div>
+							<CopyToClipboard value={previewUrl} />
+						</div>
+					{/snippet}
+					{#snippet help()}
+						<div>{`Please replace {width} and {height} to pixel values`}</div>
+					{/snippet}
 				</FieldControl>
 			{/if}
 			{#if previewStyleUrl}
@@ -565,10 +600,14 @@
 					showHelp={true}
 					showHelpPopup={false}
 				>
-					<div slot="control">
-						<CopyToClipboard value={previewStyleUrl} />
-					</div>
-					<div slot="help">Maplibre style URL for preview</div>
+					{#snippet control()}
+						<div>
+							<CopyToClipboard value={previewStyleUrl} />
+						</div>
+					{/snippet}
+					{#snippet help()}
+						<div>Maplibre style URL for preview</div>
+					{/snippet}
 				</FieldControl>
 			{/if}
 			{#if downloadUrl}
@@ -579,14 +618,18 @@
 					showHelp={!feature.properties.is_raster}
 					showHelpPopup={false}
 				>
-					<div slot="control">
-						<CopyToClipboard value={downloadUrl} />
-					</div>
-					<div slot="help">
-						<a href="https://protomaps.com/docs/frontends/maplibre" target="_blank"
-							>Learn more about how to integrate PMTiles with Maplibre GL JS</a
-						>
-					</div>
+					{#snippet control()}
+						<div>
+							<CopyToClipboard value={downloadUrl} />
+						</div>
+					{/snippet}
+					{#snippet help()}
+						<div>
+							<a href="https://protomaps.com/docs/frontends/maplibre" target="_blank"
+								>Learn more about how to integrate PMTiles with Maplibre GL JS</a
+							>
+						</div>
+					{/snippet}
 				</FieldControl>
 			{/if}
 
@@ -598,9 +641,11 @@
 					showHelp={false}
 					showHelpPopup={false}
 				>
-					<div slot="control">
-						<CopyToClipboard value={tilesUrl} />
-					</div>
+					{#snippet control()}
+						<div>
+							<CopyToClipboard value={tilesUrl} />
+						</div>
+					{/snippet}
 				</FieldControl>
 			{/if}
 			{#if infoUrl}
@@ -611,9 +656,11 @@
 					showHelp={false}
 					showHelpPopup={false}
 				>
-					<div slot="control">
-						<CopyToClipboard value={infoUrl} />
-					</div>
+					{#snippet control()}
+						<div>
+							<CopyToClipboard value={infoUrl} />
+						</div>
+					{/snippet}
 				</FieldControl>
 			{/if}
 			{#if statisticsUrl}
@@ -624,9 +671,11 @@
 					showHelp={false}
 					showHelpPopup={false}
 				>
-					<div slot="control">
-						<CopyToClipboard value={statisticsUrl} />
-					</div>
+					{#snippet control()}
+						<div>
+							<CopyToClipboard value={statisticsUrl} />
+						</div>
+					{/snippet}
 				</FieldControl>
 			{/if}
 
@@ -638,14 +687,18 @@
 					showHelp={false}
 					showHelpPopup={false}
 				>
-					<div slot="control">
-						<CopyToClipboard value={tilejson} />
-					</div>
+					{#snippet control()}
+						<div>
+							<CopyToClipboard value={tilejson} />
+						</div>
+					{/snippet}
 				</FieldControl>
 			{/if}
 
 			{#if infoUrl || statisticsUrl || tilesUrl}
-				<a href="{new URL(infoUrl).origin}/docs" target="_blank">Learn more about Titiler API</a>
+				<a href="{new URL(infoUrl as string).origin}/docs" target="_blank"
+					>Learn more about Titiler API</a
+				>
 			{/if}
 
 			{#if pbfUrl}
@@ -656,9 +709,11 @@
 					showHelp={false}
 					showHelpPopup={false}
 				>
-					<div slot="control">
-						<CopyToClipboard value={pbfUrl} />
-					</div>
+					{#snippet control()}
+						<div>
+							<CopyToClipboard value={pbfUrl} />
+						</div>
+					{/snippet}
 				</FieldControl>
 			{/if}
 
@@ -670,9 +725,11 @@
 					showHelp={false}
 					showHelpPopup={false}
 				>
-					<div slot="control">
-						<CopyToClipboard value={metadatajson} />
-					</div>
+					{#snippet control()}
+						<div>
+							<CopyToClipboard value={metadatajson} />
+						</div>
+					{/snippet}
 				</FieldControl>
 			{/if}
 		</div>
@@ -680,10 +737,10 @@
 </div>
 
 <PublishedDatasetDeleteDialog
-	bind:id={feature.properties.id}
-	bind:name={feature.properties.name}
+	bind:id={feature.properties.id as string}
+	bind:name={feature.properties.name as string}
 	bind:dialogShown={confirmDeleteDialogVisible}
-	on:deleted={handleDeletedDataset}
+	ondelete={handleDeletedDataset}
 />
 
 <style lang="scss">

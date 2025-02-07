@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { SearchDebounceTime, SupportedTableFormats } from '$lib/config/AppConfig';
 	import { expression2cql, expression2fields, getLayerStyle, type Expression } from '$lib/helper';
 	import type { Link, Pages } from '$lib/types';
@@ -31,30 +31,36 @@
 	const editingLayerStore: EditingLayerStore = getContext(EDITING_LAYER_STORE_CONTEXT_KEY);
 	const tableMenuShownStore: EditingMenuShownStore = getContext(TABLE_MENU_SHOWN_CONTEXT_KEY);
 
-	export let height = 0;
+	interface Props {
+		height?: number;
+	}
+
+	let { height = $bindable(0) }: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();
 
 	const limits = [10, 50, 100, 250, 500, 1000];
-	let selectedLimit = 1000;
+	let selectedLimit = $state();
 	let minSearchLength = 2;
 
-	let sortby = '';
-	let sortingorder: 'asc' | 'desc' = 'asc';
+	let sortby = $state('');
+	let sortingorder: 'asc' | 'desc' = $state('asc');
 
-	let panelHeaderHeight = 0;
-	let headerHeight = 0;
+	let panelHeaderHeight = $state(0);
+	let headerHeight = $state(0);
 
 	let tableData:
 		| { type: 'FeatureCollection'; features: Feature[]; links: Link[]; pages: Pages }
-		| undefined;
-	let columns: { name: string; width: number; attribute: VectorLayerTileStatAttribute }[] = [];
-	let query = '';
+		| undefined = $state();
+	let columns: { name: string; width: number; attribute: VectorLayerTileStatAttribute }[] = $state(
+		[]
+	);
+	let query = $state('');
 	let cqlFilter = '';
-	let filteredFields: string[] = [];
+	let filteredFields: string[] = $state([]);
 
-	let showDownloadMenu = false;
-	let showHistogram = false;
+	let showDownloadMenu = $state(false);
+	let showHistogram = $state(false);
 
 	const registerMapEvents = (isRegister = true) => {
 		if (!$map) return;
@@ -70,14 +76,6 @@
 			$map?.off('styledata', updataTableWithFilter);
 		}
 	};
-
-	$: if ($tableMenuShownStore === true) {
-		updateTable();
-		registerMapEvents(true);
-	} else {
-		registerMapEvents(false);
-		hideContextMenu();
-	}
 
 	onMount(() => {
 		tableMenuShownStore.subscribe((show) => {
@@ -164,7 +162,7 @@
 		const bounds = $map.getBounds();
 		const bbox = [...bounds.toArray()[0], bounds.toArray()[1]].join(',');
 
-		const apiUrl = `${$page.url.origin}/api/datasets/${dataset.properties.id}/table/layers/${vectorSourceLayer}.geojson`;
+		const apiUrl = `${page.url.origin}/api/datasets/${dataset.properties.id}/table/layers/${vectorSourceLayer}.geojson`;
 
 		const params: { [key: string]: string } = {};
 		params.bbox = bbox;
@@ -207,7 +205,8 @@
 		$tableMenuShownStore = false;
 	};
 
-	const handleFilterInput = () => {
+	const handleFilterInput = (value: string) => {
+		query = value;
 		updateTable();
 	};
 
@@ -215,22 +214,20 @@
 		updateTable();
 	};
 
-	const handlePaginationClicked = async (e: { detail: { type: 'previous' | 'next' } }) => {
-		const type = e.detail.type;
-
+	const handlePaginationClicked = async (type: 'previous' | 'next') => {
 		const link = tableData?.links.find((l) => l.rel === type);
 		if (link) {
 			reload(link.href);
 		}
 	};
 
-	const handleColumnClick = (e: { detail: { name: string; isActive: boolean } }) => {
-		const isActive = e.detail.isActive;
+	const handleColumnClick = (name: string, order: 'asc' | 'desc', isActive: boolean) => {
 		if (isActive) {
-			sortby = e.detail.name;
+			sortby = name;
 		} else {
 			sortby = '';
 		}
+		sortingorder = order;
 		updateTable();
 	};
 
@@ -273,18 +270,19 @@
 	};
 
 	// context menu
-	let showContextMenu = false;
-	let pos = { x: 0, y: 0 };
+	let showContextMenu = $state(false);
+	let pos = $state({ x: 0, y: 0 });
 	let menu = { h: 0, w: 0 };
 	let browser = { h: 0, w: 0 };
-	let selectedRow: Feature | undefined = undefined;
-	let contextMenuElement: HTMLElement;
+	let selectedRow: Feature | undefined = $state(undefined);
+	let contextMenuElement: HTMLElement | undefined = $state();
 	let selectedFatureMarker: Marker | undefined = undefined;
 
 	const handleContextMenu = (
 		event: MouseEvent & { currentTarget: EventTarget & HTMLTableRowElement },
 		row: Feature
 	) => {
+		event.preventDefault();
 		showContextMenu = true;
 
 		browser = {
@@ -313,6 +311,7 @@
 		if (browser.w - pos.x < menu.w) pos.x = pos.x - menu.w;
 
 		selectedRow = row;
+		updateMarker();
 	};
 
 	const hideContextMenu = () => {
@@ -369,9 +368,9 @@
 
 	const handleClickFeature = (row: Feature) => {
 		selectedRow = row;
+		updateMarker();
 	};
 
-	$: selectedRow, updateMarker();
 	const updateMarker = () => {
 		if (selectedRow) {
 			showMarker(selectedRow);
@@ -382,6 +381,15 @@
 			}
 		}
 	};
+	$effect(() => {
+		if ($tableMenuShownStore === true) {
+			updateTable();
+			registerMapEvents(true);
+		} else {
+			registerMapEvents(false);
+			hideContextMenu();
+		}
+	});
 </script>
 
 <nav
@@ -394,13 +402,13 @@
 	<div class="navbar">
 		<ul>
 			<li>
-				<button class="is-flex is-align-items-center p-2" on:click={zoomTo}>
+				<button class="is-flex is-align-items-center p-2" onclick={zoomTo}>
 					<span class="icon is-small material-symbols-outlined mr-2"> zoom_in </span>
 					<span> Zoom to </span>
 				</button>
 			</li>
 			<li>
-				<button class="is-flex is-align-items-center p-2" on:click={moveTo}>
+				<button class="is-flex is-align-items-center p-2" onclick={moveTo}>
 					<span class="icon is-small material-symbols-outlined mr-2"> open_with </span>
 					<span> Move to </span>
 				</button>
@@ -411,7 +419,7 @@
 
 <FloatingPanel
 	title={$editingLayerStore ? `${$editingLayerStore.name}` : 'Table'}
-	on:close={handleClose}
+	onclose={handleClose}
 	showExpand={false}
 	bind:headerHeight={panelHeaderHeight}
 >
@@ -419,10 +427,10 @@
 		<div class="is-flex px-4 py-2" bind:clientHeight={headerHeight}>
 			<div class="search-control">
 				<SearchExpand
-					bind:value={query}
+					value={query}
 					open={true}
 					placeholder="Type keyword..."
-					on:change={handleFilterInput}
+					onchange={handleFilterInput}
 					{minSearchLength}
 					iconSize={16}
 					fontSize={6}
@@ -438,8 +446,8 @@
 						class="dropdown {showDownloadMenu ? 'is-active' : ''}"
 						role="menu"
 						tabindex="-1"
-						on:mouseenter={() => (showDownloadMenu = true)}
-						on:mouseleave={() => {
+						onmouseenter={() => (showDownloadMenu = true)}
+						onmouseleave={() => {
 							showDownloadMenu = false;
 						}}
 					>
@@ -448,7 +456,7 @@
 								class="button"
 								aria-haspopup="true"
 								aria-controls="download-table-dropdown-menu"
-								on:click={() => {
+								onclick={() => {
 									showDownloadMenu = !showDownloadMenu;
 								}}
 								use:tippyTooltip={{ content: 'Download table data as various formats' }}
@@ -482,7 +490,7 @@
 				<div class="ml-1 select">
 					<select
 						bind:value={selectedLimit}
-						on:change={handleLimitChanged}
+						onchange={handleLimitChanged}
 						use:tippyTooltip={{ content: 'Change the maximum rows in the table' }}
 						disabled={!tableData}
 					>
@@ -494,47 +502,47 @@
 			</div>
 		</div>
 
-		<div
-			class="table-contents"
-			style="height: {height - panelHeaderHeight - headerHeight}px;"
-			on:scroll={hideContextMenu}
-		>
-			<div class="attribute-table">
-				<table class="table is-hoverable {showHistogram ? '' : 'has-sticky-header'}">
-					<thead>
-						<tr>
-							<th class="row-number"></th>
-							{#if columns.length > 0}
-								{#each columns as col, index}
-									<th style="width: {col.width}px;">
-										<VectorTableColumn
-											bind:name={col.name}
-											bind:width={col.width}
-											bind:attribute={col.attribute}
-											bind:order={sortingorder}
-											isFiltered={filteredFields.includes(col.name)}
-											isActive={sortby === col.name}
-											bind:showHistogram
-											on:change={handleColumnClick}
-										/>
+		{#if !tableData}
+			<div class="loader-container mt-4">
+				<Loader></Loader>
+			</div>
+		{:else if tableData.features.length > 0}
+			<div
+				class="table-contents"
+				style="height: {height - panelHeaderHeight - headerHeight}px;"
+				onscroll={hideContextMenu}
+			>
+				<div class="attribute-table">
+					<table class="table is-hoverable {showHistogram ? '' : 'has-sticky-header'}">
+						<thead>
+							<tr>
+								<th class="row-number"></th>
+								{#if columns.length > 0}
+									{#each columns as col, index}
+										<th style="width: {col.width}px;">
+											<VectorTableColumn
+												bind:name={col.name}
+												bind:width={col.width}
+												bind:attribute={col.attribute}
+												bind:order={sortingorder}
+												isFiltered={filteredFields.includes(col.name)}
+												isActive={sortby === col.name}
+												bind:showHistogram
+												change={handleColumnClick}
+											/>
 
-										<div
-											class="resizer"
-											role="button"
-											tabindex="-1"
-											on:mousedown={(e) => startResize(e, index)}
-										></div>
-									</th>
-								{/each}
-							{/if}
-						</tr>
-					</thead>
+											<div
+												class="resizer"
+												role="button"
+												tabindex="-1"
+												onmousedown={(e) => startResize(e, index)}
+											></div>
+										</th>
+									{/each}
+								{/if}
+							</tr>
+						</thead>
 
-					{#if !tableData}
-						<div class="loader-container mt-4">
-							<Loader />
-						</div>
-					{:else if tableData.features.length > 0}
 						<tbody>
 							{#each tableData.features as feature, index}
 								{#if feature.properties}
@@ -542,8 +550,8 @@
 										class={isEqual(JSON.stringify(selectedRow), JSON.stringify(feature))
 											? 'is-active'
 											: ''}
-										on:click={() => handleClickFeature(feature)}
-										on:contextmenu|preventDefault={(event) => handleContextMenu(event, feature)}
+										onclick={() => handleClickFeature(feature)}
+										oncontextmenu={(event) => handleContextMenu(event, feature)}
 									>
 										<th class="row-number">{index + 1}</th>
 										{#if columns.length > 0}
@@ -560,28 +568,29 @@
 								{/if}
 							{/each}
 						</tbody>
+					</table>
+
+					{#if tableData && tableData.features.length === 0}
+						<div class="p-4">
+							<Notification type="info" showIcon={false} showCloseButton={false}>
+								No table content found in current map extent.
+							</Notification>
+						</div>
 					{/if}
-				</table>
-				{#if tableData && tableData.features.length === 0}
-					<div class="p-4">
-						<Notification type="info" showIcon={false} showCloseButton={false}>
-							No table content found in current map extent.
-						</Notification>
+				</div>
+
+				{#if tableData}
+					<div class="pagination ml-4 mb-5 mt-4">
+						<Pagination
+							bind:totalPages={tableData.pages.totalPages}
+							bind:currentPage={tableData.pages.currentPage}
+							hidden={tableData.pages.totalPages <= 1}
+							onclick={handlePaginationClicked}
+						/>
 					</div>
 				{/if}
 			</div>
-
-			{#if tableData}
-				<div class="pagination ml-4 mb-5 mt-4">
-					<Pagination
-						bind:totalPages={tableData.pages.totalPages}
-						bind:currentPage={tableData.pages.currentPage}
-						hidden={tableData.pages.totalPages <= 1}
-						on:clicked={handlePaginationClicked}
-					/>
-				</div>
-			{/if}
-		</div>
+		{/if}
 	</div>
 </FloatingPanel>
 
@@ -718,13 +727,13 @@
 				th:hover .resizer {
 					background-color: #ccc;
 				}
-
-				.loader-container {
-					position: sticky;
-					left: 50%;
-					transform: translateX(-50%);
-				}
 			}
+		}
+
+		.loader-container {
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
 		}
 	}
 </style>

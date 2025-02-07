@@ -1,5 +1,36 @@
 # @undp-data/svelte-undp-design
 
+## 3.0.2
+
+### Patch Changes
+
+- 28b87b3: chore: updated dependencies
+
+## 3.0.1
+
+### Patch Changes
+
+- 0a235fa: fix: remove moduleResolution = nodenext from tsconfig.json
+
+## 3.0.0
+
+### Major Changes
+
+- 26440c9: feat: migrate svelte-undp-design to svelte 5 (breaking change)
+
+## 2.4.8
+
+### Patch Changes
+
+- 0ae54db: fix: fixed vector table searching behaviour
+
+## 2.4.7
+
+### Patch Changes
+
+- 1ac4d94: chore: updated monorepo package dependencies
+- a2662a7: fix: switched vitePreprocess to sveltePreprocess becauseb of svelte-package hang
+
 ## 2.4.6
 
 ### Patch Changes

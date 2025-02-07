@@ -1,36 +1,34 @@
 <script lang="ts">
 	import { MapStyles } from '$lib/config/AppConfig';
 	import type { DatasetFeatureCollection } from '$lib/types';
-	import { FieldControl, clean, handleEnterKey } from '@undp-data/svelte-undp-components';
+	import { FieldControl, clean, handleEnterKey, loadMap } from '@undp-data/svelte-undp-components';
 	import { Checkbox, CtaLink } from '@undp-data/svelte-undp-design';
+	import { debounce } from 'lodash-es';
 	import { Map, NavigationControl, Popup, type MapGeoJSONFeature } from 'maplibre-gl';
 	import { onMount } from 'svelte';
 
-	export let datasets: DatasetFeatureCollection;
-	export let hideGlobal = false;
+	interface Props {
+		datasets: DatasetFeatureCollection;
+		hideGlobal?: boolean;
+	}
 
-	let mapContainer: HTMLDivElement;
-	let popupContainer: HTMLDivElement;
+	let { datasets = $bindable(), hideGlobal = $bindable(false) }: Props = $props();
+
+	let mapContainer: HTMLDivElement | undefined = $state();
+	let popupContainer: HTMLDivElement | undefined = $state();
 	let map: Map;
 	let popup: Popup;
 	let height = 0;
-	let innerHeight: number;
-	$: mapHeight = height > 0 ? height : innerHeight * 0.6;
+	let innerHeight: number = $state(0);
 
 	const mapSourceId = 'geohub-datasets';
 	const mapPolygonLayerId = `${mapSourceId}-fill`;
-	let hoveredFeature: MapGeoJSONFeature;
-	let clickedFeatures: MapGeoJSONFeature[] = [];
-	let activeFeatureIndex: number;
+	let hoveredFeature: MapGeoJSONFeature | undefined = $state();
+	let clickedFeatures: MapGeoJSONFeature[] = $state([]);
+	let activeFeatureIndex: number = $state(0);
 
 	onMount(() => {
-		initialiseMap();
-	});
-
-	$: datasets, addDatasetsToMap();
-	$: hideGlobal, addDatasetsToMap();
-
-	const initialiseMap = () => {
+		if (!mapContainer) return;
 		map = new Map({
 			container: mapContainer,
 			style: MapStyles[0].uri,
@@ -45,13 +43,13 @@
 			map.resize();
 			map.redraw();
 			map.on('click', `${mapSourceId}-fill`, handleClickFeature);
-
-			addDatasetsToMap();
 		});
-	};
+		addDatasetsToMap();
+	});
 
 	const handleClickFeature = (e) => {
 		if (!('features' in e)) return;
+		if (!popupContainer) return;
 		const { x, y } = e.point;
 		clickedFeatures = map.queryRenderedFeatures([x, y], { layers: [mapPolygonLayerId] });
 		activeFeatureIndex = -1;
@@ -69,9 +67,10 @@
 			.addTo(map);
 	};
 
-	const addDatasetsToMap = () => {
+	const addDatasetsToMap = debounce(async () => {
 		if (!map) return;
-		if (!map.loaded()) return;
+		if (!datasets) return;
+		await loadMap(map);
 		if (map.getSource(mapSourceId)) {
 			const layers = map.getStyle().layers.filter((l) => {
 				return l['source'] === mapSourceId;
@@ -83,17 +82,21 @@
 			});
 			map.removeSource(mapSourceId);
 		}
-
+		if (!datasets) return;
 		const filteredDatasets: DatasetFeatureCollection = JSON.parse(JSON.stringify(datasets));
-		if (hideGlobal) {
+		if (hideGlobal === true) {
 			filteredDatasets.features = filteredDatasets.features.filter((f) => {
 				const globalTag = f.properties.tags?.find(
-					(t) => t.key === 'extent' && t.value.toLowerCase() === 'global'
+					(t) => t.key === 'extent' && (t.value as string).toLowerCase() === 'global'
 				);
+
+				return globalTag === undefined;
+			});
+			filteredDatasets.features = filteredDatasets.features.filter((f) => {
 				const stacTag = f.properties.tags?.find(
-					(t) => t.key === 'type' && t.value.toLowerCase() === 'stac'
+					(t) => t.key === 'type' && (t.value as string).toLowerCase() === 'stac'
 				);
-				return globalTag || stacTag ? false : true;
+				return stacTag === undefined;
 			});
 		}
 
@@ -152,15 +155,23 @@
 				map.setFeatureState(hoveredFeature, { hover: true });
 			}
 		});
-	};
+	}, 300);
+	let mapHeight = $derived(height > 0 ? height : innerHeight * 0.6);
+	$effect(() => {
+		addDatasetsToMap();
+	});
 </script>
 
 <svelte:window bind:innerHeight />
 
 <div class="map-viewer" style="height: {mapHeight}px;">
-	<div bind:this={mapContainer} class="map" />
+	<div bind:this={mapContainer} class="map"></div>
 	<div class="overlay has-background-white p-2">
-		<Checkbox label="Hide global/satellite datasets from the map" bind:checked={hideGlobal} />
+		<Checkbox
+			label="Hide global/satellite datasets from the map"
+			bind:checked={hideGlobal}
+			onclick={addDatasetsToMap}
+		/>
 	</div>
 </div>
 
@@ -170,16 +181,16 @@
 			<ul>
 				{#each Array(clickedFeatures.length).keys() as index}
 					<li class={index === activeFeatureIndex ? 'is-active' : ''}>
-						<!-- svelte-ignore a11y-missing-attribute -->
+						<!-- svelte-ignore a11y_missing_attribute -->
 						<a
 							role="tab"
 							tabindex="0"
 							data-sveltekit-preload-code="off"
 							data-sveltekit-preload-data="off"
-							on:click={() => {
+							onclick={() => {
 								activeFeatureIndex = index;
 							}}
-							on:keydown={handleEnterKey}
+							onkeydown={handleEnterKey}
 						>
 							<span>{index + 1}</span>
 						</a>
@@ -195,15 +206,19 @@
 				<p class="is-size-6 is-caplitalized has-text-weight-bold mb-2">{name}</p>
 
 				<FieldControl title="description" showHelp={false}>
-					<div slot="control" class="is-size-6 description">
-						{description}
-					</div>
+					{#snippet control()}
+						<div class="is-size-6 description">
+							{description}
+						</div>
+					{/snippet}
 				</FieldControl>
 
 				<FieldControl title="license" showHelp={false}>
-					<div slot="control" class="is-size-6">
-						{license}
-					</div>
+					{#snippet control()}
+						<div class="is-size-6">
+							{license}
+						</div>
+					{/snippet}
 				</FieldControl>
 
 				<CtaLink label="READ MORE" isArrow={false} href="/data/{feature.properties.id}" />
@@ -230,14 +245,14 @@
 			top: 5px;
 			left: 5px;
 		}
+	}
 
-		.popup {
-			.description {
-				overflow: hidden;
-				display: -webkit-box;
-				-webkit-box-orient: vertical;
-				-webkit-line-clamp: 3;
-			}
+	.popup {
+		.description {
+			overflow: hidden;
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 3;
 		}
 	}
 </style>

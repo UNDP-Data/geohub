@@ -13,22 +13,26 @@
 		type SegmentButton
 	} from '@undp-data/svelte-undp-components';
 	import { Switch } from '@undp-data/svelte-undp-design';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { getContext } from 'svelte';
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		isOpen?: boolean;
+		onInit?: () => void;
+	}
 
-	export let isOpen = false;
+	let { isOpen = $bindable(false), onInit = () => {} }: Props = $props();
 
 	/** variables for storymap initialization */
 
 	let templateButtons: SegmentButton[] = AvailableTemplates.map((t) => {
 		return { title: t, value: t };
 	});
-	let initTemplateId: StoryMapTemplate = 'light';
-	let initShowProgress =
-		$configStore?.showProgress === undefined ? true : $configStore.showProgress;
+	let initTemplateId: StoryMapTemplate = $state('light');
+	let initShowProgress = $state(
+		$configStore?.showProgress === undefined ? true : $configStore.showProgress
+	);
 
 	const handleInitialized = () => {
 		($configStore as StoryMapConfig).template_id = initTemplateId;
@@ -36,8 +40,7 @@
 		$configStore = { ...$configStore };
 
 		isOpen = false;
-
-		dispatch('initialize', { config: $configStore });
+		if (onInit) onInit();
 	};
 
 	export const open = () => {
@@ -51,50 +54,62 @@
 </script>
 
 <ModalTemplate title="Storymap setup" bind:show={isOpen} showClose={!$configStore ? false : true}>
-	<div slot="content">
-		<FieldControl
-			title="Appearance"
-			isFirstCharCapitalized={true}
-			showHelp={true}
-			showHelpPopup={false}
-		>
-			<div slot="control">
-				<SegmentButtons
-					size="normal"
-					capitalized={true}
-					buttons={templateButtons}
-					bind:selected={initTemplateId}
-				/>
-			</div>
-			<div slot="help">Choose a template style for storymap appearance.</div>
-		</FieldControl>
-
-		<FieldControl
-			title="Show progress bar"
-			fontWeight="bold"
-			isFirstCharCapitalized={false}
-			showHelpPopup={false}
-		>
-			<div slot="control">
-				<Switch bind:toggled={initShowProgress} />
-			</div>
-			<div slot="help">
-				If enabled, a slide progress bar is shown on the right hand side of the entire storymap.
-			</div>
-		</FieldControl>
-	</div>
-	<div class="is-flex" slot="buttons">
-		<div class="footer-button">
-			<button
-				class="button is-primary is-uppercase has-text-weight-bold"
-				on:click={handleInitialized}
+	{#snippet content()}
+		<div>
+			<FieldControl
+				title="Appearance"
+				isFirstCharCapitalized={true}
+				showHelp={true}
+				showHelpPopup={false}
 			>
-				{#if !$configStore}
-					Continue
-				{:else}
-					Apply
-				{/if}
-			</button>
+				{#snippet control()}
+					<div>
+						<SegmentButtons
+							size="normal"
+							capitalized={true}
+							buttons={templateButtons}
+							bind:selected={initTemplateId}
+						/>
+					</div>
+				{/snippet}
+				{#snippet help()}
+					<div>Choose a template style for storymap appearance.</div>
+				{/snippet}
+			</FieldControl>
+
+			<FieldControl
+				title="Show progress bar"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				{#snippet control()}
+					<div>
+						<Switch bind:toggled={initShowProgress} />
+					</div>
+				{/snippet}
+				{#snippet help()}
+					<div>
+						If enabled, a slide progress bar is shown on the right hand side of the entire storymap.
+					</div>
+				{/snippet}
+			</FieldControl>
 		</div>
-	</div>
+	{/snippet}
+	{#snippet buttons()}
+		<div class="is-flex">
+			<div class="footer-button">
+				<button
+					class="button is-primary is-uppercase has-text-weight-bold"
+					onclick={handleInitialized}
+				>
+					{#if !$configStore}
+						Continue
+					{:else}
+						Apply
+					{/if}
+				</button>
+			</div>
+		</div>
+	{/snippet}
 </ModalTemplate>

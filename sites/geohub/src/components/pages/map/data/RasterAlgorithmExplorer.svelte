@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	export interface AlgorithmLayerSpec {
 		algorithmId: string;
 		algorithm: RasterAlgorithm;
@@ -23,7 +23,7 @@
 <script lang="ts">
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { isRgbRaster } from '$lib/helper';
-	import type { DatasetFeature, Link } from '$lib/types';
+	import type { DatasetFeature, Link, Tag } from '$lib/types';
 	import {
 		getRandomColormap,
 		Notification,
@@ -37,42 +37,54 @@
 		RasterLayerSpecification,
 		RasterSourceSpecification
 	} from 'maplibre-gl';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 
-	export let feature: DatasetFeature;
-	export let title = 'Choose a tool';
-	export let cardDescription = 'use this tool';
-	/**
-	 * 'map' mode will add the dataset with selected algorithm to the local storage for map edit page. 'map' mode dispatch an event of 'added'
-	 * 'select' mode will show tick icon if an algorithm is selected. 'select' mode dispatch an event 'selected'.
-	 * default is 'map' mode.
-	 */
-	export let mode: 'map' | 'select' = 'map';
+	interface Props {
+		feature: DatasetFeature;
+		title?: string;
+		cardDescription?: string;
+		/**
+		 * 'map' mode will add the dataset with selected algorithm to the local storage for map edit page. 'map' mode trigger an event of 'added'
+		 * 'select' mode will show tick icon if an algorithm is selected. 'select' mode trigger an event 'selected'.
+		 * default is 'map' mode.
+		 */
+		mode?: 'map' | 'select';
+		/**
+		 * If enabled together with select mode, it will add/remove tool from dataset.properties.tags
+		 */
+		toggleTool?: boolean;
+		onAdded?: (layerSpec: AlgorithmLayerSpec) => void;
+		onSelected?: (tag: Tag, algorithm: RasterAlgorithm) => void;
+	}
 
-	/**
-	 * If enabled together with select mode, it will add/remove tool from dataset.properties.tags
-	 */
-	export let toggleTool = true;
+	let {
+		feature = $bindable(),
+		title = 'Choose a tool',
+		cardDescription = 'use this tool',
+		mode = 'map',
+		toggleTool = true,
+		onAdded = () => {},
+		onSelected = () => {}
+	}: Props = $props();
 
-	const dispatch = createEventDispatcher();
-
-	let isLoaded = false;
+	let isLoaded = $state(false);
 
 	let metadata: RasterTileMetadata;
-	let links: Link[] = feature.properties.links;
+	let links: Link[] = feature.properties.links as Link[];
 
-	let availableBands = [];
+	let availableBands = $state([]);
 
-	let algorithms: { [key: string]: RasterAlgorithm };
+	let algorithms: { [key: string]: RasterAlgorithm } = $state({});
 
-	let isRgbTile = false;
+	let isRgbTile = $state(false);
+	let tagSelectionChanged = $state(false);
 
 	const isCatalog =
 		feature.properties.tags?.find((t) => t.key === 'stacApiType')?.value === 'catalog';
 
 	const getAlgorithms = async () => {
-		const algorithmsLink = links.find((l) => l.rel === 'algorithms')?.href;
+		const algorithmsLink = links.find((l) => l.rel === 'algorithms')?.href as string;
 		const res = await fetch(algorithmsLink);
 		algorithms = await res.json();
 	};
@@ -81,7 +93,7 @@
 		if (feature.properties.is_raster) {
 			if (!isCatalog) {
 				const rasterTile = new RasterTileData(feature);
-				const rasterInfo = await rasterTile.getMetadata(algorithmId);
+				const rasterInfo = (await rasterTile.getMetadata(algorithmId)) as RasterTileMetadata;
 				metadata = rasterInfo;
 				availableBands =
 					metadata.band_metadata.length > 0
@@ -104,8 +116,7 @@
 					layerSpec = createRasterSource(id);
 					break;
 			}
-
-			dispatch('added', layerSpec);
+			if (onAdded) onAdded(layerSpec);
 		} else {
 			if (toggleTool) {
 				let tags = feature.properties.tags;
@@ -121,13 +132,12 @@
 
 				feature.properties.tags = [...tags];
 			}
-			dispatch('selected', {
-				tag: {
-					key: ALGORITHM_TAG_KEY,
-					value: id
-				},
-				algorithm: algorithms[id]
-			});
+			const tag = {
+				key: ALGORITHM_TAG_KEY,
+				value: id
+			};
+			if (onSelected) onSelected(tag, algorithms[id]);
+			tagSelectionChanged = !tagSelectionChanged;
 		}
 	};
 
@@ -293,7 +303,7 @@
 								description={algo.description ?? ''}
 								accent="yellow"
 								isEmphasize={true}
-								on:selected={() => {
+								onselect={() => {
 									handleAlgorithmSelected(name);
 								}}
 							/>
@@ -302,31 +312,33 @@
 				{/each}
 			{/if}
 
-			{#each ids as name}
-				{@const algo = algorithms[name]}
-				{#if isCatalog || algo.inputs.nbands <= availableBands.length}
-					{@const isSelected =
-						feature.properties.tags.filter((t) => t.key === ALGORITHM_TAG_KEY && t.value === name)
-							.length > 0}
-					{#if (mode === 'map' && !isSelected) || mode === 'select'}
-						<!-- if select mode, show all available algorithms -->
-						<!-- if map mode, show only unselected algorithms -->
-						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
-							<Card
-								linkName={cardDescription}
-								url=""
-								tag={algorithmCategory[name.toLowerCase()] ?? 'geohub'}
-								title={algo.title ?? name.toUpperCase()}
-								description={algo.description ?? ''}
-								isEmphasize={mode === 'select' && isSelected}
-								on:selected={() => {
-									handleAlgorithmSelected(name);
-								}}
-							/>
-						</div>
+			{#key tagSelectionChanged}
+				{#each ids as name}
+					{@const algo = algorithms[name]}
+					{#if isCatalog || algo.inputs.nbands <= availableBands.length}
+						{@const isSelected =
+							feature.properties.tags.filter((t) => t.key === ALGORITHM_TAG_KEY && t.value === name)
+								.length > 0}
+						{#if (mode === 'map' && !isSelected) || mode === 'select'}
+							<!-- if select mode, show all available algorithms -->
+							<!-- if map mode, show only unselected algorithms -->
+							<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+								<Card
+									linkName={cardDescription}
+									url=""
+									tag={algorithmCategory[name.toLowerCase()] ?? 'geohub'}
+									title={algo.title ?? name.toUpperCase()}
+									description={algo.description ?? ''}
+									isEmphasize={mode === 'select' && isSelected}
+									onselect={() => {
+										handleAlgorithmSelected(name);
+									}}
+								/>
+							</div>
+						{/if}
 					{/if}
-				{/if}
-			{/each}
+				{/each}
+			{/key}
 		</div>
 	{/if}
 {/if}

@@ -1,13 +1,22 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
-	import { writable } from 'svelte/store';
-	export let initialStep = 1;
+	import { writable, type Writable } from 'svelte/store';
 
-	export let step = writable(initialStep);
+	interface Props {
+		initialStep?: number;
+		step?: Writable<number>;
+		nextStep?: () => void;
+		children?: import('svelte').Snippet;
+	}
 
-	export let nextStep = () => {
-		$step += 1;
-	};
+	let {
+		initialStep = $bindable(1),
+		step = $bindable(writable(initialStep)),
+		nextStep = () => {
+			$step += 1;
+		},
+		children
+	}: Props = $props();
 
 	const prevStep = () => {
 		if ($step > 0) {
@@ -33,5 +42,5 @@
 </script>
 
 <div data-testid="slotted-content">
-	<slot {nextStep} {prevStep} {resetStep} {setStep} />
+	{@render children?.({ nextStep, prevStep, resetStep, setStep })}
 </div>

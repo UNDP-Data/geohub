@@ -1,22 +1,40 @@
 <script lang="ts">
-	import { clean } from '$lib/util/clean.js';
-	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
-	import { initTooltipTippy } from '$lib/util/initTippy.js';
-	import { createEventDispatcher } from 'svelte';
+	import { clean } from '$lib/util/clean';
+	import { handleEnterKey } from '$lib/util/handleEnterKey';
+	import { initTooltipTippy } from '$lib/util/initTippy';
+	import { onMount } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		title: string;
+		isExpanded?: boolean;
+		showExpand?: boolean;
+		headerHeight?: number;
+		showClose?: boolean;
+		children?: import('svelte').Snippet;
+		onclose?: () => void;
+	}
 
-	export let title: string;
-	export let isExpanded = true;
-	export let showExpand = true;
-	export let headerHeight = 48;
-	export let showClose = true;
+	let {
+		title = $bindable(),
+		isExpanded = $bindable(true),
+		showExpand = true,
+		headerHeight = $bindable(),
+		showClose = true,
+		onclose = () => {},
+		children
+	}: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();
 
 	const handleClose = () => {
-		dispatch('close');
+		if (onclose) onclose();
 	};
+
+	onMount(() => {
+		if (!headerHeight) {
+			headerHeight = 48;
+		}
+	});
 </script>
 
 <div class="floating-panel">
@@ -30,11 +48,11 @@
 			class="header-title is-size-6 my-4 pr-2"
 			role="button"
 			tabindex="0"
-			on:click={() => {
+			onclick={() => {
 				if (!showExpand) return;
 				isExpanded = !isExpanded;
 			}}
-			on:keydown={handleEnterKey}
+			onkeydown={handleEnterKey}
 		>
 			{clean(title)}
 		</div>
@@ -43,10 +61,11 @@
 				{#if showExpand}
 					<button
 						class="button chevron-button {isExpanded ? 'is-expanded' : ''} px-2"
-						on:click={() => {
+						onclick={() => {
 							isExpanded = !isExpanded;
 						}}
 						use:tippyTooltip={{ content: isExpanded ? 'Collapse' : 'Expand' }}
+						aria-label="expand"
 					>
 						<span class="icon is-small">
 							<i class="fa-solid fa-chevron-down"></i>
@@ -56,8 +75,9 @@
 				{#if showClose}
 					<button
 						class="button pr-2"
-						on:click={handleClose}
+						onclick={handleClose}
 						use:tippyTooltip={{ content: 'Close' }}
+						aria-label="close"
 					>
 						<span class="icon is-small">
 							<i class="fas fa-xmark"></i>
@@ -68,7 +88,7 @@
 		{/if}
 	</div>
 	<div class="contents" hidden={!isExpanded}>
-		<slot />
+		{@render children?.()}
 	</div>
 </div>
 

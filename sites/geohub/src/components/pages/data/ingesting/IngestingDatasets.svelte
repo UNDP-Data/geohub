@@ -1,27 +1,56 @@
 <script lang="ts">
-	import { invalidate } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
+	import VectorTableColumn from '$components/pages/map/layers/vector/VectorTableColumn.svelte';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import type { IngestingDataset } from '$lib/types';
 	import { Notification } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import IngestingDatasetHeader from './IngestingDatasetHeader.svelte';
+	import { onMount, type Snippet } from 'svelte';
 	import IngestingDatasetRow from './IngestingDatasetRow.svelte';
 
-	export let datasets: IngestingDataset[];
+	interface Props {
+		datasets: IngestingDataset[] | undefined;
+		button?: Snippet;
+	}
 
-	const handleDataChanged = async () => {
-		datasets = undefined;
-		await invalidate('data:ingestingDatasets');
-		datasets = $page.data.ingestingDatasets;
-	};
+	let { datasets = $bindable(), button }: Props = $props();
 
-	const handleSortChanged = (e) => {
-		const sortby = e.detail.sortby;
-		const sortingorder = e.detail.sortingorder;
+	const config: UserConfig = page.data.config;
 
-		if (!(datasets && datasets.length > 0)) return;
+	let sortby = $state(config.DataPageIngestingSortingColumn);
+	let sortingorder = $state(config.DataPageIngestingSortingOrder);
 
-		const sortedDatasets = datasets.sort((a, b) => {
+	const headerCols = $state([
+		{
+			name: 'name',
+			title: 'File name',
+			sortingCol: true
+		},
+		{
+			name: 'status',
+			title: 'Status',
+			sortingCol: false
+		},
+		{
+			name: 'contentLength',
+			title: 'Size',
+			sortingCol: true
+		},
+
+		{
+			name: 'createdat',
+			title: 'Uploaded at',
+			sortingCol: true
+		}
+	]);
+
+	const handleColumnClick = (name: string, order: 'asc' | 'desc') => {
+		if (sortby === name) {
+			sortingorder = order;
+		}
+		sortby = name;
+
+		datasets = datasets?.sort((a, b) => {
 			if (a.raw[sortby] > b.raw[sortby]) {
 				return sortingorder === 'desc' ? -1 : 1;
 			} else if (a.raw[sortby] < b.raw[sortby]) {
@@ -30,13 +59,25 @@
 				return 0;
 			}
 		});
-		datasets = [...sortedDatasets];
 	};
+
+	const getIngestingDatasets = async () => {
+		datasets = undefined;
+		const resIngesting = await fetch(
+			`/api/datasets/ingesting?sortby=${sortby}&sortorder=${sortingorder}`
+		);
+		datasets = await resIngesting.json();
+		return datasets;
+	};
+
+	onMount(() => {
+		getIngestingDatasets();
+	});
 </script>
 
 <section class="header-content columns is-flex is-flex-wrap-wrap mx-0 pb-4">
 	<div class="column is-12-mobile is-2 mt-auto p-0">
-		<slot name="button" />
+		{@render button?.()}
 	</div>
 	<div
 		class="column is-12-mobile is-flex is-align-items-center is-justify-content-flex-end is-flex-wrap-wrap p-0"
@@ -44,10 +85,10 @@
 		<div class="refresh-button">
 			<button
 				class="button is-link is-uppercase has-text-weight-bold my-2"
-				on:click={handleDataChanged}
+				onclick={getIngestingDatasets}
 			>
 				<span class="icon">
-					<i class="fa-solid fa-rotate" />
+					<i class="fa-solid fa-rotate"></i>
 				</span>
 				<span>Refresh</span>
 			</button>
@@ -60,11 +101,30 @@
 		<div class="table-container">
 			<table class="table is-hoverable is-fullwidth">
 				<thead>
-					<IngestingDatasetHeader on:sortChanged={handleSortChanged} />
+					<tr>
+						<th class="px-1"></th>
+						{#each headerCols as col, index}
+							<th class={index === 0 ? 'pl-0' : ''}>
+								{#if col.sortingCol}
+									<VectorTableColumn
+										bind:name={col.name}
+										bind:order={sortingorder}
+										isActive={sortby === col.name}
+										change={handleColumnClick}
+									/>
+								{:else}
+									<p class="has-text-weight-bold">{col.title}</p>
+								{/if}
+							</th>
+						{/each}
+						<th>
+							<p></p>
+						</th>
+					</tr>
 				</thead>
 				<tbody>
 					{#each datasets as dataset}
-						<IngestingDatasetRow bind:dataset on:change={handleDataChanged} />
+						<IngestingDatasetRow {dataset} change={getIngestingDatasets} />
 					{/each}
 				</tbody>
 			</table>
@@ -76,7 +136,7 @@
 	{/if}
 {:else}
 	<div class="is-flex is-justify-content-center my-4">
-		<Loader />
+		<Loader></Loader>
 	</div>
 {/if}
 

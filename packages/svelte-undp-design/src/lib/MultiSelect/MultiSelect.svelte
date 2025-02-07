@@ -4,12 +4,16 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let category: string;
-	export let items: MultiSelectItem[];
-	export let controlType: 'checkbox' | 'radio' = 'checkbox';
-	export let isFixHeight = false;
+	interface Props {
+		category: string;
+		items: MultiSelectItem[];
+		controlType?: 'checkbox' | 'radio';
+		isFixHeight?: boolean;
+	}
 
-	let isOpened = false;
+	let { category, items, controlType = 'checkbox', isFixHeight = false }: Props = $props();
+
+	let isOpened = $state(false);
 
 	const handleChanged = (value: unknown) => {
 		dispatch('change', {
@@ -25,7 +29,7 @@
 		aria-label="Region"
 		aria-expanded={isOpened}
 		data-id="filter"
-		on:click={() => {
+		onclick={() => {
 			isOpened = !isOpened;
 		}}>{category}</button
 	>
@@ -46,7 +50,7 @@
 					<button
 						type="button"
 						class="checkbox-item"
-						on:click={() => {
+						onclick={() => {
 							item.checked = !item.checked;
 						}}>{item.label}</button
 					>
@@ -62,7 +66,7 @@
 											name={item.id}
 											value={child.value}
 											bind:checked={child.checked}
-											on:change={() => {
+											onchange={() => {
 												handleChanged(child.value);
 											}}
 										/>
@@ -72,7 +76,7 @@
 											id={child.id}
 											name={item.id}
 											value={child.value}
-											on:change={() => {
+											onchange={() => {
 												handleChanged(child.value);
 											}}
 										/>
@@ -93,7 +97,7 @@
 								name="group"
 								value={item.value}
 								bind:checked={item.checked}
-								on:change={() => {
+								onchange={() => {
 									handleChanged(item.value);
 								}}
 							/>
@@ -103,7 +107,7 @@
 								id={item.id}
 								name="group"
 								value={item.value}
-								on:change={() => {
+								onchange={() => {
 									handleChanged(item.value);
 								}}
 							/>

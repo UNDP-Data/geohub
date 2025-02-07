@@ -1,5 +1,23 @@
 # @undp-data/undp-bulma
 
+## 2.0.2
+
+### Patch Changes
+
+- 28b87b3: chore: updated dependencies
+
+## 2.0.1
+
+### Patch Changes
+
+- 092b444: fix: fixed bug of undp bulma css building. use sass to build
+
+## 2.0.0
+
+### Major Changes
+
+- 1ac4d94: feat: updated major dependencies. CSS file name was changed from style.css to undp-bulma.css
+
 ## 1.1.2
 
 ### Patch Changes

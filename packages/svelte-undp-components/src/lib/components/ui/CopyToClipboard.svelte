@@ -1,65 +1,71 @@
 <script lang="ts">
-	import { isValidUrl } from '$lib/util/isValidUrl.js';
+	import { isValidUrl } from '$lib/util/isValidUrl';
 	import { copy } from 'svelte-copy';
 
-	/**
-	 * text value to copy to clipboard
-	 */
-	export let value: string;
+	interface Props {
+		/**
+		 * text value to copy to clipboard
+		 */
+		value: string;
+		/**
+		 * If enabled, input/textarea element will be readonly. Default is true
+		 */
+		readonly?: boolean;
+		/**
+		 * Placeholder text. Default is 'Copy to clipboard'
+		 */
+		placeholder?: string;
+		/**
+		 * Button text before copying to clipboard. Default is 'Copy'
+		 */
+		textCopy?: string;
+		/**
+		 * Button text after copying to clipboard. Default is 'Copied'.
+		 */
+		textCopied?: string;
+		/**
+		 * Control width. Default is '100%''
+		 */
+		width?: string;
+		/**
+		 * Timeout (milliseconds) to change button text back to the 'textCopied' value. Default is 5000ms (5 seconds)
+		 */
+		timeout?: number;
+		/**
+		 * If enabled, textarea element is used instead of input. Default is false
+		 */
+		isMultiline?: boolean;
+		/**
+		 * Control size
+		 */
+		size?: 'small' | 'normal' | 'medium' | 'large';
+		/**
+		 * If enabled, open URL as a new tab. Default is true
+		 */
+		openNewTab?: boolean;
+		/**
+		 * Color for open link button.
+		 * See supported bulma color classes here.
+		 * https://bulma.io/documentation/helpers/color-helpers/
+		 */
+		openButtonColor?: string;
+	}
 
-	/**
-	 * If enabled, input/textarea element will be readonly. Default is true
-	 */
-	export let readonly = true;
+	let {
+		value = $bindable(),
+		readonly = $bindable(true),
+		placeholder = 'Copy to clipboard',
+		textCopy = 'Copy',
+		textCopied = 'Copied',
+		width = $bindable('100%'),
+		timeout = 5000,
+		isMultiline = false,
+		size = 'normal',
+		openNewTab = true,
+		openButtonColor = 'has-text-link'
+	}: Props = $props();
 
-	/**
-	 * Placeholder text. Default is 'Copy to clipboard'
-	 */
-	export let placeholder = 'Copy to clipboard';
-
-	/**
-	 * Button text before copying to clipboard. Default is 'Copy'
-	 */
-	export let textCopy = 'Copy';
-
-	/**
-	 * Button text after copying to clipboard. Default is 'Copied'.
-	 */
-	export let textCopied = 'Copied';
-
-	/**
-	 * Control width. Default is '100%''
-	 */
-	export let width = '100%';
-
-	/**
-	 * Timeout (milliseconds) to change button text back to the 'textCopied' value. Default is 5000ms (5 seconds)
-	 */
-	export let timeout = 5000;
-
-	/**
-	 * If enabled, textarea element is used instead of input. Default is false
-	 */
-	export let isMultiline = false;
-
-	/**
-	 * Control size
-	 */
-	export let size: 'small' | 'normal' | 'medium' | 'large' = 'normal';
-
-	/**
-	 * If enabled, open URL as a new tab. Default is true
-	 */
-	export let openNewTab = true;
-
-	/**
-	 * Color for open link button.
-	 * See supported bulma color classes here.
-	 * https://bulma.io/documentation/helpers/color-helpers/
-	 */
-	export let openButtonColor = 'has-text-link';
-
-	let textCopyButton = textCopy;
+	let textCopyButton = $state(textCopy);
 
 	const handleCopy = () => {
 		textCopyButton = textCopied;
@@ -93,7 +99,7 @@
 			type="text"
 			{placeholder}
 			bind:value
-			on:focus={handleFocus}
+			onfocus={handleFocus}
 			{readonly}
 		/>
 	{:else}
@@ -101,7 +107,7 @@
 			data-testid="textarea-control"
 			class="textarea is-{size} has-fixed-size"
 			{placeholder}
-			on:focus={handleFocus}
+			onfocus={handleFocus}
 			{readonly}>{value}</textarea
 		>
 	{/if}
@@ -110,7 +116,7 @@
 		<button
 			class="button {getButtonSize()}"
 			use:copy={value}
-			on:click={handleCopy}
+			onclick={handleCopy}
 			data-testid="copy-button"
 		>
 			<span class="icon">
@@ -125,6 +131,7 @@
 				data-testid="open-button"
 				href={value}
 				target={openNewTab ? '_blank' : ''}
+				aria-label="Open link"
 			>
 				<span class="icon {openButtonColor}">
 					<i class="fa-solid fa-arrow-up-right-from-square"></i>

@@ -62,6 +62,7 @@ export const getStyleById = async (
 			x.created_user, 
 			x.updatedat, 
 			x.updated_user,
+			CAST((SELECT count(*) as no_stars FROM geohub.style_favourite WHERE style_id = ${id}) as integer) as no_stars,
 			${
 				email
 					? `

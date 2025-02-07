@@ -27,3 +27,29 @@ To build maplibre-native and sharp packages, some dependencies are need to setup
 ## Deploy
 
 CI will build and deploy new Docker image to Azure Container Registry automatically. Then App Service will pull the latest image.
+
+## Using docker
+
+- build docker image
+
+```shell
+make build
+```
+
+- launch api by docker
+
+```shell
+make up
+```
+
+- destroy docker containers
+
+```shell
+make down
+```
+
+- enter to shell
+
+```shell
+make shell
+```

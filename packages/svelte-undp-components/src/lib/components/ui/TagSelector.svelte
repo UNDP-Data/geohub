@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	export interface Tag {
 		key: string;
 		value: string;
@@ -7,27 +7,40 @@
 </script>
 
 <script lang="ts">
-	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
-	import { initTippy, initTooltipTippy } from '$lib/util/initTippy.js';
+	import { handleEnterKey } from '$lib/util/handleEnterKey';
+	import { initTippy, initTooltipTippy } from '$lib/util/initTippy';
 	import { Chips } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import Notification from './Notification.svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		selected: Tag[];
+		geohubOrigin?: string;
+		key?: string;
+		placeholder?: string;
+		apiUrl?: string;
+		type?: 'single' | 'multi';
+		newTagMode?: boolean;
+		showSelectedTags?: boolean;
+		onselect?: (tags: Tag[], key: string) => void;
+	}
 
-	export let selected: Tag[] = [];
-	export let geohubOrigin = '';
-	export let key = '';
-	export let placeholder = 'Type keyword...';
-	export let apiUrl = '';
-	export let type: 'single' | 'multi' = 'multi';
-	export let newTagMode = false;
-	export let showSelectedTags = true;
+	let {
+		selected = $bindable([]),
+		geohubOrigin = '',
+		key = '',
+		placeholder = 'Type keyword...',
+		apiUrl = $bindable(),
+		type = 'multi',
+		newTagMode = false,
+		showSelectedTags = true,
+		onselect = () => {}
+	}: Props = $props();
 
-	let query = '';
+	let query = $state('');
 
-	let isLoading = false;
+	let isLoading = $state(false);
 	let tippy = initTippy({
 		appendTo: document.body,
 		maxWidth: 500,
@@ -36,12 +49,12 @@
 		arrow: false,
 		offset: [0, 0]
 	});
-	let tooltipContent: HTMLElement;
+	let tooltipContent: HTMLElement | undefined = $state();
 
 	let tooltipTippy = initTooltipTippy();
 
-	let tags: Tag[] = [];
-	let tagsFiltered: Tag[] = [];
+	let tags: Tag[] = $state([]);
+	let tagsFiltered: Tag[] = $state([]);
 
 	const handleInput = debounce(() => {
 		if (query.length > 0) {
@@ -56,7 +69,7 @@
 	const getTags = async () => {
 		isLoading = true;
 		const res = await fetch(
-			`${geohubOrigin}/api/tags${apiUrl.length > 0 ? `?url=${encodeURIComponent(apiUrl)}` : ''}`
+			`${geohubOrigin}/api/tags${apiUrl && apiUrl.length > 0 ? `?url=${encodeURIComponent(apiUrl)}` : ''}`
 		);
 		const json = await res.json();
 		tags = json[key] ?? [];
@@ -104,10 +117,16 @@
 
 	const dispatchEvent = () => {
 		const filtered = tags.filter((n) => selected.includes(n));
-		dispatch('select', { selected: filtered, key });
+		if (onselect) onselect(filtered, key);
 	};
 
-	$: apiUrl, getTags();
+	$effect(() => {
+		if (apiUrl) {
+			untrack(() => {
+				getTags();
+			});
+		}
+	});
 
 	onMount(() => {
 		getTags();
@@ -123,8 +142,8 @@
 		placeholder={selected.length === 0
 			? placeholder
 			: `${type === 'single' ? `${selected[0].value} is selected` : `${selected.length} ${selected.length === 1 ? 'tag is selected' : 'tags are selected'}`}`}
-		on:input={handleInput}
-		on:keydown={handleEnterKey}
+		oninput={handleInput}
+		onkeydown={handleEnterKey}
 		use:tippy={{ content: tooltipContent }}
 	/>
 	<span class="icon is-small is-left">
@@ -141,7 +160,7 @@
 						<Chips
 							bind:label={tag.value}
 							showDelete={true}
-							on:delete={() => {
+							ondelete={() => {
 								handleDeleteTag(tag);
 							}}
 						/>
@@ -163,7 +182,7 @@
 							This tag <b>{query}</b> is not registred. Do you wish to add new tag?
 						</p>
 
-						<button class="button is-link mt-2" type="button" on:click={handleAddTag}>
+						<button class="button is-link mt-2" type="button" onclick={handleAddTag}>
 							Create new tag
 						</button>
 					</Notification>
@@ -174,17 +193,17 @@
 		{:else}
 			{#each tagsFiltered as tag}
 				{@const isSelected = selected.includes(tag)}
-				<!-- svelte-ignore a11y-interactive-supports-focus -->
+				<!-- svelte-ignore a11y_interactive_supports_focus -->
 				<div
 					class="tag-item p-1 {type === 'single' ? 'pl-2 pr-0' : 'px-3'}"
 					role="menuitem"
-					on:click={() => {
+					onclick={() => {
 						if (type === 'multi') {
 							return;
 						}
 						handleTagSelected(tag);
 					}}
-					on:keydown={handleEnterKey}
+					onkeydown={handleEnterKey}
 				>
 					<label class="checkbox is-flex is-align-items-center">
 						<span
@@ -207,7 +226,7 @@
 								class="ml-auto"
 								type="checkbox"
 								checked={isSelected}
-								on:change={() => {
+								onchange={() => {
 									handleTagSelected(tag);
 								}}
 							/>

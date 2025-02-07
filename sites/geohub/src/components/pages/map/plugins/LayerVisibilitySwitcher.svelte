@@ -3,10 +3,19 @@
 	import type { Map } from 'maplibre-gl';
 	import { onDestroy, onMount } from 'svelte';
 
-	export let map: Map;
-	export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' = 'top-right';
-	export let target = 'hillshade';
-	export let icon = 'fa-solid fa-mountain';
+	interface Props {
+		map: Map;
+		position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
+		target?: string;
+		icon?: string;
+	}
+
+	let {
+		map = $bindable(),
+		position = $bindable('top-right'),
+		target = $bindable('hillshade'),
+		icon = $bindable('fa-solid fa-mountain')
+	}: Props = $props();
 
 	const isLayerVisible = () => {
 		if (!map.getLayer(target)) return false;
@@ -14,12 +23,10 @@
 		return !(visibility && visibility === 'none');
 	};
 
-	let isVisible = false;
-	let isLoading = false;
+	let isVisible = $state(false);
+	let isLoading = $state(false);
 
 	const tippyTooltip = initTooltipTippy();
-
-	$: isVisible, setVisibility();
 
 	const setVisibility = () => {
 		if (!map?.isStyleLoaded()) return;
@@ -45,6 +52,7 @@
 			map.getCanvas().style.cursor = currentCursor;
 			isVisible = !isVisible;
 		}
+		setVisibility();
 	};
 
 	const handleStyleChanged = () => {
@@ -58,7 +66,7 @@
 	map.on('sourcedata', handleStyleChanged);
 	map.on('styledata', handleStyleChanged);
 
-	let visiblilityButton: HTMLButtonElement;
+	let visiblilityButton: HTMLButtonElement = $state();
 
 	function VisibilityControl() {}
 
@@ -94,6 +102,7 @@
 			}
 			map.once('load', () => {
 				isVisible = isLayerVisible();
+				setVisibility();
 			});
 		}
 	});
@@ -114,7 +123,7 @@
 	disabled={isLoading}
 >
 	{#if icon.startsWith('fa')}
-		<i class="{icon} fa-xl align-center {isVisible ? 'has-text-success' : ''}" />
+		<i class="{icon} fa-xl align-center {isVisible ? 'has-text-success' : ''}"></i>
 	{:else}
 		<span
 			class="material-symbols-outlined material-icon align-center {isVisible

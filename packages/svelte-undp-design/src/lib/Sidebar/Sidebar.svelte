@@ -1,23 +1,25 @@
 <script lang="ts">
 	import type { SidebarItem } from '$lib';
 
-	/**
-	 * SidebarItem object array to be shown in sidebar component
-	 */
-	export let data: SidebarItem[];
+	interface Props {
+		/**
+		 * SidebarItem object array to be shown in sidebar component
+		 */
+		data: SidebarItem[];
+		/**
+		 * if enabled, make height each item become narrower
+		 */
+		isNarrow?: boolean;
+		/**
+		 * If true, sidebar width is fixed. if false, width will be flexiblely changed in accordance with parent component.
+		 */
+		isFixed?: boolean;
+	}
 
-	/**
-	 * if enabled, make height each item become narrower
-	 */
-	export let isNarrow = false;
+	let { data, isNarrow = false, isFixed = true }: Props = $props();
 
-	/**
-	 * If true, sidebar width is fixed. if false, width will be flexiblely changed in accordance with parent component.
-	 */
-	export let isFixed = true;
-
-	let isMenuExpanded = false;
-	let expanded: { [key: string]: boolean } = {};
+	let isMenuExpanded = $state(false);
+	let expanded: { [key: string]: boolean } = $state({});
 
 	const toggleAccordion = (index: number) => {
 		const key = `${index}`;
@@ -40,7 +42,7 @@
 	};
 </script>
 
-<!-- svelte-ignore a11y-no-redundant-roles -->
+<!-- svelte-ignore a11y_no_redundant_roles -->
 <nav
 	role="navigation"
 	aria-label="Sidebar"
@@ -48,16 +50,16 @@
 >
 	<div class={isFixed ? 'grid-x' : ''}>
 		<div class="cell large-4">
-			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-			<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<h6
 				class=""
 				tabindex="0"
 				data-viewport="false"
-				on:click={() => {
+				onclick={() => {
 					isMenuExpanded = !isMenuExpanded;
 				}}
-				on:keydown={handleEnterKey}
+				onkeydown={handleEnterKey}
 			>
 				Menu
 			</h6>
@@ -65,18 +67,18 @@
 				{#each data as item, index}
 					<li aria-label="Sidebar heading" class={expanded[`${index}`] === true ? 'active' : ''}>
 						{#if item.callback}
-							<!-- svelte-ignore a11y-missing-attribute -->
+							<!-- svelte-ignore a11y_missing_attribute -->
 							<a
 								tabindex="0"
 								role="menuitem"
 								data-sveltekit-preload-code="off"
 								data-sveltekit-preload-data="off"
-								on:click={() => {
+								onclick={() => {
 									if (item.callback) {
 										item.callback(item);
 									}
 								}}
-								on:keydown={handleEnterKey}>{item.title}</a
+								onkeydown={handleEnterKey}>{item.title}</a
 							>
 						{:else}
 							<a href={item.href}>{item.title}</a>
@@ -87,7 +89,7 @@
 								tabindex="0"
 								aria-expanded={expanded[`${index}`] === true ? 'true' : 'false'}
 								aria-label="button"
-								on:click={() => {
+								onclick={() => {
 									toggleAccordion(index);
 								}}
 							></button>
@@ -98,18 +100,18 @@
 								{#each item.children as child}
 									<li>
 										{#if child.callback}
-											<!-- svelte-ignore a11y-missing-attribute -->
+											<!-- svelte-ignore a11y_missing_attribute -->
 											<a
 												tabindex="0"
 												role="menuitem"
 												data-sveltekit-preload-code="off"
 												data-sveltekit-preload-data="off"
-												on:click={() => {
+												onclick={() => {
 													if (item.callback) {
 														item.callback(item);
 													}
 												}}
-												on:keydown={handleEnterKey}>{child.title}</a
+												onkeydown={handleEnterKey}>{child.title}</a
 											>
 										{:else}
 											<a href={child.href}>{child.title}</a>

@@ -1,9 +1,9 @@
-<script lang="ts" context="module">
-	import type { Meta } from '@storybook/svelte';
+<script lang="ts" module>
+	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import Map from '../Map.svelte';
 	import RasterHueRotate from './RasterHueRotate.svelte';
 
-	export const meta: Meta = {
+	const { Story } = defineMeta({
 		title: 'Components/Maplibre/Raster/RasterHueRotate',
 		component: RasterHueRotate,
 		tags: ['autodocs'],
@@ -13,21 +13,17 @@
 				description: 'Layer ID to edit'
 			}
 		}
-	};
+	});
 
 	const title = 'Raster Hue Rotate Control';
 
 	const style = 'https://dev.undpgeohub.org/api/mapstyle/aerialstyle.json';
 </script>
 
-<script lang="ts">
-	import { Story, Template } from '@storybook/addon-svelte-csf';
-</script>
-
-<Template let:args>
+{#snippet template(args)}
 	<Map {title} {style}>
 		<RasterHueRotate {...args}></RasterHueRotate>
 	</Map>
-</Template>
+{/snippet}
 
-<Story name="Primary" args={{ layerId: 'bingaerial' }} />
+<Story name="Primary" args={{ layerId: 'bingaerial' }} children={template} />

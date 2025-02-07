@@ -1,14 +1,17 @@
 <script lang="ts">
 	import NumberInput from '$lib/components/ui/NumberInput.svelte';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
+	interface Props {
+		layerId: string;
+	}
 
-	const dispatch = createEventDispatcher();
+	let { layerId = $bindable() }: Props = $props();
+
 	const propertyName = 'icon-offset';
 	const style = $map
 		.getStyle()
@@ -16,17 +19,15 @@
 
 	let iconOffsetValues =
 		style?.layout && style.layout[propertyName] ? style.layout[propertyName] : [0, 0];
-	let maxValue = 10;
-	let minValue = -10;
-	let step = 1;
-	let xValue = iconOffsetValues[0];
-	let yValue = iconOffsetValues[1];
+	let maxValue = $state(10);
+	let minValue = $state(-10);
+	let step = $state(1);
+	let xValue = $state(iconOffsetValues[0]);
+	let yValue = $state(iconOffsetValues[1]);
 
 	const setIconOffset = () => {
 		iconOffsetValues = [xValue, yValue];
 		map.setLayoutProperty(layerId, propertyName, iconOffsetValues);
-
-		dispatch('change');
 	};
 </script>
 
@@ -39,7 +40,7 @@
 				bind:minValue
 				bind:maxValue
 				bind:step
-				on:change={setIconOffset}
+				onchange={setIconOffset}
 			/>
 		</div>
 	</div>
@@ -51,7 +52,7 @@
 				bind:minValue
 				bind:maxValue
 				bind:step
-				on:change={setIconOffset}
+				onchange={setIconOffset}
 			/>
 		</div>
 	</div>

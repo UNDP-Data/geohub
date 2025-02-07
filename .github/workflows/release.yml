@@ -10,7 +10,12 @@ env:
   CI: true
   PNPM_CACHE_FOLDER: .pnpm-store
 
-permissions: {}
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  packages: write
+
 jobs:
   release:
     # prevents this action from running on forks
@@ -36,11 +41,10 @@ jobs:
           cache: pnpm
 
       - name: install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --shamefully-hoist
 
       - name: build packages
-        run: |
-          pnpm build
+        run: pnpm build
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets

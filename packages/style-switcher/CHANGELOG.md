@@ -1,5 +1,18 @@
 # @undp-data/style-switcher
 
+## 2.0.11
+
+### Patch Changes
+
+- 28b87b3: chore: updated dependencies
+
+## 2.0.9
+
+### Patch Changes
+
+- 1ac4d94: chore: updated monorepo package dependencies
+- a038e3d: chore: upgrade maplibre to v5
+
 ## 2.0.8
 
 ### Patch Changes

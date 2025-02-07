@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
 	import type { ControlPosition, IControl, LngLatBoundsLike, Map } from 'maplibre-gl';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -52,12 +52,20 @@
 	import introJs from 'intro.js';
 	import 'intro.js/introjs.css';
 
-	export let map: Map;
-	export let position: ControlPosition = 'top-right';
-	export let options: IntroJsOptions;
+	interface Props {
+		map: Map;
+		position?: ControlPosition;
+		options: IntroJsOptions;
+	}
+
+	let {
+		map = $bindable(),
+		position = $bindable('top-right'),
+		options = $bindable()
+	}: Props = $props();
 
 	let control: TourControl | undefined;
-	let contentDiv: HTMLButtonElement;
+	let contentDiv: HTMLButtonElement | undefined = $state();
 
 	export const start = (init = true) => {
 		introJs()
@@ -74,6 +82,7 @@
 
 	onMount(() => {
 		if (!map) return;
+		if (!contentDiv) return;
 		control = new TourControl(contentDiv);
 		map.addControl(control, position);
 
@@ -94,7 +103,7 @@
 	};
 </script>
 
-<button class="tour-control-button" bind:this={contentDiv} on:click={handleStart}>
+<button class="tour-control-button" bind:this={contentDiv} onclick={handleStart}>
 	<span class="material-symbols-outlined"> help </span>
 </button>
 

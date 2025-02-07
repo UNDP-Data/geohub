@@ -2,16 +2,20 @@
 	import PropertySelect from '$lib/components/maplibre/util/PropertySelect.svelte';
 	import FieldControl from '$lib/components/ui/FieldControl.svelte';
 	import Slider from '$lib/components/ui/Slider.svelte';
-	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
 	import { Switch } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
-	export let metadata: VectorTileMetadata;
+	interface Props {
+		layerId: string;
+		metadata: VectorTileMetadata;
+	}
+
+	let { layerId = $bindable(), metadata = $bindable() }: Props = $props();
 
 	const maplibreLayerId = $map.getLayer(layerId).sourceLayer;
 	let statLayer = metadata.json.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
@@ -28,17 +32,20 @@
 		return value;
 	};
 
-	let maxValue = 9999;
-	let minValue = 0;
+	let maxValue = $state(9999);
+	let minValue = $state(0);
 	let propertyName = 'fill-extrusion-height';
-	let stepValue = 1;
+	let stepValue = $state(1);
 	let value = getValue();
-	let heightValue: number[] = Array.isArray(value) ? [defaultValue] : [value as number];
+	let heightValue: number[] = $state(Array.isArray(value) ? [defaultValue] : [value as number]);
 
-	let minExaggerationValue = 100000;
-	let maxExaggerationValue = 999999;
-	let exaggerationValues = [Array.isArray(value) ? value[2] : minExaggerationValue];
-	let stepExaggerationValue = 1;
+	let minExaggerationValue = $state(100000);
+	let maxExaggerationValue = $state(999999);
+	const getDefaultExaggerationValue = () => {
+		return [Array.isArray(value) ? value[2] : minExaggerationValue];
+	};
+	let exaggerationValues = $state(getDefaultExaggerationValue());
+	let stepExaggerationValue = $state(1);
 
 	const getPropertyValueFromExpression = () => {
 		if (Array.isArray(value)) {
@@ -56,10 +63,10 @@
 		return Array.isArray(value) && value[1][0] === 'ln';
 	};
 
-	let isLogarithmic = getLogState();
-	let propertySelectValue = getPropertyValueFromExpression();
+	let isLogarithmic = $state(getLogState());
+	let propertySelectValue = $state(getPropertyValueFromExpression());
 
-	$: isConstantHeight = propertySelectValue.length === 0;
+	let isConstantHeight = $derived(propertySelectValue.length === 0);
 
 	const setMinMaxExaggeration = () => {
 		if (propertySelectValue.length === 0) return;
@@ -140,7 +147,7 @@
 
 <PropertySelect
 	bind:propertySelectValue
-	on:select={handlePropertyChange}
+	onselect={handlePropertyChange}
 	{layerId}
 	{metadata}
 	onlyNumberFields={true}
@@ -159,47 +166,51 @@
 			last="label"
 			rest={false}
 			suffix="m"
-			on:change={handleConstantHeightChagned}
+			onchange={handleConstantHeightChagned}
 		/>
 	</div>
 {:else}
 	<FieldControl title="Height exaggeration">
-		<div slot="help">
-			The height exaggeration. The height value will be multiplied by this value.
-			<br />
-			The range of sliders is automatically set according to the selected property. If the data is highly
-			skewed, please try to use logarithmic. It may work better.
-		</div>
-		<div slot="control" class="mx-2">
-			<Slider
-				bind:values={exaggerationValues}
-				bind:min={minExaggerationValue}
-				bind:max={maxExaggerationValue}
-				bind:step={stepExaggerationValue}
-				first="label"
-				last="label"
-				rest={false}
-				floatLabel={false}
-				on:change={handleExaggerationChanged}
-				formatter={(value) => {
-					if (value === minExaggerationValue) {
-						return 'Low';
-					} else if (value === maxExaggerationValue) {
-						return 'High';
-					} else {
-						return '';
-					}
-				}}
-			/>
-			<div class="pt-2">
-				<Switch
-					bind:toggled={isLogarithmic}
-					toggledText="Logarithmic is enabled"
-					untoggledText="Logarithmic is disabled"
-					showValue={true}
-					on:change={handleExaggerationChanged}
-				/>
+		{#snippet help()}
+			<div>
+				The height exaggeration. The height value will be multiplied by this value.
+				<br />
+				The range of sliders is automatically set according to the selected property. If the data is
+				highly skewed, please try to use logarithmic. It may work better.
 			</div>
-		</div>
+		{/snippet}
+		{#snippet control()}
+			<div class="mx-2">
+				<Slider
+					bind:values={exaggerationValues}
+					bind:min={minExaggerationValue}
+					bind:max={maxExaggerationValue}
+					bind:step={stepExaggerationValue}
+					first="label"
+					last="label"
+					rest={false}
+					floatLabel={false}
+					onchange={handleExaggerationChanged}
+					formatter={(value) => {
+						if (value === minExaggerationValue) {
+							return 'Low';
+						} else if (value === maxExaggerationValue) {
+							return 'High';
+						} else {
+							return '';
+						}
+					}}
+				/>
+				<div class="pt-2">
+					<Switch
+						bind:toggled={isLogarithmic}
+						toggledText="Logarithmic is enabled"
+						untoggledText="Logarithmic is disabled"
+						showValue={true}
+						onchange={handleExaggerationChanged}
+					/>
+				</div>
+			</div>
+		{/snippet}
 	</FieldControl>
 {/if}

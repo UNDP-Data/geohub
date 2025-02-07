@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import type { DatasetFeature, StacCollection } from '$lib/types';
+	import type { DatasetFeature, LayerCreationInfo, StacCollection } from '$lib/types';
 	import type {
 		RasterTileMetadata,
 		VectorLayerTileStatLayer,
@@ -12,27 +12,37 @@
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { AttributionControl, Map, NavigationControl } from 'maplibre-gl';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 
-	const dispatch = createEventDispatcher();
-
-	export let feature: DatasetFeature;
-
-	export let width = '100%';
-	export let height = '100%';
-	export let isLoadMap = false;
-	export let layer: VectorLayerTileStatLayer | undefined = undefined;
-	export let band: string | undefined = undefined;
-	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle' | undefined =
-		undefined;
-
-	let config: UserConfig = $page.data.config;
-	let mapContainer: HTMLDivElement;
+	let config: UserConfig = page.data.config;
+	let mapContainer: HTMLDivElement | undefined = $state();
 	let map: Map;
-	let previewImageUrl: string | undefined = undefined;
-	let isLoading = false;
+	let previewImageUrl: string | undefined = $state(undefined);
+	let isLoading = $state(false);
 
-	export let metadata: RasterTileMetadata | VectorTileMetadata | undefined = undefined;
+	interface Props {
+		feature: DatasetFeature;
+		width?: string;
+		height?: string;
+		isLoadMap?: boolean;
+		layer?: VectorLayerTileStatLayer | undefined;
+		band?: string | undefined;
+		layerType?: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle' | undefined;
+		metadata?: RasterTileMetadata | VectorTileMetadata | undefined;
+		onLayerAdded?: (data: LayerCreationInfo) => void;
+	}
+
+	let {
+		feature = $bindable(),
+		width = $bindable('100%'),
+		height = $bindable('100%'),
+		isLoadMap = $bindable(false),
+		layer = $bindable(undefined),
+		band = $bindable(undefined),
+		layerType = $bindable(undefined),
+		metadata = $bindable(undefined),
+		onLayerAdded = () => {}
+	}: Props = $props();
 	let rasterTile: RasterTileData;
 	let vectorTile: VectorTileData;
 
@@ -64,12 +74,6 @@
 		return previewUrl;
 	};
 
-	$: if (mapContainer && isLoadMap === true) {
-		handleMapChanged();
-	}
-
-	$: layerType, handleMapChanged();
-
 	const handleMapChanged = async () => {
 		if (!map) return;
 
@@ -95,8 +99,7 @@
 				}
 				const data = await rasterTile.add(map, bandIndex);
 				metadata = data.metadata;
-
-				dispatch('layerAdded', data);
+				if (onLayerAdded) onLayerAdded(data);
 			} else {
 				if (layer) {
 					let layerName = layer ? layer.layer : undefined;
@@ -112,7 +115,7 @@
 					}
 					const data = await vectorTile.add(map, layerType, layerName);
 					metadata = data.metadata;
-					dispatch('layerAdded', data);
+					if (onLayerAdded) onLayerAdded(data);
 				}
 			}
 			map.resize();
@@ -146,6 +149,20 @@
 			}
 		});
 	});
+	$effect(() => {
+		if (mapContainer && isLoadMap === true) {
+			untrack(() => {
+				handleMapChanged();
+			});
+		}
+	});
+	$effect(() => {
+		if (layerType !== undefined) {
+			untrack(() => {
+				handleMapChanged();
+			});
+		}
+	});
 </script>
 
 <div class="map-container">
@@ -167,7 +184,7 @@
 				class="map"
 				style="width:{width}; height:{isLoading ? '0' : height}; opacity: {isLoading ? '0' : '1'};"
 				bind:this={mapContainer}
-			/>
+			></div>
 		{/if}
 	{/if}
 </div>

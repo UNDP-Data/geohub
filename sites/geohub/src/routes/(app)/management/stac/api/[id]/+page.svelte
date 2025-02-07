@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { ALGORITHM_TAG_KEY } from '$components/pages/map/data/RasterAlgorithmExplorer.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import { AccessLevel } from '$lib/config/AppConfig';
@@ -20,20 +20,23 @@
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
-	let stac = data.stac;
-	let isRegistered = data.isRegistered;
+	interface Props {
+		data: PageData;
+	}
 
-	let toolTags: Tag[] = [];
-	let isInitialising: Promise<void>;
-	let accessLevel: AccessLevel = isRegistered
-		? data.dataset.properties.access_level
-		: AccessLevel.PUBLIC;
+	let { data }: Props = $props();
+	let stac = data.stac;
+
+	let toolTags: Tag[] = $state([]);
+	let isInitialising: Promise<void> | undefined = $state();
+	let accessLevel: AccessLevel = $state(
+		data.isRegistered ? data.dataset.properties.access_level : AccessLevel.PUBLIC
+	);
 	let stacCollections: StacCollections;
-	let filteredCollection: StacCollection[] = [];
-	let geohubDatasets: DatasetFeatureCollection;
-	let query = $page.url.searchParams.get('query') ?? '';
-	let isProcessing = false;
+	let filteredCollection: StacCollection[] = $state([]);
+	let geohubDatasets: DatasetFeatureCollection | undefined = $state();
+	let query = $state(page.url.searchParams.get('query') ?? '');
+	let isProcessing = $state(false);
 
 	onMount(() => {
 		reload();
@@ -65,7 +68,7 @@
 	};
 
 	const handleFilterInput = () => {
-		const url = $page.url;
+		const url = page.url;
 		if (query) {
 			const text = query.toLowerCase();
 			filteredCollection = stacCollections.collections.filter((c) => {
@@ -91,7 +94,7 @@
 			feature.properties.access_level = accessLevel;
 			const formData = new FormData();
 			formData.append('feature', JSON.stringify(feature));
-			const res = await fetch(`${$page.url.pathname}?/register`, {
+			const res = await fetch(`${page.url.pathname}?/register`, {
 				method: 'POST',
 				body: formData
 			});
@@ -103,7 +106,7 @@
 			await res.json();
 
 			toast.push(`The STAC collection was registered successfully`);
-			isRegistered = true;
+			data.isRegistered = true;
 			reload();
 		} finally {
 			isProcessing = false;
@@ -132,17 +135,17 @@
 		}
 	};
 
-	let breadcrumbs: BreadcrumbPage[] = [
+	let breadcrumbs: BreadcrumbPage[] = $state([
 		{ title: 'home', url: '/' },
 		{ title: 'management', url: '/management' },
 		{ title: 'stac', url: '/management/stac' },
-		{ title: stac.name, url: $page.url.href }
-	];
+		{ title: stac.name, url: page.url.href }
+	]);
 
-	let editDialogOpen = false;
-	let algorithms: { [key: string]: RasterAlgorithm };
-	let selectedAlgorithmId = '';
-	let editCollection: StacCollection;
+	let editDialogOpen = $state(false);
+	let algorithms: { [key: string]: RasterAlgorithm } = $state();
+	let selectedAlgorithmId = $state('');
+	let editCollection: StacCollection = $state();
 
 	const getAlgorithms = async () => {
 		const res = await fetch(`${data.titilerUrl}/algorithms`);
@@ -167,7 +170,7 @@
 	const updateDataset = async (collection: StacCollection, tags: Tag[]) => {
 		isProcessing = true;
 		try {
-			if (!isRegistered) {
+			if (!data.isRegistered) {
 				await handleRegister(collection.id);
 				return;
 			}
@@ -181,7 +184,7 @@
 			dataset.properties.access_level = accessLevel;
 			const formData = new FormData();
 			formData.append('feature', JSON.stringify(dataset));
-			const res = await fetch(`${$page.url.pathname}?/register`, {
+			const res = await fetch(`${page.url.pathname}?/register`, {
 				method: 'POST',
 				body: formData
 			});
@@ -214,7 +217,7 @@
 					bind:value={query}
 					open={true}
 					placeholder="Type keyword..."
-					on:change={handleFilterInput}
+					onchange={handleFilterInput}
 					iconSize={24}
 					fontSize={5}
 					timeout={500}
@@ -258,14 +261,14 @@
 															? 'is-loading'
 															: ''} "
 														disabled={isProcessing}
-														on:click={() => openEditDialog(collection)}>Edit</button
+														onclick={() => openEditDialog(collection)}>Edit</button
 													>
 													<button
 														class="button ml-1 is-link is-uppercase has-text-weight-bold is-fullwidth {isProcessing
 															? 'is-loading'
 															: ''}"
 														disabled={isProcessing}
-														on:click={() => {
+														onclick={() => {
 															handleDelete(collection);
 														}}>Delete</button
 													>
@@ -276,7 +279,7 @@
 														? 'is-loading'
 														: ''} is-fullwidth"
 													disabled={isProcessing}
-													on:click={() => {
+													onclick={() => {
 														openEditDialog(collection);
 													}}>Register</button
 												>
@@ -301,67 +304,74 @@
 	{/if}
 </section>
 <ModalTemplate title="Edit" bind:show={editDialogOpen}>
-	<div slot="content">
-		<FieldControl title="Access level" showHelp={false} fontWeight="bold">
-			<div slot="control">
-				<AccessLevelSwitcher bind:accessLevel />
-			</div>
-		</FieldControl>
-		{#if algorithms}
-			<div class="is-flex">
-				<div class="select is-fullwidth">
-					<select bind:value={selectedAlgorithmId}>
-						<option value="">Select a tool</option>
-						{#each Object.keys(algorithms) as id}
-							{#if toolTags.findIndex((t) => t.value === id) === -1}
-								<option value={id}>{algorithms[id].title}</option>
-							{/if}
-						{/each}
-					</select>
-				</div>
-				<button
-					type="button"
-					class="button is-link ml-2"
-					disabled={selectedAlgorithmId === ''}
-					on:click={() => {
-						toolTags = [
-							...toolTags,
-							{
-								key: ALGORITHM_TAG_KEY,
-								value: selectedAlgorithmId
-							}
-						];
-					}}>Add</button
-				>
-			</div>
-			<div class="tags my-2">
-				{#each toolTags as tag}
-					<div class="tags has-addons m-1">
-						<span class="tag is-link">{tag.value}</span>
-						<button
-							class="tag is-delete"
-							on:click={() => {
-								toolTags = toolTags.filter((t) => t.value !== tag.value);
-							}}
-						></button>
+	{#snippet content()}
+		<div>
+			<FieldControl title="Access level" showHelp={false} fontWeight="bold">
+				{#snippet control()}
+					<div>
+						<AccessLevelSwitcher bind:accessLevel />
 					</div>
-				{/each}
-			</div>
-		{/if}
-	</div>
-	<div slot="buttons">
-		<button
-			class="button is-primary is-upppercase has-text-weight-bold {isProcessing
-				? 'is-loading'
-				: ''}"
-			on:click={async () => {
-				await updateDataset(editCollection, toolTags);
-			}}
-			disabled={isProcessing}
-			type="button"
-		>
-			{isRegistered ? 'Update' : 'Register'}
-		</button>
-	</div>
+				{/snippet}
+			</FieldControl>
+			{#if algorithms}
+				<div class="is-flex">
+					<div class="select is-fullwidth">
+						<select bind:value={selectedAlgorithmId}>
+							<option value="">Select a tool</option>
+							{#each Object.keys(algorithms) as id}
+								{#if toolTags.findIndex((t) => t.value === id) === -1}
+									<option value={id}>{algorithms[id].title}</option>
+								{/if}
+							{/each}
+						</select>
+					</div>
+					<button
+						type="button"
+						class="button is-link ml-2"
+						disabled={selectedAlgorithmId === ''}
+						onclick={() => {
+							toolTags = [
+								...toolTags,
+								{
+									key: ALGORITHM_TAG_KEY,
+									value: selectedAlgorithmId
+								}
+							];
+						}}>Add</button
+					>
+				</div>
+				<div class="tags my-2">
+					{#each toolTags as tag}
+						<div class="tags has-addons m-1">
+							<span class="tag is-link">{tag.value}</span>
+							<button
+								class="tag is-delete"
+								onclick={() => {
+									toolTags = toolTags.filter((t) => t.value !== tag.value);
+								}}
+								aria-label="delete"
+							></button>
+						</div>
+					{/each}
+				</div>
+			{/if}
+		</div>
+	{/snippet}
+	{#snippet buttons()}
+		<div>
+			<button
+				class="button is-primary is-upppercase has-text-weight-bold {isProcessing
+					? 'is-loading'
+					: ''}"
+				onclick={async () => {
+					await updateDataset(editCollection, toolTags);
+				}}
+				disabled={isProcessing}
+				type="button"
+			>
+				{data.isRegistered ? 'Update' : 'Register'}
+			</button>
+		</div>
+	{/snippet}
 </ModalTemplate>
 <SvelteToast />

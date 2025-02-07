@@ -3,31 +3,43 @@
 	import { DatePicker, type RasterAlgorithm } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import dayjs from 'dayjs';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
-	const dispatch = createEventDispatcher();
+	interface Props {
+		collectionUrl: string;
+		collection: StacCollection;
+		selectedAsset: StacAsset;
+		algorithm: RasterAlgorithm;
+		bandIndex: number;
+		selectedDate?: Date;
+		onAssetChanged?: (asset: StacAsset) => void;
+		onDateChanged?: (date: Date) => void;
+	}
 
-	export let collectionUrl: string;
-	export let collection: StacCollection;
-	export let selectedAsset: StacAsset;
-	export let algorithm: RasterAlgorithm;
-	export let bandIndex: number;
+	let {
+		collectionUrl = $bindable(),
+		collection = $bindable(),
+		selectedAsset = $bindable(),
+		algorithm = $bindable(),
+		bandIndex = $bindable(),
+		selectedDate = $bindable(),
+		onAssetChanged = () => {},
+		onDateChanged = () => {}
+	}: Props = $props();
 
 	let intervalDatetime = collection.extent.temporal.interval[0];
 
-	let temporalIntervalFrom: Date = dayjs(intervalDatetime[0]).toDate();
-	let temporalIntervalTo: Date = dayjs(intervalDatetime[1]).toDate();
-
-	export let selectedDate: Date = temporalIntervalTo;
+	let temporalIntervalFrom: Date = $state(dayjs(intervalDatetime[0]).toDate());
+	let temporalIntervalTo: Date = $state(dayjs(intervalDatetime[1]).toDate());
 
 	let years: { year: number; link: Link; catalog: StacCatalog }[] = [];
 	let months: { year: number; month: number; link: Link; catalog: StacCatalog }[] = [];
 	let dates: { date: Date; link: Link; item?: StacItemFeature }[] = [];
-	let enabledDates: Date[] = [];
+	let enabledDates: Date[] = $state([]);
 
-	let assetItems: { [key: string]: StacAsset } = {};
+	let assetItems: { [key: string]: StacAsset } = $state({});
 
-	let isLoading = false;
+	let isLoading = $state(false);
 
 	const loadYears = async () => {
 		const children = collection.links.filter((l) => l.rel === 'child');
@@ -115,11 +127,7 @@
 		selectedAsset = undefined;
 
 		selectMatchedAsset();
-
-		dispatch('dateChanged', {
-			date: selectedDate,
-			asset: selectedAsset
-		});
+		if (onDateChanged) onDateChanged(selectedDate);
 	};
 
 	const getSelectedAssetItems = async () => {
@@ -163,26 +171,25 @@
 	};
 
 	const handleAssetChanged = () => {
-		dispatch('assetChanged', {
-			date: selectedDate,
-			asset: selectedAsset
-		});
+		if (onAssetChanged) onAssetChanged(selectedAsset);
 	};
 
-	$: if (!selectedAsset && selectedDate) {
-		if (assetItems && Object.keys(assetItems).length > 0) {
-			const formattedDate = dayjs(selectedDate).format('YYYY/M/D');
-			selectMatchedAsset();
-			// if selected asset's date does not match to list of assetitems in selectbox, update asset from remote.
-			if (selectedAsset?.href.indexOf(formattedDate) === -1) {
-				getSelectedAssetItems().then((dateInfo) => {
-					if (!dateInfo) return;
-					selectedAsset = undefined;
-					selectMatchedAsset();
-				});
+	$effect(() => {
+		if (!selectedAsset && selectedDate) {
+			if (assetItems && Object.keys(assetItems).length > 0) {
+				const formattedDate = dayjs(selectedDate).format('YYYY/M/D');
+				selectMatchedAsset();
+				// if selected asset's date does not match to list of assetitems in selectbox, update asset from remote.
+				if (selectedAsset?.href.indexOf(formattedDate) === -1) {
+					getSelectedAssetItems().then((dateInfo) => {
+						if (!dateInfo) return;
+						selectedAsset = undefined;
+						selectMatchedAsset();
+					});
+				}
 			}
 		}
-	}
+	});
 
 	onMount(() => {
 		isLoading = true;
@@ -198,7 +205,7 @@
 		bind:min={temporalIntervalFrom}
 		bind:max={temporalIntervalTo}
 		{enabledDates}
-		on:select={handleDateSelected}
+		onselect={handleDateSelected}
 	/>
 
 	<div class="is-flex is-justify-content-center is-align-items-center ml-1">
@@ -212,7 +219,7 @@
 				No assets in this date
 			{:else}
 				<div class="select">
-					<select bind:value={selectedAsset} on:change={handleAssetChanged}>
+					<select bind:value={selectedAsset} onchange={handleAssetChanged}>
 						{#each assets as name}
 							{@const asset = assetItems[name]}
 							<option value={asset}>{asset.title ?? name}</option>

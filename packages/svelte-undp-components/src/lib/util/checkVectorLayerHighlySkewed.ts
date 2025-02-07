@@ -2,8 +2,8 @@ import type {
 	VectorLayerTileStatAttribute,
 	VectorLayerTileStatLayer,
 	VectorTileMetadata
-} from '../interfaces/index.js';
-import { isDataHighlySkewed } from './checkHighlySkewed.js';
+} from '../interfaces';
+import { isDataHighlySkewed } from './checkHighlySkewed';
 
 /**
  * Check whether a property of a vector layer has highly skewed value

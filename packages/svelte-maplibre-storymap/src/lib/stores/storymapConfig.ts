@@ -1,4 +1,4 @@
-import type { StoryMapConfig } from '$lib/interfaces/StoryMapConfig.js';
+import type { StoryMapConfig } from '$lib/interfaces/StoryMapConfig';
 import { writable } from 'svelte/store';
 
 export const STORYMAP_CONFIG_STORE_CONTEXT_KEY = 'maplibre-storymap-config-store';

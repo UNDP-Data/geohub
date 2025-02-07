@@ -1,13 +1,21 @@
 <script lang="ts">
 	import type { Tab } from '$lib/interfaces';
 
-	export let tabs: Tab[];
+	interface Props {
+		tabs: Tab[];
+		activeTab: string | undefined;
+		height?: number;
+		fontSize?: 'medium' | 'large' | 'small';
+		isToggleTab?: boolean;
+	}
 
-	export let activeTab: string | undefined;
-
-	export let height = 0;
-	export let fontSize: 'medium' | 'large' | 'small' = 'medium';
-	export let isToggleTab = false;
+	let {
+		tabs,
+		activeTab = $bindable(),
+		height = $bindable(0),
+		fontSize = 'medium',
+		isToggleTab = false
+	}: Props = $props();
 
 	const handleKeyDown = (event: KeyboardEvent) => {
 		if (event.key === 'ArrowLeft') {
@@ -57,14 +65,15 @@
 				}`} px-1"
 				role="presentation"
 			>
+				<!-- svelte-ignore a11y_missing_attribute -->
 				<a
 					aria-selected="true"
 					role="tab"
 					aria-controls="tab-{tab.label}"
 					id="tab-{tab.label}"
 					tabindex={Number(`${activeTab && activeTab === tab.label ? '0' : '-1'}`)}
-					on:keydown={handleKeyDown}
-					on:click={() => {
+					onkeydown={handleKeyDown}
+					onclick={() => {
 						if (isToggleTab && activeTab === tab.label) {
 							activeTab = undefined;
 						} else {
@@ -82,7 +91,7 @@
 					>
 						{#if tab.icon}
 							<span class="icon">
-								<i class={tab.icon} />
+								<i class={tab.icon}></i>
 							</span>
 						{/if}
 						<span>

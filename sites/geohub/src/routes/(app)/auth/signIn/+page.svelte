@@ -1,11 +1,16 @@
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { signIn } from '@auth/sveltekit/client';
 	import type { PageData } from './$types';
-	export let data: PageData;
 
-	let previousPage: URL = new URL($page.url.origin);
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
+
+	let previousPage: URL = $state(new URL(page.url.origin));
 	afterNavigate(({ from }) => {
 		if (from?.url) {
 			previousPage = from?.url;
@@ -25,7 +30,7 @@
 			{#each data.providers as provider, index}
 				<button
 					class="login-button button is-medium is-fullwidth is-link"
-					on:click={() => signIn(provider.id, { callbackUrl: previousPage.href })}
+					onclick={() => signIn(provider.id, { callbackUrl: previousPage.href })}
 				>
 					<span class="icon is-small">
 						{#if provider.icon.startsWith('fa')}

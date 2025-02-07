@@ -1,26 +1,39 @@
 <script lang="ts">
-	import type { VectorLayerMetadata } from '$lib/interfaces/VectorLayerMetadata.js';
-	import type { VectorLayerTileStatLayer } from '$lib/interfaces/VectorLayerTileStatLayer.js';
-	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
-	import { clean } from '$lib/util/clean.js';
+	import type { VectorLayerMetadata } from '$lib/interfaces/VectorLayerMetadata';
+	import type { VectorLayerTileStatLayer } from '$lib/interfaces/VectorLayerTileStatLayer';
+	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
+	import { clean } from '$lib/util/clean';
 	import type { LayerSpecification, Map } from 'maplibre-gl';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
-	export let parentId: string | undefined = undefined;
-	export let metadata: VectorTileMetadata;
-	export let propertySelectValue: string;
-	export let showEmptyFields = false;
-	export let onlyNumberFields: boolean;
-	export let emptyFieldLabel = 'No Label';
-	export let readonly = false;
+	interface Props {
+		layerId: string;
+		parentId?: string | undefined;
+		metadata: VectorTileMetadata;
+		propertySelectValue: string;
+		showEmptyFields?: boolean;
+		onlyNumberFields: boolean;
+		emptyFieldLabel?: string;
+		readonly?: boolean;
+		onselect?: (property: string) => void;
+	}
 
-	let propertySelectOptions: string[];
+	let {
+		layerId = $bindable(),
+		parentId = $bindable(undefined),
+		metadata = $bindable(),
+		propertySelectValue = $bindable(),
+		showEmptyFields = $bindable(false),
+		onlyNumberFields = $bindable(),
+		emptyFieldLabel = $bindable('No Label'),
+		readonly = $bindable(false),
+		onselect = () => {}
+	}: Props = $props();
 
-	const dispatch = createEventDispatcher();
+	let propertySelectOptions: string[] = $state();
 
 	onMount(() => {
 		setPropertyList();
@@ -36,9 +49,7 @@
 	}
 
 	const propertyChanged = () => {
-		dispatch('select', {
-			prop: propertySelectValue
-		});
+		if (onselect) onselect(propertySelectValue);
 	};
 
 	const getLayerProperties = (
@@ -47,8 +58,9 @@
 		metadata: VectorTileMetadata,
 		onlyNumberFields = true
 	) => {
-		const vectorInfo: VectorLayerMetadata[] = metadata.json.vector_layers;
-
+		if (!map || !metadata) return;
+		const vectorInfo: VectorLayerMetadata[] = metadata.json?.vector_layers as VectorLayerMetadata[];
+		if (!vectorInfo) return;
 		const style = map.getStyle();
 		const layer = style?.layers?.find((l) => l.id === layerId) as LayerSpecification;
 
@@ -95,7 +107,7 @@
 			class="is-normal"
 			bind:value={propertySelectValue}
 			data-testid="property-select-input"
-			on:change={propertyChanged}
+			onchange={propertyChanged}
 			title="Property Options"
 			disabled={readonly}
 		>
@@ -112,6 +124,6 @@
 		</select>
 	</div>
 	<span class="icon is-small is-left">
-		<i style="color:black" class="fas fa-table-list" />
+		<i style="color:black" class="fas fa-table-list"></i>
 	</span>
 </div>

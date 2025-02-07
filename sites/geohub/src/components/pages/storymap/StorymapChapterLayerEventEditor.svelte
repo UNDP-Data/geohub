@@ -6,24 +6,29 @@
 	import { Loader, Switch } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification, StyleSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	const tippyTooltip = initTooltipTippy();
-	const dipatch = createEventDispatcher();
 
-	export let chapterLayerEvent: 'onChapterEnter' | 'onChapterExit' = 'onChapterEnter';
+	interface Props {
+		chapterLayerEvent?: 'onChapterEnter' | 'onChapterExit';
+		onchange?: () => void;
+	}
+
+	let { chapterLayerEvent = 'onChapterEnter', onchange = () => {} }: Props = $props();
 
 	const activeChapterStore: ActiveStorymapChapterStore = getContext(
 		ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY
 	);
 
-	let styleJson: StyleSpecification;
+	let styleJson: StyleSpecification | undefined = $state();
 	let geohubStyle: DashboardMapStyle | undefined;
 
 	let requireUpdated = false;
-	let showOnlyGeoHubLayers = true;
+	let showOnlyGeoHubLayers = $state(true);
 
 	const getLayerOpacity = (layerId: string) => {
+		if (!styleJson) return;
 		const layer = styleJson.layers.find((l) => l.id === layerId);
 		if (!layer) return;
 
@@ -51,7 +56,7 @@
 	};
 
 	const isShowOpacity = (layerId: string) => {
-		const layer = styleJson.layers?.find((l) => l.id === layerId);
+		const layer = styleJson?.layers?.find((l) => l.id === layerId);
 		if (!layer) return false;
 
 		return layer.type === 'hillshade' ? false : true;
@@ -143,7 +148,7 @@
 	const handleOpacityChanged = debounce((values: number, layer: LayerSpecification) => {
 		const opacity = values;
 		updateChangeLayerVisibility(layer.id, opacity);
-		dipatch('change');
+		if (onchange) onchange();
 	}, 300);
 </script>
 
@@ -154,9 +159,11 @@
 {:else}
 	<nav class="is-flex is-flex-direction-column">
 		<FieldControl title="Show only GeoHub layers" showHelp={false}>
-			<div slot="control">
-				<Switch bind:toggled={showOnlyGeoHubLayers} />
-			</div>
+			{#snippet control()}
+				<div>
+					<Switch bind:toggled={showOnlyGeoHubLayers} />
+				</div>
+			{/snippet}
 		</FieldControl>
 
 		<table class="table is-striped is-narrow is-hoverable is-fullwidth layer-panel">
@@ -182,10 +189,9 @@
 
 										<div class="ml-auto">
 											<OpacityEditor
-												opacity={getLayerOpacity(layer.id)}
+												opacity={getLayerOpacity(layer.id) as number}
 												{showOpacity}
-												on:change={(e) => {
-													const opacity = e.detail.opacity;
+												onchange={(opacity: number) => {
 													handleOpacityChanged(opacity, layer);
 												}}
 											/>

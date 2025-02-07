@@ -22,16 +22,6 @@ npm install -D bulma @undp-data/undp-bulma
 
 ## Usage
 
-### Import CSS
-
 ```ts
-import "@undp-data/undp-bulma/style.css";
-```
-
-### Import SCSS
-
-```svelte
-<style lang="scss">
-    @import '@undp-data/undp-bulma/bulma.scss';
-</style>
+import "@undp-data/undp-bulma/dist/undp-bulma.css";
 ```

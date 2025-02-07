@@ -20,7 +20,7 @@ spec:
         # Replace the section below with your DNS01 provider
         cloudflare:
           email: ioan.ferencik@undp.org
-          apiTokenSecretRef:
-            name: cloudflare-api-token-secret
-            key: api-token
+          apiKeySecretRef:
+            name: cloudflare-api-key
+            key: api-key
         
