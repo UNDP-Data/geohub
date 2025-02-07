@@ -1,7 +1,7 @@
 {
 	"name": "@undp-data/svelte-maplibre-storymap",
 	"description": "This component is to create maplibre storymap from config.",
-	"version": "1.0.4",
+	"version": "1.0.6",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run package",
@@ -40,6 +40,7 @@
 		"svelte": "^4.0.0 || ^5.0.0"
 	},
 	"devDependencies": {
+		"@eslint/js": "^9.19.0",
 		"@sveltejs/adapter-auto": "^4.0.0",
 		"@sveltejs/kit": "^2.16.0",
 		"@sveltejs/package": "^2.3.7",

@@ -1,5 +1,25 @@
 # geohub
 
+## 1.22.35
+
+### Patch Changes
+
+- 0671874: refactor: merge electricity and ceei dashboards codes to (app) main folder
+
+## 1.22.34
+
+### Patch Changes
+
+- c09a179: fix: fixed bug of importing maptiler geocoder in SSR.
+- 93b51ce: fix: switched the electricity forecast data (2021-2030) to v3 on Electricity Dashboard
+- f70c8af: fix: fixed bug of not showing scaled raster tile correctly. always use unscale=true for titiler now.
+
+## 1.22.33
+
+### Patch Changes
+
+- 6092700: fix: revert @undp-data/date-picker-svelte to v2.12.1 since it has reference error in geohub
+
 ## 1.22.32
 
 ### Patch Changes

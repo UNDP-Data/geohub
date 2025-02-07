@@ -128,10 +128,10 @@
 		updateParamsInURL(layerStyle, layerURL, updatedParams, $map);
 	};
 
-	const handleRescaleChanged = debounce(() => {
+	const handleRescaleChanged = debounce((rescale: number[]) => {
 		if (layerHasUniqueValues) return;
-		if (!$rescaleStore) return;
 		if (algorithmId && !hasRescaleProperty()) return;
+		$rescaleStore = [...rescale];
 
 		const layerStyle = getLayerStyle($map, layerId);
 		const layerUrl = getLayerSourceUrl($map, layerId) as string;
@@ -405,9 +405,9 @@
 				{#snippet content()}
 					<div class="pb-2">
 						<RasterRescale
-							bind:layerId
-							bind:metadata
-							bind:unit
+							{layerId}
+							{metadata}
+							{unit}
 							bind:rescale={$rescaleStore}
 							onchange={handleRescaleChanged}
 						/>

@@ -1,6 +1,6 @@
 // must specify dataset ID of GeoHub api
 
-import type { DashBoardDataset } from './+page.svelte';
+import type { DashBoardDataset } from './+page@.svelte';
 
 // token and URL of datasets will be retrieved from /api/datasets/{id} API
 export const ELECTRICITY_DATASETS: { [key: string]: DashBoardDataset[] } = {
@@ -43,43 +43,43 @@ export const ELECTRICITY_DATASETS: { [key: string]: DashBoardDataset[] } = {
 		},
 		{
 			year: 2021,
-			id: 'add1242d0e4a705d75fd93fe7754e179'
+			id: 'f9ffacfc690536d81a0a717c730be456'
 		},
 		{
 			year: 2022,
-			id: '6978ef8b35e07ca5e12e263ec5f24ca6'
+			id: 'ad586554a64bab5109675f83bdf86692'
 		},
 		{
 			year: 2023,
-			id: '3504d57c71101d974943410a1403cd1d'
+			id: 'a3879ca5d88fd7f9b3dcc673849723cc'
 		},
 		{
 			year: 2024,
-			id: '23b67271e93a510e1c5fc4075fecfc9c'
+			id: '868b9f6c6286e71bcb45ea0992d5cdff'
 		},
 		{
 			year: 2025,
-			id: 'd5252ef98bfc95ffb6b5152a5783fa70'
+			id: '6b21989538ea91c6e66a954511aa8bb9'
 		},
 		{
 			year: 2026,
-			id: '3f70e55304345faad0aacd2334ece862'
+			id: 'b08ca6fe789fcac1e88fd055a23dffcd'
 		},
 		{
 			year: 2027,
-			id: '6befca9038ea303bfc1319415b51f923'
+			id: '49968b41e89940ff9da64ba8fb4b12b6'
 		},
 		{
 			year: 2028,
-			id: '8e3ff7e2b48a07fe39b99c1e8fb7bab7'
+			id: '203f0ff05d030a253a5bb6350f1db142'
 		},
 		{
 			year: 2029,
-			id: 'f91d5b1a279ebed4daae06d2c3e55da9'
+			id: '9df4a1f87a15ab634dafdea4d82e828d'
 		},
 		{
 			year: 2030,
-			id: '848131f9ba188d9a5b102ee4fbe4fed3'
+			id: '12225a0bc97b522681daed74951bd24f'
 		}
 	]
 };

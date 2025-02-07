@@ -1,5 +1,17 @@
 # @undp-data/svelte-undp-components
 
+## 2.0.4
+
+### Patch Changes
+
+- f70c8af: fix: fixed too much reactivity caused by binding props in Slider and RasterRescale components.
+
+## 2.0.3
+
+### Patch Changes
+
+- 6092700: fix: revert @undp-data/date-picker-svelte to v2.12.1 since it has reference error in geohub
+
 ## 2.0.2
 
 ### Patch Changes
