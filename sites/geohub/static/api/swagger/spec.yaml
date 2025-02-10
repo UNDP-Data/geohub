@@ -3030,40 +3030,6 @@ paths:
           in: query
           name: limit
           description: search limit. Default is 10
-  /token:
-    get:
-      summary: Generate an access token for API
-      responses: {}
-      operationId: get-token
-      description: |
-        Generate an access token for GeoHub APIs. The permission of a token issued will follow the user's permission who issues. This token is only valid within `/api` endpoints. Pages have to be authenticated with SSO through authentication providers.
-
-        Only approved users can specify expiration time with `duration` query param. Otherwise, a token will be expired in an hour as default.
-
-        Regarding to the format of expiration time, please follow the below formats.
-
-        Format used for time span should be a number followed by a unit, such as `5 minutes` or `1 day`.
-
-        Valid units are: 
-        - `sec`, `secs`, `second`, `seconds`, `s`
-        - `minute`, `minutes`, `min`, `mins`, `m`, 
-        - `hour`, `hours`, `hr`, `hrs`, `h`, 
-        - `day`, `days`, `d`, 
-        - `week`, `weeks`, `w`, 
-        - `year`, `years`, `yr`, `yrs`, `y`. 
-
-        It is not possible to specify months. 365.25 days is used as an alias for a year.
-      security:
-        - Azure AD authentication: []
-        - API access token: []
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: duration
-          description: 'The duration, that the token will be valid. Only valid for approved users.'
-      tags:
-        - token
   '/mapstyle/{id}.json':
     parameters:
       - schema:
