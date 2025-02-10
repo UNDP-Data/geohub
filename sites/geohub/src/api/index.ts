@@ -40,7 +40,21 @@ const api = new API(
 			contact: { name: 'jin.igarashi@undp.org', email: 'https://geohub.data.undp.org' }
 		}
 	},
-	'/api'
+	'/api',
+	(r) => {
+		r.registerComponent('securitySchemes', 'Azure AD authentication', {
+			type: 'http',
+			scheme: 'oauth',
+			description: 'Access to /auth/signin to sign in to Azure AD with your UNDP account.'
+		});
+		r.registerComponent('securitySchemes', 'API access token', {
+			type: 'apiKey',
+			name: 'token',
+			in: 'query',
+			description:
+				'API access token to authenticate users. Please get an access token from /api/token endpoint. Or sign in at your browser.'
+		});
+	}
 );
 
 export default api;
