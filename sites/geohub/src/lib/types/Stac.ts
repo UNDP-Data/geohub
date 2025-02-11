@@ -5,7 +5,7 @@ export interface Stac {
 	type: string;
 	providers?: string[];
 	createdat?: string;
-	created_user?: string;
+	createdUser?: string;
 	updatedat?: string;
-	updated_user?: string;
+	updatedUser?: string;
 }
