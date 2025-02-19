@@ -33,7 +33,7 @@ export const Query = z.object({
 export const Error = {
 	400: apiError(400, `Invalid parameters`),
 	403: apiError(403, 'Permission error'),
-	404: apiError(403, 'Not found')
+	404: apiError(404, 'Not found')
 };
 
 export const Modifier: RouteModifier = (c) => {
