@@ -3,7 +3,8 @@ import type { PageLoad } from './$types';
 export const load: PageLoad = async () => {
 	const title = 'API Docs | GeoHub';
 	const content = 'GeoHub API Spec';
-	const spec = '/api/swagger/spec.json';
+	const spec = '/api/openapi.json';
+	// const spec = '/api/swagger/spec.json';
 
 	return {
 		title,

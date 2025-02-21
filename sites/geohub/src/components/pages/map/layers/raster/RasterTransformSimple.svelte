@@ -63,7 +63,7 @@
 			const operator = values[1];
 			const value = Number(values[2]);
 			expression = {
-				band: split[1].trim(),
+				band: split[1]?.trim(),
 				operator: operator,
 				operatorLabel:
 					RasterComparisonOperators.find((o) => o.value === operator)?.text ?? undefined,

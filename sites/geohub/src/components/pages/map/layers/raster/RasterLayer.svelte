@@ -60,6 +60,7 @@
 
 	const rasterInfo: RasterTileMetadata = layer.info as RasterTileMetadata;
 	const isRgbTile = isRgbRaster(rasterInfo.colorinterp as string[]);
+	const productTag = layer.dataset?.properties.tags?.find((t) => t.key === 'product');
 
 	let tabs: Tab[] = $state([
 		{ label: TabNames.STYLE, id: TabNames.STYLE },
@@ -79,7 +80,11 @@
 
 	let activeTab: TabNames = $state(getDefaultTab());
 
-	if (isRgbTile || (rasterInfo?.isMosaicJson === true && rasterInfo?.band_metadata?.length > 1)) {
+	if (
+		isRgbTile ||
+		productTag ||
+		(rasterInfo?.isMosaicJson === true && rasterInfo?.band_metadata?.length > 1)
+	) {
 		tabs = [
 			{ label: TabNames.STYLE, id: TabNames.STYLE },
 			{ label: TabNames.INFO, id: TabNames.INFO }
@@ -128,7 +133,7 @@
 			bind:links={layer.dataset.properties.links}
 		/>
 	</div>
-	{#if !isRgbTile}
+	{#if !isRgbTile || !productTag}
 		<div class="px-4 pb-4" hidden={activeTab !== TabNames.TRANSFORM}>
 			<RasterTransformSimple bind:layer />
 		</div>
