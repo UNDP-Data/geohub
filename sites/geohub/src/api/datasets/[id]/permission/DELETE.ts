@@ -40,7 +40,7 @@ export const Error = {
 	403: appError(403, 'Permission error')
 };
 
-export default new Endpoint({ Param, Query, Output, Modifier }).handle(
+export default new Endpoint({ Param, Query, Output, Modifier, Error }).handle(
 	async (param, { locals }) => {
 		const session = await locals.auth();
 		if (!session) error(403, { message: 'Permission error' });

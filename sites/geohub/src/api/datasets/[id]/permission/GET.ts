@@ -26,21 +26,23 @@ export const Error = {
 	403: appError(403, 'Permission error')
 };
 
-export default new Endpoint({ Param, Output, Modifier }).handle(async (param, { locals }) => {
-	const session = await locals.auth();
-	if (!session) error(403, { message: 'Permission error' });
+export default new Endpoint({ Param, Output, Modifier, Error }).handle(
+	async (param, { locals }) => {
+		const session = await locals.auth();
+		if (!session) error(403, { message: 'Permission error' });
 
-	const user_email = session?.user.email;
+		const user_email = session?.user.email;
 
-	const id = param.id;
+		const id = param.id;
 
-	const exists = await datasetExists(id);
-	if (!exists) {
-		error(404, { message: `No dataset found.` });
+		const exists = await datasetExists(id);
+		if (!exists) {
+			error(404, { message: `No dataset found.` });
+		}
+
+		const dpm = new DatasetPermissionManager(id, user_email);
+		const permissions = await dpm.getAll();
+
+		return permissions;
 	}
-
-	const dpm = new DatasetPermissionManager(id, user_email);
-	const permissions = await dpm.getAll();
-
-	return permissions;
-});
+);

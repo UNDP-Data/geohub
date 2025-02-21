@@ -24,7 +24,7 @@ export const Error = {
 	403: appError(403, 'Permission error')
 };
 
-export default new Endpoint({ Param, Output, Modifier }).handle(async (param) => {
+export default new Endpoint({ Param, Output, Modifier, Error }).handle(async (param) => {
 	const dataset_id = param.id;
 
 	const stars = await getDatasetStarCount(dataset_id);

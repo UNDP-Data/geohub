@@ -710,24 +710,6 @@ paths:
       security:
         - Azure AD authentication: []
         - API access token: []
-  '/datasets/{id}/preview/style.json':
-    parameters:
-      - $ref: '#/components/parameters/dataset_id'
-    get:
-      summary: Get Maplibre style.json for preview map
-      tags:
-        - datasets
-      responses: {}
-      operationId: get-datasets-id-preview-style.json
-      description: |-
-        This endpoint is to create a style.json with default style for the dataset preview.
-
-        If `type` is not specified, the layer type will be assumed by the geometry type of the layer.
-
-        If `layer` is not specified, the first layer (if vector) or the first band (if raster) will be used.
-      parameters:
-        - $ref: '#/components/parameters/maplibre_layer_type_optional'
-        - $ref: '#/components/parameters/maplibre_layer_id_optional'
   '/datasets/{id}/preview/auto/{width}x{height}.{format}':
     parameters:
       - $ref: '#/components/parameters/dataset_id'

@@ -29,32 +29,34 @@ export const Error = {
 	403: appError(403, 'Permission error')
 };
 
-export default new Endpoint({ Param, Output, Modifier }).handle(async (param, { locals }) => {
-	const session = await locals.auth();
-	if (!session) {
-		error(403, { message: 'Permission error' });
+export default new Endpoint({ Param, Output, Modifier, Error }).handle(
+	async (param, { locals }) => {
+		const session = await locals.auth();
+		if (!session) {
+			error(403, { message: 'Permission error' });
+		}
+
+		const dataset_id = param.id;
+		const user_email = session.user.email;
+		const now = new Date().toISOString();
+
+		await db
+			.insert(datasetFavouriteInGeohub)
+			.values({ datasetId: dataset_id, userEmail: user_email, savedat: now })
+			.onConflictDoUpdate({
+				target: [datasetFavouriteInGeohub.datasetId, datasetFavouriteInGeohub.userEmail],
+				set: {
+					savedat: now
+				}
+			});
+
+		const stars = await getDatasetStarCount(dataset_id);
+
+		return {
+			dataset_id,
+			user_email,
+			savedat: now,
+			no_stars: stars
+		};
 	}
-
-	const dataset_id = param.id;
-	const user_email = session.user.email;
-	const now = new Date().toISOString();
-
-	await db
-		.insert(datasetFavouriteInGeohub)
-		.values({ datasetId: dataset_id, userEmail: user_email, savedat: now })
-		.onConflictDoUpdate({
-			target: [datasetFavouriteInGeohub.datasetId, datasetFavouriteInGeohub.userEmail],
-			set: {
-				savedat: now
-			}
-		});
-
-	const stars = await getDatasetStarCount(dataset_id);
-
-	return {
-		dataset_id,
-		user_email,
-		savedat: now,
-		no_stars: stars
-	};
-});
+);

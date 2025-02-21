@@ -28,25 +28,27 @@ export const Error = {
 	403: appError(403, 'Permission error')
 };
 
-export default new Endpoint({ Param, Output, Modifier }).handle(async (param, { locals }) => {
-	const session = await locals.auth();
-	if (!session) {
-		error(403, { message: 'Permission error' });
+export default new Endpoint({ Param, Output, Modifier, Error }).handle(
+	async (param, { locals }) => {
+		const session = await locals.auth();
+		if (!session) {
+			error(403, { message: 'Permission error' });
+		}
+
+		const dataset_id = param.id;
+		const user_email = session.user.email;
+
+		await db
+			.delete(datasetFavouriteInGeohub)
+			.where(
+				sql`${datasetFavouriteInGeohub.datasetId} = ${dataset_id} AND ${datasetFavouriteInGeohub.userEmail} = ${user_email}`
+			);
+
+		const stars = await getDatasetStarCount(dataset_id);
+
+		return {
+			dataset_id,
+			no_stars: stars
+		};
 	}
-
-	const dataset_id = param.id;
-	const user_email = session.user.email;
-
-	await db
-		.delete(datasetFavouriteInGeohub)
-		.where(
-			sql`${datasetFavouriteInGeohub.datasetId} = ${dataset_id} AND ${datasetFavouriteInGeohub.userEmail} = ${user_email}`
-		);
-
-	const stars = await getDatasetStarCount(dataset_id);
-
-	return {
-		dataset_id,
-		no_stars: stars
-	};
-});
+);
