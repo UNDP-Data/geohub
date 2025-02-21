@@ -9,21 +9,14 @@ import { ALGORITHM_TAG_KEY } from '$components/pages/map/data/RasterAlgorithmExp
 import { env } from '$env/dynamic/private';
 import { error } from '@sveltejs/kit';
 
-const LAYER_TYPES: [string, ...string[]] = [
-	'raster',
-	'fill',
-	'symbol',
-	'line',
-	'circle',
-	'heatmap'
-];
+const LAYER_TYPES = ['raster', 'fill', 'symbol', 'line', 'circle', 'heatmap'];
 
 export const Output = z.custom<DatasetDefaultLayerStyle>().describe('default layer style');
 
 export const Param = z.object({
 	layer: z.string().describe('Band name if it is raster, layer ID if it is vector.'),
 	type: z
-		.enum(LAYER_TYPES)
+		.enum(['raster', 'fill', 'symbol', 'line', 'circle', 'heatmap'])
 		.describe('Maplibre layer type (fill, line, symbol, circle, heatmap, raster)')
 });
 
@@ -54,7 +47,7 @@ export const Error = {
 	400: appError(400, 'Invalid parameter')
 };
 
-export default new Endpoint({ Param, Query, Input, Output, Modifier, Error }).handle(
+export default new Endpoint({ Param, Query, Output, Modifier, Error }).handle(
 	async (param, { request, url, fetch }) => {
 		const layer_id = param.layer;
 		const layer_type = param.type;
