@@ -1,5 +1,14 @@
 # geohub
 
+## 1.22.38
+
+### Patch Changes
+
+- b3585d6: fix: update bounds for mosaicjson if tilejson.bounds property is available
+- b005c29: fix: replace http to https for titiler tilejson api's tile url if it starts with http, but not localhost. This is required because of our kubernetes has an issue of SSL certificate.
+- a5e963c: fix: add slode terrain algorithm and operation algorithm to algo explorer component
+- a694d4f: fix: add tilematrixid (WebMercatorQuad) for mosaicjson tilejson endpoint.
+
 ## 1.22.37
 
 ### Patch Changes
