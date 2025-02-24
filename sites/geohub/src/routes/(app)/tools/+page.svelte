@@ -53,7 +53,9 @@
 		{ title: 'Tools', type: 'Tools' }
 	]);
 
-	let terrainAlgoIds = ['contours', 'hillshade', 'terrainrgb', 'terrarium'];
+	let terrainAlgoIds = Object.keys(algorithmCategory)
+		.filter((k) => algorithmCategory[k] === 'terrain')
+		.map((k) => k.toLowerCase());
 
 	const handleBreadcrumbClicked = (page: BreadcrumbPage) => {
 		if (breadcrumbs?.length > 0) {
