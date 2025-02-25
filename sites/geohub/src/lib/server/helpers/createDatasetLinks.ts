@@ -185,7 +185,7 @@ export const createDatasetLinks = async (
 			feature.properties.links.push({
 				rel: 'tilejson',
 				type: 'application/json',
-				href: `${titilerUrl.replace('cog', 'mosaicjson')}/tilejson.json?url=${encodeURIComponent(
+				href: `${titilerUrl.replace('cog', 'mosaicjson')}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
 					feature.properties.url
 				)}`
 			});

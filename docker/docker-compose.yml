@@ -58,7 +58,7 @@ services:
       - 25432:5432
 
   cogserver:
-    image: ghcr.io/undp-data/cogserver:v0.4.0
+    image: ghcr.io/undp-data/cogserver:v0.5.0
     container_name: cogserver
     restart: unless-stopped
     ports:
