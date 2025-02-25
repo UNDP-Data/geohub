@@ -57,7 +57,15 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 				throw new Error(error.message ?? error.cause.message ?? res.statusText);
 			}
 			const tilejson = await res.json();
-			tileLinkUrl = tilejson.tiles[0];
+			tileLinkUrl = tilejson.tiles[0] as string;
+			const _url = new URL(tileLinkUrl);
+			if (_url.protocol === 'http:' && _url.hostname !== 'localhost') {
+				// hostname is not localhost, but its protocol is http, convert it to https
+				tileLinkUrl = tileLinkUrl.replace('http://', 'https://');
+			}
+			if (tilejson.bounds) {
+				this.metadata['bounds'] = tilejson.bounds;
+			}
 		}
 		const tilesUrl = new URL(tileLinkUrl);
 		let params = tilesUrl.searchParams;
