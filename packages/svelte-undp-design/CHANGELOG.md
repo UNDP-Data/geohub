@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 3.0.3
+
+### Patch Changes
+
+- 621bd48: fix: removed unnecessary aria-hidden from footer to avoid Blocked aria-hidden error
+
 ## 3.0.2
 
 ### Patch Changes
