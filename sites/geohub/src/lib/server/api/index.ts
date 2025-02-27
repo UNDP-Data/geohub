@@ -1,6 +1,6 @@
 import { API } from 'sveltekit-api';
-import packageJson from '../../../../package.json' assert { type: 'json' };
-const { version } = packageJson;
+import { version } from '$app/environment';
+const versionInfo = JSON.parse(version);
 
 const description = `
 This documentation describes GeoHub's endpoints specification.
@@ -31,13 +31,13 @@ const api = new API(
 		openapi: '3.0.0',
 		info: {
 			title: 'GeoHub API specification',
-			version: version,
+			version: versionInfo.version,
 			description: description,
 			license: {
-				name: 'BSD-3-Clause license',
+				name: versionInfo.license,
 				url: 'https://github.com/UNDP-Data/geohub/blob/develop/LICENSE'
 			},
-			contact: { name: 'jin.igarashi@undp.org', email: 'https://geohub.data.undp.org' }
+			contact: { name: versionInfo.author, url: versionInfo.homepage }
 		}
 	},
 	'/api',
