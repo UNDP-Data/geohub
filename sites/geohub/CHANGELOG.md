@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.40
+
+### Patch Changes
+
+- 1bf06a5: refactor: rewrite GeoHub api endpoints with sveltekit-api to generate open api documentation automatically.
+
 ## 1.22.39
 
 ### Patch Changes
