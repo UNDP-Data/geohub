@@ -18,7 +18,7 @@ const handlePrimary: Handle = async ({ event, resolve }) => {
 		return new Response(undefined, {
 			status: 308,
 			headers: {
-				location: redirects[pathname]
+				location: redirects[pathname as keyof typeof redirects]
 			}
 		});
 	} else if (pathname.startsWith('/map/')) {
@@ -37,6 +37,11 @@ const handlePrimary: Handle = async ({ event, resolve }) => {
 
 // https://snippets.khromov.se/configure-cors-in-sveltekit-to-access-your-api-routes-from-a-different-host/
 export const handleCORS: Handle = async ({ resolve, event }) => {
+	// ignore .svelte endpoints
+	if (event.url.pathname.endsWith('.svelte')) {
+		return new Response();
+	}
+
 	// Apply CORS header for API routes
 	if (event.url.pathname.startsWith('/api')) {
 		// Required for CORS to work
@@ -58,7 +63,7 @@ export const handleCORS: Handle = async ({ resolve, event }) => {
 	return response;
 };
 
-const handleAccessToken = async ({ event, resolve }) => {
+const handleAccessToken: Handle = async ({ event, resolve }) => {
 	const { url } = event;
 
 	if (
@@ -76,6 +81,8 @@ const handleAccessToken = async ({ event, resolve }) => {
 			if (payload) {
 				// update locals.auth function to return payload from token
 				event.locals = {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
 					auth: async () => {
 						return {
 							user: {

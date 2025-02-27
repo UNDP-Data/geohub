@@ -153,8 +153,6 @@
 										id={panelId}
 										class="footer-panel desktop-visible"
 										aria-label={itemId}
-										aria-hidden={!panelExpanded[itemId] ||
-											(panelExpanded[itemId] && panelExpanded[itemId] === false)}
 										role="region"
 										style="display: {!isMobile
 											? 'block'
