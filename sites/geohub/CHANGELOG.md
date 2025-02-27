@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.39
+
+### Patch Changes
+
+- f46b9a9: fix: fixed hooks.server.ts to avoid sveltekit error for .svelte URL in handleCORS
+
 ## 1.22.38
 
 ### Patch Changes
