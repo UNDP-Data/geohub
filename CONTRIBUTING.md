@@ -213,12 +213,11 @@ This GeoHub repo is using monorepo structure to manage several Javascript packag
   - config: There are constant variables for app, and also user config settings.
   - helper: Javascript's helper functions used in frontend and backend are here
   - server: Javascript funcitons used in only backend are here.
+    - api: it manages all server endpoints. open api document is generated from this folder.
   - stac: STAC server configulations
   - types: All interfaces should be filed in this repo.
 - routes: It manages APIs and Pages.
   - (app): It manages pages which has both header and footer.
-  - (auth): It manages SignIn page.
-  - (map): It manages map pages with only a header, and also dashboard pages.
   - api: GeoHub API codes are here.
   - +layout.svelte: This will be used across (app), (auth) and (map). See the [advanced layout](https://kit.svelte.dev/docs/advanced-routing#advanced-layouts) in official sveltekit doc.
 - stores: it manages svelte store. We should not use stores globally!! Use [Context API](https://learn.svelte.dev/tutorial/context-api) together with store in the parent component.

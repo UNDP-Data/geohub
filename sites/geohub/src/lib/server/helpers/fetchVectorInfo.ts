@@ -3,10 +3,14 @@ import Pbf from 'pbf';
 import arraystat from 'arraystat';
 import { mean, std, median } from 'mathjs';
 import { UniqueValueThreshold } from '$lib/config/AppConfig';
+import type {
+	VectorLayerTileStatAttribute,
+	VectorLayerTileStatLayer
+} from '@undp-data/svelte-undp-components';
 
 // fetch vector tiles info from
 export const fetchVectorTileInfo = async (path: string, layerName: string) => {
-	let attributesArray = [];
+	let attributesArray: VectorLayerTileStatAttribute[] = [];
 
 	let pbf: Pbf;
 
@@ -31,7 +35,7 @@ export const fetchVectorTileInfo = async (path: string, layerName: string) => {
 		attributesArray = [];
 	}
 
-	let geometryType: number;
+	let geometryType = 1;
 	const propsObj = {};
 
 	// The layer._keys is a list with all the available attributes in the layer.
@@ -106,11 +110,13 @@ export const fetchVectorTileInfo = async (path: string, layerName: string) => {
 		}
 	});
 
-	return {
+	const result: VectorLayerTileStatLayer = {
 		layer: layer.name,
 		geometry: geometryType === 1 ? 'Point' : geometryType === 2 ? 'LineString' : 'Polygon',
 		count: layer.length,
 		attributeCount: attributesArray.length,
 		attributes: attributesArray
 	};
+
+	return result;
 };

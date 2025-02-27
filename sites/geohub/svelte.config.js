@@ -18,7 +18,9 @@ const config = {
 		}),
 		alias: {
 			$components: resolve('./src/components'),
-			$stores: resolve('./src/stores/index.ts')
+			$stores: resolve('./src/stores/index.ts'),
+			'$api/*': './src/lib/server/api/*',
+			$api: './src/lib/server/api/index'
 		},
 		version: {
 			name: JSON.stringify({
