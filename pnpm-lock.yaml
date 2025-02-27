@@ -52,8 +52,8 @@ importers:
         specifier: ^2.46.1
         version: 2.46.1(eslint@9.19.0)(svelte@5.19.9)
       globals:
-        specifier: ^15.14.0
-        version: 15.14.0
+        specifier: ^16.0.0
+        version: 16.0.0
       pmtiles:
         specifier: ^4.2.1
         version: 4.2.1
@@ -128,8 +128,8 @@ importers:
         specifier: ^2.46.1
         version: 2.46.1(eslint@9.19.0)(svelte@5.19.9)
       globals:
-        specifier: ^15.14.0
-        version: 15.14.0
+        specifier: ^16.0.0
+        version: 16.0.0
       prettier:
         specifier: ^3.4.2
         version: 3.4.2
@@ -222,8 +222,8 @@ importers:
         specifier: ^2.46.1
         version: 2.46.1(eslint@9.19.0)(svelte@5.19.9)
       globals:
-        specifier: ^15.14.0
-        version: 15.14.0
+        specifier: ^16.0.0
+        version: 16.0.0
       prettier:
         specifier: ^3.4.2
         version: 3.4.2
@@ -316,8 +316,8 @@ importers:
         specifier: ^2.46.1
         version: 2.46.1(eslint@9.19.0)(svelte@5.19.9)
       globals:
-        specifier: ^15.14.0
-        version: 15.14.0
+        specifier: ^16.0.0
+        version: 16.0.0
       pmtiles:
         specifier: ^4.2.1
         version: 4.2.1
@@ -482,8 +482,8 @@ importers:
         specifier: ^2.46.1
         version: 2.46.1(eslint@9.19.0)(svelte@5.19.9)
       globals:
-        specifier: ^15.14.0
-        version: 15.14.0
+        specifier: ^16.0.0
+        version: 16.0.0
       jsdom:
         specifier: ^26.0.0
         version: 26.0.0
@@ -621,8 +621,8 @@ importers:
         specifier: ^2.46.1
         version: 2.46.1(eslint@9.19.0)(svelte@5.19.9)
       globals:
-        specifier: ^15.14.0
-        version: 15.14.0
+        specifier: ^16.0.0
+        version: 16.0.0
       jsdom:
         specifier: ^26.0.0
         version: 26.0.0
@@ -893,8 +893,8 @@ importers:
         specifier: ^7.3.2
         version: 7.3.2
       globals:
-        specifier: ^15.14.0
-        version: 15.14.0
+        specifier: ^16.0.0
+        version: 16.0.0
       hex-to-css-filter:
         specifier: ^5.4.0
         version: 5.4.0
@@ -4018,8 +4018,8 @@ packages:
     resolution: {integrity: sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ==}
     engines: {node: '>=18'}
 
-  globals@15.14.0:
-    resolution: {integrity: sha512-OkToC372DtlQeje9/zHIo5CT8lRP/FUgEOKBEhU4e0abL7J7CD24fD9ohiLN5hagG/kWCYj4K5oaxxtj2Z0Dig==}
+  globals@16.0.0:
+    resolution: {integrity: sha512-iInW14XItCXET01CQFqudPOWP2jYMl7T+QRQT+UNcR/iQncN/F0UNpgd76iFkBPgNQb4+X3LV9tLJYzwh+Gl3A==}
     engines: {node: '>=18'}
 
   globby@11.1.0:
@@ -9434,7 +9434,7 @@ snapshots:
 
   globals@14.0.0: {}
 
-  globals@15.14.0: {}
+  globals@16.0.0: {}
 
   globby@11.1.0:
     dependencies:
