@@ -404,7 +404,7 @@ class StorymapManager {
 	) {
 		const where = this.getWhereSql(query, accessLevel, onlyStar, user_email, mydataOnly);
 
-		const sql = this.getSelectSql(is_superuser, user_email, true, where);
+		const sql = this.getSelectSql(is_superuser, user_email, true, where, true);
 
 		const res = await db.execute(sql);
 		if (res.length === 0) {
@@ -500,7 +500,7 @@ class StorymapManager {
 			a.id = UUID('${id}')
 		`);
 
-		const mainSql = this.getSelectSql(is_superuser, user_email as string, false, where);
+		const mainSql = this.getSelectSql(is_superuser, user_email as string, false, where, false);
 
 		const res = await db.execute(mainSql);
 
