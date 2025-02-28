@@ -354,10 +354,6 @@
 
 						{#each geohubAlgos as name}
 							{@const algo = algorithms[name]}
-							<!--{#if algo.title === 'Flood detection '}-->
-							<!--	&lt;!&ndash;TODO: Remove this once flood detection algorithm is complete&ndash;&gt;-->
-							<!--	<span></span>-->
-							<!--{:else}-->
 							<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 								<Card
 									linkName="Explore datasets"
@@ -376,7 +372,6 @@
 									}}
 								/>
 							</div>
-							<!--{/if}-->
 						{/each}
 					</div>
 

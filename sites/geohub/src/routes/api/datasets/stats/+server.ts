@@ -1,7 +1,4 @@
-import type { RequestHandler } from './$types';
-import { getDatasetStats } from '$lib/server/helpers';
+import api from '$api';
+import type { RequestEvent, RequestHandler } from './$types';
 
-export const GET: RequestHandler = async () => {
-	const cards = await getDatasetStats();
-	return new Response(JSON.stringify(cards));
-};
+export const GET: RequestHandler = (event: RequestEvent) => api.handle(event);

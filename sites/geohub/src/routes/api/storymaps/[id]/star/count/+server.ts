@@ -1,15 +1,4 @@
-import type { RequestHandler } from './$types';
-import { getStoryStarCount } from '$lib/server/helpers';
+import api from '$api';
+import type { RequestEvent, RequestHandler } from './$types';
 
-export const GET: RequestHandler = async ({ params }) => {
-	const storymap_id = params.id;
-
-	const stars = await getStoryStarCount(storymap_id);
-
-	const res = {
-		storymap_id,
-		no_stars: stars
-	};
-
-	return new Response(JSON.stringify(res));
-};
+export const GET: RequestHandler = (event: RequestEvent) => api.handle(event);
