@@ -1,5 +1,13 @@
 # geohub
 
+## 1.22.41
+
+### Patch Changes
+
+- f240871: fix: fixed /tags api to accepet any string value for tag query param.
+- f2964ee: fix: added 'exclude_chapter' to /api/storymaps endpoint to remove chapters from search result as default. so it can make the performance a bit faster since chapters may contain massive data and images.
+- f240871: fix: fixed default access level settings for storymaps endpoint.
+
 ## 1.22.40
 
 ### Patch Changes
