@@ -1,6 +1,6 @@
 import { Endpoint, z, type RouteModifier, error as appError } from 'sveltekit-api';
 import { AddSecurictyModifier } from '$api/securityModifier';
-import { Permission } from '$lib/config/AppConfig';
+import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import {
 	createDatasetLinks,
 	createDatasetSearchWhereExpression,
@@ -92,7 +92,17 @@ export const Query = z.object({
 		.enum(['true', 'false'])
 		.optional()
 		.default('false')
-		.describe('if true, only fetch datasets owned by login user')
+		.describe('if true, only fetch datasets owned by login user'),
+	accesslevel: z
+		.enum([
+			`${AccessLevel.ALL}`,
+			`${AccessLevel.PRIVATE}`,
+			`${AccessLevel.ORGANIZATION}`,
+			`${AccessLevel.PUBLIC}`
+		])
+		.optional()
+		.default(`${AccessLevel.ALL}`)
+		.describe('Access Level published to -1: All, 1: login user 2: UNDP 3: public')
 });
 
 const description = `

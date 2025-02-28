@@ -7,22 +7,26 @@ import { isSuperuser } from '$lib/server/helpers/isSuperuser';
 
 export const Query = z.object({
 	key: z
-		.enum([
-			'extent',
-			'granularity',
-			'keyword',
-			'layertype',
-			'resolution',
-			'schema',
-			'sdg_goal',
-			'sdg_target',
-			'stac',
-			'theme',
-			'type',
-			'year'
-		])
+		.string()
 		.optional()
-		.describe('Optional parameter to filter by key'),
+		.describe('Optional parameter to filter by key')
+		.openapi({
+			examples: [
+				'extent',
+				'granularity',
+				'keyword',
+				'layertype',
+				'resolution',
+				'schema',
+				'sdg_goal',
+				'sdg_target',
+				'stac',
+				'theme',
+				'type',
+				'year',
+				'algorithm'
+			]
+		}),
 	url: z
 		.string()
 		.optional()
