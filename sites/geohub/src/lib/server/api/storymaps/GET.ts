@@ -46,7 +46,14 @@ export const Query = z.object({
 		.string()
 		.optional()
 		.default('false')
-		.describe(`If true, only search for signed user's storymaps. default is false`)
+		.describe(`If true, only search for signed user's storymaps. default is false`),
+	exclude_chapter: z
+		.enum(['true', 'false'])
+		.optional()
+		.default('true')
+		.describe(
+			'exclude chapters from the result if enabled. Default is true. If it is set to false, returning all chapters in the search result which may make the performance slow.'
+		)
 });
 
 export const Modifier: RouteModifier = (c) => {
@@ -127,6 +134,9 @@ export default new Endpoint({ Query, Output, Modifier }).handle(async (param, { 
 		}
 	}
 
+	const _excludeChapter = param.exclude_chapter ?? 'true';
+	const excludeChapter = _excludeChapter.toLowerCase() === 'true';
+
 	const sm = new StorymapManager();
 	const stories = await sm.search(
 		query,
@@ -138,7 +148,8 @@ export default new Endpoint({ Query, Output, Modifier }).handle(async (param, { 
 		sortOrder,
 		is_superuser,
 		user_email,
-		mydataOnly
+		mydataOnly,
+		excludeChapter
 	);
 
 	const nextUrl = new URL(url.toString());

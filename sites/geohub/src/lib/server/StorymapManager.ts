@@ -56,7 +56,8 @@ class StorymapManager {
 		is_superuser: boolean,
 		user_email: string,
 		isCount = false,
-		where?: SQL
+		where?: SQL,
+		excludeChapter = false
 	) => {
 		const sqlChunks: SQL[] = [];
 		sqlChunks.push(
@@ -99,6 +100,10 @@ class StorymapManager {
 			a.updatedat, 
 			a.updated_user,
 			CASE WHEN z.no_stars is not null THEN cast(z.no_stars as integer) ELSE 0 END as no_stars,
+			${
+				excludeChapter === true
+					? `'{}'::integer[] as chapters`
+					: `
 			${
 				user_email
 					? `
@@ -151,7 +156,9 @@ class StorymapManager {
 					c.updatedat, 
 					c.updated_user
 				) AS p
-			)) ORDER BY b.sequence)) AS chapters
+			)) ORDER BY b.sequence)) AS chapters	
+			`
+			}
 			`)
 			);
 		}
@@ -457,12 +464,13 @@ class StorymapManager {
 		sortOrder: 'asc' | 'desc',
 		is_superuser: boolean,
 		user_email: string,
-		mydataOnly: boolean
+		mydataOnly: boolean,
+		excludeChapter: boolean = false
 	) {
 		const where = this.getWhereSql(query, accessLevel, onlyStar, user_email, mydataOnly);
 
 		const sqlChunks: SQL[] = [];
-		const mainSql = this.getSelectSql(is_superuser, user_email, false, where);
+		const mainSql = this.getSelectSql(is_superuser, user_email, false, where, excludeChapter);
 		sqlChunks.push(mainSql);
 
 		sqlChunks.push(
