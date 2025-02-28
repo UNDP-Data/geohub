@@ -35,7 +35,7 @@ export const Query = z.object({
 			`${AccessLevel.PUBLIC}`
 		])
 		.optional()
-		.default(`${AccessLevel.PRIVATE}`)
+		.default(`${AccessLevel.ALL}`)
 		.describe('Access Level published to -1: All, 1: login user 2: UNDP 3: public'),
 	staronly: z
 		.string()
