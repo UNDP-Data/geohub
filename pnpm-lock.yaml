@@ -422,8 +422,8 @@ importers:
         specifier: ^8.5.3
         version: 8.5.3(storybook@8.5.3(prettier@3.4.2))
       '@storybook/addon-svelte-csf':
-        specifier: 5.0.0-next.24
-        version: 5.0.0-next.24(@storybook/svelte@8.5.3(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9))(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)))(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0))
+        specifier: 5.0.0-next.25
+        version: 5.0.0-next.25(@storybook/svelte@8.5.3(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9))(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)))(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0))
       '@storybook/blocks':
         specifier: ^8.5.3
         version: 8.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.5.3(prettier@3.4.2))
@@ -561,8 +561,8 @@ importers:
         specifier: ^8.5.3
         version: 8.5.3(storybook@8.5.3(prettier@3.4.2))
       '@storybook/addon-svelte-csf':
-        specifier: 5.0.0-next.24
-        version: 5.0.0-next.24(@storybook/svelte@8.5.3(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9))(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)))(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0))
+        specifier: 5.0.0-next.25
+        version: 5.0.0-next.25(@storybook/svelte@8.5.3(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9))(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)))(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0))
       '@storybook/blocks':
         specifier: ^8.5.3
         version: 8.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.5.3(prettier@3.4.2))
@@ -2257,11 +2257,12 @@ packages:
     peerDependencies:
       storybook: ^8.5.3
 
-  '@storybook/addon-svelte-csf@5.0.0-next.24':
-    resolution: {integrity: sha512-WQQNc3WT0WvVgxGSGt7I7ME/OmMvhsXoDy2GBtMNbRJU6nsDt8uo9btIq6PgN/VwwfslJ4/ynqOR66KF2Aktdg==}
+  '@storybook/addon-svelte-csf@5.0.0-next.25':
+    resolution: {integrity: sha512-AavdnBC9pIXNG2+JpWD8J+8LyECgbxowwm8qaKsQyPhGUrhKzrBt3sAw3EdvjDJcOJIHQl6wKNJGsYl04CFdTA==}
     peerDependencies:
       '@storybook/svelte': ^0.0.0-0 || ^8.0.0 || ^9.0.0-0
       '@sveltejs/vite-plugin-svelte': ^4.0.0 || ^5.0.0
+      storybook: ^0.0.0-0 || ^8.0.0 || ^9.0.0-0
       svelte: ^5.0.0
       vite: ^5.0.0 || ^6.0.0
 
@@ -2316,11 +2317,6 @@ packages:
 
   '@storybook/csf@0.1.13':
     resolution: {integrity: sha512-7xOOwCLGB3ebM87eemep89MYRFTko+D8qE7EdAAq74lgdqRR5cOUtYWJLjO2dLtP94nqoOdHJo6MdLLKzg412Q==}
-
-  '@storybook/docs-tools@8.5.3':
-    resolution: {integrity: sha512-9vHwJ+Gu9XMCLWXWxohQxKsAsc/f5s1hhKhvl5mYiI/uuubkYmzqUL1fUNo3JIBdh9IdGAIhcA2p2i4ldnj22A==}
-    peerDependencies:
-      storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
 
   '@storybook/global@5.0.0':
     resolution: {integrity: sha512-FcOqPAXACP0I3oJ/ws6/rrPT9WGhu915Cg8D02a9YxLo0DE9zI+a9A5gRGvmQ09fiWPukqI8ZAEoQEdWUKMQdQ==}
@@ -2390,11 +2386,6 @@ packages:
 
   '@storybook/theming@8.5.3':
     resolution: {integrity: sha512-Jvzw+gT1HNarkJo21WZBq5pU89qDN8u/pD3woSh/1c2h5RS6UylWjQHotPFpcBIQiUSrDFtvCU9xugJm4MD0+w==}
-    peerDependencies:
-      storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-
-  '@storybook/types@8.5.3':
-    resolution: {integrity: sha512-p0afNyToSIDXj/Lt6gZrM6AN4gTQu+Z5v6LIn5nqzwWYE87cLHx/hCoY172/kXi5HugS5TIU5bfAihREY8qg/g==}
     peerDependencies:
       storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
 
@@ -7397,24 +7388,22 @@ snapshots:
       storybook: 8.5.3(prettier@3.4.2)
       ts-dedent: 2.2.0
 
-  '@storybook/addon-svelte-csf@5.0.0-next.24(@storybook/svelte@8.5.3(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9))(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)))(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0))':
+  '@storybook/addon-svelte-csf@5.0.0-next.25(@storybook/svelte@8.5.3(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9))(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)))(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0))':
     dependencies:
       '@storybook/csf': 0.1.13
-      '@storybook/docs-tools': 8.5.3(storybook@8.5.3(prettier@3.4.2))
       '@storybook/svelte': 8.5.3(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9)
-      '@storybook/types': 8.5.3(storybook@8.5.3(prettier@3.4.2))
       '@sveltejs/vite-plugin-svelte': 5.0.3(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0))
       dedent: 1.5.3
       es-toolkit: 1.32.0
       esrap: 1.4.3
       magic-string: 0.30.17
+      storybook: 8.5.3(prettier@3.4.2)
       svelte: 5.19.9
       svelte-ast-print: 0.4.2(svelte@5.19.9)
       vite: 6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)
       zimmerframe: 1.1.2
     transitivePeerDependencies:
       - babel-plugin-macros
-      - storybook
 
   '@storybook/addon-toolbars@8.5.3(storybook@8.5.3(prettier@3.4.2))':
     dependencies:
@@ -7479,10 +7468,6 @@ snapshots:
   '@storybook/csf@0.1.13':
     dependencies:
       type-fest: 2.19.0
-
-  '@storybook/docs-tools@8.5.3(storybook@8.5.3(prettier@3.4.2))':
-    dependencies:
-      storybook: 8.5.3(prettier@3.4.2)
 
   '@storybook/global@5.0.0': {}
 
@@ -7595,10 +7580,6 @@ snapshots:
       storybook: 8.5.3(prettier@3.4.2)
 
   '@storybook/theming@8.5.3(storybook@8.5.3(prettier@3.4.2))':
-    dependencies:
-      storybook: 8.5.3(prettier@3.4.2)
-
-  '@storybook/types@8.5.3(storybook@8.5.3(prettier@3.4.2))':
     dependencies:
       storybook: 8.5.3(prettier@3.4.2)
 
