@@ -422,8 +422,8 @@ importers:
         specifier: ^8.5.3
         version: 8.5.3(storybook@8.5.3(prettier@3.4.2))
       '@storybook/addon-svelte-csf':
-        specifier: 5.0.0-next.23
-        version: 5.0.0-next.23(@storybook/svelte@8.5.3(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9))(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)))(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0))
+        specifier: 5.0.0-next.27
+        version: 5.0.0-next.27(@storybook/svelte@8.5.3(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9))(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)))(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0))
       '@storybook/blocks':
         specifier: ^8.5.3
         version: 8.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.5.3(prettier@3.4.2))
@@ -561,8 +561,8 @@ importers:
         specifier: ^8.5.3
         version: 8.5.3(storybook@8.5.3(prettier@3.4.2))
       '@storybook/addon-svelte-csf':
-        specifier: 5.0.0-next.23
-        version: 5.0.0-next.23(@storybook/svelte@8.5.3(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9))(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)))(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0))
+        specifier: 5.0.0-next.27
+        version: 5.0.0-next.27(@storybook/svelte@8.5.3(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9))(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)))(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0))
       '@storybook/blocks':
         specifier: ^8.5.3
         version: 8.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.5.3(prettier@3.4.2))
@@ -709,8 +709,8 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0
       drizzle-orm:
-        specifier: ^0.39.2
-        version: 0.39.2(@types/pg@8.11.11)(@types/react@19.0.2)(postgres@3.4.5)(react@18.3.1)
+        specifier: ^0.40.0
+        version: 0.40.0(@types/pg@8.11.11)(postgres@3.4.5)
       flatgeobuf:
         specifier: ^3.36.0
         version: 3.36.0
@@ -728,8 +728,8 @@ importers:
         version: 3.4.5
     devDependencies:
       '@auth/core':
-        specifier: ^0.37.4
-        version: 0.37.4
+        specifier: ^0.38.0
+        version: 0.38.0
       '@auth/sveltekit':
         specifier: ^1.7.4
         version: 1.7.4(@sveltejs/kit@2.17.1(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)))(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)))(svelte@5.19.9)
@@ -905,8 +905,8 @@ importers:
         specifier: ^17.13.3
         version: 17.13.3
       jose:
-        specifier: ^5.9.6
-        version: 5.9.6
+        specifier: ^6.0.0
+        version: 6.0.8
       js-yaml:
         specifier: ^4.1.0
         version: 4.1.0
@@ -1041,6 +1041,20 @@ packages:
 
   '@auth/core@0.37.4':
     resolution: {integrity: sha512-HOXJwXWXQRhbBDHlMU0K/6FT1v+wjtzdKhsNg0ZN7/gne6XPsIrjZ4daMcFnbq0Z/vsAbYBinQhhua0d77v7qw==}
+    peerDependencies:
+      '@simplewebauthn/browser': ^9.0.1
+      '@simplewebauthn/server': ^9.0.2
+      nodemailer: ^6.8.0
+    peerDependenciesMeta:
+      '@simplewebauthn/browser':
+        optional: true
+      '@simplewebauthn/server':
+        optional: true
+      nodemailer:
+        optional: true
+
+  '@auth/core@0.38.0':
+    resolution: {integrity: sha512-ClHl44x4cY3wfJmHLpW+XrYqED0fZIzbHmwbExltzroCjR5ts3DLTWzADRba8mJFYZ8JIEJDa+lXnGl0E9Bl7Q==}
     peerDependencies:
       '@simplewebauthn/browser': ^9.0.1
       '@simplewebauthn/server': ^9.0.2
@@ -2257,11 +2271,12 @@ packages:
     peerDependencies:
       storybook: ^8.5.3
 
-  '@storybook/addon-svelte-csf@5.0.0-next.23':
-    resolution: {integrity: sha512-GAdvA1f5wMhfrkP9znwDZzBFEopkELTRz8US+5XqucYHFfATiJIOALB+dW+CsUuknsfPxaA/Yqz9314ZYrT4iQ==}
+  '@storybook/addon-svelte-csf@5.0.0-next.27':
+    resolution: {integrity: sha512-iWEg084pWy2m9Z7jLDg+zXS8cjA2eRBrLe127KV9P1RYtyYzh45ALN72wVNoHmWzLNQl2CAh0ggTCKjMHHEjRg==}
     peerDependencies:
-      '@storybook/svelte': ^8.0.0
+      '@storybook/svelte': ^0.0.0-0 || ^8.2.0 || ^9.0.0-0
       '@sveltejs/vite-plugin-svelte': ^4.0.0 || ^5.0.0
+      storybook: ^0.0.0-0 || ^8.2.0 || ^9.0.0-0
       svelte: ^5.0.0
       vite: ^5.0.0 || ^6.0.0
 
@@ -2316,11 +2331,6 @@ packages:
 
   '@storybook/csf@0.1.13':
     resolution: {integrity: sha512-7xOOwCLGB3ebM87eemep89MYRFTko+D8qE7EdAAq74lgdqRR5cOUtYWJLjO2dLtP94nqoOdHJo6MdLLKzg412Q==}
-
-  '@storybook/docs-tools@8.5.3':
-    resolution: {integrity: sha512-9vHwJ+Gu9XMCLWXWxohQxKsAsc/f5s1hhKhvl5mYiI/uuubkYmzqUL1fUNo3JIBdh9IdGAIhcA2p2i4ldnj22A==}
-    peerDependencies:
-      storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
 
   '@storybook/global@5.0.0':
     resolution: {integrity: sha512-FcOqPAXACP0I3oJ/ws6/rrPT9WGhu915Cg8D02a9YxLo0DE9zI+a9A5gRGvmQ09fiWPukqI8ZAEoQEdWUKMQdQ==}
@@ -2390,11 +2400,6 @@ packages:
 
   '@storybook/theming@8.5.3':
     resolution: {integrity: sha512-Jvzw+gT1HNarkJo21WZBq5pU89qDN8u/pD3woSh/1c2h5RS6UylWjQHotPFpcBIQiUSrDFtvCU9xugJm4MD0+w==}
-    peerDependencies:
-      storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-
-  '@storybook/types@8.5.3':
-    resolution: {integrity: sha512-p0afNyToSIDXj/Lt6gZrM6AN4gTQu+Z5v6LIn5nqzwWYE87cLHx/hCoY172/kXi5HugS5TIU5bfAihREY8qg/g==}
     peerDependencies:
       storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
 
@@ -3495,8 +3500,8 @@ packages:
     resolution: {integrity: sha512-B2oJN5UkvwwNHscPWXDG5KqAixu7AUzZ3qbe++KU9SsQ+cZWR4DXEPYcvWplyFAno0dhRJECNEhNxiDmFaPGyQ==}
     hasBin: true
 
-  drizzle-orm@0.39.2:
-    resolution: {integrity: sha512-cuopo+udkKEGGpSxCML9ZRQ43R01zYCTsbqCrb9kJkabx1QEwFlPIFoQfx6E6tuawtiX930Gwyrkwj4inlpzDg==}
+  drizzle-orm@0.40.0:
+    resolution: {integrity: sha512-7ptk/HQiMSrEZHnAsSlBESXWj52VwgMmyTEfoNmpNN2ZXpcz13LwHfXTIghsAEud7Z5UJhDOp8U07ujcqme7wg==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=4'
@@ -3511,20 +3516,19 @@ packages:
       '@tidbcloud/serverless': '*'
       '@types/better-sqlite3': '*'
       '@types/pg': '*'
-      '@types/react': '>=18'
       '@types/sql.js': '*'
       '@vercel/postgres': '>=0.8.0'
       '@xata.io/client': '*'
       better-sqlite3: '>=7'
       bun-types: '*'
       expo-sqlite: '>=14.0.0'
+      gel: '>=2'
       knex: '*'
       kysely: '*'
       mysql2: '>=2'
       pg: '>=8'
       postgres: '>=3'
       prisma: '*'
-      react: '>=18'
       sql.js: '>=1'
       sqlite3: '>=5'
     peerDependenciesMeta:
@@ -3554,8 +3558,6 @@ packages:
         optional: true
       '@types/pg':
         optional: true
-      '@types/react':
-        optional: true
       '@types/sql.js':
         optional: true
       '@vercel/postgres':
@@ -3568,6 +3570,8 @@ packages:
         optional: true
       expo-sqlite:
         optional: true
+      gel:
+        optional: true
       knex:
         optional: true
       kysely:
@@ -3579,8 +3583,6 @@ packages:
       postgres:
         optional: true
       prisma:
-        optional: true
-      react:
         optional: true
       sql.js:
         optional: true
@@ -4275,6 +4277,9 @@ packages:
   jose@5.9.6:
     resolution: {integrity: sha512-AMlnetc9+CV9asI19zHmrgS/WYsWUwCn2R7RzlbJWD7F9eWYUTGyBmU9o6PxngtLGOiDGPRu+Uc4fhKzbpteZQ==}
 
+  jose@6.0.8:
+    resolution: {integrity: sha512-EyUPtOKyTYq+iMOszO42eobQllaIjJnwkZ2U93aJzNyPibCy7CEvT9UQnaCVB51IAd49gbNdCew1c0LcLTCB2g==}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -4776,6 +4781,9 @@ packages:
 
   oauth4webapi@3.1.4:
     resolution: {integrity: sha512-eVfN3nZNbok2s/ROifO0UAc5G8nRoLSbrcKJ09OqmucgnhXEfdIQOR4gq1eJH1rN3gV7rNw62bDEgftsgFtBEg==}
+
+  oauth4webapi@3.3.0:
+    resolution: {integrity: sha512-ZlozhPlFfobzh3hB72gnBFLjXpugl/dljz1fJSRdqaV2r3D5dmi5lg2QWI0LmUYuazmE+b5exsloEv6toUtw9g==}
 
   object-keys@1.1.1:
     resolution: {integrity: sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==}
@@ -6201,6 +6209,14 @@ snapshots:
       preact: 10.24.3
       preact-render-to-string: 6.5.11(preact@10.24.3)
 
+  '@auth/core@0.38.0':
+    dependencies:
+      '@panva/hkdf': 1.2.1
+      jose: 6.0.8
+      oauth4webapi: 3.3.0
+      preact: 10.24.3
+      preact-render-to-string: 6.5.11(preact@10.24.3)
+
   '@auth/sveltekit@1.7.4(@sveltejs/kit@2.17.1(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)))(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)))(svelte@5.19.9)':
     dependencies:
       '@auth/core': 0.37.4
@@ -7397,24 +7413,22 @@ snapshots:
       storybook: 8.5.3(prettier@3.4.2)
       ts-dedent: 2.2.0
 
-  '@storybook/addon-svelte-csf@5.0.0-next.23(@storybook/svelte@8.5.3(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9))(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)))(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0))':
+  '@storybook/addon-svelte-csf@5.0.0-next.27(@storybook/svelte@8.5.3(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9))(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)))(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0))':
     dependencies:
       '@storybook/csf': 0.1.13
-      '@storybook/docs-tools': 8.5.3(storybook@8.5.3(prettier@3.4.2))
       '@storybook/svelte': 8.5.3(storybook@8.5.3(prettier@3.4.2))(svelte@5.19.9)
-      '@storybook/types': 8.5.3(storybook@8.5.3(prettier@3.4.2))
       '@sveltejs/vite-plugin-svelte': 5.0.3(svelte@5.19.9)(vite@6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0))
       dedent: 1.5.3
       es-toolkit: 1.32.0
       esrap: 1.4.3
       magic-string: 0.30.17
+      storybook: 8.5.3(prettier@3.4.2)
       svelte: 5.19.9
       svelte-ast-print: 0.4.2(svelte@5.19.9)
       vite: 6.1.0(@types/node@22.13.1)(sass-embedded@1.83.4)(sass@1.84.0)(yaml@2.7.0)
       zimmerframe: 1.1.2
     transitivePeerDependencies:
       - babel-plugin-macros
-      - storybook
 
   '@storybook/addon-toolbars@8.5.3(storybook@8.5.3(prettier@3.4.2))':
     dependencies:
@@ -7479,10 +7493,6 @@ snapshots:
   '@storybook/csf@0.1.13':
     dependencies:
       type-fest: 2.19.0
-
-  '@storybook/docs-tools@8.5.3(storybook@8.5.3(prettier@3.4.2))':
-    dependencies:
-      storybook: 8.5.3(prettier@3.4.2)
 
   '@storybook/global@5.0.0': {}
 
@@ -7595,10 +7605,6 @@ snapshots:
       storybook: 8.5.3(prettier@3.4.2)
 
   '@storybook/theming@8.5.3(storybook@8.5.3(prettier@3.4.2))':
-    dependencies:
-      storybook: 8.5.3(prettier@3.4.2)
-
-  '@storybook/types@8.5.3(storybook@8.5.3(prettier@3.4.2))':
     dependencies:
       storybook: 8.5.3(prettier@3.4.2)
 
@@ -8852,12 +8858,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.39.2(@types/pg@8.11.11)(@types/react@19.0.2)(postgres@3.4.5)(react@18.3.1):
+  drizzle-orm@0.40.0(@types/pg@8.11.11)(postgres@3.4.5):
     optionalDependencies:
       '@types/pg': 8.11.11
-      '@types/react': 19.0.2
       postgres: 3.4.5
-      react: 18.3.1
 
   dunder-proto@1.0.1:
     dependencies:
@@ -9676,6 +9680,8 @@ snapshots:
 
   jose@5.9.6: {}
 
+  jose@6.0.8: {}
+
   js-tokens@4.0.0: {}
 
   js-yaml@3.14.1:
@@ -10372,6 +10378,8 @@ snapshots:
   nwsapi@2.2.16: {}
 
   oauth4webapi@3.1.4: {}
+
+  oauth4webapi@3.3.0: {}
 
   object-keys@1.1.1: {}
 
