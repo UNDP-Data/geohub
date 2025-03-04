@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.43
+
+### Patch Changes
+
+- 678bcec: refactor: moved ImageUploader to svelte-undp-components
+
 ## 1.22.42
 
 ### Patch Changes
