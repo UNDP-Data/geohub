@@ -1,5 +1,5 @@
 import type { StyleSpecification } from 'maplibre-gl';
-import type { StoryMapChapter } from './StoryMapChapter';
+import type { StoryMapChapterType } from './StoryMapChapter';
 
 export interface StoryMapConfig {
 	/**
@@ -35,7 +35,7 @@ export interface StoryMapConfig {
 	/**
 	 * This contains all of the story content and map controls for each section of the story. Array of objects
 	 */
-	chapters: StoryMapChapter[];
+	chapters: StoryMapChapterType[];
 
 	/**
 	 * If true, slide progress bar is shown at the right hand side of storymap. Default is true.

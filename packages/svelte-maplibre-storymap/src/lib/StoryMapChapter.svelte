@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { StoryMapChapter, StoryMapTemplate } from '$lib/interfaces';
+	import type { StoryMapChapterType, StoryMapTemplate } from '$lib/interfaces';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { marked } from 'marked';
 	import { getContext, untrack } from 'svelte';
@@ -12,7 +12,7 @@
 	} from './stores/storymapConfig';
 
 	interface Props {
-		chapter: StoryMapChapter;
+		chapter: StoryMapChapterType;
 		activeId?: string;
 		template?: StoryMapTemplate;
 		size?: 'small' | 'normal';
