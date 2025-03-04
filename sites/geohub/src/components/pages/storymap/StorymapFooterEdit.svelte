@@ -38,7 +38,12 @@
 					<FieldControl title="description" showHelp={true} showHelpPopup={false}>
 						{#snippet control()}
 							<div>
-								<MarkdownEditor bind:value={$configStore.footer} />
+								<MarkdownEditor
+									value={$configStore.footer}
+									onchange={(value) => {
+										$configStore.footer = value;
+									}}
+								/>
 							</div>
 						{/snippet}
 						{#snippet help()}

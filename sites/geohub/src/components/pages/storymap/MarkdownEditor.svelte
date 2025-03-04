@@ -7,12 +7,14 @@
 		value?: string;
 		placeholder?: string;
 		maxHeight?: string;
+		onchange?: (value: string) => void;
 	}
 
 	let {
-		value = $bindable(''),
+		value = '',
 		placeholder = 'Input contents in markdown...',
-		maxHeight = '200px'
+		maxHeight = '200px',
+		onchange = () => {}
 	}: Props = $props();
 
 	let textareaElement: HTMLTextAreaElement | undefined = $state();
@@ -38,6 +40,7 @@
 			debounce(() => {
 				if (!easyMDE) return;
 				value = easyMDE.value().trim();
+				onchange(value);
 			}, 300)
 		);
 	});
