@@ -6,7 +6,7 @@
 
 	interface Props {
 		dataUrl: string | undefined;
-		onchange?: () => void;
+		onchange?: (value: string) => void;
 	}
 
 	let { dataUrl = $bindable(), onchange = () => {} }: Props = $props();
@@ -19,12 +19,12 @@
 		const targetFile = acceptedFiles[0];
 		const url = await file2dataurl(targetFile);
 		dataUrl = url;
-		if (onchange) onchange();
+		if (onchange) onchange(dataUrl);
 	};
 
 	const handleRemoveFile = () => {
 		dataUrl = undefined;
-		if (onchange) onchange();
+		if (onchange) onchange('');
 	};
 
 	const file2dataurl = (file: File): Promise<string> => {

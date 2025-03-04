@@ -1,24 +1,25 @@
+<script module lang="ts">
+	interface Location {
+		center: [number, number];
+		zoom: number;
+		bearing: number;
+		pitch: number;
+	}
+</script>
+
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { page } from '$app/state';
 	import type { StoryMapChapter } from '$lib/types';
-	import { createMapLibreGlMapController } from '@maptiler/geocoding-control/maplibregl';
-	import GeocodingControl from '@maptiler/geocoding-control/svelte/GeocodingControl.svelte';
-	import type { MapController } from '@maptiler/geocoding-control/types';
+	import '@maptiler/geocoding-control/style.css';
 	import {
 		layerTypes,
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		type StoryMapConfigStore
 	} from '@undp-data/svelte-maplibre-storymap';
 	import { FieldControl, Slider } from '@undp-data/svelte-undp-components';
-	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import maplibregl, {
-		Map,
-		Marker,
-		NavigationControl,
-		Popup,
-		type StyleSpecification
-	} from 'maplibre-gl';
+	import { Map, Marker, NavigationControl, Popup, type StyleSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
@@ -33,14 +34,11 @@
 	let locationMapContainer: HTMLDivElement | undefined = $state();
 	let locationMap: Map | undefined = $state();
 	let locationMarker: Marker | undefined = $state();
-	let tempLocation: { center: [number, number]; zoom: number; bearing: number; pitch: number } =
-		$state();
+	let tempLocation: Location | undefined = $state();
 
 	let mapBearing = $state([0]);
 	let mapPitch = $state([0]);
 
-	let apiKey = page.data.maptilerKey;
-	let mapController: MapController | undefined = $state();
 	let popupContainer: HTMLDivElement | undefined = $state();
 
 	export const updateMapStyle = debounce(() => {
@@ -53,17 +51,17 @@
 
 		applyLayerEvent().then((style) => {
 			if (!chapter) {
-				tempLocation.center = tempLocation.center ?? style.center;
-				tempLocation.zoom = tempLocation.zoom ?? style.zoom;
-				tempLocation.bearing = tempLocation.bearing ?? style.bearing;
-				tempLocation.pitch = tempLocation.pitch ?? style.pitch;
+				(tempLocation as Location).center = (tempLocation as Location).center ?? style.center;
+				(tempLocation as Location).zoom = (tempLocation as Location).zoom ?? style.zoom;
+				(tempLocation as Location).bearing = (tempLocation as Location).bearing ?? style.bearing;
+				(tempLocation as Location).pitch = (tempLocation as Location).pitch ?? style.pitch;
 			} else {
 				if ($configStore.location?.center && $configStore.location.center[0] !== null) {
 					// if center is not undefined, use location from config
-					tempLocation.bearing = $configStore.location.bearing ?? 0;
-					tempLocation.pitch = $configStore.location.pitch ?? 0;
-					tempLocation.center = $configStore.location.center;
-					tempLocation.zoom = $configStore.location.zoom;
+					(tempLocation as Location).bearing = $configStore.location.bearing ?? 0;
+					(tempLocation as Location).pitch = $configStore.location.pitch ?? 0;
+					(tempLocation as Location).center = $configStore.location.center;
+					(tempLocation as Location).zoom = $configStore.location.zoom;
 				}
 			}
 			locationMap?.setStyle(style);
@@ -84,15 +82,15 @@
 
 		const lngLat = locationMap.getCenter();
 
-		tempLocation.center = [lngLat.lng, lngLat.lat];
-		tempLocation.zoom = locationMap.getZoom();
+		(tempLocation as Location).center = [lngLat.lng, lngLat.lat];
+		(tempLocation as Location).zoom = locationMap.getZoom();
 		mapBearing = [locationMap.getBearing()];
 		mapPitch = [locationMap.getPitch()];
 
 		if (!locationMarker) {
-			locationMarker = new Marker().setLngLat(tempLocation.center).addTo(locationMap);
+			locationMarker = new Marker().setLngLat((tempLocation as Location).center).addTo(locationMap);
 		} else {
-			locationMarker.setLngLat(tempLocation.center);
+			locationMarker.setLngLat((tempLocation as Location).center);
 		}
 
 		const popup = new Popup().setDOMContent(popupContainer);
@@ -100,10 +98,10 @@
 	}, 300);
 
 	const applyMarkerPosition = () => {
-		tempLocation.bearing = mapBearing[0];
-		tempLocation.pitch = mapPitch[0];
+		(tempLocation as Location).bearing = mapBearing[0];
+		(tempLocation as Location).pitch = mapPitch[0];
 		if (!chapter) {
-			$configStore.location = tempLocation;
+			$configStore.location = tempLocation as Location;
 		} else {
 			chapter.location = tempLocation;
 		}
@@ -115,10 +113,10 @@
 
 		if (chapter) {
 			tempLocation = JSON.parse(JSON.stringify(chapter.location));
-			locationMap.setCenter(tempLocation.center);
-			locationMap.setZoom(tempLocation.zoom);
-			locationMap.setBearing(tempLocation.bearing);
-			locationMap.setPitch(tempLocation.pitch);
+			locationMap.setCenter((tempLocation as Location).center);
+			locationMap.setZoom((tempLocation as Location).zoom);
+			locationMap.setBearing((tempLocation as Location).bearing);
+			locationMap.setPitch((tempLocation as Location).pitch);
 		} else {
 			const style = await applyLayerEvent();
 			tempLocation = {
@@ -128,20 +126,20 @@
 				pitch: style.pitch ?? 0
 			};
 		}
-		locationMap.setCenter(tempLocation.center);
-		locationMap.setZoom(tempLocation.zoom);
-		locationMap.setBearing(tempLocation.bearing);
-		locationMap.setPitch(tempLocation.pitch);
+		locationMap.setCenter((tempLocation as Location).center);
+		locationMap.setZoom((tempLocation as Location).zoom);
+		locationMap.setBearing((tempLocation as Location).bearing);
+		locationMap.setPitch((tempLocation as Location).pitch);
 	};
 
 	const handleBearingChanged = debounce(() => {
-		tempLocation.bearing = parseInt(`${mapBearing[0]}`);
-		locationMap?.setBearing(tempLocation.bearing);
+		(tempLocation as Location).bearing = parseInt(`${mapBearing[0]}`);
+		locationMap?.setBearing((tempLocation as Location).bearing);
 	}, 300);
 
 	const handlePitchChanged = debounce(() => {
-		tempLocation.pitch = parseInt(`${mapPitch[0]}`);
-		locationMap?.setPitch(tempLocation.pitch);
+		(tempLocation as Location).pitch = parseInt(`${mapPitch[0]}`);
+		locationMap?.setPitch((tempLocation as Location).pitch);
 	}, 300);
 
 	const handleGeocodingSelected = (e) => {
@@ -165,7 +163,21 @@
 			'bottom-right'
 		);
 
-		mapController = createMapLibreGlMapController(locationMap, maplibregl);
+		if (browser) {
+			const { GeocodingControl } = await import('@maptiler/geocoding-control/maplibregl');
+			const apiKey = page.data.maptilerKey;
+			if (apiKey) {
+				const gc = new GeocodingControl({
+					apiKey: apiKey,
+					marker: true,
+					showResultsWhileTyping: false,
+					collapsed: false,
+					limit: 5
+				});
+				gc.fire('pick', handleGeocodingSelected);
+				locationMap.addControl(gc, 'top-left');
+			}
+		}
 
 		locationMap.on('moveend', updateMarkerPosition);
 		locationMap.on('pitchend', updateMarkerPosition);
@@ -222,40 +234,8 @@
 	};
 </script>
 
-<FieldControl title="Search location by name." showHelp={true} showHelpPopup={false}>
-	{#snippet control()}
-		<div>
-			<div class="geocoding">
-				{#if locationMap && mapController}
-					<GeocodingControl
-						{mapController}
-						{apiKey}
-						{maplibregl}
-						showResultsWhileTyping={false}
-						flyTo={false}
-						flyToSelected={false}
-						limit={5}
-						on:pick={handleGeocodingSelected}
-					/>
-				{:else}
-					<div class="is-flex is-justify-content-center">
-						<Loader size="small" />
-					</div>
-				{/if}
-			</div>
-		</div>
-	{/snippet}
-	{#snippet help()}
-		<div>
-			{#if locationMap && mapController}
-				Type <b>Enter</b> key to search locations.
-			{/if}
-		</div>
-	{/snippet}
-</FieldControl>
-
 <FieldControl
-	title="or move a pin to change the location"
+	title="Search location by name or move a pin to change the location"
 	isFirstCharCapitalized={false}
 	showHelp={false}
 >
@@ -363,21 +343,8 @@
 	@import 'maplibre-gl/dist/maplibre-gl.css';
 	.map {
 		width: 100%;
-		height: 218px;
+		height: 350px;
 		border: 1px solid #d4d6d8;
-	}
-
-	.geocoding {
-		:global(form) {
-			width: 328px !important;
-			max-width: 328px !important;
-		}
-		:global(.input-group) {
-			border-radius: 0 !important;
-			border: 1px solid black;
-			width: 328px;
-			height: 43px;
-		}
 	}
 
 	.reset-button {
