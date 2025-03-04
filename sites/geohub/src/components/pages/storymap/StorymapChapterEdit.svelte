@@ -16,7 +16,7 @@
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { Switch } from '@undp-data/svelte-undp-design';
-	import { ControlPosition } from 'maplibre-gl';
+	import type { ControlPosition } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 	import ImageUploader from './ImageUploader.svelte';
 	import MapLocationSelector from './MapLocationSelector.svelte';
@@ -219,9 +219,13 @@
 								<FieldControl title="Description" showHelp={false}>
 									{#snippet control()}
 										<div>
-											{#key activeTab}
-												<MarkdownEditor bind:value={$activeChapterStore.description} />
-											{/key}
+											<MarkdownEditor
+												value={($activeChapterStore as StoryMapChapter).description}
+												onchange={(value) => {
+													if (!$activeChapterStore) return;
+													$activeChapterStore.description = value;
+												}}
+											/>
 										</div>
 									{/snippet}
 								</FieldControl>
@@ -463,7 +467,10 @@
 												bind:selected={mapAnimation}
 												onchange={() => {
 													if (!$activeChapterStore) return;
-													$activeChapterStore.mapAnimation = mapAnimation;
+													($activeChapterStore as StoryMapChapter).mapAnimation = mapAnimation as
+														| 'flyTo'
+														| 'easeTo'
+														| 'jumpTo';
 													handleChange;
 												}}
 											/>
