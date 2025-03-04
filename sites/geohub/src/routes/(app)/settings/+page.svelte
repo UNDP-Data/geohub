@@ -1180,8 +1180,9 @@
 						{#snippet control()}
 							<div>
 								<ImageUploader
-									bind:dataUrl={StorymapDefaultLogo}
-									onchange={() => {
+									dataUrl={StorymapDefaultLogo}
+									onchange={(value) => {
+										StorymapDefaultLogo = value;
 										userSettings.StorymapDefaultLogo = StorymapDefaultLogo ?? '';
 									}}
 								/>

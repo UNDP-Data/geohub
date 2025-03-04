@@ -195,7 +195,12 @@
 					<Accordion title="Logo" bind:isExpanded={expanded['image']}>
 						{#snippet content()}
 							<div>
-								<ImageUploader bind:dataUrl={$configStore.logo} />
+								<ImageUploader
+									dataUrl={$configStore.logo}
+									onchange={(value) => {
+										$configStore.logo = value;
+									}}
+								/>
 							</div>
 						{/snippet}
 						{#snippet buttons()}
