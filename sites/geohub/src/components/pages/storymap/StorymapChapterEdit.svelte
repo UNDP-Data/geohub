@@ -11,6 +11,7 @@
 		FieldControl,
 		FloatingPanel,
 		Help,
+		ImageUploader,
 		SegmentButtons,
 		Tabs,
 		type Tab
@@ -18,7 +19,6 @@
 	import { Switch } from '@undp-data/svelte-undp-design';
 	import type { ControlPosition } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
-	import ImageUploader from './ImageUploader.svelte';
 	import MapLocationSelector from './MapLocationSelector.svelte';
 	import MarkdownEditor from './MarkdownEditor.svelte';
 	import StorymapChapterLayerEventEditor from './StorymapChapterLayerEventEditor.svelte';

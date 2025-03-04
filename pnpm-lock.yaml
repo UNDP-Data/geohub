@@ -360,6 +360,9 @@ importers:
       '@undp-data/date-picker-svelte':
         specifier: 2.12.1
         version: 2.12.1(svelte@5.19.9)
+      '@undp-data/svelte-file-dropzone':
+        specifier: ^2.0.3
+        version: 2.0.3(svelte@5.19.9)
       '@undp-data/svelte-undp-design':
         specifier: workspace:*
         version: link:../svelte-undp-design

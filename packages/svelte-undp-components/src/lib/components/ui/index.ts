@@ -12,6 +12,7 @@ import Help from './Help.svelte';
 import HeroHeader from './HeroHeader.svelte';
 import HeroLink from './HeroLink.svelte';
 import IconImageSelector, { type IconImageType } from './IconImageSelector.svelte';
+import ImageUploader from './ImageUploader.svelte';
 import MenuButton, { type MenuButtonType, type MenuSubButtonType } from './MenuButton.svelte';
 import ModalNotification from './ModalNotification.svelte';
 import ModalTemplate from './ModalTemplate.svelte';
@@ -45,6 +46,7 @@ export {
 	HeroLink,
 	Histogram,
 	IconImageSelector,
+	ImageUploader,
 	MenuButton,
 	ModalNotification,
 	ModalTemplate,
