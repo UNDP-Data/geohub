@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { type StoryMapChapter } from '$lib/types';
 	import { ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY, type ActiveStorymapChapterStore } from '$stores';
 	import {
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
@@ -15,6 +16,7 @@
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { Switch } from '@undp-data/svelte-undp-design';
+	import { ControlPosition } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 	import ImageUploader from './ImageUploader.svelte';
 	import MapLocationSelector from './MapLocationSelector.svelte';
@@ -166,10 +168,10 @@
 	onMount(() => {
 		activeChapterStore.subscribe(() => {
 			if ($activeChapterStore) {
-				mapInteractive = $activeChapterStore.mapInteractive;
-				mapAnimation = $activeChapterStore.mapAnimation;
-				rotateAnimation = $activeChapterStore.rotateAnimation;
-				showLegend = $activeChapterStore.showLegend;
+				mapInteractive = $activeChapterStore.mapInteractive as boolean;
+				mapAnimation = $activeChapterStore.mapAnimation as 'flyTo' | 'easeTo' | 'jumpTo';
+				rotateAnimation = $activeChapterStore.rotateAnimation as boolean;
+				showLegend = $activeChapterStore.showLegend as boolean;
 				cardSize = $activeChapterStore.alignment !== 'full' ? 'default' : 'full';
 			}
 		});
@@ -235,7 +237,14 @@
 					<Accordion title="Image" bind:isExpanded={expanded['image']}>
 						{#snippet content()}
 							<div>
-								<ImageUploader bind:dataUrl={$activeChapterStore.image} onchange={handleChange} />
+								<ImageUploader
+									dataUrl={($activeChapterStore as StoryMapChapter).image}
+									onchange={(value) => {
+										if (!$activeChapterStore) return;
+										$activeChapterStore.image = value;
+										handleChange();
+									}}
+								/>
 							</div>
 						{/snippet}
 					</Accordion>
@@ -274,8 +283,16 @@
 														{ title: 'center', value: 'center', icon: 'fa-solid fa-align-center' },
 														{ title: 'right', value: 'right', icon: 'fa-solid fa-align-right' }
 													]}
-													bind:selected={$activeChapterStore.alignment}
-													onchange={handleChange}
+													selected={($activeChapterStore as StoryMapChapter).alignment}
+													onchange={(value) => {
+														if (!$activeChapterStore) return;
+														$activeChapterStore.alignment = value as
+															| 'full'
+															| 'center'
+															| 'left'
+															| 'right';
+														handleChange();
+													}}
 												/>
 											</div>
 										{/snippet}
@@ -297,8 +314,11 @@
 									{#snippet control()}
 										<div>
 											<Switch
-												bind:toggled={$activeChapterStore.cardHidden}
-												onchange={handleChange}
+												toggled={($activeChapterStore as StoryMapChapter).cardHidden}
+												onchange={(toggled) => {
+													($activeChapterStore as StoryMapChapter).cardHidden = toggled;
+													handleChange();
+												}}
 												showValue={false}
 											/>
 										</div>
@@ -355,8 +375,9 @@
 									{#snippet control()}
 										<div>
 											<Switch
-												bind:toggled={mapInteractive}
-												onchange={() => {
+												toggled={mapInteractive}
+												onchange={(toggled) => {
+													mapInteractive = toggled;
 													if (!$activeChapterStore) return;
 													$activeChapterStore.mapInteractive = mapInteractive;
 													handleChange();
@@ -366,13 +387,18 @@
 									{/snippet}
 								</FieldControl>
 
-								{#if $activeChapterStore.mapInteractive}
+								{#if $activeChapterStore && $activeChapterStore.mapInteractive}
 									<FieldControl title="Select position" showHelp={false} showHelpPopup={false}>
 										{#snippet control()}
 											<div class="select is-fullwidth">
 												<select
-													bind:value={$activeChapterStore.mapNavigationPosition}
-													onchange={handleChange}
+													value={($activeChapterStore as StoryMapChapter).mapNavigationPosition}
+													onchange={(value) => {
+														if (!$activeChapterStore) return;
+														$activeChapterStore.mapNavigationPosition =
+															value as unknown as ControlPosition;
+														handleChange();
+													}}
 												>
 													{#each mapControlPositions as item}
 														<option value={item.value}>{item.title}</option>
@@ -401,8 +427,9 @@
 									{#snippet control()}
 										<div>
 											<Switch
-												bind:toggled={showLegend}
-												onchange={() => {
+												toggled={showLegend}
+												onchange={(toggled) => {
+													showLegend = toggled;
 													if (!$activeChapterStore) return;
 													$activeChapterStore.showLegend = showLegend;
 													handleChange();
@@ -462,8 +489,9 @@
 									{#snippet control()}
 										<div>
 											<Switch
-												bind:toggled={rotateAnimation}
-												onchange={() => {
+												toggled={rotateAnimation}
+												onchange={(toggled) => {
+													rotateAnimation = toggled;
 													if (!$activeChapterStore) return;
 													$activeChapterStore.rotateAnimation = rotateAnimation;
 													handleChange();
