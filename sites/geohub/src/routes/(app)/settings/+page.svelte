@@ -3,7 +3,6 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
-	import ImageUploader from '$components/pages/storymap/ImageUploader.svelte';
 	import {
 		DatasetSortingColumns,
 		IconOverlapPriority,
@@ -25,6 +24,7 @@
 		FieldControl,
 		HeroHeader,
 		IconImageSelector,
+		ImageUploader,
 		LineTypes,
 		SegmentButtons,
 		Slider,

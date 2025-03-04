@@ -9,12 +9,12 @@
 		FieldControl,
 		FloatingPanel,
 		Help,
+		ImageUploader,
 		Tabs,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
-	import ImageUploader from './ImageUploader.svelte';
 	import MapLocationSelector from './MapLocationSelector.svelte';
 	import StorymapStyleSelector, {
 		type StorymapBaseMapConfig
