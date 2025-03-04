@@ -1,5 +1,11 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 1.0.9
+
+### Patch Changes
+
+- b0d1072: fix: fixed StoryMapChapter interface name to StoryMapChapterType due to the conflict with StoryMapChapter component itself.
+
 ## 1.0.8
 
 ### Patch Changes
