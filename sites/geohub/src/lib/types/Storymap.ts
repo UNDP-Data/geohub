@@ -1,7 +1,7 @@
 import type { AccessLevel, Permission } from '$lib/config/AppConfig';
 import {
 	type StoryMapConfig as BaseStoryMapConfig,
-	type StoryMapChapter as BaseStoryMapChapter,
+	type StoryMapChapterType as BaseStoryMapChapter,
 	type StoryMapTemplate
 } from '@undp-data/svelte-maplibre-storymap';
 import type { Link } from './Link';

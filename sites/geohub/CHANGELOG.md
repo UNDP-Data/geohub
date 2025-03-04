@@ -1,5 +1,18 @@
 # geohub
 
+## 1.22.43
+
+### Patch Changes
+
+- 678bcec: refactor: moved ImageUploader to svelte-undp-components
+
+## 1.22.42
+
+### Patch Changes
+
+- b0d1072: fix: use normal maptiler geocoder instead of svelte version for storymap editor. Furthermore, fixed binding undefined prop issue in StoryMapChapterEdit since it crashes.
+- b376bc3: fix: fixed reactivity of MarkdownEditor component
+
 ## 1.22.41
 
 ### Patch Changes

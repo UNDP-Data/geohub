@@ -15,7 +15,7 @@ export interface StoryMapChapterLayerEvent {
 	duration?: number;
 }
 
-export interface StoryMapChapter {
+export interface StoryMapChapterType {
 	/**
 	 * A slug-style ID for the chapter. This is read by the JavaScript driving the app and is assigned as an HTML id for the div element containing the rest of the story. A best-practice format would be to use kebab case, like my-story-chapter-1
 	 */

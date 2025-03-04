@@ -1,30 +1,44 @@
 <script lang="ts">
+	import { initTooltipTippy } from '$lib/util/initTippy';
 	import Dropzone from '@undp-data/svelte-file-dropzone';
-	import { FieldControl, initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import FieldControl from './FieldControl.svelte';
 
 	const tippyTooltip = initTooltipTippy();
 
 	interface Props {
+		/**
+		 * Image data URI string
+		 */
 		dataUrl: string | undefined;
-		onchange?: () => void;
+		/**
+		 * The list of accepted image file extensions
+		 */
+		acceptedExts?: string[];
+		/**
+		 * onchange event
+		 * @param value image data URI string
+		 */
+		onchange?: (value: string) => void;
 	}
 
-	let { dataUrl = $bindable(), onchange = () => {} }: Props = $props();
+	let {
+		dataUrl = $bindable(),
+		acceptedExts = ['.png', '.jpeg', '.jpg', '.webp', '.svg', '.gif'],
+		onchange = () => {}
+	}: Props = $props();
 
-	const acceptedExts = ['.png', '.jpeg', '.jpg', '.webp', '.svg', '.gif'];
-
-	const handleFileSelect = async (e) => {
+	const handleFileSelect = async (e: { detail: { acceptedFiles: File[] } }) => {
 		const { acceptedFiles } = e.detail;
 		if (acceptedFiles.length === 0) return;
 		const targetFile = acceptedFiles[0];
 		const url = await file2dataurl(targetFile);
 		dataUrl = url;
-		if (onchange) onchange();
+		if (onchange) onchange(dataUrl);
 	};
 
 	const handleRemoveFile = () => {
 		dataUrl = undefined;
-		if (onchange) onchange();
+		if (onchange) onchange('');
 	};
 
 	const file2dataurl = (file: File): Promise<string> => {
