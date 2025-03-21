@@ -15,7 +15,7 @@ export const getRasterMetadata = async (url: string) => {
 	const json: RasterTileMetadata = await res.json();
 	const band_metadata = json.band_metadata;
 	const urlObj = new URL(url).pathname.split('/');
-	const name: string = clean(urlObj.pop());
+	const name: string = clean(urlObj.pop() as string);
 	let description: string | undefined;
 	let source: string | undefined;
 	band_metadata?.forEach((band) => {
@@ -27,10 +27,25 @@ export const getRasterMetadata = async (url: string) => {
 		});
 	});
 
+	let bounds = await getRasterBounds(fileUrl);
+	bounds = bounds
+		? bounds
+		: ((json.bounds ? json.bounds : [-180, -90, 180, 90]) as [number, number, number, number]);
+
 	return {
 		name,
-		bounds: (json.bounds ? json.bounds : [-180, -90, 180, 90]) as [number, number, number, number],
+		bounds: bounds,
 		description: description,
 		source: source
 	};
+};
+
+const getRasterBounds = async (cogUrl: string) => {
+	const apiUrl = `${env.TITILER_ENDPOINT}/bounds?url=${getBase64EncodedUrl(cogUrl)}&crs=EPSG:4326`;
+	const res = await fetch(apiUrl);
+	if (!res.ok) {
+		return;
+	}
+	const json = await res.json();
+	return json.bounds;
 };

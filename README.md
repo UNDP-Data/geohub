@@ -31,11 +31,11 @@ More details diagrams about GeoHub system architecture are available at [documen
 
 | Repository                                                                  | Description                                                                       |
 | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| [style](https://github.com/UNDP-Data/style)                                 | It manages and hosts maplibre style.json for Geohub                               |
-| [fonts](https://github.com/UNDP-Data/fonts)                                 | The repository to manage font glyph files for maplibre-gl-js                      |
-| [pgsql](https://github.com/UNDP-Data/pgsql)                                 | It manages PostgreSQL funciton for pg_tileserv                                    |
-| [geohub-data-pipeline](https://github.com/UNDP-Data/geohub-data-pipeline)   | It manages data upload pipelines for GeoHub                                       |
-| [geo-cogserver](https://github.com/UNDP-Data/geo-cogserver)                 | It manages the code for our customised titiler.                                   |
+| [style](https://github.com/UNDP-Data/style)                                 | hosts maplibre style.json for Geohub                               |
+| [fonts](https://github.com/UNDP-Data/fonts)                                 | font glyph files for maplibre-gl-js                      |
+| [pgsql](https://github.com/UNDP-Data/pgsql)                                 | PostgreSQL functions or dynamic layers for pg_tileserv                                    |
+| [geohub-data-pipeline](https://github.com/UNDP-Data/geohub-data-pipeline)   | Data upload pipelines for GeoHub                                       |
+| [geo-cogserver](https://github.com/UNDP-Data/geo-cogserver)                 | customised WMTS server.                                   |
 | [geo-undpstac-pipeline](https://github.com/UNDP-Data/geo-undpstac-pipeline) | This project processes geospatial data from remote sources into UNDP STAC Catalog |
 
 ## Contributing
