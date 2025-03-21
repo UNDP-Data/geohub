@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.44
+
+### Patch Changes
+
+- 54ecad3: fix: register bbox as longtitude and latitude if it is raster dataset.
+
 ## 1.22.43
 
 ### Patch Changes
