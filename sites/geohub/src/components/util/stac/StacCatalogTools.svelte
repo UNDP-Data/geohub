@@ -64,7 +64,7 @@
 {/if}
 
 {#if dataset}
-	{#each breadcrumbs as page, index}
+	{#each breadcrumbs as page, index (breadcrumbs.indexOf(page))}
 		{@const isLastPage = index === breadcrumbs.length - 1}
 		<div hidden={!isLastPage}>
 			{#if page.type === 'index'}

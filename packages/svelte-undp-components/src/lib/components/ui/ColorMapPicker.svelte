@@ -129,9 +129,9 @@
 
 	<div class="card-color">
 		{#key isReverseColors}
-			{#each colorMapTypes as colorMapType}
+			{#each colorMapTypes as colorMapType (colorMapType.name)}
 				{#if activeColorMapType === colorMapType.name}
-					{#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as cmName}
+					{#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as cmName (cmName)}
 						<div
 							class="card {colorMapName.replace('_r', '') === cmName ? 'selected' : ''}"
 							role="button"

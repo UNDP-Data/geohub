@@ -658,7 +658,7 @@
 				</thead>
 
 				<tbody>
-					{#each stacCatalogs as catalog}
+					{#each stacCatalogs as catalog (catalog.id)}
 						{@const self = catalog.links.find((l) => l.rel === 'self')}
 						{@const selfUrl = resolveRelativeUrl(self.href, url)}
 						<tr>
@@ -679,7 +679,7 @@
 						</tr>
 					{/each}
 
-					{#each stacCollections as collection}
+					{#each stacCollections as collection (collection.id)}
 						{@const self = collection.links.find((l) => l.rel === 'self')}
 						{@const selfUrl = resolveRelativeUrl(self.href, url)}
 						{@const title = collection.title ?? collection.id}
@@ -705,7 +705,7 @@
 						</tr>
 					{/each}
 
-					{#each stacItems as item}
+					{#each stacItems as item (item.id)}
 						{@const self = item.links.find((l) => l.rel === 'self')}
 						{#if self}
 							{@const selfUrl = resolveRelativeUrl(self.href, url)}
@@ -752,7 +752,7 @@
 		{#if popedFeatures.length > 1}
 			<div class="tabs is-small mb-2">
 				<ul>
-					{#each popedFeatures as f, index}
+					{#each popedFeatures as f, index (popedFeatures.indexOf(f))}
 						<li class={popedFeature === f ? 'is-active' : ''}>
 							<!-- svelte-ignore a11y_missing_attribute -->
 							<a
@@ -814,7 +814,7 @@
 							{#if Object.keys(itemFeature.assets).length > 1}
 								<option value="">Select an asset</option>
 							{/if}
-							{#each Object.keys(itemFeature.assets) as assetName}
+							{#each Object.keys(itemFeature.assets) as assetName (assetName)}
 								{@const asset = itemFeature.assets[assetName]}
 								<!-- it is preferred to use `image/tiff; application=geotiff; profile=cloud-optimized` to check asset type,
 						but we found some of COG from some STAC server, they don't put `profile=cloud-optimized`.

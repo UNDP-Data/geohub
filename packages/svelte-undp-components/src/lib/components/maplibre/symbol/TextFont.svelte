@@ -23,6 +23,7 @@
 	onMount(async () => {
 		const res = await fetch(fontJsonUrl);
 		fonts = await res.json();
+		setValue();
 	});
 
 	const style = $map
@@ -38,14 +39,11 @@
 	const setValue = () => {
 		map.setLayoutProperty(layerId, propertyName, [value]);
 	};
-	onMount(() => {
-		setValue();
-	});
 </script>
 
 <div class="select is-fullwidth">
 	<select bind:value onchange={setValue}>
-		{#each fonts as font}
+		{#each fonts as font (font)}
 			<option value={font}>{font}</option>
 		{/each}
 	</select>

@@ -116,7 +116,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each data.stacs as stac}
+			{#each data.stacs as stac (stac.id)}
 				<tr>
 					<td>
 						<DefaultLink title={stac.id} href="/management/stac/{stac.type}/{stac.id}" target="" />
@@ -291,22 +291,24 @@
 							</p>
 							<table class="mt-2 table is-striped is-narrow is-hoverable is-fullwidth">
 								<tbody>
-									{#each registerStac.providers as provider}
-										<tr>
-											<td>
-												<span>{provider}</span>
-											</td>
-											<td>
-												<button
-													class="delete"
-													type="button"
-													onclick={() => {
-														handleDeleteProvider(provider);
-													}}>Delete</button
-												>
-											</td>
-										</tr>
-									{/each}
+									{#if registerStac.providers}
+										{#each registerStac.providers as provider (provider)}
+											<tr>
+												<td>
+													<span>{provider}</span>
+												</td>
+												<td>
+													<button
+														class="delete"
+														type="button"
+														onclick={() => {
+															handleDeleteProvider(provider);
+														}}>Delete</button
+													>
+												</td>
+											</tr>
+										{/each}
+									{/if}
 								</tbody>
 							</table>
 							<input

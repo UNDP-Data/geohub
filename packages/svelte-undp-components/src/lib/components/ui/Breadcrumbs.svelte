@@ -32,7 +32,7 @@
 
 <nav class="breadcrumb has-text-weight-bold is-uppercase is-{size}" aria-label="breadcrumbs">
 	<ul>
-		{#each pages as page, index}
+		{#each pages as page, index (pages.indexOf(page))}
 			{#if index === pages.length - 1}
 				<li class="is-active">
 					<!-- svelte-ignore a11y_missing_attribute -->

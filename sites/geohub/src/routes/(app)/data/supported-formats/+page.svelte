@@ -25,7 +25,7 @@
 		</p>
 	</div>
 
-	{#each ['raster', 'vector'] as type}
+	{#each ['raster', 'vector'] as type (type)}
 		<h2 class="title is-2 is-capitalized">{type} Formats Supported</h2>
 
 		<div class="table-container has-content-centered mt-5">
@@ -37,14 +37,14 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each AccepedExtensions as item}
+					{#each AccepedExtensions as item, index (index)}
 						{#if item.name !== 'Archive Formats'}
 							{#if item.dataTypes?.includes(type)}
 								<tr>
 									<td><DefaultLink title={item.name} href={item.href} target="_blank" /></td>
 									<td>
 										<div class="extensions">
-											{#each item.extensions as ext}
+											{#each item.extensions as ext (ext)}
 												<span
 													class="{item.requiredExtensions?.includes(ext)
 														? 'is-danger'
@@ -73,7 +73,7 @@
 			<p class="is-size-5">
 				These file formats listed in the above sections can be supplied in their original formats or
 				as archives as
-				{#each archiveFormat.extensions as ext}
+				{#each archiveFormat.extensions as ext (ext)}
 					<span class="is-info is-light tag is-medium ml-1">
 						.{ext}
 					</span>

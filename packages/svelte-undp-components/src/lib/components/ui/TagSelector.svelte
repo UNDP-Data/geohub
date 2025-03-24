@@ -155,7 +155,7 @@
 	{#if showSelectedTags && type === 'multi' && selected.length > 0}
 		<div class="selected-area fixed-grid has-3-cols p-2">
 			<div class="grid">
-				{#each selected as tag}
+				{#each selected as tag (`${tag.key}-${tag.value}`)}
 					<div class="cell">
 						<Chips
 							bind:label={tag.value}
@@ -191,7 +191,7 @@
 				{/if}
 			</div>
 		{:else}
-			{#each tagsFiltered as tag}
+			{#each tagsFiltered as tag (`${tag.key}-${tag.value}`)}
 				{@const isSelected = selected.includes(tag)}
 				<!-- svelte-ignore a11y_interactive_supports_focus -->
 				<div

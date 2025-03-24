@@ -112,7 +112,7 @@
 			disabled={readonly}
 		>
 			{#if propertySelectOptions}
-				{#each propertySelectOptions as propertySelectOption}
+				{#each propertySelectOptions as propertySelectOption (propertySelectOption)}
 					<option
 						title="Property Option"
 						data-testid="property-select-option"

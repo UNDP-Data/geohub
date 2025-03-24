@@ -255,7 +255,7 @@
 		<div class="layer-contents" style="height: {totalHeight}px;">
 			{#key isLayerListChanged}
 				{#key $layerListStore}
-					{#each $layerListStore as layer, index}
+					{#each $layerListStore as layer, index (layer.id)}
 						<LayerTemplate
 							bind:layer={$layerListStore[index]}
 							isExpanded={layer.isExpanded as boolean}

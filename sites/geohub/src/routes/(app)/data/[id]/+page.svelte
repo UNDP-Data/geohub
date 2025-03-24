@@ -354,7 +354,7 @@
 						{#snippet control()}
 							<div>
 								<div class="sdg-grid">
-									{#each sdgs as sdg}
+									{#each sdgs as sdg (sdg.value)}
 										<span class="icon is-large">
 											<i class="sdg-{sdg.value}"></i>
 										</span>
@@ -512,7 +512,7 @@
 								{:else}
 									<div class="select mb-2">
 										<select bind:value={selectedFgbLayer}>
-											{#each fgbUrls as url}
+											{#each fgbUrls as url, index (index)}
 												{@const layer = url.rel.split('-')[1]}
 												<option value={url.rel}>{layer}</option>
 											{/each}

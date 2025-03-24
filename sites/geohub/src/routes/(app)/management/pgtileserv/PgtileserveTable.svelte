@@ -39,7 +39,7 @@
 		<thead>
 			<tr>
 				<th>No.</th>
-				{#each Object.keys(layers[0]) as col}
+				{#each Object.keys(layers[0]) as col (col)}
 					{#if !skipCols.includes(col)}
 						<th>
 							{col}
@@ -50,13 +50,13 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each layers as layer, index}
+			{#each layers as layer, index (layer.id)}
 				{@const publishUrl = getPublishLink(layer)}
 				{@const unregistered = publishUrl.startsWith('/data')}
 				{#if !(hideRegistered && !unregistered)}
 					<tr>
 						<td>{index + 1}</td>
-						{#each Object.keys(layer) as col}
+						{#each Object.keys(layer) as col (col)}
 							{#if !skipCols.includes(col)}
 								<td>
 									{#if col === 'detailurl'}
@@ -81,7 +81,7 @@
 		<tfoot>
 			<tr>
 				<th>No.</th>
-				{#each Object.keys(layers[0]) as col}
+				{#each Object.keys(layers[0]) as col (col)}
 					{#if !skipCols.includes(col)}
 						<th>{col}</th>
 					{/if}

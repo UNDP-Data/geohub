@@ -499,7 +499,7 @@
 					<Loader size="small" />
 				</div>
 			{:else}
-				{#each features as feature}
+				{#each features as feature (features.indexOf(feature))}
 					<Accordion title={`${feature.properties.name}`} bind:isExpanded={expanded[feature.id]}>
 						{#snippet content()}
 							<div>
@@ -511,7 +511,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										{#each Object.keys(feature.properties) as property}
+										{#each Object.keys(feature.properties) as property (property)}
 											{@const value = feature.properties[property]}
 											{#if value}
 												<tr>
@@ -544,7 +544,7 @@
 					</Accordion>
 				{/each}
 				{#if coordinates && coordinates.length === 2}
-					<Accordion title={`Coordinates`} bind:isExpanded={expanded['coordinates']}>
+					<Accordion title="Coordinates" bind:isExpanded={expanded['coordinates']}>
 						{#snippet content()}
 							<div>
 								<table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">

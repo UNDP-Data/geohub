@@ -308,7 +308,7 @@
 									bind:value={classificationMethod}
 									onchange={handleClassificationMethodChanged}
 								>
-									{#each ClassificationMethods as classificationMethod}
+									{#each ClassificationMethods as classificationMethod (classificationMethod.code)}
 										<option
 											class="legend-text"
 											title="Classification Method"
@@ -352,7 +352,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each colorMapRows as row, index}
+				{#each colorMapRows as row, index (row.index)}
 					<tr data-testid="line-width-row-container">
 						<td style="min-width: 100px;">
 							<div style={legendCssTemplate.replace(/{value}/g, `${row.value}`)}></div>
@@ -373,7 +373,8 @@
 						<td style="min-width: 10px;">
 							<div style="margin-top: 5px;">
 								{#if row.end}
-									{`<`}
+									{@const ope = `<`}
+									{ope}
 								{/if}
 							</div>
 						</td>

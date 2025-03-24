@@ -64,7 +64,7 @@
 				Menu
 			</h6>
 			<ul>
-				{#each data as item, index}
+				{#each data as item, index (data.indexOf(item))}
 					<li aria-label="Sidebar heading" class={expanded[`${index}`] === true ? 'active' : ''}>
 						{#if item.callback}
 							<!-- svelte-ignore a11y_missing_attribute -->
@@ -97,7 +97,7 @@
 								class="accordion__panel"
 								style="display: {expanded[`${index}`] === true ? 'block' : 'none'};"
 							>
-								{#each item.children as child}
+								{#each item.children as child (item.children.indexOf(child))}
 									<li>
 										{#if child.callback}
 											<!-- svelte-ignore a11y_missing_attribute -->

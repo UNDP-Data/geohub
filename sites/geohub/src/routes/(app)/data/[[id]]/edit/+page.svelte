@@ -443,7 +443,7 @@
 
 	<div class="tabs is-uppercase has-text-weight-bold">
 		<ul>
-			{#each tabs as tab}
+			{#each tabs as tab (tab.id)}
 				{@const isGeneralInfoFilled = name && license && description && providers.length > 0}
 				{@const isCoverageFilled =
 					isGlobal === 'global' ||
@@ -603,7 +603,7 @@
 						<div class="select is-fullwidth {license.length > 0 ? 'is-success' : 'is-danger'}">
 							<select bind:value={license} disabled={isRegistering} name="license">
 								<option value="">Select a data license</option>
-								{#each licenses as lc}
+								{#each licenses as lc (lc.id)}
 									<option value={lc.name}>{lc.name}</option>
 								{/each}
 							</select>
@@ -627,7 +627,7 @@
 				{#snippet control()}
 					<div>
 						<div class="flex is-flex-wrap-wrap pb-2">
-							{#each providers as provider}
+							{#each providers as provider (provider.value)}
 								<span class="pl-1">
 									<Chips
 										label={provider.value}
@@ -776,7 +776,7 @@
 					{#snippet control()}
 						<div>
 							<div class="flex is-flex-wrap-wrap pb-2">
-								{#each countries as country}
+								{#each countries as country (country.value)}
 									<span class="pl-1">
 										<Chips
 											label={country.value}
@@ -860,7 +860,7 @@
 				{#snippet control()}
 					<div>
 						<div class="flex is-flex-wrap-wrap pb-2">
-							{#each units as unit}
+							{#each units as unit (unit.value)}
 								<span class="pl-1">
 									<Chips
 										label={unit.value}
@@ -900,7 +900,7 @@
 				{#snippet control()}
 					<div>
 						<div class="flex is-flex-wrap-wrap pb-2">
-							{#each years as year}
+							{#each years as year (year.value)}
 								<span class="pl-1">
 									<Chips
 										label={year.value}
@@ -940,7 +940,7 @@
 				{#snippet control()}
 					<div>
 						<div class="flex is-flex-wrap-wrap pb-2">
-							{#each resolutions as resolution}
+							{#each resolutions as resolution (resolution.value)}
 								<span class="pl-1">
 									<Chips
 										label={resolution.value}
@@ -981,7 +981,7 @@
 				{#snippet control()}
 					<div>
 						<div class="flex is-flex-wrap-wrap pb-2">
-							{#each granularities as granularity}
+							{#each granularities as granularity (granularity.value)}
 								<span class="pl-1">
 									<Chips
 										label={granularity.value}
@@ -1021,7 +1021,7 @@
 				{#snippet control()}
 					<div>
 						<div class="flex is-flex-wrap-wrap pb-2">
-							{#each themes as theme}
+							{#each themes as theme (theme.value)}
 								<span class="pl-1">
 									<Chips
 										label={theme.value}
@@ -1058,7 +1058,7 @@
 				{#snippet control()}
 					<div>
 						<div class="flex is-flex-wrap-wrap pb-2">
-							{#each sdg_targets as sdg_target}
+							{#each sdg_targets as sdg_target (sdg_target.value)}
 								<span class="pl-1">
 									<Chips
 										label={sdg_target.value}

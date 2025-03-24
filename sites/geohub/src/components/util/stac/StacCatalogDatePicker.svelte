@@ -213,14 +213,14 @@
 			<Loader size="small" />
 		{:else}
 			{@const assets = Object.keys(assetItems).filter(
-				(key) => assetItems[key].type.indexOf('profile=cloud-optimized') !== -1
+				(key) => assetItems[key].type?.indexOf('profile=cloud-optimized') !== -1
 			)}
 			{#if assets.length === 0}
 				No assets in this date
 			{:else}
 				<div class="select">
 					<select bind:value={selectedAsset} onchange={handleAssetChanged}>
-						{#each assets as name}
+						{#each assets as name (name)}
 							{@const asset = assetItems[name]}
 							<option value={asset}>{asset.title ?? name}</option>
 						{/each}

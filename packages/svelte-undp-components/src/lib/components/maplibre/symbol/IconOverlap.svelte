@@ -24,7 +24,7 @@
 
 <div data-testid="icon-overlap-slider" class="select is-fullwidth">
 	<select bind:value={selected} onchange={setIconOverlap}>
-		{#each choices as choice}
+		{#each choices as choice (choice)}
 			<option value={choice}
 				>{choice.toLowerCase().replace(/\b(\w)/g, (s) => s.toUpperCase())}</option
 			>

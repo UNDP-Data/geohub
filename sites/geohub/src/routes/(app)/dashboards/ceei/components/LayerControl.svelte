@@ -467,7 +467,7 @@
 	</div>
 	<div class="is-background-light p-3 is-flex is-flex-direction-column is-gap-1">
 		<div class="is-flex" style="gap: 1px;">
-			{#each colorGroups as cg}
+			{#each colorGroups as cg, index (index)}
 				<div class="is-flex-grow-1 bar" style="background: {cg}"></div>
 			{/each}
 		</div>
@@ -532,7 +532,7 @@
 							</div>
 						</div>
 						<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
-							{#each sliders as { id, percentage, label, locked }}
+							{#each sliders as { id, percentage, label, locked }, index (index)}
 								{#if [1, 2, 3, 4].includes(id)}
 									<div style="margin: auto;">
 										<div class="slider-field-sm">
@@ -609,7 +609,7 @@
 							</div>
 						</div>
 						<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
-							{#each sliders as { id, percentage, label, locked }}
+							{#each sliders as { id, percentage, label, locked }, index (index)}
 								{#if [12, 13, 14, 15].includes(id)}
 									<div style="margin: auto;">
 										<div class="slider-field-sm">
@@ -686,7 +686,7 @@
 						</div>
 					</div>
 					<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
-						{#each sliders as { id, percentage, label, locked }}
+						{#each sliders as { id, percentage, label, locked }, index (index)}
 							{#if [5, 6, 7, 8, 9, 10, 11].includes(id)}
 								<div style="margin: auto;">
 									<div class="slider-field-sm">

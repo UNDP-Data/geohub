@@ -69,7 +69,7 @@
 {#if !isRgbTile && bands && bands.length > 0}
 	<div class="select is-fullwidth">
 		<select bind:value={selectedBand} {disabled} onchange={setActiveBand}>
-			{#each bands as band, index}
+			{#each bands as band, index (band)}
 				<option value={band}>{getBandDescription(index)}</option>
 			{/each}
 		</select>

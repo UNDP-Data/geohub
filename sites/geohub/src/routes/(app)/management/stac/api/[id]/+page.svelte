@@ -236,7 +236,7 @@
 						</thead>
 						<tbody>
 							{#if filteredCollection}
-								{#each filteredCollection as collection, index}
+								{#each filteredCollection as collection, index (collection.id)}
 									{@const registred = !!geohubDatasets.features.find((f) => {
 										const id = f.properties.tags.find((t) => t.key === 'collection');
 										return id.value === collection.id;
@@ -318,7 +318,7 @@
 					<div class="select is-fullwidth">
 						<select bind:value={selectedAlgorithmId}>
 							<option value="">Select a tool</option>
-							{#each Object.keys(algorithms) as id}
+							{#each Object.keys(algorithms) as id (id)}
 								{#if toolTags.findIndex((t) => t.value === id) === -1}
 									<option value={id}>{algorithms[id].title}</option>
 								{/if}
@@ -341,7 +341,7 @@
 					>
 				</div>
 				<div class="tags my-2">
-					{#each toolTags as tag}
+					{#each toolTags as tag (tag.value)}
 						<div class="tags has-addons m-1">
 							<span class="tag is-link">{tag.value}</span>
 							<button

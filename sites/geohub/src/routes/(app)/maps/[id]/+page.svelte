@@ -516,7 +516,7 @@
 		{/if}
 
 		<p class="mt-4 title is-size-5">Static image api</p>
-		{#each [staticAutoLink, staticBBOXLink, staticCenterLink] as link, index}
+		{#each [staticAutoLink, staticBBOXLink, staticCenterLink] as link, index (index)}
 			<FieldControl
 				title="Static image api ({index === 0
 					? 'Auto centered'

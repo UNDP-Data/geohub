@@ -329,7 +329,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								{#each metadataProps as prop}
+								{#each metadataProps as prop (prop)}
 									{@const value = itemFeature.properties[prop]}
 									{#if value}
 										<tr>
@@ -365,7 +365,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								{#each viewgeometryProps as prop}
+								{#each viewgeometryProps as prop (prop)}
 									{@const value = itemFeature.properties[prop]}
 									{#if value}
 										<tr>
@@ -401,7 +401,7 @@
 									{#if Object.keys(itemFeature.assets).length > 1}
 										<option value="">Select an asset</option>
 									{/if}
-									{#each Object.keys(itemFeature.assets) as assetName}
+									{#each Object.keys(itemFeature.assets) as assetName (assetName)}
 										{@const asset = itemFeature.assets[assetName]}
 										<!-- it is preferred to use `image/tiff; application=geotiff; profile=cloud-optimized` to check asset type,
 										but we found some of COG from some STAC server, they don't put `profile=cloud-optimized`.

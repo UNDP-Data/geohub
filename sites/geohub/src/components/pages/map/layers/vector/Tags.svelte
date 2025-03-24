@@ -323,7 +323,7 @@
 	<label for={id} class={labelShow ? '' : 'sr-only'}>{labelText}</label>
 
 	{#if tags.length > 0}
-		{#each tags as tag, i}
+		{#each tags as tag, i (tags.indexOf(tag))}
 			<div
 				class="tags has-addons mb-0"
 				aria-label={typeof tag === 'string' ? clean(tag) : clean(tag[autoCompleteKey])}
@@ -373,7 +373,7 @@
 {#if autoComplete && arrelementsmatch.length > 0}
 	<div style="z-index: 99" class="svelte-tags-input-matchs-parent" hidden={hideOptions}>
 		<ul id="{id}_matchs" class="svelte-tags-input-matchs">
-			{#each arrelementsmatch as element, index}
+			{#each arrelementsmatch as element, index (arrelementsmatch.indexOf(element))}
 				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 				<li
 					aria-label={element.label}

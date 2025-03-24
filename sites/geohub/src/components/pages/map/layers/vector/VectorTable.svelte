@@ -475,7 +475,7 @@
 						</div>
 						<div class="dropdown-menu" id="download-table-dropdown-menu" role="menu">
 							<div class="dropdown-content">
-								{#each SupportedTableFormats as format}
+								{#each SupportedTableFormats as format (format)}
 									{@const fileUrl = tableData?.links?.find((l) => l.rel === format)?.href}
 									{#if fileUrl}
 										<a href={fileUrl} target="_blank" class="dropdown-item">
@@ -494,7 +494,7 @@
 						use:tippyTooltip={{ content: 'Change the maximum rows in the table' }}
 						disabled={!tableData}
 					>
-						{#each limits as limit}
+						{#each limits as limit (limit)}
 							<option value={limit}>{limit}</option>
 						{/each}
 					</select>
@@ -518,7 +518,7 @@
 							<tr>
 								<th class="row-number"></th>
 								{#if columns.length > 0}
-									{#each columns as col, index}
+									{#each columns as col, index (col.name)}
 										<th style="width: {col.width}px;">
 											<VectorTableColumn
 												bind:name={col.name}
@@ -544,7 +544,7 @@
 						</thead>
 
 						<tbody>
-							{#each tableData.features as feature, index}
+							{#each tableData.features as feature, index (tableData.features.indexOf(feature))}
 								{#if feature.properties}
 									<tr
 										class={isEqual(JSON.stringify(selectedRow), JSON.stringify(feature))
@@ -555,7 +555,7 @@
 									>
 										<th class="row-number">{index + 1}</th>
 										{#if columns.length > 0}
-											{#each columns as col}
+											{#each columns as col (col.name)}
 												{@const value = feature.properties[col.name]}
 												<td style="max-width: {col.width}px;">
 													{#if value}

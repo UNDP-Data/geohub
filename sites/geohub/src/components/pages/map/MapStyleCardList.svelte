@@ -68,7 +68,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each mapData.styles as style}
+						{#each mapData.styles as style (style.id)}
 							{@const accessIcon = getAccessLevelIcon(style.access_level, true)}
 							{@const selected = selectedId === style.id}
 							<tr
@@ -121,7 +121,7 @@
 			</div>
 		{:else}
 			<div class="columns is-multiline is-mobile">
-				{#each mapData.styles as style}
+				{#each mapData.styles as style (style.id)}
 					{@const styleLink = style.links.find((l) => l.rel === 'static-auto')?.href}
 					{@const accessLevel = style.access_level}
 					{@const accessIcon = getAccessLevelIcon(accessLevel, true)}
@@ -143,7 +143,7 @@
 									image={styleLink.replace('{width}', '298').replace('{height}', '180')}
 									width={298}
 									height={180}
-									linkName={'Explore'}
+									linkName="Explore"
 									accent={accentColor}
 									icon={accessIcon}
 								/>

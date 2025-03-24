@@ -779,7 +779,7 @@
 									disabled={isLoading}
 									onchange={handleMapExtentChanged}
 								>
-									{#each StacSearchLimitOptions as limit}
+									{#each StacSearchLimitOptions as limit (limit)}
 										<option value={limit}>{limit}</option>
 									{/each}
 								</select>
@@ -824,7 +824,7 @@
 
 					<div class="select is-fullwidth">
 						<select bind:value={selectedDateFilterOption} onchange={handleDateFilterOptionChanged}>
-							{#each StacDateFilterOptions as option}
+							{#each StacDateFilterOptions as option (option.value)}
 								<option value={option.value}>{option.label}</option>
 							{/each}
 						</select>
@@ -901,7 +901,7 @@
 											{#if assetList.length > 1}
 												<option value="">Select an asset</option>
 											{/if}
-											{#each assetList as assetName}
+											{#each assetList as assetName (assetName)}
 												{@const asset = feature.assets[assetName]}
 												<option value={assetName}>{asset?.title ? asset.title : assetName}</option>
 											{/each}
@@ -922,7 +922,7 @@
 										>
 											{#if AvailableProducts.find((p) => p.collection_id === collection)}
 												<option value="">Select a product</option>
-												{#each AvailableProducts as product}
+												{#each AvailableProducts as product (product.product_id)}
 													<option value={product.product_id}>{product.description}</option>
 												{/each}
 											{:else}
@@ -944,7 +944,7 @@
 											disabled={isLoading}
 										>
 											<option value="">Select a tool</option>
-											{#each registeredTools as tool}
+											{#each registeredTools as tool (tool.value)}
 												<option value={tool.value}>{clean(tool.value)}</option>
 											{/each}
 										</select>
@@ -954,7 +954,7 @@
 						</FieldControl>
 						{#if selectedAlgorithmName && selectedTool}
 							<!-- eslint-disable-next-line no-unused-vars -->
-							{#each selectedTool.inputs.bands as band}
+							{#each selectedTool.inputs.bands as band (band)}
 								{@const index = selectedTool.inputs.bands.indexOf(band)}
 								{@const bandTitle = selectedTool.inputs.bands[index].title}
 								<FieldControl title={`Please select the ${bandTitle}`} showHelp={true}>
@@ -969,7 +969,7 @@
 													{#if assetList.length > 1}
 														<option value="">Select an asset</option>
 													{/if}
-													{#each assetList as assetName}
+													{#each assetList as assetName (assetName)}
 														{@const asset = feature.assets[assetName]}
 														<option value={assetName}
 															>{asset.title ? asset.title : assetName}</option
@@ -1021,7 +1021,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								{#each clickedFeatures as feature, index}
+								{#each clickedFeatures as feature, index (clickedFeatures.indexOf(feature))}
 									<tr>
 										<td>{index + 1}</td>
 										<td
@@ -1031,7 +1031,11 @@
 											/></td
 										>
 										{#if stacInstance.hasCloudCoverProp}
-											<td>{feature.properties[stacInstance.cloudCoverPropName].toFixed(2)}%</td>
+											<td
+												>{feature.properties[stacInstance.cloudCoverPropName as string].toFixed(
+													2
+												)}%</td
+											>
 										{/if}
 										<td>
 											<button

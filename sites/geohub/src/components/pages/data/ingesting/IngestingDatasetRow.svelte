@@ -442,7 +442,7 @@
 </tr>
 
 {#if isDetailsShown && dataset.datasets}
-	{#each dataset.datasets as ds}
+	{#each dataset.datasets as ds (ds.id)}
 		<IngestingDatasetRowDetail dataset={ds} change={handleDatasetRowChanged} />
 	{/each}
 {/if}

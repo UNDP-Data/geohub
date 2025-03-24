@@ -51,7 +51,7 @@
 
 <div class="fixed-grid has-3-cols">
 	<div class="grid is-gap-1">
-		{#each operationOptions as operation}
+		{#each operationOptions as operation (operation.value)}
 			<div class="cell">
 				<div
 					data-testid="operation-button"

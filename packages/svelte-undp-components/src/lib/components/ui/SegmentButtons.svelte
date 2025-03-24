@@ -53,7 +53,7 @@
 </script>
 
 <div class="field has-addons is-flex {wrap ? 'is-flex-wrap-wrap' : ''}">
-	{#each buttons as button}
+	{#each buttons as button (button.value)}
 		<p class="control">
 			<button
 				type="button"

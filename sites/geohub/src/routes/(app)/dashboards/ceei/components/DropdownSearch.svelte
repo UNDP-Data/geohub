@@ -68,7 +68,7 @@
 		<div class="dropdown-content">
 			<hr class="dropdown-divider" />
 			<div class="search-results">
-				{#each filteredItemResults.length ? filteredItemResults : items as item}
+				{#each filteredItemResults.length ? filteredItemResults : items as item (item.value)}
 					<button
 						class="dropdown-item"
 						class:is-active={selectedItem?.value === item.value}

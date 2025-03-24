@@ -26,7 +26,7 @@
 </script>
 
 <div class="radio-buttons" style="flex-direction: {isVertical ? 'column' : 'row'};">
-	{#each radios as radio}
+	{#each radios as radio (radio.value)}
 		<label class="radio">
 			<div class="vertical-align is-flex-row">
 				<input
