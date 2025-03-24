@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/svelte-undp-components",
-	"version": "2.0.7",
+	"version": "2.0.8",
 	"description": "It manages util functions and svelte components used in UNDP GeoHub",
 	"scripts": {
 		"dev": "vite dev",

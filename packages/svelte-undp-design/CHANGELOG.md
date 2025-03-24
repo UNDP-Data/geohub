@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 3.0.4
+
+### Patch Changes
+
+- d2bb101: fix: fixed lint error for eslint-plugin-svelte v3 changes.
+
 ## 3.0.3
 
 ### Patch Changes

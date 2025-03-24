@@ -1,5 +1,13 @@
 # @undp-data/svelte-undp-components
 
+## 2.0.8
+
+### Patch Changes
+
+- d2bb101: fix: fixed lint error for eslint-plugin-svelte v3 changes.
+- Updated dependencies [d2bb101]
+  - @undp-data/svelte-undp-design@3.0.4
+
 ## 2.0.7
 
 ### Patch Changes

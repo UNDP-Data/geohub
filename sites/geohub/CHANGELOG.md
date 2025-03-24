@@ -1,5 +1,11 @@
 # geohub
 
+## 1.22.45
+
+### Patch Changes
+
+- d2bb101: fix: fixed lint error for eslint-plugin-svelte v3 changes.
+
 ## 1.22.44
 
 ### Patch Changes
