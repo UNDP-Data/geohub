@@ -169,7 +169,7 @@
 		<table class="table is-striped is-narrow is-hoverable is-fullwidth layer-panel">
 			<tbody>
 				{#key requireUpdated}
-					{#each styleJson.layers as layer}
+					{#each styleJson.layers as layer (layer.id)}
 						{@const isGeoHub = isGeoHubLayer(layer.id)}
 						{#if !showOnlyGeoHubLayers || (showOnlyGeoHubLayers && isGeoHub)}
 							{@const layerName = getLayerName(layer.id)}

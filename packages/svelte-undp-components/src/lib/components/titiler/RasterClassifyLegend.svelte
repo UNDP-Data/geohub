@@ -462,7 +462,7 @@
 									bind:value={classificationMethod}
 									onchange={handleClassificationMethodChange}
 								>
-									{#each ClassificationMethods as classificationMethod}
+									{#each ClassificationMethods as classificationMethod (classificationMethod.code)}
 										<option
 											class="legend-text"
 											title="Classification Method"
@@ -518,7 +518,7 @@
 		</thead>
 		<tbody>
 			<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-			{#each colorMapRows as colorMapRow, index}
+			{#each colorMapRows as colorMapRow, index (colorMapRow.index)}
 				<LegendColorMapRow
 					bind:colorMapRow={colorMapRows[index]}
 					bind:colorMapName

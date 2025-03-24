@@ -295,7 +295,7 @@
 		<div class="columns is-multiline is-mobile">
 			{#if mode === 'map'}
 				<!-- if map mode, show selected algos first -->
-				{#each ids as name}
+				{#each ids as name (name)}
 					{@const algo = algorithms[name]}
 					{#if isCatalog || (algo.inputs.nbands <= availableBands.length && feature.properties.tags.find((t) => t.key === ALGORITHM_TAG_KEY && t.value === name))}
 						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
@@ -317,7 +317,7 @@
 			{/if}
 
 			{#key tagSelectionChanged}
-				{#each ids as name}
+				{#each ids as name (name)}
 					{@const algo = algorithms[name]}
 					{#if isCatalog || algo.inputs.nbands <= availableBands.length}
 						{@const isSelected =

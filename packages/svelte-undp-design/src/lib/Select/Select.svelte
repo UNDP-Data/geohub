@@ -49,7 +49,7 @@
 		{/if}
 	</button>
 	<ul class={isOpened ? 'active' : ''} role="listbox" data-select-options="">
-		{#each items as item}
+		{#each items as item (item.value)}
 			<li
 				role="option"
 				tabindex="0"

@@ -103,7 +103,7 @@
 				<thead>
 					<tr>
 						<th class="px-1"></th>
-						{#each headerCols as col, index}
+						{#each headerCols as col, index (col.name)}
 							<th class={index === 0 ? 'pl-0' : ''}>
 								{#if col.sortingCol}
 									<VectorTableColumn
@@ -123,7 +123,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each datasets as dataset}
+					{#each datasets as dataset (datasets.indexOf(dataset))}
 						<IngestingDatasetRow {dataset} change={getIngestingDatasets} />
 					{/each}
 				</tbody>

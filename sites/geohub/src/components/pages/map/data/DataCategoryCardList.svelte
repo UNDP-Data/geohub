@@ -48,7 +48,7 @@
 	class="container mt-2 category-container"
 	style="grid-template-columns: repeat(auto-fit, minmax(80px, 1fr))"
 >
-	{#each categories as category}
+	{#each categories as category (categories.indexOf(category))}
 		<DataCategoryCard
 			{category}
 			onclick={() => {

@@ -54,7 +54,7 @@
 			bind:initialPageIndex
 			on:pageChange={handlePageChanged}
 		>
-			{#each contents as content}
+			{#each contents as content (contents.indexOf(content))}
 				<div
 					class="swiper-slide slider-slide"
 					aria-roledescription="slide"

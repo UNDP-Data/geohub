@@ -40,7 +40,7 @@
 		aria-hidden="true"
 		class={isFixHeight ? 'fix-height' : ''}
 	>
-		{#each items as item}
+		{#each items as item (item.id)}
 			{#if item.children}
 				<li
 					role="option"
@@ -55,7 +55,7 @@
 						}}>{item.label}</button
 					>
 					<ul role="listbox" class="sub-menu">
-						{#each item.children as child}
+						{#each item.children as child (child.id)}
 							<li role="option" aria-selected={child.checked}>
 								<div class="form-check">
 									<label for={child.id}>{child.label}</label>

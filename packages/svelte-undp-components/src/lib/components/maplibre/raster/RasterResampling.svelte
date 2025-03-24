@@ -37,7 +37,7 @@
 
 <div class="select is-fullwidth">
 	<select bind:value onchange={setValue}>
-		{#each options as option}
+		{#each options as option (option.value)}
 			<option value={option.value}>{option.title}</option>
 		{/each}
 	</select>

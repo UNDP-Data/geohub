@@ -460,7 +460,7 @@
 <ModalTemplate title="Download data" bind:show={showDialog}>
 	{#snippet content()}
 		<div class="download-contents">
-			{#each layers as l}
+			{#each layers as l, index (index)}
 				<div
 					class="is-flex is-flex-wrap-wrap is-justify-content-space-between is-align-items-center a-box p-4 mt-4"
 				>
@@ -475,7 +475,7 @@
 							<div class="select">
 								<select bind:value={l.format}>
 									{#if $hrea}
-										{#each $hrea as dataset}
+										{#each $hrea as dataset (dataset.year)}
 											{#if 'years' in l && dataset.year >= l.years[0] && dataset.year <= l.years[1]}
 												<option value={dataset.year.toString()}>{dataset.year}</option>
 											{/if}
@@ -486,7 +486,7 @@
 						{:else}
 							<div class="select">
 								<select bind:value={l.format}>
-									{#each formats as f}
+									{#each formats as f (f)}
 										<option value={f}>{f}</option>
 									{/each}
 								</select>

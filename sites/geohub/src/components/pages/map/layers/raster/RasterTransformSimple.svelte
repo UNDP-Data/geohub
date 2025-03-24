@@ -245,7 +245,7 @@
 				</div>
 
 				<div class="grid mt-2">
-					{#each RasterComparisonOperators as operator}
+					{#each RasterComparisonOperators as operator (operator.value)}
 						{@const isVisible = !operator.disabled}
 						{#if isVisible}
 							<button

@@ -613,7 +613,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							{#each filesToUpload as file, index}
+							{#each filesToUpload as file, index (index)}
 								{@const name = file.name}
 								{@const path = file.path}
 								<tr>
@@ -650,7 +650,7 @@
 													{#if !path}
 														<!-- Shapefiles that have been zipped by selecting multiple files for it will have no `path` property. This condition will only be true if shapefiles are selected-->
 														<div>
-															{#each zipFiles as zipFile}
+															{#each zipFiles as zipFile, j (j)}
 																<span class="tag is-info is-medium is-light ml-1">
 																	<small>.{zipFile.name.split('.').at(-1)}</small>
 																</span>
@@ -766,7 +766,7 @@
 		</div>
 
 		{#if showErrorMessages}
-			{#each errorMessages as message}
+			{#each errorMessages as message, index (index)}
 				<div class="mt-3">
 					<Notification
 						type="danger"

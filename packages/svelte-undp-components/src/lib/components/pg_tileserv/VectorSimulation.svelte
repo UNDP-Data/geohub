@@ -127,7 +127,7 @@
 		</div>
 	</div>
 {:else}
-	{#each Object.entries(args) as [argId, arg]}
+	{#each Object.entries(args) as [argId, arg] (argId)}
 		{@const value = selectedArgs[argId]?.value ?? 0}
 
 		<PropertyEditor

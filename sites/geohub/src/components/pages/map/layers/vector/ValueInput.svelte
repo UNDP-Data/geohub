@@ -433,10 +433,10 @@
 				<Tags
 					ontags={handleTags}
 					maxTags={acceptSingleTag ? 1 : 100}
-					splitWith={'/'}
+					splitWith="/"
 					onlyUnique={true}
 					removeKeys={[27]}
-					placeholder={'Select a value...'}
+					placeholder="Select a value..."
 					autoComplete={sol}
 					tags={tagsList}
 					allowBlur={true}
@@ -477,7 +477,7 @@
 				/>
 
 				<div class="buttons">
-					{#each svals as v}
+					{#each svals as v (svals.indexOf(v))}
 						<button
 							onclick={(e) => {
 								expressionValue = v;

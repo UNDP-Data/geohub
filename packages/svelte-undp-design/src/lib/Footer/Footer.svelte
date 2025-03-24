@@ -125,7 +125,7 @@
 				<div class="grid-x grid-margin-x" data-accordion="mobile">
 					<div class="cell medium-8">
 						<div class="grid-x grid-margin-x footer-items">
-							{#each Object.keys(footerItems) as pageTitle, index}
+							{#each Object.keys(footerItems) as pageTitle, index (pageTitle)}
 								{@const itemId = `footer-item-${index}`}
 								{@const panelId = `footer-panel-${index}`}
 								<div class="cell footer-item {isInverted ? 'inverted' : ''}">
@@ -160,7 +160,7 @@
 												? 'block'
 												: 'none'}"
 									>
-										{#each footerItems[pageTitle] as item}
+										{#each footerItems[pageTitle] as item (footerItems[pageTitle].indexOf(item))}
 											{#if item.callback}
 												<!-- svelte-ignore a11y_missing_attribute -->
 												<a

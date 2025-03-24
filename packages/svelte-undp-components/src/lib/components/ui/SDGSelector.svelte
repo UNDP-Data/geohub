@@ -88,7 +88,7 @@
 </div>
 
 <div bind:this={tooltipContent} class="sdg-content tooltip">
-	{#each sdgNumbers as number}
+	{#each sdgNumbers as number (number)}
 		{@const isSelected = selected.includes(number)}
 		<div class="sdg-item py-2 pl-2 pr-4">
 			<label class="checkbox is-flex is-align-items-center">

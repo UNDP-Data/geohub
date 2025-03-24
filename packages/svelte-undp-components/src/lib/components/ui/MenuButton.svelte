@@ -61,7 +61,7 @@
 			onmouseleave={() => (isButtonHovered = false)}
 		>
 			<div class="dropdown-content">
-				{#each subButtons as btn}
+				{#each subButtons as btn (subButtons.indexOf(btn))}
 					{#if btn.callback}
 						<!-- svelte-ignore a11y_missing_attribute -->
 						<a

@@ -178,7 +178,7 @@
 									</div>
 									<div class="dropdown-menu" id="dropdown-menu" role="menu">
 										<div class="dropdown-content">
-											{#each data.examples as example}
+											{#each data.examples as example (data.examples.indexOf(example))}
 												<!-- svelte-ignore a11y_missing_attribute -->
 												<a
 													class="dropdown-item"

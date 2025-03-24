@@ -177,7 +177,8 @@
 			{#snippet control()}
 				<div>
 					{#if selectedTool.algorithm.inputs.bands}
-						{#each selectedTool.algorithm.inputs.bands as band, index}
+						{@const bands = selectedTool.algorithm.inputs.bands}
+						{#each bands as band, index (bands.indexOf(band))}
 							<div class="field">
 								<!-- svelte-ignore a11y_label_has_associated_control -->
 								<label class="label">{band.title} ({band.required ? 'Required' : 'Optional'})</label
@@ -203,7 +204,7 @@
 							</div>
 						{/each}
 					{:else}
-						{#each listOfbands(selectedTool.algorithm.inputs.nbands) as bandNo}
+						{#each listOfbands(selectedTool.algorithm.inputs.nbands) as bandNo (bandNo)}
 							<div class="field">
 								<!-- svelte-ignore a11y_label_has_associated_control -->
 								<label class="label">Input Band {bandNo}</label>

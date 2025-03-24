@@ -142,7 +142,7 @@
 			>
 				{#snippet control()}
 					<div>
-						{#each Object.keys(params) as key}
+						{#each Object.keys(params) as key (key)}
 							{@const args = params[key]}
 							<PropertyEditor
 								id={key}

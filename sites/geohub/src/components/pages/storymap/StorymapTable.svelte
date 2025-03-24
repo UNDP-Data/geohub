@@ -42,7 +42,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each storiesData.stories as story}
+					{#each storiesData.stories as story (story.id)}
 						{@const storymapLink = story.links?.find((l) => l.rel === 'storymap')?.href}
 						{@const accessIcon = getAccessLevelIcon(story.access_level as AccessLevel, true)}
 						{#if storymapLink}
@@ -118,7 +118,7 @@
 		</div>
 	{:else}
 		<div class="columns is-multiline is-mobile">
-			{#each storiesData.stories as story}
+			{#each storiesData.stories as story (story.id)}
 				{@const storyLink = story.links?.find((l) => l.rel === 'storymap')?.href}
 				{@const staticLink = story.links?.find((l) => l.rel === 'static-auto')?.href}
 				{@const accessLevel = story.access_level}

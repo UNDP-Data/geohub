@@ -99,8 +99,7 @@
 
 <div class="fixed-grid has-{colorValues.length}-cols">
 	<div class="grid is-gap-1">
-		<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-		{#each colorValues as colorValueRow, index}
+		{#each colorValues as colorValueRow, index (colorValueRow.index)}
 			<div class="cell">
 				<HeatmapColorRow
 					bind:colorRow={colorValues[index]}

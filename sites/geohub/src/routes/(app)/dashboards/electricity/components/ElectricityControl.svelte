@@ -10,7 +10,7 @@
 
 <div>
 	<div class="button-container mt-2">
-		{#each electricityDataTypes as choice}
+		{#each electricityDataTypes as choice (choice.value)}
 			<button
 				class="button data-option pl-3 {`${JSON.stringify(choice.value) === JSON.stringify(electricityDataType) ? 'is-active' : ''}`}"
 				onclick={() => {

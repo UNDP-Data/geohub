@@ -140,7 +140,7 @@
 	{#if showSelectedCountries && selected.length > 0}
 		<div class="selected-area fixed-grid has-3-cols p-2">
 			<div class="grid">
-				{#each selected as iso3}
+				{#each selected as iso3 (iso3)}
 					<div class="cell">
 						<Chips
 							label={iso3}
@@ -158,7 +158,7 @@
 		{#if countriesFiltered.length === 0}
 			<Notification type="info" showCloseButton={false}>No country found</Notification>
 		{:else}
-			{#each countriesFiltered as country}
+			{#each countriesFiltered as country (country.iso_3)}
 				{@const isSelected = selected.includes(country.iso_3)}
 				<div class="country-item p-1 px-2">
 					<label class="checkbox is-flex is-align-items-center">

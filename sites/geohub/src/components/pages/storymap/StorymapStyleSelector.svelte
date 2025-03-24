@@ -171,7 +171,7 @@
 				hidden={activeTab !== 'base_style_id'}
 			>
 				<div class="grid">
-					{#each MapStyles as style}
+					{#each MapStyles as style (style.id)}
 						<label
 							class="cell"
 							use:tippyTooltip={{
@@ -237,7 +237,7 @@
 							<div>
 								<div class="basemap-style-selector fixed-grid has-4-cols">
 									<div class="grid">
-										{#each MapStyles as style}
+										{#each MapStyles as style (style.id)}
 											<label
 												class="cell"
 												use:tippyTooltip={{

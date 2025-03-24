@@ -269,7 +269,7 @@
 							<div>
 								<div class="select is-fullwidth">
 									<select name="MapPageSearchLimit" bind:value={userSettings.MapPageSearchLimit}>
-										{#each MapPageLimitOptions as limit}
+										{#each MapPageLimitOptions as limit (limit)}
 											<option value={limit}>{limit}</option>
 										{/each}
 									</select>
@@ -289,7 +289,7 @@
 										name="MapPageSortingColumn"
 										bind:value={userSettings.MapPageSortingColumn}
 									>
-										{#each MapSortingColumns as column}
+										{#each MapSortingColumns as column (column.value)}
 											<option value={column.value}>{column.label}</option>
 										{/each}
 									</select>
@@ -340,7 +340,7 @@
 							<div>
 								<div class="select is-fullwidth">
 									<select name="DataPageSearchLimit" bind:value={userSettings.DataPageSearchLimit}>
-										{#each DataPageLimitOptions as limit}
+										{#each DataPageLimitOptions as limit (limit)}
 											<option value={limit}>{limit}</option>
 										{/each}
 									</select>
@@ -367,7 +367,7 @@
 										name="DataPageSearchQueryOperator"
 										bind:value={userSettings.DataPageSearchQueryOperator}
 									>
-										{#each ['and', 'or'] as operator}
+										{#each ['and', 'or'] as operator (operator)}
 											<option value={operator}>
 												{#if operator === 'and'}
 													Match all words typed (AND)
@@ -400,7 +400,7 @@
 										name="DataPageTagSearchOperator"
 										bind:value={userSettings.DataPageTagSearchOperator}
 									>
-										{#each ['and', 'or'] as operator}
+										{#each ['and', 'or'] as operator (operator)}
 											<option value={operator}>
 												{#if operator === 'and'}
 													Match all selected tags (AND)
@@ -425,7 +425,7 @@
 										name="DataPageSortingColumn"
 										bind:value={userSettings.DataPageSortingColumn}
 									>
-										{#each DatasetSortingColumns as column}
+										{#each DatasetSortingColumns as column (column.value)}
 											<option value={column.value}>{column.label}</option>
 										{/each}
 									</select>
@@ -449,7 +449,7 @@
 										name="DataPageIngestingSortingColumn"
 										bind:value={userSettings.DataPageIngestingSortingColumn}
 									>
-										{#each IngestingDatasetSortingColumns as column}
+										{#each IngestingDatasetSortingColumns as column (column.value)}
 											<option value={column.value}>{column.label}</option>
 										{/each}
 									</select>
@@ -523,7 +523,7 @@
 							<div>
 								<div class="select is-fullwidth">
 									<select name="StacSearchLimit" bind:value={userSettings.StacSearchLimit}>
-										{#each StacSearchLimitOptions as limit}
+										{#each StacSearchLimitOptions as limit (limit)}
 											<option value={limit}>{limit}</option>
 										{/each}
 									</select>
@@ -580,7 +580,7 @@
 										name="StacDateFilterOption"
 										bind:value={userSettings.StacDateFilterOption}
 									>
-										{#each StacDateFilterOptions as option}
+										{#each StacDateFilterOptions as option (option.value)}
 											<option value={option.value}>{option.label}</option>
 										{/each}
 									</select>
@@ -599,7 +599,7 @@
 						{/snippet}
 						{#snippet control()}
 							<div class="is-flex">
-								{#each MapStyles as style}
+								{#each MapStyles as style (style.id)}
 									<label
 										class="m-1"
 										use:tippyTooltip={{
@@ -634,7 +634,7 @@
 						{#snippet control()}
 							<div>
 								<div class="columns is-mobile">
-									{#each ['left', 'right'] as pos}
+									{#each ['left', 'right'] as pos (pos)}
 										<label
 											class="column"
 											use:tippyTooltip={{
@@ -698,7 +698,7 @@
 							<div>
 								<div class="select is-fullwidth">
 									<select name="DatasetSearchLimit" bind:value={userSettings.DatasetSearchLimit}>
-										{#each DatasetLimitOptions as limit}
+										{#each DatasetLimitOptions as limit (limit)}
 											<option value={limit}>{limit}</option>
 										{/each}
 									</select>
@@ -726,7 +726,7 @@
 										name="DatasetSearchQueryOperator"
 										bind:value={userSettings.DatasetSearchQueryOperator}
 									>
-										{#each ['and', 'or'] as operator}
+										{#each ['and', 'or'] as operator (operator)}
 											<option value={operator}>
 												{#if operator === 'and'}
 													Match all words typed (AND)
@@ -753,7 +753,7 @@
 											name="DatasetSortingColumn"
 											bind:value={userSettings.DatasetSortingColumn}
 										>
-											{#each DatasetSortingColumns as column}
+											{#each DatasetSortingColumns as column (column.value)}
 												<option value={column.value}>{column.label}</option>
 											{/each}
 										</select>
@@ -779,7 +779,7 @@
 							<div>
 								<div class="select is-fullwidth">
 									<select name="TagSearchOperator" bind:value={userSettings.TagSearchOperator}>
-										{#each ['and', 'or'] as operator}
+										{#each ['and', 'or'] as operator (operator)}
 											<option value={operator}>
 												{#if operator === 'and'}
 													Match all selected tags (AND)
@@ -811,7 +811,7 @@
 										name="ClassificationMethod"
 										bind:value={userSettings.ClassificationMethod}
 									>
-										{#each ClassificationMethods as classificationMethod}
+										{#each ClassificationMethods as classificationMethod (classificationMethod.code)}
 											<option value={classificationMethod.code}>{classificationMethod.name}</option>
 										{/each}
 									</select>
@@ -977,7 +977,7 @@
 							<div>
 								<div class="select is-fullwidth">
 									<select name="IconOverlapPriority" bind:value={userSettings.IconOverlapPriority}>
-										{#each IconOverlapPriority as overlapPriority}
+										{#each IconOverlapPriority as overlapPriority (overlapPriority.value)}
 											<option value={overlapPriority.value}>{overlapPriority.label}</option>
 										{/each}
 									</select>
@@ -1032,7 +1032,7 @@
 										name="RasterResamplingMethod"
 										bind:value={userSettings.RasterResamplingMethod}
 									>
-										{#each RasterResamplingMethods as resamplingMethod}
+										{#each RasterResamplingMethods as resamplingMethod (resamplingMethod.value)}
 											<option value={resamplingMethod.value}>{resamplingMethod.label}</option>
 										{/each}
 									</select>
@@ -1051,7 +1051,7 @@
 							<div>
 								<div class="select is-fullwidth">
 									<select name="LabelTextFont" bind:value={userSettings.LabelTextFont}>
-										{#each data.fonts as font}
+										{#each data.fonts as font (font)}
 											<option value={font}>{font}</option>
 										{/each}
 									</select>
@@ -1140,7 +1140,7 @@
 										name="StorymapPageSearchLimit"
 										bind:value={userSettings.StorymapPageSearchLimit}
 									>
-										{#each StorymapPageLimitOptions as limit}
+										{#each StorymapPageLimitOptions as limit (limit)}
 											<option value={limit}>{limit}</option>
 										{/each}
 									</select>
@@ -1160,7 +1160,7 @@
 										name="StorymapPageSortingColumn"
 										bind:value={userSettings.StorymapPageSortingColumn}
 									>
-										{#each StorymapSortingColumns as column}
+										{#each StorymapSortingColumns as column (column.value)}
 											<option value={column.value}>{column.label}</option>
 										{/each}
 									</select>
@@ -1245,7 +1245,7 @@
 						{#snippet control()}
 							<div class="select is-fullwidth">
 								<select bind:value={userSettings.StorymapChapterNavigationControlPosition}>
-									{#each [{ title: 'top-left', value: 'top-left' }, { title: 'top-right', value: 'top-right' }, { title: 'bottom-left', value: 'bottom-left' }, { title: 'bottom-right', value: 'bottom-right' }] as item}
+									{#each [{ title: 'top-left', value: 'top-left' }, { title: 'top-right', value: 'top-right' }, { title: 'bottom-left', value: 'bottom-left' }, { title: 'bottom-right', value: 'bottom-right' }] as item, index (index)}
 										<option value={item.value}>{item.title}</option>
 									{/each}
 								</select>

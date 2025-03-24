@@ -82,7 +82,7 @@
 				<div class="select is-fullwidth">
 					<select bind:value={accessLevel} onchange={handleSelectClicked}>
 						<option value={AccessLevel.ALL}>All</option>
-						{#each getSegmentButtons() as item}
+						{#each getSegmentButtons() as item (item.value)}
 							<option value={item.value}>{item.title}</option>
 						{/each}
 					</select>

@@ -404,7 +404,7 @@
 														handleChange();
 													}}
 												>
-													{#each mapControlPositions as item}
+													{#each mapControlPositions as item (item.value)}
 														<option value={item.value}>{item.title}</option>
 													{/each}
 												</select>

@@ -402,7 +402,7 @@
 						</span>
 					</button>
 					<div class="dropdown-content" bind:this={tooltipContent}>
-						{#each expressionsArray as expr, i}
+						{#each expressionsArray as expr, i (expr.index)}
 							{@const op = VectorFilterOperators.filter((i) => i.value == expr.operator)}
 
 							{#if op && op.length > 0}

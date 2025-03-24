@@ -199,7 +199,7 @@
 		<thead>
 			<tr>
 				<th></th>
-				{#each formattedFeatures as feature}
+				{#each formattedFeatures as feature (feature.name)}
 					<th class="has-text-right">{feature.name}</th>
 				{/each}
 			</tr>
@@ -207,14 +207,14 @@
 		<tbody>
 			<tr class="my-4">
 				<th>CEEI</th>
-				{#each formattedFeatures as feature}
+				{#each formattedFeatures as feature (feature.name)}
 					{@const prop = feature['CEEI']}
 					<th class="has-text-right">
 						{typeof prop === 'number' ? prop.toFixed(2) : prop}
 					</th>
 				{/each}
 			</tr>
-			{#each Object.entries(pillarGroups) as [pgName, pgMembers]}
+			{#each Object.entries(pillarGroups) as [pgName, pgMembers], index (index)}
 				<tr on:click={() => handleAccordionSelect(pgName)}>
 					<th colspan={formattedFeatures.length + 1}>
 						<div class="is-flex is-gap-1 accordion-button" class:clicked={showPillars[pgName]}>
@@ -223,7 +223,7 @@
 					</th>
 				</tr>
 				{#if showPillars[pgName]}
-					{#each pgMembers as key}
+					{#each pgMembers as key (key)}
 						<tr>
 							<td class="pillar-group-key">
 								<div>
@@ -235,7 +235,7 @@
 								<div class="is-italic is-size-7">
 									<span>source: </span>
 									<ul class="source-list">
-										{#each featureDetails[key].source as source}
+										{#each featureDetails[key].source as source, index (index)}
 											<li>
 												<a href={source.url}>{source.name}</a>
 											</li>
@@ -243,7 +243,7 @@
 									</ul>
 								</div>
 							</td>
-							{#each formattedFeatures as feature}
+							{#each formattedFeatures as feature (feature.name)}
 								{@const prop = feature[key]}
 								<td class="has-text-right">
 									{typeof prop === 'number' ? prop.toFixed(2) : prop}

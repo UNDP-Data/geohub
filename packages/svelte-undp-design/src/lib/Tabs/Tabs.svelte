@@ -58,7 +58,7 @@
 		id="tablist_1"
 		role="tablist"
 	>
-		{#each tabs as tab}
+		{#each tabs as tab (tab.id)}
 			<li
 				class="tab-{tab.label} tabs-title {`${
 					activeTab && activeTab === tab.label ? 'is-active' : ''

@@ -99,7 +99,7 @@
 					<div class="cell small-1 large-auto align-content-middle top-center">
 						<nav class="menu">
 							<ul class="">
-								{#each links as link, index}
+								{#each links as link, index (links.indexOf(link))}
 									{@const isLast = links.length > 1 && links.length - 1 === index}
 									{#if link.children && link.children.length > 0}
 										<li class="has-submenu">
@@ -123,7 +123,7 @@
 												</a>
 											{/if}
 											<ul class="submenu" data-submenu="true">
-												{#each link.children as child}
+												{#each link.children as child (link.children.indexOf(child))}
 													{#if child.children && child.children.length > 0}
 														<li class="has-submenu {isLast ? 'edge' : ''}">
 															{#if child.callback}
@@ -143,7 +143,7 @@
 																</a>
 															{/if}
 															<ul class="submenu" data-submenu="true">
-																{#each child.children as grandchild}
+																{#each child.children as grandchild (child.children.indexOf(grandchild))}
 																	<li class="">
 																		{#if grandchild.callback}
 																			{@const callback = grandchild.callback}
@@ -266,7 +266,7 @@
 								{actionMenu.title}
 							</button>
 							<ul role="menu">
-								{#each actionMenu.links as actionLink}
+								{#each actionMenu.links as actionLink (actionMenu.links.indexOf(actionLink))}
 									<li role="menuitem">
 										<a href={actionLink.href} tabindex="-1">{actionLink.title}</a>
 									</li>
@@ -295,7 +295,7 @@
 									: ''}"
 							>
 								<ul>
-									{#each links as link}
+									{#each links as link (links.indexOf(link))}
 										<li>
 											{#if link.children && link.children.length > 0}
 												<div
@@ -443,7 +443,7 @@
 									Back
 								</button>
 								<div class="mobile-mega-wrapper">
-									{#each links as link}
+									{#each links as link (links.indexOf(link))}
 										{#if link.children && link.children.length > 0}
 											<div
 												class="mobile-mega-content {link.id === submenuLink?.id
@@ -453,12 +453,12 @@
 											>
 												<h6 class="sub-heading">{link.title}</h6>
 												<ul class="sub-sub-menus">
-													{#each link.children as child}
+													{#each link.children as child (link.children.indexOf(child))}
 														{#if child.children && child.children.length > 0}
 															<li>
 																<span>{child.title}</span>
 																<ul>
-																	{#each child.children as grandchild}
+																	{#each child.children as grandchild (child.children.indexOf(grandchild))}
 																		<li>
 																			{#if grandchild.callback}
 																				{@const callback = grandchild.callback}
@@ -558,7 +558,7 @@
 										<li>
 											<span>{actionMenu.title}</span>
 											<ul>
-												{#each actionMenu.links as link}
+												{#each actionMenu.links as link (actionMenu.links.indexOf(link))}
 													<li><a href={link.href}>{link.title}</a></li>
 												{/each}
 											</ul>

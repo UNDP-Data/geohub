@@ -528,7 +528,7 @@ ${username}`;
 				</tr>
 			</thead>
 			<tbody>
-				{#each permissions as permission}
+				{#each permissions as permission (permission.user_email)}
 					<tr class="border-bottom">
 						<td class="email">
 							{permission.user_email}
@@ -624,7 +624,7 @@ ${username}`;
 								</div>
 								<div class="dropdown-menu user-list-menu" id="dropdown-menu" role="menu">
 									<div class="dropdown-content">
-										{#each userList as user}
+										{#each userList as user (user)}
 											<!-- svelte-ignore a11y_missing_attribute -->
 											<!-- svelte-ignore a11y_interactive_supports_focus -->
 											<a
@@ -657,7 +657,7 @@ ${username}`;
 					{#snippet control()}
 						<div class="select is-fullwidth">
 							<select class="is-capitalized" bind:value={user_permission} disabled={isUpadating}>
-								{#each getPermissionList() as p}
+								{#each getPermissionList() as p (p)}
 									<option value={p}>{getPermissionLabel(p)}</option>
 								{/each}
 							</select>
@@ -726,7 +726,7 @@ ${username}`;
 					{#snippet control()}
 						<div class="select is-fullwidth">
 							<select class="is-capitalized" bind:value={user_permission} disabled={isUpadating}>
-								{#each getPermissionList() as p}
+								{#each getPermissionList() as p (p)}
 									<option value={p}>{getPermissionLabel(p)}</option>
 								{/each}
 							</select>

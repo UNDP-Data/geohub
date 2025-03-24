@@ -127,9 +127,9 @@
 				</div>
 				<div>
 					<div class="is-flex is-flex-direction-column">
-						{#each colorGrid as row, rowIndex}
+						{#each colorGrid as row, rowIndex (rowIndex)}
 							<div class="is-flex">
-								{#each row as color, colIndex}
+								{#each row as color, colIndex (colIndex)}
 									<button
 										class="a-legend__item"
 										class:selected={selectedRow === rowIndex && selectedCol === colIndex}

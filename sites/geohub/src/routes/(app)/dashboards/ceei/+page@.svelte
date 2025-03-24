@@ -314,7 +314,7 @@
 						</div>
 					</div>
 
-					{#each $layerStore as l, i}
+					{#each $layerStore as l, i (l.layerId)}
 						<div>
 							<LayerControl layerDetails={l} index={i} />
 						</div>
