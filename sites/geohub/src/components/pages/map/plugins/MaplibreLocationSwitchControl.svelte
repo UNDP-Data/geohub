@@ -85,7 +85,7 @@
 </script>
 
 <div class="location-switch-control" bind:this={contentDiv}>
-	{#each places as place}
+	{#each places as place (place.name)}
 		<button
 			class="button is-light is-fullwidth p-2"
 			onclick={() => {

@@ -27,7 +27,7 @@
 	<div class="p-5">
 		{#if data.providers?.length > 0}
 			<p class="is-6 has-text-justified has-text-dark pb-4">GeoHub allows you to login with:</p>
-			{#each data.providers as provider, index}
+			{#each data.providers as provider, index (provider.id)}
 				<button
 					class="login-button button is-medium is-fullwidth is-link"
 					onclick={() => signIn(provider.id, { callbackUrl: previousPage.href })}

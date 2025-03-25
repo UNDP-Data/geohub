@@ -55,7 +55,7 @@
 		The platform uses the following open source softwares in the frontend side.
 	</p>
 
-	{#each Object.keys(licenses) as key}
+	{#each Object.keys(licenses) as key (key)}
 		{@const licenseList = licenses[key]}
 		{@const title = key.replace('(', '').replace(')', '').trim()}
 		<Accordion {title} bind:isExpanded={expanded[key]}>
@@ -77,7 +77,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								{#each licenseList as l}
+								{#each licenseList as l (l.name)}
 									<tr>
 										<td>{l.name}</td>
 										<td>{l.versions.join(', ')}</td>

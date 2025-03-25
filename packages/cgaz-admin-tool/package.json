@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/cgaz-admin-tool",
-	"version": "0.0.12",
+	"version": "0.0.13",
 	"description": "This package is to add administrative boundaries tool with CGAZ dataset to Maplibre GL JS.",
 	"scripts": {
 		"dev": "vite dev",
@@ -48,7 +48,7 @@
 		"@typescript-eslint/parser": "^8.23.0",
 		"eslint": "^9.19.0",
 		"eslint-config-prettier": "^10.0.1",
-		"eslint-plugin-svelte": "^2.46.1",
+		"eslint-plugin-svelte": "^3.0.0",
 		"globals": "^16.0.0",
 		"pmtiles": "^4.2.1",
 		"prettier": "^3.4.2",

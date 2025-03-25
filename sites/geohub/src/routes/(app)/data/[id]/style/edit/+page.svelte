@@ -419,7 +419,7 @@
 													onchange={handleLayerSelected}
 													disabled={isLoading}
 												>
-													{#each tilestatsLayers as layer}
+													{#each tilestatsLayers as layer (layer.layer)}
 														<option value={layer}>{layer.layer}</option>
 													{/each}
 												</select>

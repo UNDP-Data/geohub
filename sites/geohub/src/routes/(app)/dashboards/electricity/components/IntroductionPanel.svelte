@@ -59,7 +59,7 @@
 			></button>
 		</div>
 
-		{#each dashboardSelections as dbs}
+		{#each dashboardSelections as dbs, index (index)}
 			<button
 				class="a-reset a-box p-4 is-flex is-flex-wrap-wrap is-justify-content-space-between is-align-items-center my-4"
 				onclick={() => {

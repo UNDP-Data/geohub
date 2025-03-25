@@ -14,6 +14,7 @@
 <section class="solution-section">
 	<h2 class="title is-2">Discover geospatial solutions</h2>
 	<p class="description is-size-4">
+		<!-- eslint-disable-next-line svelte/no-useless-mustaches -->
 		Leverage dashboards and geospatial tools for{'\u00A0'}informed decision-making
 	</p>
 

@@ -315,7 +315,7 @@
 						{#if !is_raster && tilestatsLayers?.length > 1}
 							<DataCardInfo bind:feature bind:metadata onStarDeleted={handleStarDeleted} />
 
-							{#each tilestatsLayers as layer, index}
+							{#each tilestatsLayers as layer, index (layer.layer)}
 								<DataVectorCard
 									bind:layer={tilestatsLayers[index]}
 									bind:feature
@@ -332,7 +332,7 @@
 											<MiniMap
 												bind:feature
 												{width}
-												height={'150px'}
+												height="150px"
 												bind:isLoadMap={isExpanded}
 												bind:metadata
 												band={isRgbTile ? undefined : selectedBand}

@@ -351,7 +351,7 @@
 						minValue={0}
 						maxValue={10}
 						stepValue={0.1}
-						propertyName={'line-width'}
+						propertyName="line-width"
 						styleType="paint"
 						legendCssTemplate={`margin-top: 13px; width: 40px; height: {value}px; background-color: ${$defaultColorStore};`}
 						dataLabel="Line width"

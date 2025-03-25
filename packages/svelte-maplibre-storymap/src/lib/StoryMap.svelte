@@ -288,7 +288,7 @@
 		<StoryMapHeader bind:template />
 
 		{#if $mapStore}
-			{#each config.chapters as chapter}
+			{#each config.chapters as chapter (chapter.id)}
 				<StoryMapChapter {chapter} bind:activeId bind:template />
 			{/each}
 		{/if}
@@ -333,7 +333,7 @@
 							aria-label={config.title}
 						>
 						</button>
-						{#each config.chapters as ch, index}
+						{#each config.chapters as ch, index (ch.id)}
 							<button
 								class="progress-button {slideIndex === index + 1 ? 'is-active' : ''}"
 								use:tippyTooltip={{ content: ch.title }}

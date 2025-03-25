@@ -111,9 +111,9 @@
 	></button>
 
 	<div class="card-icon">
-		{#each iconGroupsByLetter as iconGroup}
+		{#each iconGroupsByLetter as iconGroup (iconGroup.id)}
 			{#if activeIconGroupId === iconGroup.id}
-				{#each iconGroup.values as spriteImage}
+				{#each iconGroup.values as spriteImage (spriteImage.alt)}
 					<div
 						role="button"
 						tabindex="0"

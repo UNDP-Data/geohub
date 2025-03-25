@@ -43,7 +43,7 @@
 		: null} m-0 mt-2 mb-2"
 >
 	<ul>
-		{#each tabs as tab}
+		{#each tabs as tab (tab.id)}
 			<li class={activeTab === tab.id ? 'is-active' : 'inactive-tab'}>
 				<a
 					href={tab.id.startsWith('#') ? tab.id : null}

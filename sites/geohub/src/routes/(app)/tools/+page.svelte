@@ -324,7 +324,7 @@
 />
 
 <div class="m-6 tools">
-	{#each breadcrumbs as page, index}
+	{#each breadcrumbs as page, index (index)}
 		{@const isLastPage = index === breadcrumbs.length - 1}
 		<div hidden={!isLastPage}>
 			{#if page.type === 'Tools'}
@@ -352,7 +352,7 @@
 							/>
 						</div>
 
-						{#each geohubAlgos as name}
+						{#each geohubAlgos as name (name)}
 							{@const algo = algorithms[name]}
 							<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 								<Card
@@ -378,7 +378,7 @@
 					<h3 class="title is-3 mt-6">Simulation add-ons</h3>
 
 					<div class="columns is-multiline is-mobile">
-						{#each data.datasets.features as dataset}
+						{#each data.datasets.features as dataset (dataset.properties.id)}
 							{@const datasetUrl = dataset.properties.links?.find((l) => l.rel === 'dataset')?.href}
 							{@const sdgs = dataset.properties.tags
 								?.filter((t) => t.key === 'sdg_goal')
@@ -403,7 +403,7 @@
 					<h3 class="title is-3 mt-6">Terrain add-ons</h3>
 
 					<div class="columns is-multiline is-mobile">
-						{#each terrainAlgos as name}
+						{#each terrainAlgos as name (name)}
 							{@const algo = algorithms[name]}
 							<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 								<Card
@@ -455,7 +455,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								{#each datasets.features as feature}
+								{#each datasets.features as feature (feature.properties.id)}
 									<PublishedDatasetRow
 										{feature}
 										dispatchEvent={true}

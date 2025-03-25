@@ -72,7 +72,7 @@
 				<span
 					class="initial-avator is-flex is-justify-content-center is-align-items-center has-background-grey-lighter"
 				>
-					{#each names as name}
+					{#each names as name (name)}
 						<p class="is-size-5 has-text-black">
 							{name.slice(0, 1)}
 						</p>
@@ -151,7 +151,7 @@
 					</div>
 				{:then}
 					<div class="changelog-content content">
-						{#each sections as section, index}
+						{#each sections as section, index (sections.indexOf(section))}
 							<div class="changelog-section">
 								<div
 									class="changelog-header py-4 is-flex is-align-items-center"

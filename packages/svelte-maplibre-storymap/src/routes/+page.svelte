@@ -19,7 +19,7 @@
 
 <div class="overlay">
 	<div class="buttons has-addons">
-		{#each cssModes as mode}
+		{#each cssModes as mode (mode.id)}
 			<label class="radio">
 				<input type="radio" name="cssmode" value={mode.id} bind:group={cssMode} />
 				{mode.label}

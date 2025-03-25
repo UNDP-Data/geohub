@@ -286,7 +286,7 @@
 	<div class="my-2 ml-1 mr-2">
 		<nav class="breadcrumb has-text-weight-bold" aria-label="breadcrumbs">
 			<ul>
-				{#each breadcrumbs as page, index}
+				{#each breadcrumbs as page, index (breadcrumbs.indexOf(page))}
 					<li class={index === breadcrumbs.length - 1 ? 'is-active' : ''}>
 						<!-- svelte-ignore a11y_missing_attribute -->
 						<a
@@ -323,7 +323,7 @@
 	style="height: {totalHeight}px;"
 	bind:this={containerDivElement}
 >
-	{#each breadcrumbs as page, index}
+	{#each breadcrumbs as page, index (breadcrumbs.indexOf(page))}
 		{#if index === breadcrumbs.length - 1}
 			{#if isDatasetLoading() || query?.length > 0}
 				{#if isLoading}
@@ -341,7 +341,7 @@
 							{/if}
 						</Notification>
 					{:else}
-						{#each DataItemFeatureCollection.features as feature}
+						{#each DataItemFeatureCollection.features as feature (feature.properties.id)}
 							<DataCard
 								{feature}
 								bind:isExpanded={expanded[feature.properties.id as string]}

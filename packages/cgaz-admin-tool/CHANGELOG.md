@@ -1,5 +1,11 @@
 # @undp-data/cgaz-admin-tool
 
+## 0.0.13
+
+### Patch Changes
+
+- d2bb101: fix: fixed lint error for eslint-plugin-svelte v3 changes.
+
 ## 0.0.12
 
 ### Patch Changes

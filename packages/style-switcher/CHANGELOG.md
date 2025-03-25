@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 2.0.12
+
+### Patch Changes
+
+- d2bb101: fix: fixed lint error for eslint-plugin-svelte v3 changes.
+
 ## 2.0.11
 
 ### Patch Changes

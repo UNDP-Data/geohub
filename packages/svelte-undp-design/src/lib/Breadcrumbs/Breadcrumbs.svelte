@@ -31,7 +31,7 @@
 {#if breadcrumbs && breadcrumbs.length > 0}
 	<nav aria-label="breadcrumb" data-viewport="true" class="breadcrumb-undp inviewport">
 		<ul>
-			{#each breadcrumbs as breadcrumb, index}
+			{#each breadcrumbs as breadcrumb, index (breadcrumbs.indexOf(breadcrumb))}
 				{#if index === breadcrumbs.length - 1}
 					<li>
 						<span class="icon-text">

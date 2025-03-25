@@ -169,7 +169,7 @@
 						<div class="control">
 							<div class="select is-link is-fullwidth">
 								<select bind:value={selectedVectorLayer} onchange={handleLayerTypeChanged}>
-									{#each tilestatsLayers as layer}
+									{#each tilestatsLayers as layer (layer.layer)}
 										<option value={layer}>{layer.layer}</option>
 									{/each}
 								</select>

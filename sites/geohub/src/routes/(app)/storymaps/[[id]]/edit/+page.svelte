@@ -628,7 +628,7 @@
 					{/key}
 
 					{#key requireUpdated}
-						{#each $configStore.chapters as chapter, index}
+						{#each $configStore.chapters as chapter, index (chapter.id)}
 							{@const slideNo = index + 2}
 							{@const isActive = $activeStorymapChapterStore?.id === chapter.id}
 							<button

@@ -1,5 +1,14 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 1.0.11
+
+### Patch Changes
+
+- d2bb101: fix: fixed lint error for eslint-plugin-svelte v3 changes.
+- Updated dependencies [d2bb101]
+  - @undp-data/svelte-undp-components@2.0.8
+  - @undp-data/svelte-undp-design@3.0.4
+
 ## 1.0.10
 
 ### Patch Changes

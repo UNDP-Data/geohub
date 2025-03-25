@@ -74,7 +74,7 @@
 	{#if StacBreadcrumbs && StacBreadcrumbs.length > 0}
 		<Breadcrumbs bind:pages={StacBreadcrumbs} size="small" onclick={handleBreadcrumbClicked} />
 
-		{#each StacBreadcrumbs as page, index}
+		{#each StacBreadcrumbs as page, index (StacBreadcrumbs.indexOf(page))}
 			{@const isLastPage = index === StacBreadcrumbs.length - 1}
 			<div hidden={!isLastPage}>
 				{#if page.type === 'Catalog'}

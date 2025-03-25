@@ -261,7 +261,7 @@
 				<div class="select is-fullwidth">
 					<select bind:value={selectedPageName} onchange={handlePageSizeChanged}>
 						<option value="custom">Custom</option>
-						{#each Object.keys(PageSizes) as name}
+						{#each Object.keys(PageSizes) as name (name)}
 							{@const size = PageSizes[name]}
 							<option value={name}>{name} ({size[0]} mm x {size[1]} mm)</option>
 						{/each}

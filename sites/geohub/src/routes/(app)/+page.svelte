@@ -81,6 +81,7 @@
 					{data.title}
 				</h1>
 				<p class="summary mb-0">
+					<!-- eslint-disable-next-line svelte/no-useless-mustaches -->
 					open-source geospatial services for{'\u00A0'}supporting SDG development
 				</p>
 
@@ -216,6 +217,7 @@
 <section class="solution-section">
 	<h2 class="title is-2">Discover geospatial solutions</h2>
 	<p class="description is-size-4">
+		<!-- eslint-disable-next-line svelte/no-useless-mustaches -->
 		Leverage dashboards and geospatial tools for{'\u00A0'}informed decision-making
 	</p>
 	<DashboardsExplorer />
@@ -241,7 +243,7 @@
 					{/if}
 				{/if}
 				{#await loadDynamicDatasets() then datasets}
-					{#each datasets.features as dataset}
+					{#each datasets.features as dataset (dataset.properties.id)}
 						{@const datasetUrl = dataset.properties.links?.find((l) => l.rel === 'dataset')?.href}
 						{@const sdgs = dataset.properties.tags
 							?.filter((t) => t.key === 'sdg_goal')
@@ -300,7 +302,7 @@
 				</div>
 			{:then stories}
 				<div class="columns is-multiline is-mobile">
-					{#each stories.stories as story}
+					{#each stories.stories as story (story.id)}
 						{@const storyLink = story.links?.find((l) => l.rel === 'storymap')?.href}
 						{@const staticLink = story.links?.find((l) => l.rel === 'static-auto')?.href}
 

@@ -379,7 +379,7 @@
 					<div>
 						<div class="select mt-auto">
 							<select bind:value={limit} onchange={handleLimitChanged} disabled={isLoading}>
-								{#each LimitOptions as limit}
+								{#each LimitOptions as limit (limit)}
 									<option value={`${limit}`}>{limit}</option>
 								{/each}
 							</select>
@@ -394,7 +394,7 @@
 					<div>
 						<div class="select mt-auto">
 							<select bind:value={sortby} onchange={handleSortbyChanged} disabled={isLoading}>
-								{#each DatasetSortingColumns as option}
+								{#each DatasetSortingColumns as option (option.value)}
 									<option value={option.value}>{option.label}</option>
 								{/each}
 							</select>
@@ -526,7 +526,7 @@
 						<div>
 							<div class="flex is-flex-wrap-wrap pb-2">
 								{#key selectedContinents}
-									{#each selectedContinents as continent}
+									{#each selectedContinents as continent (continent)}
 										<span class="pl-1">
 											<Chips
 												label={continent}
@@ -553,7 +553,7 @@
 			/>
 		</div>
 		<div hidden={!showAdvancedSearch}>
-			{#each [{ key: 'provider', title: 'DataProviders' }, { key: 'year', title: 'Year' }, { key: 'resolution', title: 'Resolution' }, { key: 'theme', title: 'Theme' }, { key: 'granularity', title: 'Admin level' }] as tagKey}
+			{#each [{ key: 'provider', title: 'DataProviders' }, { key: 'year', title: 'Year' }, { key: 'resolution', title: 'Resolution' }, { key: 'theme', title: 'Theme' }, { key: 'granularity', title: 'Admin level' }] as tagKey (tagKey.key)}
 				<div class="py-1">
 					<FieldControl title={tagKey.title} isFirstCharCapitalized={false} showHelp={false}>
 						{#snippet control()}
@@ -611,7 +611,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							{#each datasets.features as feature}
+							{#each datasets.features as feature (feature.properties.id)}
 								<PublishedDatasetRow {feature} />
 							{/each}
 						</tbody>
@@ -620,7 +620,7 @@
 			</div>
 			<div hidden={viewType !== 'card'}>
 				<div class="columns is-multiline is-mobile">
-					{#each datasets.features as feature}
+					{#each datasets.features as feature (feature.properties.id)}
 						<div class="column is-one-third-tablet is-one-third-desktop is-full-mobile p-2">
 							<CardView {feature} />
 						</div>

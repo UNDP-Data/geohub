@@ -111,7 +111,7 @@
 		>
 			{#if sdgs.length > 0}
 				<div class="sdg-grid">
-					{#each sdgs as sdg, index}
+					{#each sdgs as sdg, index (sdg)}
 						{#if index < 3}
 							<span class="icon is-medium">
 								<i class="sdg-{sdg.value}"></i>
@@ -128,7 +128,7 @@
 						</div>
 
 						<div class="tooltip sdg-grid p-2" role="menu" bind:this={tooltipContent}>
-							{#each sdgs.slice(3) as sdg}
+							{#each sdgs.slice(3) as sdg (sdg)}
 								<span class="icon is-medium">
 									<i class="sdg-{sdg.value}"></i>
 								</span>

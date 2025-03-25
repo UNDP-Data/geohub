@@ -107,7 +107,7 @@
 		<label class="label">Providers</label>
 		<div class="control">
 			{#if collection.providers}
-				{#each collection.providers as provider, index}
+				{#each collection.providers as provider, index (index)}
 					{#if index > 0}
 						,
 					{/if}

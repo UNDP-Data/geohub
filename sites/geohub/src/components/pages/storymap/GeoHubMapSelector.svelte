@@ -107,7 +107,7 @@
 					<div>
 						<div class="select mt-auto">
 							<select bind:value={sortby} onchange={handleSortbyChanged}>
-								{#each MapSortingColumns as option}
+								{#each MapSortingColumns as option (option.value)}
 									<option value={option.value}>{option.label}</option>
 								{/each}
 							</select>

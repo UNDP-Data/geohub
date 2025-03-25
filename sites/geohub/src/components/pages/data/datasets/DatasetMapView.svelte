@@ -179,7 +179,7 @@
 	{#if clickedFeatures?.length > 0}
 		<div class="tabs is-centered is-boxed">
 			<ul>
-				{#each Array(clickedFeatures.length).keys() as index}
+				{#each Array(clickedFeatures.length).keys() as index (index)}
 					<li class={index === activeFeatureIndex ? 'is-active' : ''}>
 						<!-- svelte-ignore a11y_missing_attribute -->
 						<a
@@ -198,7 +198,7 @@
 				{/each}
 			</ul>
 		</div>
-		{#each clickedFeatures as feature, index}
+		{#each clickedFeatures as feature, index (clickedFeatures.indexOf(feature))}
 			{#if index === activeFeatureIndex}
 				{@const name = clean(feature.properties.name)}
 				{@const description = feature.properties.description}

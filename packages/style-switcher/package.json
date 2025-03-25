@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/style-switcher",
-	"version": "2.0.11",
+	"version": "2.0.12",
 	"description": "This package is to add basemap style switcher plugin to maplibre in GeoHub",
 	"scripts": {
 		"dev": "vite dev",
@@ -27,11 +27,11 @@
 		"@sveltejs/kit": "^2.17.1",
 		"@sveltejs/package": "^2.3.10",
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
-		"@typescript-eslint/eslint-plugin": "8.26.1",
+		"@typescript-eslint/eslint-plugin": "8.27.0",
 		"@typescript-eslint/parser": "^8.23.0",
 		"eslint": "^9.19.0",
 		"eslint-config-prettier": "^10.0.1",
-		"eslint-plugin-svelte": "^2.46.1",
+		"eslint-plugin-svelte": "^3.0.0",
 		"globals": "^16.0.0",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",

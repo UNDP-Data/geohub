@@ -75,7 +75,7 @@
 >
 	{#if iconImage}
 		<span class="icon is-small">
-			<figure class={`image is-24x24`} data-testid="icon-figure">
+			<figure class="image is-24x24" data-testid="icon-figure">
 				<div style={iconImage}></div>
 			</figure>
 		</span>

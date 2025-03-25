@@ -682,7 +682,7 @@
 					isUppercase={true}
 				></Tabs>
 			{/if}
-			{#each clickedFeatures as f}
+			{#each clickedFeatures as f, index (index)}
 				{@const contents = getFeatureData(f)}
 				<div hidden={`${f.id}` !== selectedTab}>
 					<FieldControl title={f.properties.name} showHelp={false} fontWeight="bold">
@@ -697,7 +697,7 @@
 											autoplayProgressVisible
 											arrows={true}
 										>
-											{#each images as imageSrc}
+											{#each images as imageSrc, j (j)}
 												<img src={imageSrc} alt={f.properties.name} class="photo" loading="eager" />
 											{/each}
 										</Carousel>
@@ -716,7 +716,7 @@
 							<div>
 								<table class="table is-narrow is-hoverable is-fullwidth">
 									<tbody>
-										{#each Object.keys(contents) as key}
+										{#each Object.keys(contents) as key (key)}
 											{#if contents[key] && contents[key].length > 0}
 												<tr>
 													<th><p class="is-capitalized">{key}</p></th>

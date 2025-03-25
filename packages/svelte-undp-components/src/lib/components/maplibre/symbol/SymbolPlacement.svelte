@@ -70,7 +70,7 @@
 		title="Icon overlap"
 		onchange={setSymbolPlacement}
 	>
-		{#each choices as choice}
+		{#each choices as choice (choice)}
 			<option class="legend-text" value={choice}>{clean(choice)}</option>
 		{/each}
 	</select>
