@@ -479,8 +479,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1(eslint@9.19.0)
       eslint-plugin-storybook:
-        specifier: ^0.11.2
-        version: 0.11.2(eslint@9.19.0)(typescript@5.7.3)
+        specifier: ^0.12.0
+        version: 0.12.0(eslint@9.19.0)(typescript@5.7.3)
       eslint-plugin-svelte:
         specifier: ^3.0.0
         version: 3.3.3(eslint@9.19.0)(svelte@5.19.9)
@@ -618,8 +618,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1(eslint@9.19.0)
       eslint-plugin-storybook:
-        specifier: ^0.11.2
-        version: 0.11.2(eslint@9.19.0)(typescript@5.7.3)
+        specifier: ^0.12.0
+        version: 0.12.0(eslint@9.19.0)(typescript@5.7.3)
       eslint-plugin-svelte:
         specifier: ^3.0.0
         version: 3.3.3(eslint@9.19.0)(svelte@5.19.9)
@@ -3802,8 +3802,8 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-plugin-storybook@0.11.2:
-    resolution: {integrity: sha512-0Z4DUklJrC+GHjCRXa7PYfPzWC15DaVnwaOYenpgXiCEijXPZkLKCms+rHhtoRcWccP7Z8DpOOaP1gc3P9oOwg==}
+  eslint-plugin-storybook@0.12.0:
+    resolution: {integrity: sha512-Lg5I0+npTgiYgZ4KSvGWGDFZi3eOCNJPaWX0c9rTEEXC5wvooOClsP9ZtbI4hhFKyKgYR877KiJxbRTSJq9gWA==}
     engines: {node: '>= 18'}
     peerDependencies:
       eslint: '>=8'
@@ -9215,10 +9215,10 @@ snapshots:
     dependencies:
       eslint: 9.19.0
 
-  eslint-plugin-storybook@0.11.2(eslint@9.19.0)(typescript@5.7.3):
+  eslint-plugin-storybook@0.12.0(eslint@9.19.0)(typescript@5.7.3):
     dependencies:
       '@storybook/csf': 0.1.13
-      '@typescript-eslint/utils': 8.23.0(eslint@9.19.0)(typescript@5.7.3)
+      '@typescript-eslint/utils': 8.28.0(eslint@9.19.0)(typescript@5.7.3)
       eslint: 9.19.0
       ts-dedent: 2.2.0
     transitivePeerDependencies:
