@@ -715,8 +715,8 @@ importers:
         specifier: ^0.41.0
         version: 0.41.0(@types/pg@8.11.11)(postgres@3.4.5)
       flatgeobuf:
-        specifier: ^3.36.0
-        version: 3.36.0
+        specifier: ^4.0.0
+        version: 4.0.1
       jwt-decode:
         specifier: ^4.0.0
         version: 4.0.0
@@ -4025,11 +4025,11 @@ packages:
     resolution: {integrity: sha512-f7ccFPK3SXFHpx15UIGyRJ/FJQctuKZ0zVuN3frBo4HnK3cay9VEW0R6yPYFHC0AgqhukPzKjq22t5DmAyqGyw==}
     engines: {node: '>=16'}
 
-  flatbuffers@24.3.25:
-    resolution: {integrity: sha512-3HDgPbgiwWMI9zVB7VYBHaMrbOO7Gm0v+yD2FV/sCKj+9NDeVL7BOBYUuhWAQGKWOzBo8S9WdMvV0eixO233XQ==}
+  flatbuffers@24.12.23:
+    resolution: {integrity: sha512-dLVCAISd5mhls514keQzmEG6QHmUUsNuWsb4tFafIUwvvgDjXhtfAYSKOzt5SWOy+qByV5pbsDZ+Vb7HUOBEdA==}
 
-  flatgeobuf@3.36.0:
-    resolution: {integrity: sha512-vSKhQpClrZdguVLmD6QhVw4aKnqvcpEpeR5yBMTJmnRpBPBD1GLEE1MtGpBlBwdBfh3AzSnlcB3TS2MHelRwlQ==}
+  flatgeobuf@4.0.1:
+    resolution: {integrity: sha512-KhK+34kFaCw1knOSq1vAq3eWf3UzsNlQ38+ursdQMG2iWmCV67RsovrLZKG29XHysQVLIoFHaV7dLEbdUpLwcw==}
 
   flatpickr@4.6.1:
     resolution: {integrity: sha512-3ULSxbXmcMIRzer/2jLNweoqHpwDvsjEawO2FUd9UFR8uPwLM+LruZcPDpuZStcEgbQKhuFOfXo4nYdGladSNw==}
@@ -9542,12 +9542,12 @@ snapshots:
       flatted: 3.3.2
       keyv: 4.5.4
 
-  flatbuffers@24.3.25: {}
+  flatbuffers@24.12.23: {}
 
-  flatgeobuf@3.36.0:
+  flatgeobuf@4.0.1:
     dependencies:
       '@repeaterjs/repeater': 3.0.6
-      flatbuffers: 24.3.25
+      flatbuffers: 24.12.23
       slice-source: 0.4.1
     optionalDependencies:
       ol: 10.4.0
