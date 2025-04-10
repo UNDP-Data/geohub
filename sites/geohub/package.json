@@ -114,7 +114,7 @@
 		"prettier-plugin-svelte": "^3.3.3",
 		"sass": "^1.84.0",
 		"svelte": "^5.19.9",
-		"svelte-awesome-color-picker": "^3.1.4",
+		"svelte-awesome-color-picker": "^4.0.0",
 		"svelte-carousel": "^1.0.25",
 		"svelte-check": "^4.1.4",
 		"svelte-htm": "^1.2.0",
