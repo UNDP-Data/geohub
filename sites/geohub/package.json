@@ -147,7 +147,7 @@
 		"@undp-data/style": "^2.3.4",
 		"crypto-js": "^4.2.0",
 		"drizzle-orm": "^0.41.0",
-		"flatgeobuf": "^3.36.0",
+		"flatgeobuf": "^4.0.0",
 		"jwt-decode": "^4.0.0",
 		"pbf": "^4.0.1",
 		"pngjs": "^7.0.0",
