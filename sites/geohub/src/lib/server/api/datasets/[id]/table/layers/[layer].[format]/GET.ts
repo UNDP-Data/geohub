@@ -33,7 +33,7 @@ export const Param = z.object({
 		.describe(`a layer ID. This should be equivalent to maplibre's source layer ID.`)
 		.openapi({ example: 'zanzibar_tourism_attractions' }),
 	format: z
-		.enum([...SupportedTableFormats] as [string, ...string[]])
+		.string()
 		.describe(`Table format either json or csv or geojson or xlsx. default is json.`)
 });
 
@@ -162,8 +162,17 @@ export default new Endpoint({ Param, Query, Output, Modifier }).handle(
 		}
 
 		const id: string = param.id;
-		const layer: string = param.layer.toLowerCase();
-		const format: string = param.format.toLowerCase();
+		let layer: string = param.layer.toLowerCase();
+		let format: string = param.format.toLowerCase();
+
+		// if layer name consists of dot, sveltekit will split layer name and format weirdly.
+		// this code will fix layer name and format name correctly.
+		const formatParts = format.split('.');
+		if (formatParts.length > 1) {
+			format = formatParts[formatParts.length - 1];
+			layer = [layer, ...formatParts.slice(0, formatParts.length - 1)].join('.');
+		}
+
 		if (!SupportedTableFormats.includes(format)) {
 			error(400, {
 				message: `${format} is not supported. Please select it from ${SupportedTableFormats.join(', ')}`
