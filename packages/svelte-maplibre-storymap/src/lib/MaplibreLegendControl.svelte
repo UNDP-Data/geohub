@@ -337,7 +337,7 @@
 					{#if showInvisibleLayers || (!showInvisibleLayers && getLayerOpacity(l.id) > 0 && !isRemoteLegend)}
 						{#if showInteractive}
 							<Accordion
-								title={clean(l.name)}
+								title={l.name}
 								bind:isExpanded={expanded[l.id]}
 								isSelected={false}
 								showHoveredColor={true}

@@ -9,6 +9,7 @@
 		isSelected?: boolean;
 		showHoveredColor?: boolean;
 		isUppercase?: boolean;
+		removeExtension?: boolean;
 		padding?: string;
 		buttons?: import('svelte').Snippet;
 		content?: import('svelte').Snippet;
@@ -21,6 +22,7 @@
 		isSelected = false,
 		showHoveredColor = false,
 		isUppercase = true,
+		removeExtension = false,
 		padding = 'px-4',
 		buttons,
 		content,
@@ -72,7 +74,7 @@
 					class="fa-solid fa-chevron-down toggle-icon {isExpanded ? 'active' : ''} has-text-primary"
 				></i>
 			</span>
-			<span class="has-text-grey-dark">{clean(title, isUppercase)}</span>
+			<span class="has-text-grey-dark">{clean(title, isUppercase, removeExtension)}</span>
 		</span>
 
 		{@render buttons?.()}
