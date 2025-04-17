@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/svelte-geohub-static-image-controls",
-	"version": "3.0.11",
+	"version": "3.0.12",
 	"description": "This package is to add controls for GeoHub Static Image API",
 	"scripts": {
 		"dev": "vite dev",
@@ -40,7 +40,7 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.19.0",
-		"@sveltejs/adapter-auto": "^4.0.0",
+		"@sveltejs/adapter-auto": "^6.0.0",
 		"@sveltejs/kit": "^2.17.1",
 		"@sveltejs/package": "^2.3.10",
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",

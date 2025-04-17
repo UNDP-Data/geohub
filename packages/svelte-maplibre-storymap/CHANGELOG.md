@@ -1,5 +1,15 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 1.0.12
+
+### Patch Changes
+
+- 27fa5fa: fix: show accordion and floating panel titile correctly if title contains dot (.)
+- Updated dependencies [1ed3137]
+- Updated dependencies [27fa5fa]
+  - @undp-data/svelte-undp-components@2.0.9
+  - @undp-data/svelte-undp-design@3.0.5
+
 ## 1.0.11
 
 ### Patch Changes

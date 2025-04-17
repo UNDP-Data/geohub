@@ -1,5 +1,13 @@
 # geohub
 
+## 1.22.46
+
+### Patch Changes
+
+- 1ed3137: fix: remove $bindable from toggled property of Switch component in UNDP Design System because of some issue of reactivity in svelte 5. Use onchange event instead.
+- 27fa5fa: fix: show accordion and floating panel titile correctly if title contains dot (.)
+- 27fa5fa: fix: fixed /datasets/{id}/table endpoint to handle layer name correctly if layer name contains dot (.)
+
 ## 1.22.45
 
 ### Patch Changes

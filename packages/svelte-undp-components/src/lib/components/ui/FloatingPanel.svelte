@@ -54,7 +54,7 @@
 			}}
 			onkeydown={handleEnterKey}
 		>
-			{clean(title)}
+			{clean(title, true, false)}
 		</div>
 		{#if showExpand || showClose}
 			<div class="header-buttons is-flex is-align-items-center ml-auto">

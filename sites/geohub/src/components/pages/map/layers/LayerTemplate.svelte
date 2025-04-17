@@ -452,7 +452,7 @@
 </script>
 
 <Accordion
-	title={clean(layer.name)}
+	title={clean(layer.name, true, false)}
 	bind:isExpanded
 	isSelected={$editingLayerStore?.id === layer.id}
 	showHoveredColor={true}
