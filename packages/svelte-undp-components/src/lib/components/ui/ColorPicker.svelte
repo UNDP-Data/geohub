@@ -10,7 +10,7 @@
 	let { color = $bindable(), onchange = () => {} }: Props = $props();
 
 	const changeColor = debounce((e) => {
-		const newRgba: RgbaColor = e.detail.color.rgba;
+		const newRgba: RgbaColor = e.color.rgba;
 		if (
 			color.r === newRgba.r &&
 			color.g === newRgba.g &&
@@ -32,7 +32,7 @@
 		isAlpha={true}
 		sliderDirection="horizontal"
 		isOpen={true}
-		on:input={changeColor}
+		onInput={changeColor}
 		rgb={color}
 	/>
 </div>
