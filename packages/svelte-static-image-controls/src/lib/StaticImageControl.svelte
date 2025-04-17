@@ -354,7 +354,12 @@
 	<span class="is-flex my-2">
 		<span class="is-size-6 has-text-weight-bold mr-2 my-auto">Advanced settings</span>
 		<div class="ml-auto pr-1">
-			<Switch bind:toggled={showAdvanced} />
+			<Switch
+				toggled={showAdvanced}
+				onchange={(toggled) => {
+					showAdvanced = toggled;
+				}}
+			/>
 		</div>
 	</span>
 

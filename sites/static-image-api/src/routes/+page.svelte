@@ -210,20 +210,26 @@
 							<div>
 								<div class="pb-2">
 									<Switch
-										bind:toggled={showTileBoundaries}
+										toggled={showTileBoundaries}
 										toggledText="Tile boundaries is shown"
 										untoggledText="Tile boundaries is hidden"
 										showValue={true}
-										onchange={handleShowTileBoundaryChange}
+										onchange={(toggled) => {
+											showTileBoundaries = toggled;
+											handleShowTileBoundaryChange();
+										}}
 									/>
 								</div>
 								<div>
 									<Switch
-										bind:toggled={showCollisionBoxes}
+										toggled={showCollisionBoxes}
 										toggledText="Collision Boxes is shown"
 										untoggledText="Collision Boxes is hidden"
 										showValue={true}
-										onchange={handleShowCollisionBoxes}
+										onchange={(toggled) => {
+											showCollisionBoxes = toggled;
+											handleShowCollisionBoxes();
+										}}
 									/>
 								</div>
 							</div>

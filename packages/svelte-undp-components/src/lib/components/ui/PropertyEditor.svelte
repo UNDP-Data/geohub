@@ -254,8 +254,11 @@
 			{#if type === 'boolean'}
 				<div class="field">
 					<Switch
-						bind:toggled={value as boolean}
-						onchange={handleChanged}
+						toggled={value as boolean}
+						onchange={(toggled: boolean) => {
+							value = toggled;
+							handleChanged();
+						}}
 						showValue={true}
 						toggledText="Enable {title}"
 						untoggledText="Disable {title}"

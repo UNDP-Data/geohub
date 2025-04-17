@@ -203,11 +203,14 @@
 				/>
 				<div class="pt-2">
 					<Switch
-						bind:toggled={isLogarithmic}
+						toggled={isLogarithmic}
 						toggledText="Logarithmic is enabled"
 						untoggledText="Logarithmic is disabled"
 						showValue={true}
-						onchange={handleExaggerationChanged}
+						onchange={(toggled) => {
+							isLogarithmic = toggled;
+							handleExaggerationChanged();
+						}}
 					/>
 				</div>
 			</div>
