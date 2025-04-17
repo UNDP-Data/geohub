@@ -1,5 +1,15 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 3.0.12
+
+### Patch Changes
+
+- 1ed3137: fix: remove $bindable from toggled property of Switch component in UNDP Design System because of some issue of reactivity in svelte 5. Use onchange event instead.
+- Updated dependencies [1ed3137]
+- Updated dependencies [27fa5fa]
+  - @undp-data/svelte-undp-components@2.0.9
+  - @undp-data/svelte-undp-design@3.0.5
+
 ## 3.0.11
 
 ### Patch Changes
