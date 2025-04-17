@@ -161,7 +161,12 @@
 		<FieldControl title="Show only GeoHub layers" showHelp={false}>
 			{#snippet control()}
 				<div>
-					<Switch bind:toggled={showOnlyGeoHubLayers} />
+					<Switch
+						toggled={showOnlyGeoHubLayers}
+						onchange={(toggled) => {
+							showOnlyGeoHubLayers = toggled;
+						}}
+					/>
 				</div>
 			{/snippet}
 		</FieldControl>

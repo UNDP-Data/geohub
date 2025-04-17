@@ -673,7 +673,10 @@
 							<div>
 								<div class="field">
 									<Switch
-										bind:toggled={userSettings.MaplibreDevMode}
+										toggled={userSettings.MaplibreDevMode}
+										onchange={(toggled) => {
+											userSettings.MaplibreDevMode = toggled;
+										}}
 										showValue={true}
 										toggledText="Enable devlopment mode on map editor"
 										untoggledText="Disable devlopment mode on map editor"

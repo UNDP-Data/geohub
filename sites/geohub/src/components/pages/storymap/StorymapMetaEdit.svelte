@@ -85,7 +85,12 @@
 			>
 				{#snippet control()}
 					<div>
-						<Switch bind:toggled={initShowProgress} />
+						<Switch
+							toggled={initShowProgress}
+							onchange={(toggled) => {
+								initShowProgress = toggled;
+							}}
+						/>
 					</div>
 				{/snippet}
 				{#snippet help()}

@@ -37,7 +37,7 @@
 	}
 
 	let {
-		toggled = $bindable(false),
+		toggled = false,
 		size = 'default',
 		disabled = false,
 		showIcon = false,
