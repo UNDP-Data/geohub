@@ -316,7 +316,7 @@
 
 					{#each $layerStore as l, i (l.layerId)}
 						<div>
-							<LayerControl layerDetails={l} index={i} />
+							<LayerControl bind:layerDetails={$layerStore[i]} index={i} />
 						</div>
 					{/each}
 				{/if}

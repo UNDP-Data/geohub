@@ -23,7 +23,7 @@
 	let showResults = $state(false);
 	let inputValue = $state('');
 	let filteredItemResults = $derived(
-		items.filter((i) => i.label.toLowerCase().includes(inputValue.toLowerCase()))
+		items?.filter((i) => i.label.toLowerCase().includes(inputValue.toLowerCase()) ?? [])
 	);
 
 	const handleItemClick = (item: Item) => {
