@@ -33,6 +33,7 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "esbuild",
       "svelte-preprocess"
     ]
   }
