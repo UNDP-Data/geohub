@@ -76,7 +76,7 @@
 		"@undp-data/svelte-undp-components": "workspace:*",
 		"@undp-data/svelte-undp-design": "workspace:*",
 		"@undp-data/undp-bulma": "workspace:*",
-		"@watergis/maplibre-gl-terradraw": "^1.3.12",
+		"@watergis/maplibre-gl-terradraw": "^1.3.13",
 		"@watergis/svelte-splitter": "^2.0.0",
 		"@zerodevx/svelte-toast": "^0.9.6",
 		"arraystat": "^1.7.81",
