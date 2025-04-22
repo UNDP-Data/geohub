@@ -96,7 +96,7 @@ const addLayer = (map: Map, layer: Layer) => {
 
 	const layers = get(layersStore);
 
-	layersStore.set([...layers, layer]);
+	layersStore.set([layer, ...layers]);
 
 	map.addSource(layer.sourceId, layer.source);
 
