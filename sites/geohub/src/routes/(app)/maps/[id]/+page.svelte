@@ -34,6 +34,8 @@
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
+	import { MaplibreMeasureControl } from '@watergis/maplibre-gl-terradraw';
+	import '@watergis/maplibre-gl-terradraw/dist/maplibre-gl-terradraw.css';
 	import { toast } from '@zerodevx/svelte-toast';
 	import {
 		AttributionControl,
@@ -191,6 +193,14 @@
 			defaultStyle: MapStyles[0].title
 		});
 		map.addControl(styleSwitcher, 'bottom-left');
+
+		const measureControl = new MaplibreMeasureControl({
+			modes: ['render', 'point', 'linestring', 'polygon', 'delete'],
+			open: false,
+			computeElevation: true
+		});
+		measureControl.fontGlyphs = ['Proxima Nova Italic'];
+		map.addControl(measureControl, 'bottom-right');
 
 		map.once('load', async () => {
 			map.resize();
