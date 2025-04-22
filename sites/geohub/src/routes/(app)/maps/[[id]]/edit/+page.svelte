@@ -31,6 +31,8 @@
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
+	import { MaplibreMeasureControl } from '@watergis/maplibre-gl-terradraw';
+	import '@watergis/maplibre-gl-terradraw/dist/maplibre-gl-terradraw.css';
 	import {
 		AttributionControl,
 		GeolocateControl,
@@ -73,6 +75,7 @@
 
 	let container: HTMLDivElement | undefined = $state();
 	let styleSwitcher: MaplibreStyleSwitcherControl;
+	let measureControl: MaplibreMeasureControl | undefined = $state();
 
 	const layerListStorageKey = storageKeys.layerList(page.url.host);
 	const mapStyleStorageKey = storageKeys.mapStyle(page.url.host);
@@ -224,7 +227,16 @@
 				step: 9,
 				scrollTo: 'off'
 			},
-
+			{
+				title: 'Measuring distance, area and elevation',
+				intro: `
+            You can measure distance, area and elevation by drawing point, line or polygon.
+            `,
+				element: '.maplibregl-terradraw-render-button',
+				position: 'left',
+				step: 10,
+				scrollTo: 'off'
+			},
 			{
 				title: 'Disable hillshade layer',
 				intro: `
@@ -232,7 +244,7 @@
             `,
 				element: '.maplibregl-ctrl-hillshade-visibility',
 				position: 'left',
-				step: 10,
+				step: 11,
 				scrollTo: 'off'
 			},
 			{
@@ -242,7 +254,7 @@
             `,
 				element: '.maplibregl-ctrl-geolocate',
 				position: 'left',
-				step: 11,
+				step: 12,
 				scrollTo: 'off'
 			},
 			{
@@ -251,7 +263,7 @@
 					'You have completed map editor tour. Now you can start exploring GeoHub to create a beautiful map. You can always come back to the tour by clicking this button',
 				element: '.tour-control-button',
 				position: 'left',
-				step: 12,
+				step: 13,
 				scrollTo: 'off'
 			}
 		]
@@ -448,6 +460,14 @@
 		});
 		$map.addControl(styleSwitcher, 'bottom-left');
 
+		measureControl = new MaplibreMeasureControl({
+			modes: ['render', 'point', 'linestring', 'polygon', 'delete'],
+			open: false,
+			computeElevation: true
+		});
+		measureControl.fontGlyphs = ['Proxima Nova Italic'];
+		$map.addControl(measureControl, 'bottom-right');
+
 		$map.once('load', mapInitializeAfterLoading);
 	};
 
@@ -474,6 +494,9 @@
 
 		map.subscribe((value) => {
 			let storageValue = value ? value.getStyle() : null;
+			if (storageValue && measureControl) {
+				storageValue = measureControl.cleanStyle(storageValue, { excludeTerraDrawLayers: true });
+			}
 			toLocalStorage(mapStyleStorageKey, storageValue);
 		});
 
@@ -497,10 +520,16 @@
 		$map.on('styledata', async () => {
 			$showProgressBarStore = false;
 			let storageValue = $map.getStyle();
+			if (storageValue && measureControl) {
+				storageValue = measureControl.cleanStyle(storageValue, { excludeTerraDrawLayers: true });
+			}
 			toLocalStorage(mapStyleStorageKey, storageValue);
 		});
 		$map.on('projectiontransition', () => {
 			let storageValue = $map.getStyle();
+			if (storageValue && measureControl) {
+				storageValue = measureControl.cleanStyle(storageValue, { excludeTerraDrawLayers: true });
+			}
 			toLocalStorage(mapStyleStorageKey, storageValue);
 		});
 	};
