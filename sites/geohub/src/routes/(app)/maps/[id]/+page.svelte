@@ -34,12 +34,12 @@
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
-	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { toast } from '@zerodevx/svelte-toast';
 	import {
 		AttributionControl,
 		FullscreenControl,
 		GeolocateControl,
+		GlobeControl,
 		Map,
 		NavigationControl,
 		ScaleControl,
@@ -147,7 +147,8 @@
 		const map = new Map({
 			container: mapContainer,
 			style: style.style,
-			attributionControl: false
+			attributionControl: false,
+			maxPitch: 85
 		});
 
 		map.addControl(new FullscreenControl(), 'top-right');
@@ -171,7 +172,9 @@
 			}),
 			'bottom-right'
 		);
-		map.setMaxPitch(85);
+
+		map.addControl(new GlobeControl(), 'bottom-right');
+
 		map.addControl(
 			new TerrainControl({
 				source: 'terrarium',
@@ -188,9 +191,6 @@
 			defaultStyle: MapStyles[0].title
 		});
 		map.addControl(styleSwitcher, 'bottom-left');
-
-		const sky = new SkyControl();
-		sky.addTo(map, { timeType: 'solarNoon' });
 
 		map.once('load', async () => {
 			map.resize();

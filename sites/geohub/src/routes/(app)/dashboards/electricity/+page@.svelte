@@ -34,11 +34,11 @@
 	} from '@undp-data/svelte-geohub-static-image-controls';
 	import { initTooltipTippy, ModalTemplate, Sidebar } from '@undp-data/svelte-undp-components';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
-	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import {
 		addProtocol,
 		AttributionControl,
 		GeolocateControl,
+		GlobeControl,
 		Map,
 		NavigationControl,
 		ScaleControl
@@ -125,7 +125,8 @@
 			center: [0, 0],
 			zoom: 2.5,
 			hash: true,
-			attributionControl: false
+			attributionControl: false,
+			maxPitch: 85
 		});
 
 		map.addControl(new NavigationControl({}), 'top-right');
@@ -136,6 +137,7 @@
 			}),
 			'top-right'
 		);
+		map.addControl(new GlobeControl(), 'top-right');
 		map.addControl(new ScaleControl({ maxWidth: 80, unit: 'metric' }), 'bottom-left');
 		map.addControl(
 			new AttributionControl({ compact: true, customAttribution: data.attribution }),
@@ -163,8 +165,6 @@
 		isInitialized = true;
 
 		map.on('load', () => {
-			const sky = new SkyControl();
-			sky.addTo(map, { timeType: 'solarNoon' });
 			map.resize();
 
 			styleSwitcher.initialise();
