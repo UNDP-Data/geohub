@@ -211,6 +211,7 @@
 		});
 
 		map.once('load', async () => {
+			isQueryToolActive = true;
 			map.resize();
 			await styleSwitcher.initialise();
 			layerListStore.set(style.layers as Layer[]);

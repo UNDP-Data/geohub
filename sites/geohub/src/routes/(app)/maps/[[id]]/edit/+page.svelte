@@ -249,13 +249,33 @@
 				scrollTo: 'off'
 			},
 			{
+				title: 'Enabled 3D terrain',
+				intro: `
+            You can switch between 2D and 3D by enabling terrain mode.
+            `,
+				element: '.maplibregl-ctrl-terrain, .maplibregl-ctrl-terrain-enabled',
+				position: 'left',
+				step: 12,
+				scrollTo: 'off'
+			},
+			{
+				title: 'Switch map projection',
+				intro: `
+            You can switch map projection between web mercator and globe.
+            `,
+				element: '.maplibregl-ctrl-globe, .maplibregl-ctrl-globe-enabled',
+				position: 'left',
+				step: 13,
+				scrollTo: 'off'
+			},
+			{
 				title: 'Positioning your current location',
 				intro: `
             Your current location will be visible on the map if you enable this GNSS control.
             `,
 				element: '.maplibregl-ctrl-geolocate',
 				position: 'left',
-				step: 12,
+				step: 14,
 				scrollTo: 'off'
 			},
 			{
@@ -264,7 +284,7 @@
 					'You have completed map editor tour. Now you can start exploring GeoHub to create a beautiful map. You can always come back to the tour by clicking this button',
 				element: '.tour-control-button',
 				position: 'left',
-				step: 13,
+				step: 15,
 				scrollTo: 'off'
 			}
 		]
