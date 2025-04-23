@@ -125,6 +125,9 @@ export const renderMap = async (
 			if (l.layout && 'icon-overlap' in l.layout) {
 				delete l.layout['icon-overlap'];
 			}
+			if (l.layout && 'text-overlap' in l.layout) {
+				delete l.layout['text-overlap'];
+			}
 		});
 
 	// replace all hex color format with alpha value to rgba

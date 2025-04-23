@@ -27,6 +27,7 @@
 		"@undp-data/svelte-undp-components": "^2.0.9",
 		"@undp-data/svelte-undp-design": "^3.0.5",
 		"@undp-data/undp-bulma": "^2.0.2",
+		"@watergis/maplibre-gl-terradraw": "^1.3.14",
 		"eslint": "^9.24.0",
 		"eslint-config-prettier": "^10.1.2",
 		"eslint-plugin-svelte": "^3.5.1",
