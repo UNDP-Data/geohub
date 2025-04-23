@@ -1,5 +1,20 @@
 # geohub
 
+## 1.23.0
+
+### Minor Changes
+
+- 90f731e: feat: added maplibre globe mode to GeoHub. Sky layer was removed since it has issues with globe mode.
+- 96488e5: feat: added MeasureControl to GeoHub map editor and viewer
+
+### Patch Changes
+
+- d6ee455: fix: added tourguide for terrain control and globe control.
+- 80149b7: fix: previously, the order of layers in sidebar is opposite from what maplibre renders. That makes some confusion and users do not realize the first layer is actually rendered the bottom of second layer. This will bring duplicated layer to the top, so it will be the same order of maplibre.
+- 727f584: refactor: merged Map component to +page.svelte since it is not used any other places.
+- b6133b9: fix: make map query tool inactive when measure control is enabled.
+- 6a4f8b3: fix: added select mode and delete-selection mode to allow users to delete only selected feature.
+
 ## 1.22.47
 
 ### Patch Changes
