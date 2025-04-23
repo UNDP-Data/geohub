@@ -462,7 +462,7 @@
 		$map.addControl(styleSwitcher, 'bottom-left');
 
 		measureControl = new MaplibreMeasureControl({
-			modes: ['render', 'point', 'linestring', 'polygon', 'delete'],
+			modes: ['render', 'point', 'linestring', 'polygon', 'select', 'delete-selection', 'delete'],
 			open: false,
 			computeElevation: true
 		});
