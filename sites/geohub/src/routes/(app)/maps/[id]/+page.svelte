@@ -197,7 +197,7 @@
 		map.addControl(styleSwitcher, 'bottom-left');
 
 		const measureControl = new MaplibreMeasureControl({
-			modes: ['render', 'point', 'linestring', 'polygon', 'delete'],
+			modes: ['render', 'point', 'linestring', 'polygon', 'select', 'delete-selection', 'delete'],
 			open: false,
 			computeElevation: true
 		});
@@ -205,7 +205,7 @@
 		map.addControl(measureControl, 'bottom-right');
 
 		measureControl.on('mode-changed', (e) => {
-			if (['linestring', 'point', 'polygon'].includes(e.mode)) {
+			if (['linestring', 'point', 'polygon', 'select'].includes(e.mode)) {
 				isQueryToolActive = false;
 			}
 		});
