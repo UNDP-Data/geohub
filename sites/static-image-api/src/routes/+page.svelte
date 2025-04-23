@@ -12,6 +12,8 @@
 		Sidebar
 	} from '@undp-data/svelte-undp-components';
 	import { Switch } from '@undp-data/svelte-undp-design';
+	import { MaplibreMeasureControl } from '@watergis/maplibre-gl-terradraw';
+	import '@watergis/maplibre-gl-terradraw/dist/maplibre-gl-terradraw.css';
 	import { addProtocol, Map, NavigationControl, ScaleControl } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { getContext, onMount } from 'svelte';
@@ -77,6 +79,13 @@
 		map.addControl(new NavigationControl(), 'bottom-right');
 		map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
 
+		const measureControl = new MaplibreMeasureControl({
+			open: true,
+			computeElevation: true
+		});
+		measureControl.fontGlyphs = ['Proxima Nova Italic'];
+		map.addControl(measureControl, 'bottom-left');
+
 		map.on('load', () => {
 			map?.resize();
 		});
@@ -96,7 +105,7 @@
 		apiUrl = url;
 	};
 
-	const handleExport = () => {
+	const handleExport = async () => {
 		if (!map) return;
 		try {
 			isExporting = true;
@@ -107,12 +116,28 @@
 			const urlParts = url.pathname.split('.');
 			const extension = urlParts[urlParts.length - 1];
 
+			const response = await fetch(apiUrl, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(styleJson)
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to export image');
+			}
+			const blob = await response.blob();
+			const blobUrl = URL.createObjectURL(blob);
+
 			let a = document.createElement('a');
-			a.href = apiUrl;
+			a.href = blobUrl;
 			a.download = `${styleJson.name ?? 'map'}.${extension}`;
 			document.body.appendChild(a);
 			a.click();
 			a.remove();
+
+			URL.revokeObjectURL(blobUrl);
 		} finally {
 			isExporting = false;
 		}

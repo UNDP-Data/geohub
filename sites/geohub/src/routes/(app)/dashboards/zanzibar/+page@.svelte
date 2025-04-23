@@ -31,7 +31,6 @@
 		type BreadcrumbPage
 	} from '@undp-data/svelte-undp-components';
 	import { Button, Footer } from '@undp-data/svelte-undp-design';
-	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import dayjs from 'dayjs';
 	import maplibregl, {
 		addProtocol,
@@ -131,8 +130,7 @@
 		if (!map) return;
 		map.resize();
 		await styleSwitcher.initialise();
-		const sky = new SkyControl();
-		sky.addTo(map, { timeType: 'solarNoon' });
+
 		const isTerrain = map.getTerrain();
 		if (isTerrain) {
 			map.setTerrain(null);

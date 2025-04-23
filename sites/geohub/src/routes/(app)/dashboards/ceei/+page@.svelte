@@ -11,7 +11,6 @@
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import { createMapStore, MAPSTORE_CONTEXT_KEY, Sidebar } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import type { FeatureCollection } from 'geojson';
 	import { uniq } from 'lodash-es';
@@ -192,7 +191,8 @@
 			zoom: 2.5,
 			hash: true,
 			attributionControl: false,
-			dragPan: false
+			dragPan: false,
+			maxPitch: 85
 		});
 
 		map.addControl(new NavigationControl({}), 'top-right');
@@ -234,9 +234,6 @@
 		popupStore.set(popup);
 
 		map.on('load', () => {
-			const sky = new SkyControl();
-			sky.addTo(map, { timeType: 'solarNoon' });
-
 			map.resize();
 
 			styleSwitcher.initialise();
