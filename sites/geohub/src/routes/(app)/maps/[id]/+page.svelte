@@ -102,6 +102,8 @@
 	let deletedStyleName = $state('');
 	let isUpdating = $state(false);
 
+	let isQueryToolActive: boolean = $state(true);
+
 	const mapStore = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, mapStore);
 
@@ -201,6 +203,12 @@
 		});
 		measureControl.fontGlyphs = ['Proxima Nova Italic'];
 		map.addControl(measureControl, 'bottom-right');
+
+		measureControl.on('mode-changed', (e) => {
+			if (['linestring', 'point', 'polygon'].includes(e.mode)) {
+				isQueryToolActive = false;
+			}
+		});
 
 		map.once('load', async () => {
 			map.resize();
@@ -421,7 +429,11 @@
 								{/if}
 								<div class="map" bind:this={mapContainer}>
 									{#if $mapStore}
-										<MapQueryInfoControl bind:map={$mapStore} layerList={layerListStore} />
+										<MapQueryInfoControl
+											bind:map={$mapStore}
+											layerList={layerListStore}
+											bind:isActive={isQueryToolActive}
+										/>
 										<MaplibreLegendControl
 											bind:map={$mapStore}
 											bind:styleId={style.id}

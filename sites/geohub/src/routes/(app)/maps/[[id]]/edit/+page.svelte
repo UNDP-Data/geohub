@@ -76,6 +76,7 @@
 	let container: HTMLDivElement | undefined = $state();
 	let styleSwitcher: MaplibreStyleSwitcherControl;
 	let measureControl: MaplibreMeasureControl | undefined = $state();
+	let isQueryToolActive: boolean = $state(true);
 
 	const layerListStorageKey = storageKeys.layerList(page.url.host);
 	const mapStyleStorageKey = storageKeys.mapStyle(page.url.host);
@@ -468,6 +469,13 @@
 		measureControl.fontGlyphs = ['Proxima Nova Italic'];
 		$map.addControl(measureControl, 'bottom-right');
 
+		measureControl.on('mode-changed', (e) => {
+			if (['linestring', 'point', 'polygon'].includes(e.mode)) {
+				isQueryToolActive = false;
+			}
+		});
+		isQueryToolActive = true;
+
 		$map.once('load', mapInitializeAfterLoading);
 	};
 
@@ -598,7 +606,12 @@
 </SplitControl>
 
 {#if $map}
-	<MapQueryInfoControl bind:map={$map} layerList={layerListStore} position="top-right" />
+	<MapQueryInfoControl
+		bind:map={$map}
+		layerList={layerListStore}
+		position="top-right"
+		bind:isActive={isQueryToolActive}
+	/>
 	<LayerVisibilitySwitcher bind:map={$map} position="bottom-right" />
 	<TourControl bind:map={$map} position="top-right" bind:options={tourOptions} />
 {/if}
