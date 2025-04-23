@@ -39,7 +39,7 @@
 	},
 	"homepage": "https://github.com/UNDP-Data/geohub#readme",
 	"devDependencies": {
-		"@auth/core": "^0.38.0",
+		"@auth/core": "^0.39.0",
 		"@auth/sveltekit": "^1.7.4",
 		"@azure/web-pubsub-client": "1.0.2",
 		"@carbon/charts-svelte": "1.22.0",
