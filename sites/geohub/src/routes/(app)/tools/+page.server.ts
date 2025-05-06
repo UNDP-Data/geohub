@@ -14,9 +14,16 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	let algoTags = tags[ALGORITHM_TAG_KEY] ?? [];
 	algoTags = algoTags.sort((a, b) => a.count - b.count);
 
-	const apiUrl = `${env.TITILER_ENDPOINT.replace('/cog', '')}/algorithms`;
-	const resAlgo = await fetch(apiUrl);
-	const algorithms: { [key: string]: RasterAlgorithm } = await resAlgo.json();
+	let algorithms: { [key: string]: RasterAlgorithm } = {};
+	try {
+		const apiUrl = `${env.TITILER_ENDPOINT.replace('/cog', '')}/algorithms`;
+		const resAlgo = await fetch(apiUrl);
+		algorithms = await resAlgo.json();
+	} catch (error) {
+		console.error('Error fetching algorithms:', error);
+		algorithms = {};
+	}
+
 	const filteredAlgos: { [key: string]: RasterAlgorithm } = {};
 
 	algoTags.forEach((tag) => {

@@ -1,5 +1,11 @@
 # geohub
 
+## 1.23.1
+
+### Patch Changes
+
+- 9946e64: fix: add try catch to handle error when titiler is down, so landing page can be shown all the time
+
 ## 1.23.0
 
 ### Minor Changes
