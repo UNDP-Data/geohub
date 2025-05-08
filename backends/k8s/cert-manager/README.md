@@ -25,10 +25,28 @@ It is recommended to follow/consult the official doc on [uninstalling](https://c
 
 ## DNS services
 
-The deployed services in the cluster are exposed to the internet using ingress resources. A ingress associates a hostname with a service. Note that ingresses are **namespace** specific resources, taht is each namespace outght to have an its ingress. The **hostnames** are ususally managed through a DNS service. In this case we use the domain undpgeohub.org that we manage through [cloudflare](www.cloudflare.com) which allows cert-manager to validate domain ownership through API Tokens or API keys. As a result a secret resource needs to be defined in the cert-manager namespace to provide this key.
+The deployed services in the cluster are exposed to the internet using ingress resources. A ingress associates a hostname with a service. Note that ingresses are **namespace** specific resources, taht is each namespace outght to have an its ingress. The **hostnames** are ususally managed through a DNS service. In this case we use the domain undpgeohub.org that we manage through [cloudflare](www.cloudflare.com) which allows cert-manager to validate domain ownership through API Tokens. As a result a secret resource needs to be defined in the cert-manager namespace to provide this token.
+
+1. create API token in cloudflare dashboard usingh DNS template
+
+2. create CLOUDFLARE_API_TOKEN env var in scripts/.env
 
 ```bash
-    kubectl apply -f yaml/cloudflare-apitoken-secret.yaml
+    CLOUDFLARE_API_TOKEN="TOKEN-VALUE
+```
+
+3. load the env var
+
+```bash
+    set -o allexport
+    source scripts/.env
+    set +o allexport
+```
+
+4. apply and check
+
+```bash
+    envsubst < yaml/cloudflare-apitoken-secret.yaml | kubectl apply -f -
 
     #check
     kubectl get secret -n cert-manager | grep cloud
