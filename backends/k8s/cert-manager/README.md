@@ -71,13 +71,44 @@ The clusterissuer is a cluster wide resource that represent certificate authorit
 
 [zerossl](https://zerossl.com/) ZeroSSL is a one-stop solution for SSL certificate creation and management, allowing users to create website security certificates issued by ZeroSSL either using a fast and straightforward user interface, using ACME integrations, or using a full-fledged SSL REST API. With zerossl an account is required and the ZeroSSL dashboard can be used to generate EAB credentials. This will be used to create a secret that the issuer will use to authenticate.
 
+1. fetch EAB HMAC key and ID from zerossl developer section
+
+2. create ZEROSSL_HMAC_KEY env var
+
+```bash
+    ZEROSSL_HMAC_KEY="KEY_VALUE"
+
+```
+
+3. load the env var
+
+```bash
+    set -o allexport
+    source scripts/.env
+    set +o allexport
+```
+
+4. apply and check
+
+```bash
+    envsubst < yaml/zerossl-hmac-key-secret.yaml | kubectl apply -f -
+
+    #check
+    kubectl get secret -n cert-manager | grep zero
+```
+
+5. add key id into the (zerossl issuer)[./yaml/zerossl-cluster-issuer.yaml]
+
+```yaml
+externalAccountBinding:
+  keyID: keyid-value
+```
+
+6. create the issuer and check
+
 ```bash
 
     kubectl apply -f yaml/zerossl-cluster-issuer.yaml
-
-```
-
-```
      #check
     kubectl get clusterissuer
 ```
