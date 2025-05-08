@@ -14,13 +14,14 @@ spec:
     # Name of a secret used to store the ACME account private key
     privateKeySecretRef:
       name: zerossl
-       # Enable the DNS-01 challenge provider
+    # Enable the DNS-01 challenge provider
     solvers:
-    - dns01:
-        # Replace the section below with your DNS01 provider
-        cloudflare:
-          email: ioan.ferencik@undp.org
-          apiKeySecretRef:
-            name: cloudflare-api-key
-            key: api-key
-        
+      - dns01:
+          cloudflare:
+            email: ioan.ferencik@undp.org
+            apiTokenSecretRef:
+              name: cloudflare-api-token
+              key: api-token
+        selector:
+          dnsZones:
+            - undpgeohub.org
