@@ -12,9 +12,9 @@ spec:
       - dns01:
           cloudflare:
             email: ioan.ferencik@undp.org
-            apiKeySecretRef:
-              name: cloudflare-api-key
-              key: api-key
+            apiTokenSecretRef:
+              name: cloudflare-api-token
+              key: api-token
         selector:
           dnsZones:
-          - 'undpgeohub.org'
+            - "undpgeohub.org"
