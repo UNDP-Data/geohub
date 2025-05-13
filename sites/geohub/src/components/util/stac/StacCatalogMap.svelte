@@ -13,9 +13,9 @@
 	}
 
 	let {
-		stacId = $bindable(),
-		url = $bindable(),
-		collectionUrl = $bindable(''),
+		stacId,
+		url,
+		collectionUrl = '',
 		onDataAdded = () => {},
 		onSelected = () => {}
 	}: Props = $props();
@@ -58,10 +58,10 @@
 	</Accordion>
 
 	<StacCollectionMap
-		bind:stacId
-		bind:url
-		bind:links={stacCatalog.links}
-		bind:collectionUrl
+		{stacId}
+		{url}
+		links={stacCatalog.links}
+		{collectionUrl}
 		{onSelected}
 		{onDataAdded}
 	/>

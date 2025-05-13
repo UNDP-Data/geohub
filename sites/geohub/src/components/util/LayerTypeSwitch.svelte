@@ -13,12 +13,7 @@
 		onchange?: (type: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle') => void;
 	}
 
-	let {
-		layer = $bindable(),
-		layerType = $bindable(),
-		size = $bindable('normal'),
-		onchange = () => {}
-	}: Props = $props();
+	let { layer, layerType, size = 'normal', onchange = () => {} }: Props = $props();
 
 	const setDefaultLayerType = () => {
 		if (!layer) return;

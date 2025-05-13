@@ -77,10 +77,7 @@
 	let slideProgressHeight = $state(0);
 
 	// collapse legend for small screen device
-	let isLegendExpanded = $state(false);
-	$effect(() => {
-		isLegendExpanded = innerWidth < 768 ? false : true;
-	});
+	let isLegendExpanded = $derived(innerWidth < 768 ? false : true);
 
 	onMount(async () => {
 		let protocol = new Protocol();

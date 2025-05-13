@@ -123,7 +123,7 @@
 		<p class="title is-5">STAC data explorer</p>
 
 		<StacApiExplorer
-			bind:dataset
+			{dataset}
 			stacId={data.stac.id}
 			collection={collection.id}
 			onDataAdded={dataAddedToMap}

@@ -429,9 +429,12 @@
 								{/if}
 								<div class="mt-2">
 									<LayerTypeSwitch
-										bind:layer={selectedVectorLayer as VectorLayerTileStatLayer}
-										bind:layerType={layerType as 'point' | 'heatmap' | 'polygon' | 'linestring'}
-										onchange={handleLayerSelected}
+										layer={selectedVectorLayer as VectorLayerTileStatLayer}
+										layerType={layerType as 'point' | 'heatmap' | 'polygon' | 'linestring'}
+										onchange={(type) => {
+											layerType = type as 'point' | 'heatmap' | 'polygon' | 'linestring';
+											handleLayerSelected();
+										}}
 									/>
 								</div>
 							</div>

@@ -17,11 +17,11 @@
 	}
 
 	let {
-		collectionUrl = $bindable(),
-		collection = $bindable(),
+		collectionUrl,
+		collection,
 		selectedAsset = $bindable(),
-		algorithm = $bindable(),
-		bandIndex = $bindable(),
+		algorithm,
+		bandIndex,
 		selectedDate = $bindable(),
 		onAssetChanged = () => {},
 		onDateChanged = () => {}

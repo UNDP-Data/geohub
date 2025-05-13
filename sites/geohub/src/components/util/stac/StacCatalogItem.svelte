@@ -26,9 +26,9 @@
 	}
 
 	let {
-		stacId = $bindable(),
-		url = $bindable(),
-		collectionUrl = $bindable(),
+		stacId,
+		url,
+		collectionUrl,
 		height = $bindable(0),
 		onDataAdded = () => {}
 	}: Props = $props();

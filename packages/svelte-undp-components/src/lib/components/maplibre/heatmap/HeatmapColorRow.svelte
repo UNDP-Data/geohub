@@ -12,7 +12,6 @@
 	import { initTippy } from '$lib/util/initTippy';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
-	import { onMount } from 'svelte';
 
 	const tippy = initTippy({
 		appendTo: document.body
@@ -31,13 +30,6 @@
 		onchange = () => {}
 	}: Props = $props();
 
-	let color: RgbaColor = $state();
-	let colorPickerStyle: string = $state('');
-
-	onMount(() => {
-		setColorFromProp();
-	});
-
 	// set color based on default value
 	const setColorFromProp = () => {
 		const rowColor: RgbaColor = colorRow.color as RgbaColor;
@@ -45,13 +37,22 @@
 		const g = rowColor.g;
 		const b = rowColor.b;
 
-		color = {
+		return {
 			r,
 			g,
 			b,
 			a: rowColor.a
 		};
 	};
+
+	let color: RgbaColor = $derived(setColorFromProp());
+
+	const getColorPickerStyle = (color: RgbaColor) => {
+		const rgb = [color.r, color.g, color.b].join();
+		return `caret-color:rgb(${rgb}); background-color: rgb(${rgb})`;
+	};
+
+	let colorPickerStyle: string = $derived(getColorPickerStyle(colorRow?.color as RgbaColor));
 
 	// set color of display and dispatch to update map
 	const updateColorMap = debounce((colorSelected: RgbaColor) => {
@@ -71,15 +72,6 @@
 			}
 		}
 	}, 50);
-
-	const getColorPickerStyle = (color: RgbaColor) => {
-		const rgb = [color.r, color.g, color.b].join();
-		return `caret-color:rgb(${rgb}); background-color: rgb(${rgb})`;
-	};
-
-	$effect(() => {
-		colorPickerStyle = getColorPickerStyle(colorRow?.color as RgbaColor);
-	});
 </script>
 
 <div

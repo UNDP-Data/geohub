@@ -35,10 +35,10 @@
 	}
 
 	let {
-		layer = $bindable(),
-		feature = $bindable(),
+		layer,
+		feature,
 		isExpanded = $bindable(),
-		metadata = $bindable(),
+		metadata,
 		isShowInfo = $bindable(false),
 		onStarDeleted = () => {}
 	}: Props = $props();
@@ -142,16 +142,16 @@
 		<div class="container pb-2" bind:clientWidth>
 			{#if isExpanded === true}
 				{#if isShowInfo}
-					<DataCardInfo bind:feature bind:metadata onStarDeleted={handleStarDeleted}>
+					<DataCardInfo {feature} {metadata} onStarDeleted={handleStarDeleted}>
 						<div class="map">
 							<MiniMap
-								bind:feature
+								{feature}
 								{width}
 								height="200px"
 								bind:isLoadMap={isExpanded}
-								bind:metadata
-								bind:layer
-								bind:layerType
+								{metadata}
+								{layer}
+								{layerType}
 								onLayerAdded={handleLayerAdded}
 							/>
 						</div>
@@ -159,19 +159,27 @@
 				{:else}
 					<div class="map">
 						<MiniMap
-							bind:feature
+							{feature}
 							{width}
 							height="200px"
 							bind:isLoadMap={isExpanded}
-							bind:metadata
-							bind:layer
-							bind:layerType
+							{metadata}
+							{layer}
+							{layerType}
 							onLayerAdded={handleLayerAdded}
 						/>
 					</div>
 				{/if}
 
-				<LayerTypeSwitch bind:layer bind:layerType size="small" onchange={handleLayerTypeChanged} />
+				<LayerTypeSwitch
+					{layer}
+					{layerType}
+					size="small"
+					onchange={(type) => {
+						layerType = type as 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle';
+						handleLayerTypeChanged();
+					}}
+				/>
 				{#if layerCreationInfo}
 					<AddLayerButton bind:isLoading={layerLoading} title="Add layer" onclick={addLayer} />
 				{/if}

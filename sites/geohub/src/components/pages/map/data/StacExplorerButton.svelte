@@ -20,7 +20,7 @@
 	}
 
 	let {
-		feature = $bindable(),
+		feature,
 		isIconButton = false,
 		title = 'Explore satellite data',
 		showDialog = $bindable(false),
@@ -83,24 +83,28 @@
 {/if}
 
 <div class="modal {showDialog ? 'is-active' : ''}">
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-	<div class="modal-background" role="dialog" onclick={handleCloseDialog}></div>
+	<div
+		class="modal-background"
+		tabindex="-1"
+		role="dialog"
+		onclick={handleCloseDialog}
+		onkeydown={handleEnterKey}
+	></div>
 	<div class="modal-content p-2">
 		<button class="delete is-large" aria-label="close" onclick={handleCloseDialog}></button>
 
 		{#if showDialog}
 			<div class="explorer">
 				{#if isCatalog}
-					<StacCatalogExplorer {stacId} bind:dataset={feature} onDataAdded={handleDataAdded} />
+					<StacCatalogExplorer {stacId} dataset={feature} onDataAdded={handleDataAdded} />
 				{:else}
 					<StacApiExplorer
 						{stacId}
-						bind:dataset={feature}
+						dataset={feature}
 						collection={collectionId}
 						onDataAdded={handleDataAdded}
-						bind:center
-						bind:zoom
+						{center}
+						{zoom}
 						height={mapHeight}
 					/>
 				{/if}

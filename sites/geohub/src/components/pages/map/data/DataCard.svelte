@@ -35,11 +35,7 @@
 		isStarOnly?: boolean;
 	}
 
-	let {
-		feature = $bindable(),
-		isExpanded = $bindable(),
-		isStarOnly = $bindable(false)
-	}: Props = $props();
+	let { feature, isExpanded = $bindable(), isStarOnly = $bindable(false) }: Props = $props();
 
 	const tippyTooltip = initTooltipTippy();
 
@@ -251,16 +247,16 @@
 <div bind:this={nodeRef}>
 	{#if tilestatsLayers?.length === 1}
 		<DataVectorCard
-			bind:layer={tilestatsLayers[0]}
-			bind:feature
+			layer={tilestatsLayers[0]}
+			{feature}
 			bind:isExpanded
-			bind:metadata={metadata as VectorTileMetadata}
+			metadata={metadata as VectorTileMetadata}
 			onStarDeleted={handleStarDeleted}
 			isShowInfo={true}
 		/>
 	{:else}
 		{@const accessLevel = feature.properties.access_level ?? AccessLevel.PUBLIC}
-		<Accordion title={feature.properties.name} bind:isExpanded>
+		<Accordion title={feature.properties.name as string} bind:isExpanded>
 			{#snippet buttons()}
 				<div class="is-flex is-align-items-center">
 					{#if accessLevel !== AccessLevel.PUBLIC}
@@ -283,7 +279,7 @@
 							{#if !isExpanded}
 								{#if is_raster && !stacType && !isRgbTile}
 									<RasterAlgorithmExplorerButton
-										bind:feature
+										{feature}
 										isIconButton={true}
 										onadd={addAlgoLayer}
 										bind:showDialog={showAlgoDialog}
@@ -291,7 +287,7 @@
 								{/if}
 								{#if stacType}
 									<StacExplorerButton
-										bind:feature
+										{feature}
 										isIconButton={true}
 										onclick={addStacLayer}
 										bind:showDialog={showSTACDialog}
@@ -313,28 +309,28 @@
 				<div class="card-container px-1" bind:clientWidth>
 					{#if isExpanded === true}
 						{#if !is_raster && tilestatsLayers?.length > 1}
-							<DataCardInfo bind:feature bind:metadata onStarDeleted={handleStarDeleted} />
+							<DataCardInfo {feature} {metadata} onStarDeleted={handleStarDeleted} />
 
 							{#each tilestatsLayers as layer, index (layer.layer)}
 								<DataVectorCard
-									bind:layer={tilestatsLayers[index]}
-									bind:feature
+									layer={tilestatsLayers[index]}
+									{feature}
 									bind:isExpanded={expanded[`${feature.properties.id}-${layer.layer}`]}
-									bind:metadata={metadata as VectorTileMetadata}
+									metadata={metadata as VectorTileMetadata}
 									isShowInfo={false}
 								/>
 							{/each}
 						{:else}
-							<DataCardInfo bind:feature bind:metadata onStarDeleted={handleStarDeleted}>
+							<DataCardInfo {feature} {metadata} onStarDeleted={handleStarDeleted}>
 								{#if isRgbTile || selectedBand}
 									{#key selectedBand}
 										<div class="map">
 											<MiniMap
-												bind:feature
+												{feature}
 												{width}
 												height="150px"
 												bind:isLoadMap={isExpanded}
-												bind:metadata
+												{metadata}
 												band={isRgbTile ? undefined : selectedBand}
 												onLayerAdded={handleLayerAdded}
 											/>
@@ -355,7 +351,7 @@
 
 							{#if stacType}
 								<StacExplorerButton
-									bind:feature
+									{feature}
 									isIconButton={false}
 									onclick={addStacLayer}
 									bind:showDialog={showSTACDialog}
@@ -371,7 +367,7 @@
 							{#if is_raster && !stacType && !isRgbTile}
 								<div class="mt-2">
 									<RasterAlgorithmExplorerButton
-										bind:feature
+										{feature}
 										isIconButton={false}
 										onadd={addAlgoLayer}
 										bind:showDialog={showAlgoDialog}
