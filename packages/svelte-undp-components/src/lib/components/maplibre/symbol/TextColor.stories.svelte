@@ -721,5 +721,5 @@
 		colorMapName: 'viridis',
 		defaultColor: '#000000'
 	}}
-	children={template}
+	{template}
 />

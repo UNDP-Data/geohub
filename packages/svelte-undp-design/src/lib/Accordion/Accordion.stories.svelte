@@ -52,7 +52,7 @@
 		headerIcon: '',
 		fontSize: 'medium'
 	}}
-	children={template}
+	{template}
 />
 
 <Story
@@ -62,7 +62,7 @@
 		isExpanded: false,
 		headerIcon: 'fas fa-circle'
 	}}
-	children={template}
+	{template}
 />
 
 <Story
@@ -72,5 +72,5 @@
 		isExpanded: false,
 		fontSize: 'small'
 	}}
-	children={template}
+	{template}
 />

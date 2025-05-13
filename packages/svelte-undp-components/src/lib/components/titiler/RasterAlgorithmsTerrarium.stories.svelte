@@ -71,5 +71,5 @@
 		algorithmsApi: 'https://titiler-dev.undpgeohub.org/algorithms',
 		algorithmId: 'terrarium'
 	}}
-	children={template}
+	{template}
 />
