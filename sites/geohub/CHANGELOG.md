@@ -1,5 +1,13 @@
 # geohub
 
+## 1.23.2
+
+### Patch Changes
+
+- 2d81062: chore: updated dependencies
+- 2d81062: fix: fixed several binding error and prefer-writable-derived error in svelte components used in GeoHub.
+- e663d99: fix: added fill-extrusion layer type for default style endpoint.
+
 ## 1.23.1
 
 ### Patch Changes
