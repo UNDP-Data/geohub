@@ -29,8 +29,8 @@ export const Param = z.object({
 		.describe('Band name if it is raster, layer ID if it is vector.')
 		.openapi({ example: 'drr.dynamic_subnational_hhr' }),
 	type: z
-		.enum(['raster', 'fill', 'symbol', 'line', 'circle', 'heatmap'])
-		.describe('Maplibre layer type (fill, line, symbol, circle, heatmap, raster)')
+		.enum(['raster', 'fill', 'symbol', 'line', 'circle', 'heatmap', 'fill-extrusion'])
+		.describe('Maplibre layer type (fill, line, symbol, circle, heatmap, raster, fill-extrusion)')
 		.openapi({ example: 'fill' })
 });
 
