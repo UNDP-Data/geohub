@@ -302,5 +302,5 @@
 		classificationMethod: 'n',
 		numberOfRandomSamplingPoints: 1000
 	}}
-	children={template}
+	{template}
 />

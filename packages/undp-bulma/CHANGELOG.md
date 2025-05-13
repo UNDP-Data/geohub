@@ -1,5 +1,11 @@
 # @undp-data/undp-bulma
 
+## 2.0.3
+
+### Patch Changes
+
+- 2d81062: chore: updated dependencies
+
 ## 2.0.2
 
 ### Patch Changes

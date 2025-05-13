@@ -126,5 +126,5 @@
 		colorMapName: 'brbg',
 		numberOfClasses: 6
 	}}
-	children={template}
+	{template}
 />

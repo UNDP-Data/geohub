@@ -45,4 +45,4 @@
 	</Map>
 {/snippet}
 
-<Story name="Primary" args={{ layerId: layer.id, defaultHaloWidth: 1 }} children={template} />
+<Story name="Primary" args={{ layerId: layer.id, defaultHaloWidth: 1 }} {template} />

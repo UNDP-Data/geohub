@@ -20,7 +20,7 @@ export const Query = z.object({
 	type: z
 		.enum(['fill', 'line', 'symbol', 'circle', 'heatmap', 'fill-extrusion', 'raster'])
 		.optional()
-		.describe('Maplibre layer type (fill, line, symbol, circle, heatmap, raster)')
+		.describe('Maplibre layer type (fill, line, symbol, circle, heatmap, raster, fill-extrusion)')
 });
 
 const description = `

@@ -709,5 +709,5 @@
 		defaultColor: layer.paint?.['icon-color'],
 		apiOrigin: 'https://dev.undpgeohub.org'
 	}}
-	children={template}
+	{template}
 />

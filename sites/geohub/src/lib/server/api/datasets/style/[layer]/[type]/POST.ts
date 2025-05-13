@@ -16,8 +16,8 @@ export const Output = z.custom<DatasetDefaultLayerStyle>().describe('default lay
 export const Param = z.object({
 	layer: z.string().describe('Band name if it is raster, layer ID if it is vector.'),
 	type: z
-		.enum(['raster', 'fill', 'symbol', 'line', 'circle', 'heatmap'])
-		.describe('Maplibre layer type (fill, line, symbol, circle, heatmap, raster)')
+		.enum(['raster', 'fill', 'symbol', 'line', 'circle', 'heatmap', 'fill-extrusion'])
+		.describe('Maplibre layer type (fill, line, symbol, circle, heatmap, raster, fill-extrusion)')
 });
 
 export const Query = z.object({

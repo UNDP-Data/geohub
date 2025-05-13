@@ -101,7 +101,7 @@
 <FieldControl {title} showHelp={false}>
 	{#snippet control()}
 		<div>
-			{#if isLoaded}
+			{#if $mapStore && isLoaded}
 				{@render children?.()}
 			{/if}
 		</div>

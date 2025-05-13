@@ -15,8 +15,8 @@
 	}
 
 	let {
-		stacId = $bindable(),
-		dataset = $bindable(undefined),
+		stacId,
+		dataset,
 		onDataAdded = () => {},
 		onBreadcrumbSelected = () => {}
 	}: Props = $props();
@@ -82,7 +82,7 @@
 					{@const fistColleciton = collectionUrls.length > 0 ? collectionUrls[0]?.dataUrl : ''}
 					<StacCatalogMap
 						stacId={stac?.id as string}
-						bind:url={page.dataUrl}
+						url={page.dataUrl}
 						collectionUrl={fistColleciton}
 						onSelected={handleSelectCollection}
 						{onDataAdded}
@@ -93,10 +93,10 @@
 					<StacCatalogCollections
 						stacId={stac?.id as string}
 						collectionUrl={fistColleciton}
-						bind:url={page.dataUrl}
+						url={page.dataUrl}
 						onSelected={handleSelectChild}
 						{onDataAdded}
-						bind:dataset
+						{dataset}
 					/>
 				{:else if page.type === 'Item'}
 					{@const collectionUrls = StacBreadcrumbs.filter((x) =>
@@ -105,7 +105,7 @@
 					{@const fistColleciton = collectionUrls[0].dataUrl}
 					<StacCatalogItem
 						stacId={stac?.id as string}
-						bind:url={page.dataUrl}
+						url={page.dataUrl}
 						collectionUrl={fistColleciton}
 						{onDataAdded}
 					/>

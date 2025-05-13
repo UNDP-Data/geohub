@@ -93,10 +93,7 @@
 
 	let sol: string[] = $state([]);
 	const nn = 5;
-	let tagsList: string[] = $state([]);
-	$effect(() => {
-		tagsList = $filterInputTags;
-	});
+	let tagsList: string[] = $derived($filterInputTags);
 
 	const fclosest = (array, goal) =>
 		array.reduce((prev, curr) => (Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev));

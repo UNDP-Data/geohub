@@ -63,7 +63,7 @@
 	}
 
 	let {
-		feature = $bindable(),
+		feature,
 		title = 'Choose a tool',
 		cardDescription = 'use this tool',
 		mode = 'map',

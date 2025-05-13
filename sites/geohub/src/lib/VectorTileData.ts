@@ -80,9 +80,12 @@ export class VectorTileData {
 
 				body: data
 			});
+			if (!res.ok) {
+				const message = await res.json();
+				throw new Error(`Failed to fetch saved layer style. ${res.statusText}: ${message.message}`);
+			}
 			savedLayerStyle = await res.json();
 		}
-
 		const layerSpec = JSON.parse(
 			JSON.stringify(savedLayerStyle.style)
 				.replace('{source_id}', tileSourceId)

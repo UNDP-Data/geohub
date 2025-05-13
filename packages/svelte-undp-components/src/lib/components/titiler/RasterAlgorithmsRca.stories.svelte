@@ -71,5 +71,5 @@
 		algorithmsApi: 'https://titiler-dev.undpgeohub.org/algorithms',
 		algorithmId: 'rca'
 	}}
-	children={template}
+	{template}
 />

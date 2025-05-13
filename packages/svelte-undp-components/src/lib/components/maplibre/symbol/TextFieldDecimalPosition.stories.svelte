@@ -121,4 +121,4 @@
 	</Map>
 {/snippet}
 
-<Story name="Primary" args={{ layerId: layer.id, metadata: metadata }} children={template} />
+<Story name="Primary" args={{ layerId: layer.id, metadata: metadata }} {template} />

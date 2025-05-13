@@ -28,12 +28,22 @@
   },
   "type": "module",
   "devDependencies": {
-    "@changesets/cli": "^2.27.12",
-    "lefthook": "^1.10.10"
+    "@changesets/cli": "^2.29.4",
+    "lefthook": "^1.11.12"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "@carbon/charts",
+      "@carbon/charts-svelte",
+      "@carbon/colors",
+      "@carbon/utils-position",
+      "@parcel/watcher",
+      "@scarf/scarf",
+      "carbon-components",
+      "core-js",
+      "core-js-pure",
       "esbuild",
+      "lefthook",
       "svelte-preprocess"
     ]
   }
