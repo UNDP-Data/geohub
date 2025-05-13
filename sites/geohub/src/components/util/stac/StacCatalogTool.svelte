@@ -26,10 +26,10 @@
 	}
 
 	let {
-		collectionUrl = $bindable(),
-		collection = $bindable(),
-		dataset = $bindable(),
-		selectedTool = $bindable(),
+		collectionUrl,
+		collection,
+		dataset,
+		selectedTool,
 		onDataAdded = () => {}
 	}: Props = $props();
 
@@ -185,11 +185,11 @@
 								>
 								<div class="control">
 									<StacCatalogDatePicker
-										bind:collectionUrl
-										bind:collection
+										{collectionUrl}
+										{collection}
 										bind:selectedAsset={selectedAssets[index]}
 										bind:selectedDate={selectedDates[index]}
-										bind:algorithm={selectedTool.algorithm}
+										algorithm={selectedTool.algorithm}
 										bandIndex={index}
 										onAssetChanged={(asset: StacAsset) => {
 											selectedAssets[index] = asset;
@@ -210,11 +210,11 @@
 								<label class="label">Input Band {bandNo}</label>
 								<div class="control">
 									<StacCatalogDatePicker
-										bind:collectionUrl
-										bind:collection
+										{collectionUrl}
+										{collection}
 										bind:selectedAsset={selectedAssets[bandNo]}
 										bind:selectedDate={selectedDates[bandNo]}
-										bind:algorithm={selectedTool.algorithm}
+										algorithm={selectedTool.algorithm}
 										bandIndex={bandNo - 1}
 										onAssetChanged={(asset: StacAsset) => {
 											selectedAssets[bandNo] = asset;

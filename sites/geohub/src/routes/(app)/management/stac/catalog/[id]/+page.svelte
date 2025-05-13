@@ -301,7 +301,7 @@
 		{/if}
 
 		<StacCatalogExplorer
-			bind:stacId={stac.id}
+			stacId={stac.id}
 			onDataAdded={dataAddedToMap}
 			onBreadcrumbSelected={handleBreadcrumbSelected}
 		/>

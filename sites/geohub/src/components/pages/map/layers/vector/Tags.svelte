@@ -396,8 +396,9 @@
 	.svelte-tags-input,
 	.svelte-tags-input-matchs,
 	.svelte-tags-input-layout label {
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
-			'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+		font-family:
+			-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans',
+			'Droid Sans', 'Helvetica Neue', sans-serif;
 		font-size: 11.375px;
 		padding: 2px 5px;
 	}

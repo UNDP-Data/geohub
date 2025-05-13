@@ -33,14 +33,14 @@
 	}
 
 	let {
-		feature = $bindable(),
-		width = $bindable('100%'),
-		height = $bindable('100%'),
+		feature,
+		width = '100%',
+		height = '100%',
 		isLoadMap = $bindable(false),
-		layer = $bindable(undefined),
-		band = $bindable(undefined),
-		layerType = $bindable(undefined),
-		metadata = $bindable(undefined),
+		layer,
+		band,
+		layerType,
+		metadata,
 		onLayerAdded = () => {}
 	}: Props = $props();
 	let rasterTile: RasterTileData;

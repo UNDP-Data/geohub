@@ -46,10 +46,10 @@
 	}
 
 	let {
-		stacId = $bindable(),
-		collectionUrl = $bindable(''),
-		url = $bindable(),
-		links = $bindable([]),
+		stacId,
+		collectionUrl = '',
+		url,
+		links = [],
 		onDataAdded = () => {},
 		onSelected = () => {}
 	}: Props = $props();

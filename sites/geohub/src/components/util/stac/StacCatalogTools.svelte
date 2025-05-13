@@ -21,12 +21,7 @@
 		onDataAdded?: (layers: StacDataLayer[]) => void;
 	}
 
-	let {
-		collectionUrl = $bindable(),
-		collection = $bindable(),
-		dataset = $bindable(undefined),
-		onDataAdded = () => {}
-	}: Props = $props();
+	let { collectionUrl, collection, dataset, onDataAdded = () => {} }: Props = $props();
 
 	let selectedTool: { algorithmId: string; algorithm: RasterAlgorithm } | undefined = $state();
 
@@ -69,17 +64,17 @@
 		<div hidden={!isLastPage}>
 			{#if page.type === 'index'}
 				<RasterAlgorithmExplorer
-					bind:feature={dataset}
+					feature={dataset}
 					mode="select"
 					toggleTool={false}
 					onSelected={handleToolSelected}
 				/>
 			{:else if page.type === 'tool'}
 				<StacCatalogTool
-					bind:collection
-					bind:collectionUrl
-					bind:dataset
-					bind:selectedTool={selectedTool as { algorithmId: string; algorithm: RasterAlgorithm }}
+					{collection}
+					{collectionUrl}
+					{dataset}
+					selectedTool={selectedTool as { algorithmId: string; algorithm: RasterAlgorithm }}
 					{onDataAdded}
 				/>
 			{/if}

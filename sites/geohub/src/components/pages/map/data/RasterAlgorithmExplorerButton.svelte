@@ -18,8 +18,8 @@
 	}
 
 	let {
-		feature = $bindable(),
-		isIconButton = $bindable(false),
+		feature,
+		isIconButton = false,
 		title = 'Explore tools',
 		showDialog = $bindable(false),
 		onadd = (layerSpec) => {
@@ -59,15 +59,19 @@
 {/if}
 
 <div class="modal {showDialog ? 'is-active' : ''}">
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-	<div class="modal-background" role="dialog" onclick={handleCloseDialog}></div>
+	<div
+		class="modal-background"
+		tabindex="-1"
+		role="dialog"
+		onclick={handleCloseDialog}
+		onkeydown={handleEnterKey}
+	></div>
 	<div class="modal-content p-2">
 		<button class="delete is-large" aria-label="close" onclick={handleCloseDialog}></button>
 
 		{#if showDialog}
 			<div class="p-4">
-				<RasterAlgorithmExplorer bind:feature onAdded={onadd} />
+				<RasterAlgorithmExplorer {feature} onAdded={onadd} />
 			</div>
 		{/if}
 	</div>

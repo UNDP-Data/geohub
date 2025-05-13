@@ -815,7 +815,7 @@
 		{#if data.feature.properties.is_raster && !isRgbTile}
 			<div hidden={activeTab !== 'tools'}>
 				<RasterAlgorithmExplorer
-					bind:feature={data.feature}
+					feature={data.feature}
 					onSelected={updateTags}
 					title="Register tools to the dataset"
 					cardDescription="Register this tool"

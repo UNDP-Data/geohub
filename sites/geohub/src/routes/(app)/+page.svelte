@@ -586,7 +586,8 @@
 	}
 
 	.undp-link {
-		background-image: linear-gradient(var(--undpds-color-dark-red), var(--undpds-color-dark-red)),
+		background-image:
+			linear-gradient(var(--undpds-color-dark-red), var(--undpds-color-dark-red)),
 			linear-gradient(var(--undpds-color-dark-red), var(--undpds-color-dark-red));
 		background-position:
 			100% 100%,
