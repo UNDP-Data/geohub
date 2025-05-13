@@ -314,5 +314,5 @@
 			]
 		}
 	}}
-	children={template}
+	{template}
 />

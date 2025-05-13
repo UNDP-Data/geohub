@@ -44,4 +44,4 @@
 	</Map>
 {/snippet}
 
-<Story name="Primary" args={{ layerId: layer.id, apiOrigin: apiOrigin }} children={template} />
+<Story name="Primary" args={{ layerId: layer.id, apiOrigin: apiOrigin }} {template} />
