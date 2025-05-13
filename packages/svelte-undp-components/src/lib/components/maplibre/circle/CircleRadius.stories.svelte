@@ -42,8 +42,8 @@
 	</Map>
 {/snippet}
 
-<Story name="Primary" args={{ layerId: layer.id }} children={template} />
+<Story name="Primary" args={{ layerId: layer.id }} {template} />
 
-<Story name="Readonly" args={{ layerId: layer.id, readonly: true }} children={template} />
+<Story name="Readonly" args={{ layerId: layer.id, readonly: true }} {template} />
 
-<Story name="Step value by 2" args={{ layerId: layer.id, stepValue: 2 }} children={template} />
+<Story name="Step value by 2" args={{ layerId: layer.id, stepValue: 2 }} {template} />

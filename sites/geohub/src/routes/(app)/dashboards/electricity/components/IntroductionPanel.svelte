@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { hrea } from '../stores';
 
 	interface Props {
@@ -49,9 +50,13 @@
 </button>
 
 <div class="modal {showDialog ? 'is-active' : ''}">
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-	<div class="modal-background" role="dialog" onclick={modalHandler}></div>
+	<div
+		class="modal-background"
+		tabindex="-1"
+		role="dialog"
+		onclick={modalHandler}
+		onkeydown={handleEnterKey}
+	></div>
 	<div class="modal-content has-background-white p-4">
 		<div class="is-flex is-justify-content-space-between is-align-items-flex-end">
 			<p>What do you want to explore?</p>

@@ -26,4 +26,4 @@
 	</Map>
 {/snippet}
 
-<Story name="Primary" args={{ layerId: 'bingaerial' }} children={template} />
+<Story name="Primary" args={{ layerId: 'bingaerial' }} {template} />

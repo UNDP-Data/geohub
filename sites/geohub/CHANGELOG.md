@@ -1,5 +1,40 @@
 # geohub
 
+## 1.23.1
+
+### Patch Changes
+
+- 9946e64: fix: add try catch to handle error when titiler is down, so landing page can be shown all the time
+
+## 1.23.0
+
+### Minor Changes
+
+- 90f731e: feat: added maplibre globe mode to GeoHub. Sky layer was removed since it has issues with globe mode.
+- 96488e5: feat: added MeasureControl to GeoHub map editor and viewer
+
+### Patch Changes
+
+- d6ee455: fix: added tourguide for terrain control and globe control.
+- 80149b7: fix: previously, the order of layers in sidebar is opposite from what maplibre renders. That makes some confusion and users do not realize the first layer is actually rendered the bottom of second layer. This will bring duplicated layer to the top, so it will be the same order of maplibre.
+- 727f584: refactor: merged Map component to +page.svelte since it is not used any other places.
+- b6133b9: fix: make map query tool inactive when measure control is enabled.
+- 6a4f8b3: fix: added select mode and delete-selection mode to allow users to delete only selected feature.
+
+## 1.22.47
+
+### Patch Changes
+
+- 1f9fe6d: fix: previously simulation button on CEEI dashboard was disabled when the page is shown. Now the button is enabled on initial page shown. This bug was caused by svelte 5 migration which did not bind layer variable to the component correctly.
+
+## 1.22.46
+
+### Patch Changes
+
+- 1ed3137: fix: remove $bindable from toggled property of Switch component in UNDP Design System because of some issue of reactivity in svelte 5. Use onchange event instead.
+- 27fa5fa: fix: show accordion and floating panel titile correctly if title contains dot (.)
+- 27fa5fa: fix: fixed /datasets/{id}/table endpoint to handle layer name correctly if layer name contains dot (.)
+
 ## 1.22.45
 
 ### Patch Changes

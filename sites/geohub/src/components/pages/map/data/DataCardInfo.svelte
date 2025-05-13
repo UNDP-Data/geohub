@@ -14,12 +14,7 @@
 		onStarDeleted?: () => void;
 	}
 
-	let {
-		feature = $bindable(),
-		metadata = $bindable(),
-		children,
-		onStarDeleted = () => {}
-	}: Props = $props();
+	let { feature, metadata, children, onStarDeleted = () => {} }: Props = $props();
 
 	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
 

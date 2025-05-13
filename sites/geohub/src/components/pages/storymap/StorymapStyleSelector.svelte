@@ -48,11 +48,7 @@
 	let mapImageSize = [128, 64];
 	let mapImageData = $state('');
 
-	let mapStyleId: string = $state('');
-
-	$effect(() => {
-		mapStyleId = mapConfig?.style_id?.toString() ?? '';
-	});
+	let mapStyleId: string = $derived(mapConfig?.style_id?.toString() ?? '');
 
 	const handleBaseStyleChanged = (e: ExtendedStyleDefinition) => {
 		mapConfig.base_style_id = e.id;

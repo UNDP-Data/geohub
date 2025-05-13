@@ -324,12 +324,12 @@
 								{#if isCatalog}
 									<StacCatalogExplorer
 										stacId={stacId as string}
-										bind:dataset={feature}
+										dataset={feature}
 										onDataAdded={dataAddedToMap}
 									/>
 								{:else}
 									<StacApiExplorer
-										bind:dataset={feature}
+										dataset={feature}
 										stacId={stacId as string}
 										{collection}
 										onDataAdded={dataAddedToMap}
@@ -543,7 +543,7 @@
 
 	{#if feature.properties.is_raster && !isStac}
 		<div hidden={activeTab !== `#${TabNames.TOOLS}`}>
-			<RasterAlgorithmExplorer bind:feature onAdded={handleAlgorithmSelected} />
+			<RasterAlgorithmExplorer {feature} onAdded={handleAlgorithmSelected} />
 		</div>
 	{/if}
 

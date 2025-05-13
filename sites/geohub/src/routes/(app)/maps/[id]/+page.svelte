@@ -34,12 +34,14 @@
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
-	import { SkyControl } from '@watergis/maplibre-gl-sky';
+	import { MaplibreMeasureControl } from '@watergis/maplibre-gl-terradraw';
+	import '@watergis/maplibre-gl-terradraw/dist/maplibre-gl-terradraw.css';
 	import { toast } from '@zerodevx/svelte-toast';
 	import {
 		AttributionControl,
 		FullscreenControl,
 		GeolocateControl,
+		GlobeControl,
 		Map,
 		NavigationControl,
 		ScaleControl,
@@ -100,6 +102,8 @@
 	let deletedStyleName = $state('');
 	let isUpdating = $state(false);
 
+	let isQueryToolActive: boolean = $state(true);
+
 	const mapStore = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, mapStore);
 
@@ -147,7 +151,8 @@
 		const map = new Map({
 			container: mapContainer,
 			style: style.style,
-			attributionControl: false
+			attributionControl: false,
+			maxPitch: 85
 		});
 
 		map.addControl(new FullscreenControl(), 'top-right');
@@ -171,7 +176,9 @@
 			}),
 			'bottom-right'
 		);
-		map.setMaxPitch(85);
+
+		map.addControl(new GlobeControl(), 'bottom-right');
+
 		map.addControl(
 			new TerrainControl({
 				source: 'terrarium',
@@ -189,10 +196,22 @@
 		});
 		map.addControl(styleSwitcher, 'bottom-left');
 
-		const sky = new SkyControl();
-		sky.addTo(map, { timeType: 'solarNoon' });
+		const measureControl = new MaplibreMeasureControl({
+			modes: ['render', 'point', 'linestring', 'polygon', 'select', 'delete-selection', 'delete'],
+			open: false,
+			computeElevation: true
+		});
+		measureControl.fontGlyphs = ['Proxima Nova Italic'];
+		map.addControl(measureControl, 'bottom-right');
+
+		measureControl.on('mode-changed', (e) => {
+			if (['linestring', 'point', 'polygon', 'select'].includes(e.mode)) {
+				isQueryToolActive = false;
+			}
+		});
 
 		map.once('load', async () => {
+			isQueryToolActive = true;
 			map.resize();
 			await styleSwitcher.initialise();
 			layerListStore.set(style.layers as Layer[]);
@@ -411,7 +430,11 @@
 								{/if}
 								<div class="map" bind:this={mapContainer}>
 									{#if $mapStore}
-										<MapQueryInfoControl bind:map={$mapStore} layerList={layerListStore} />
+										<MapQueryInfoControl
+											bind:map={$mapStore}
+											layerList={layerListStore}
+											bind:isActive={isQueryToolActive}
+										/>
 										<MaplibreLegendControl
 											bind:map={$mapStore}
 											bind:styleId={style.id}

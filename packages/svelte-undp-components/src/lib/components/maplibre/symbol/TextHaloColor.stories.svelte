@@ -45,4 +45,4 @@
 	</Map>
 {/snippet}
 
-<Story name="Primary" args={{ layerId: layer.id }} children={template} />
+<Story name="Primary" args={{ layerId: layer.id }} {template} />

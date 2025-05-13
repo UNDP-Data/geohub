@@ -7,6 +7,7 @@
 	import type { DashboardMapStyle } from '$lib/types';
 	import type { LayerListStore } from '$stores';
 	import { ModalTemplate, Notification } from '@undp-data/svelte-undp-components';
+	import { cleanMaplibreStyle } from '@watergis/maplibre-gl-terradraw';
 	import type { Map, StyleSpecification } from 'maplibre-gl';
 	import { untrack } from 'svelte';
 
@@ -139,10 +140,12 @@
 
 	const createStyleJSON2Generate = () => {
 		if (!map) return;
-		const style: StyleSpecification = map.getStyle();
+		let style: StyleSpecification = map.getStyle();
 		if ($layerList.length === 0) {
 			return;
 		}
+
+		style = cleanMaplibreStyle(style, { excludeTerraDrawLayers: true });
 
 		style.name = styleName;
 		const center = map.getCenter();

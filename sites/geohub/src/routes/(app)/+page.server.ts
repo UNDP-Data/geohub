@@ -24,8 +24,13 @@ export const load: PageServerLoad = async ({ depends, fetch }) => {
 };
 
 const getAlgorithms = async (fetch) => {
-	const apiUrl = `${env.TITILER_ENDPOINT.replace('/cog', '')}/algorithms`;
-	const res = await fetch(apiUrl);
-	const algorithms: { [key: string]: RasterAlgorithm } = await res.json();
-	return algorithms;
+	try {
+		const apiUrl = `${env.TITILER_ENDPOINT.replace('/cog', '')}/algorithms`;
+		const res = await fetch(apiUrl);
+		const algorithms: { [key: string]: RasterAlgorithm } = await res.json();
+		return algorithms;
+	} catch (error) {
+		console.error('Error fetching algorithms:', error);
+		return {};
+	}
 };

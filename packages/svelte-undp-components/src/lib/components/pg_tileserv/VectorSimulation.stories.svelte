@@ -72,5 +72,5 @@
 		layerId: layer.id,
 		datasetUrl: sourceUrl
 	}}
-	children={template}
+	{template}
 />

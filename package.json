@@ -22,17 +22,28 @@
     "url": "https://github.com/UNDP-Data/geohub/issues"
   },
   "homepage": "https://github.com/UNDP-Data/geohub#readme",
-  "packageManager": "pnpm@10.8.1",
+  "packageManager": "pnpm@10.10.0",
   "engines": {
     "pnpm": "^10.0.0"
   },
   "type": "module",
   "devDependencies": {
-    "@changesets/cli": "^2.27.12",
-    "lefthook": "^1.10.10"
+    "@changesets/cli": "^2.29.4",
+    "lefthook": "^1.11.12"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "@carbon/charts",
+      "@carbon/charts-svelte",
+      "@carbon/colors",
+      "@carbon/utils-position",
+      "@parcel/watcher",
+      "@scarf/scarf",
+      "carbon-components",
+      "core-js",
+      "core-js-pure",
+      "esbuild",
+      "lefthook",
       "svelte-preprocess"
     ]
   }

@@ -179,10 +179,13 @@
 				{/if}
 				<div class="mt-2">
 					<LayerTypeSwitch
-						bind:layer={selectedVectorLayer as VectorLayerTileStatLayer}
-						bind:layerType={layerType as 'point' | 'heatmap' | 'polygon' | 'linestring'}
+						layer={selectedVectorLayer as VectorLayerTileStatLayer}
+						layerType={layerType as 'point' | 'heatmap' | 'polygon' | 'linestring'}
 						size="small"
-						onchange={handleLayerTypeChanged}
+						onchange={(type) => {
+							layerType = type as 'point' | 'heatmap' | 'polygon' | 'linestring';
+							handleLayerTypeChanged();
+						}}
 					/>
 				</div>
 			</div>
@@ -191,13 +194,13 @@
 			{#key selectedVectorLayer}
 				{#key layerType}
 					<MiniMap
-						bind:feature
+						{feature}
 						isLoadMap={true}
 						width="100%"
 						height={height?.length > 0 ? height : innerWidth < 768 ? '200px' : '50vh'}
 						layer={selectedVectorLayer}
-						bind:metadata
-						bind:layerType
+						{metadata}
+						{layerType}
 						onLayerAdded={handleLayerAdded}
 					/>
 				{/key}
@@ -219,11 +222,11 @@
 		{#if isRgbTile || selectedBand}
 			{#key selectedBand}
 				<MiniMap
-					bind:feature
+					{feature}
 					isLoadMap={true}
 					width="100%"
 					height={height?.length > 0 ? height : innerWidth < 768 ? '200px' : '50vh'}
-					bind:metadata
+					{metadata}
 					band={isRgbTile ? undefined : selectedBand}
 					onLayerAdded={handleLayerAdded}
 				/>

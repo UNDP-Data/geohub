@@ -486,9 +486,9 @@
 				</div>
 				{#if page.dataset?.properties.tags?.find((t) => t.key === 'stacApiType')?.value === 'catalog'}
 					<StacCatalogTool
-						bind:collection={page.stacCollection as StacCollection}
-						bind:collectionUrl={page.dataset.properties.url}
-						bind:dataset={page.dataset}
+						collection={page.stacCollection as StacCollection}
+						collectionUrl={page.dataset.properties.url}
+						dataset={page.dataset}
 						selectedTool={{
 							algorithm: page.algorithm as RasterAlgorithm,
 							algorithmId: page.algorithmId as string
@@ -497,12 +497,12 @@
 					/>
 				{:else}
 					<StacApiExplorer
-						bind:selectedTool={page.algorithm as RasterAlgorithm}
+						selectedTool={page.algorithm as RasterAlgorithm}
 						collection={page.dataset?.properties.tags?.find((t) => t.key === 'collection')
 							?.value as string}
 						stacId={page.dataset?.properties.tags?.find((t) => t.key === 'stac')?.value as string}
 						onDataAdded={stacDataAddedToMap}
-						bind:dataset={page.dataset as DatasetFeature}
+						dataset={page.dataset as DatasetFeature}
 					/>
 				{/if}
 			{/if}

@@ -21,10 +21,10 @@
 	}
 
 	let {
-		stacId = $bindable(),
-		collectionUrl = $bindable(),
-		url = $bindable(),
-		dataset = $bindable(undefined),
+		stacId,
+		collectionUrl,
+		url,
+		dataset,
 		onDataAdded = () => {},
 		onSelected = () => {}
 	}: Props = $props();
@@ -87,16 +87,16 @@
 
 	<div hidden={activeTab !== 'catalog'}>
 		<StacCollectionMap
-			bind:stacId
-			bind:collectionUrl
-			bind:url
-			bind:links={collection.links}
+			{stacId}
+			{collectionUrl}
+			{url}
+			links={collection.links}
 			{onSelected}
 			{onDataAdded}
 		/>
 	</div>
 
 	<div hidden={activeTab !== 'tools'}>
-		<StacCatalogTools bind:collectionUrl bind:collection bind:dataset {onDataAdded} />
+		<StacCatalogTools {collectionUrl} {collection} {dataset} {onDataAdded} />
 	</div>
 {/if}

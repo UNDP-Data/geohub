@@ -68,13 +68,13 @@
 	}
 
 	let {
-		stacId = $bindable(),
-		collection = $bindable(),
-		center = $bindable([0, 0]),
-		zoom = $bindable(0),
-		height = $bindable(0),
-		selectedTool = $bindable(''),
-		dataset = $bindable(),
+		stacId,
+		collection,
+		center = [0, 0],
+		zoom = 0,
+		height = 0,
+		selectedTool = '',
+		dataset,
 		onDataAdded = () => {}
 	}: Props = $props();
 
@@ -1063,11 +1063,11 @@
 								</Notification>
 							{:else}
 								<MiniMap
-									bind:feature={stacDatasetFeature}
+									feature={stacDatasetFeature}
 									isLoadMap={true}
 									width="100%"
 									height="200px"
-									bind:metadata
+									{metadata}
 									onLayerAdded={handleLayerAdded}
 								/>
 							{/if}

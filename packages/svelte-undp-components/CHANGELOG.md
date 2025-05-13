@@ -1,5 +1,14 @@
 # @undp-data/svelte-undp-components
 
+## 2.0.9
+
+### Patch Changes
+
+- 1ed3137: fix: remove $bindable from toggled property of Switch component in UNDP Design System because of some issue of reactivity in svelte 5. Use onchange event instead.
+- 27fa5fa: fix: show accordion and floating panel titile correctly if title contains dot (.)
+- Updated dependencies [1ed3137]
+  - @undp-data/svelte-undp-design@3.0.5
+
 ## 2.0.8
 
 ### Patch Changes

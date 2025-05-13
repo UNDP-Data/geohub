@@ -16,7 +16,7 @@
 	import { Checkbox, DefaultLink, Loader } from '@undp-data/svelte-undp-design';
 	import { Map, MapMouseEvent, Popup, type ControlPosition, type PointLike } from 'maplibre-gl';
 	import PapaParse from 'papaparse';
-	import { onDestroy, onMount } from 'svelte';
+	import { onDestroy, onMount, untrack } from 'svelte';
 
 	interface PointFeature {
 		type: 'Feature';
@@ -32,17 +32,18 @@
 		map: Map;
 		layerList: LayerListStore;
 		position?: ControlPosition;
+		isActive?: boolean;
 	}
 
 	let {
 		map = $bindable(),
 		layerList = $bindable(),
-		position = $bindable('top-right')
+		position = $bindable('top-right'),
+		isActive = $bindable(true)
 	}: Props = $props();
 	let popup: Popup | undefined;
 	let queryButton: HTMLButtonElement | undefined = $state();
 	let popupContainer: HTMLDivElement | undefined = $state();
-	let isActive = $state(false);
 	let isValuesRounded = $state(true);
 	let showDownloadDropdown = $state(false);
 
@@ -52,6 +53,24 @@
 	let showPopup = $state(false);
 
 	const tippyTooltip = initTooltipTippy();
+
+	$effect(() => {
+		if (isActive !== undefined) {
+			untrack(() => {
+				handleActiveChanged();
+			});
+		}
+	});
+
+	const handleActiveChanged = () => {
+		if (isActive) {
+			map.on('click', onMapClick);
+			map.getCanvas().style.cursor = 'crosshair';
+		} else {
+			map.off('click', onMapClick);
+			map.getCanvas().style.cursor = '';
+		}
+	};
 
 	function MapQueryInfoControl() {}
 
@@ -69,18 +88,11 @@
 	};
 
 	MapQueryInfoControl.prototype.changeButtonCondition = function () {
-		if (isActive) {
-			map.off('click', this.onClick.bind(this));
-			map.getCanvas().style.cursor = '';
-			isActive = false;
-		} else {
-			map.on('click', this.onClick.bind(this));
-			map.getCanvas().style.cursor = 'crosshair';
-			isActive = true;
-		}
+		isActive = !isActive;
+		handleActiveChanged();
 	};
 
-	MapQueryInfoControl.prototype.onClick = async (e: MapMouseEvent) => {
+	const onMapClick = async (e: MapMouseEvent) => {
 		if (!isActive) return;
 		const visibleLayers = map.getStyle().layers.filter((l) => {
 			let visibility = 'visible';
