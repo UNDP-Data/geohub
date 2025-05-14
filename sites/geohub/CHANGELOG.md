@@ -1,5 +1,11 @@
 # geohub
 
+## 1.24.0
+
+### Minor Changes
+
+- 9255143: feat: support statistics algorithms(min, max, median, mean, std, var) of titiler.
+
 ## 1.23.2
 
 ### Patch Changes
