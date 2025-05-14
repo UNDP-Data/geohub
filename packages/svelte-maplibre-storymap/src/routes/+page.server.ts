@@ -16,7 +16,7 @@ export const load: PageServerLoad = async () => {
 			bearing: 0,
 			pitch: 0
 		},
-		projection: { type: 'mercator' },
+		projection: 'mercator',
 		chapters: [
 			{
 				id: 'kenya',
@@ -40,7 +40,7 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				rotateAnimation: true,
 				spinGlobe: false,
 				hidden: false,
-				projection: { type: 'globe' }
+				projection: 'globe'
 			},
 			{
 				id: 'rwanda',
@@ -105,7 +105,7 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				],
 				legendPosition: 'bottom-left',
 				showLegend: false,
-				projection: { type: 'globe' }
+				projection: 'globe'
 			},
 			{
 				id: 'rwanda-2',
@@ -137,7 +137,7 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 					}
 				],
 				legendPosition: 'bottom-right',
-				projection: { type: 'mercator' }
+				projection: 'mercator'
 			},
 			{
 				id: 'ceei',

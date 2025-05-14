@@ -1,4 +1,5 @@
-import type { ControlPosition, ProjectionSpecification, StyleSpecification } from 'maplibre-gl';
+import type { ControlPosition, StyleSpecification } from 'maplibre-gl';
+import type { mapProjectionType } from './mapProjectionType';
 
 export interface StoryMapChapterLayerEvent {
 	/**
@@ -126,5 +127,5 @@ export interface StoryMapChapterType {
 	/**
 	 * Projection type either mercator or globe. Default is mercator
 	 */
-	projection?: ProjectionSpecification;
+	projection?: mapProjectionType;
 }

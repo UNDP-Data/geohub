@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { StoryMapConfig, StoryMapTemplate } from '$lib/interfaces';
+	import type { mapProjectionType, StoryMapConfig, StoryMapTemplate } from '$lib/interfaces';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import {
@@ -115,16 +115,16 @@
 			mapStyle.zoom = config.location.zoom;
 		}
 
-		let mapProjection: ProjectionSpecification;
+		let mapProjection: mapProjectionType;
 		if (mapStyle.projection) {
-			mapProjection = mapStyle.projection;
+			mapProjection = mapStyle.projection.type as mapProjectionType;
 		} else if (config.projection) {
 			mapProjection = config.projection;
 		} else {
-			mapProjection = { type: 'mercator' };
+			mapProjection = 'mercator';
 		}
 		if (mapProjection) {
-			mapStyle.projection = mapProjection;
+			mapStyle.projection = { type: mapProjection };
 		}
 
 		const center = mapStyle.center ?? [0, 0];
