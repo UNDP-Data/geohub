@@ -12,15 +12,27 @@
 	export const ALGORITHM_TAG_KEY = 'algorithm';
 
 	export const algorithmCategory: { [key: string]: string } = {
+		// algorithms for index
 		normalizedindex: 'index',
+
+		// algorithms for terrain elevation
 		hillshade: 'terrain',
 		contours: 'terrain',
 		slope: 'terrain',
 		terrarium: 'terrain',
 		terrainrgb: 'terrain',
+
+		// algorithms for math operations
 		cast: 'operation',
 		floor: 'operation',
-		ceil: 'operation'
+		ceil: 'operation',
+		// algorithms for statistics
+		min: 'statistic',
+		max: 'statistic',
+		median: 'statistic',
+		mean: 'statistic',
+		std: 'statistic',
+		var: 'statistic'
 	};
 </script>
 
