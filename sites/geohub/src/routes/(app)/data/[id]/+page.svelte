@@ -189,7 +189,7 @@
 				layers = [
 					{
 						id: layerSpec.layerId,
-						name: feature.properties.name as string,
+						name: `${layerSpec.algorithm.title} ${feature.properties.name}`,
 						info: metadata,
 						dataset: feature,
 						colorMapName: layerSpec.colormap_name

@@ -32,11 +32,7 @@
 
 	const headerHeight: Writable<number> = getContext('header-height');
 	let innerHeight: number = $state(0);
-	let sidebarHeight = $state(0);
-
-	$effect(() => {
-		sidebarHeight = innerHeight - $headerHeight;
-	});
+	let sidebarHeight = $derived(innerHeight - $headerHeight);
 
 	let isExporting = $state(false);
 	let showStyleDropdown = $state(false);

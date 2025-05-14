@@ -205,7 +205,7 @@
 			$layerListStore = [
 				{
 					id: layerSpec.layerId,
-					name: feature.properties.name,
+					name: `${layerSpec.algorithm.title} ${feature.properties.name}`,
 					info: rasterInfo,
 					dataset: feature,
 					colorMapName: layerSpec.colormap_name
