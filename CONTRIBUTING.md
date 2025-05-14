@@ -189,12 +189,6 @@ This GeoHub repo is using monorepo structure to manage several Javascript packag
 
 - components
   - header: It manages Header component.
-  - maplibre: It manages maplibre style editing components
-    - fill
-    - heatmap
-    - line
-    - raster
-    - symbol
   - pages: It manages the components used in pages.
     - data: Components used in data (/data) page
       - datasets: The components for published dataset table (data tab)
@@ -203,23 +197,23 @@ This GeoHub repo is using monorepo structure to manage several Javascript packag
     - map: Components used in map (/map) page.
       - data: The components for Data tabs
       - layers: The components for Layers tabs
-        - header: The components for Layer header
         - order: The components for layer ordering feature
         - raster: The components for raster layer
         - vector: The components for vector layer
       - plugins: Maplibre plugins used in map app
+    - storymap: Components used for storymaps
   - util
 - lib
   - config: There are constant variables for app, and also user config settings.
   - helper: Javascript's helper functions used in frontend and backend are here
   - server: Javascript funcitons used in only backend are here.
-    - api: it manages all server endpoints. open api document is generated from this folder.
+    - api: it manages actual implementation of all server endpoints. open api document is generated from this folder.
   - stac: STAC server configulations
   - types: All interfaces should be filed in this repo.
 - routes: It manages APIs and Pages.
-  - (app): It manages pages which has both header and footer.
-  - api: GeoHub API codes are here.
-  - +layout.svelte: This will be used across (app), (auth) and (map). See the [advanced layout](https://kit.svelte.dev/docs/advanced-routing#advanced-layouts) in official sveltekit doc.
+  - (app): It manages pages.
+  - api: GeoHub API codes are here. This should be the same folder structure with `/lib/server/api`.
+  - +layout.svelte: This will be used across the application. See the [advanced layout](https://kit.svelte.dev/docs/advanced-routing#advanced-layouts) in official sveltekit doc.
 - stores: it manages svelte store. We should not use stores globally!! Use [Context API](https://learn.svelte.dev/tutorial/context-api) together with store in the parent component.
 - hooks.server.ts: it manages authentication and CORS, and permanent redirecting.
 
@@ -242,24 +236,6 @@ The following link for vitest might be useful to make tests.
 
 ### Fill the issue reporting form properly and as completely as possible.
 
-## Deploy to Azure App Services
-
-We have two environments for production (`undpgeohub`) and development (`undpgeohub-dev`) in App Services.
-
-All environmental variables indicated in `.env.example` needs to be registred in `Settings -> Configulation -> Application settings` as well.
-
-Also, the following PM2 setting needs to be done in Azure.
-
-```bash
-az login
-az webapp config set --resource-group "undpdpbppssdganalyticsgeo" --name "undpgeohub-dev" --startup-file "pm2 start pm2.json --no-daemon"
-az webapp restart --resource-group "undpdpbppssdganalyticsgeo" --name "undpgeohub-dev"
-```
-
-Note. change `undpgeohub-dev` to `undpgeohub` for production.
-
-Or, alternatively, you can change startup command from Azure Portal `Settings -> Configulation -> General settings`. The nodejs server will be launched as a cluster with four instances. Check the [pm2.json](./sites/geohub/pm2.json) for GeoHub setting. See the official azure doc for PM2 settings [here](https://learn.microsoft.com/en-us/azure/app-service/configure-language-nodejs?pivots=platform-linux#run-with-pm2).
-
 ## Release packages and versioning GeoHub
 
 In this repo, [changeset](https://github.com/changesets/changesets) handles releasing packages and version GeoHub automatically. However, only static image api is excluded from the target of changeset because the building process of maplibre native is too complicated if the API is included in PNPM workspace.
@@ -280,3 +256,20 @@ The procedure of creating changeset file for GeoHub is the same with the above p
 - Increment patch version (0.0.X) if the PR is going to fix bugs.
 - Increment minor version (0.X.0) if the PR contains a new feature to improve the app.
 - Increment major version (X.0.0) if the PR contains breaking changes.
+
+## Deploy to Azure App Services
+
+CI on GitHub Actions deploys Docker image of GeoHub to Azure Container Registry.
+
+You can find `geohub-prod` app service in Azure Portal. The app services manages both production and development version. Development version is deployed as Deployment Slot. Deployment branch is:
+
+- `main` branch: the branch for production (https://geohub.data.undp.org).
+- `develop` branch: the branch for development (https://dev.undpgeohub.org).
+
+The branch setting is configured in AppService (`geohub-prod` > `Deployment` > `Deployment Center` or `Deployment slots`). To deploy AppServices correctly, valid environmental variables need to be set for AppService.
+
+To deploy to development, you can simply merge your PR to `develop` branch. CI/CD will deploy it automatically.
+
+Regarding development to production server, `develop` branch needs to be merged to `main` branch. The CI will create a PR to do this automatically. If you find a PR named `[RELEASE] Merge develop to main`, you can merge it to `main` branch when it is ready. Don't use `squash and merge` for this PR since `squash and merge` will break git commit history diffrent from original.
+
+Furthremore, please make sure all `changesets` created PRs are managed before deploying to production.
