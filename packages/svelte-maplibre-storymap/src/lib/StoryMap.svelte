@@ -8,6 +8,7 @@
 		Map,
 		NavigationControl,
 		type ControlPosition,
+		type ProjectionSpecification,
 		type StyleSpecification
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
@@ -79,6 +80,13 @@
 	// collapse legend for small screen device
 	let isLegendExpanded = $derived(innerWidth < 768 ? false : true);
 
+	const spinGlobe = () => {
+		const center = $mapStore.getCenter();
+		const newCenter: [number, number] = [center.lng + 1, center.lat];
+		$mapStore.easeTo({ center: newCenter, duration: 100, easing: (n) => n }, 'moveend');
+		$mapStore.once('moveend', spinGlobe);
+	};
+
 	onMount(async () => {
 		let protocol = new Protocol();
 		addProtocol('pmtiles', protocol.tile);
@@ -105,6 +113,18 @@
 			mapStyle.pitch = config.location.pitch;
 			mapStyle.center = config.location.center;
 			mapStyle.zoom = config.location.zoom;
+		}
+
+		let mapProjection: ProjectionSpecification;
+		if (mapStyle.projection) {
+			mapProjection = mapStyle.projection;
+		} else if (config.projection) {
+			mapProjection = config.projection;
+		} else {
+			mapProjection = { type: 'mercator' };
+		}
+		if (mapProjection) {
+			mapStyle.projection = mapProjection;
 		}
 
 		const center = mapStyle.center ?? [0, 0];
@@ -179,17 +199,23 @@
 						const navPosition = chapter.mapNavigationPosition ?? 'top-right';
 						$mapStore.addControl(navigationControl, navPosition);
 					}
+
+					if (chapter.spinGlobe) {
+						$mapStore.once('load', spinGlobe);
+					}
 				})
 				.onStepExit((response) => {
 					if (activeId === response.element.id) {
 						if (config.chapters[config.chapters.length - 1].id !== response.element.id) {
 							activeId = '';
+							$mapStore.off('moveend', spinGlobe);
 						}
 
 						map.resize();
 
 						const chapter = config.chapters.find((chap) => chap.id === response.element.id);
 						if (chapter) {
+							$mapStore.off('moveend', spinGlobe);
 							const eventLength = chapter.onChapterEnter?.length ?? 0;
 							if (eventLength > 0) {
 								if ($mapStore.loaded()) {
@@ -270,6 +296,19 @@
 			$mapStore.setBearing(bearing);
 			$mapStore.setPitch(pitch);
 			$mapStore.flyTo({ center: center, zoom: zoom });
+
+			let mapProjection: ProjectionSpecification;
+			if (style.projection) {
+				mapProjection = style.projection;
+			} else if (config.projection) {
+				mapProjection = config.projection;
+			} else {
+				mapProjection = { type: 'mercator' };
+			}
+			if (mapProjection) {
+				style.projection = mapProjection;
+			}
+
 			$mapStore.setStyle(style);
 		} else {
 			const chapter = $configStore.chapters[index - 1];

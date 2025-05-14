@@ -16,6 +16,7 @@ export const load: PageServerLoad = async () => {
 			bearing: 0,
 			pitch: 0
 		},
+		projection: { type: 'mercator' },
 		chapters: [
 			{
 				id: 'kenya',
@@ -31,14 +32,15 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				mapInteractive: false,
 				location: {
 					center: [35.446, -0.12],
-					zoom: 6,
+					zoom: 2,
 					bearing: 0,
 					pitch: 0
 				},
 				mapAnimation: 'flyTo',
-				rotateAnimation: false,
-				spinGlobe: true,
-				hidden: false
+				rotateAnimation: true,
+				spinGlobe: false,
+				hidden: false,
+				projection: { type: 'globe' }
 			},
 			{
 				id: 'rwanda',
@@ -88,7 +90,7 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				},
 				mapAnimation: 'flyTo',
 				rotateAnimation: false,
-				spinGlobe: false,
+				spinGlobe: true,
 				hidden: false,
 				style: 'https://dev.undpgeohub.org/api/style/315.json',
 				onChapterEnter: [
@@ -102,7 +104,8 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 					}
 				],
 				legendPosition: 'bottom-left',
-				showLegend: false
+				showLegend: false,
+				projection: { type: 'globe' }
 			},
 			{
 				id: 'rwanda-2',
@@ -133,7 +136,8 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 						opacity: 1
 					}
 				],
-				legendPosition: 'bottom-right'
+				legendPosition: 'bottom-right',
+				projection: { type: 'mercator' }
 			},
 			{
 				id: 'ceei',

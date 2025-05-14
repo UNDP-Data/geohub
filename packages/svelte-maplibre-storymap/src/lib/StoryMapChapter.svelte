@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { StoryMapChapterType, StoryMapTemplate } from '$lib/interfaces';
-	import type { StyleSpecification } from 'maplibre-gl';
+	import type { ProjectionSpecification, StyleSpecification } from 'maplibre-gl';
 	import { marked } from 'marked';
 	import { getContext, untrack } from 'svelte';
 	import { layerTypes } from './helpers';
@@ -73,6 +73,18 @@
 			$mapStyleStore = newStyle;
 		}
 
+		let mapProjection: ProjectionSpecification;
+		if (chapter.projection) {
+			mapProjection = chapter.projection;
+		} else if ($config.projection) {
+			mapProjection = $config.projection;
+		} else {
+			mapProjection = { type: 'mercator' };
+		}
+		if (!(mapProjection && ($mapStyleStore as StyleSpecification).projection === mapProjection)) {
+			($mapStyleStore as StyleSpecification).projection = mapProjection;
+		}
+
 		$mapStore.setStyle($mapStyleStore);
 
 		$mapStore[chapter.mapAnimation || 'flyTo']({
@@ -113,14 +125,6 @@
 						return t;
 					}
 				});
-			});
-		}
-
-		if (chapter.spinGlobe) {
-			$mapStore.once('moveend', () => {
-				const center = $mapStore.getCenter();
-				const newCenter: [number, number] = [center.lng + 360, center.lat];
-				$mapStore.easeTo({ center: newCenter, duration: 20000, easing: (n) => n });
 			});
 		}
 	};
