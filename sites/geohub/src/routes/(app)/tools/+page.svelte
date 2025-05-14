@@ -57,6 +57,14 @@
 		.filter((k) => algorithmCategory[k] === 'terrain')
 		.map((k) => k.toLowerCase());
 
+	let operationAlgoIds = Object.keys(algorithmCategory)
+		.filter((k) => algorithmCategory[k] === 'operation')
+		.map((k) => k.toLowerCase());
+
+	let statisticsAlgoIds = Object.keys(algorithmCategory)
+		.filter((k) => algorithmCategory[k] === 'statistic')
+		.map((k) => k.toLowerCase());
+
 	const handleBreadcrumbClicked = (page: BreadcrumbPage) => {
 		if (breadcrumbs?.length > 0) {
 			const pageIndex = breadcrumbs.findIndex((p) => p.title === page.title);
@@ -97,6 +105,10 @@
 			];
 		} else {
 			// azure data
+			if (algoBreadcrumb.algorithm) {
+				dataset.properties.name = `${algoBreadcrumb.algorithm?.title} ${dataset.properties.name}`;
+			}
+
 			await azureDataAddedToMap(
 				algoBreadcrumb.algorithmId as string,
 				algoBreadcrumb.algorithm as RasterAlgorithm,
@@ -332,10 +344,19 @@
 					<Notification showCloseButton={false}>No tools registered</Notification>
 				{:else}
 					{@const geohubAlgos = Object.keys(algorithms).filter(
-						(k) => !terrainAlgoIds.includes(k.toLowerCase())
+						(k) =>
+							!terrainAlgoIds.includes(k.toLowerCase()) &&
+							!operationAlgoIds.includes(k.toLowerCase()) &&
+							!statisticsAlgoIds.includes(k.toLowerCase())
 					)}
 					{@const terrainAlgos = Object.keys(algorithms).filter((k) =>
 						terrainAlgoIds.includes(k.toLowerCase())
+					)}
+					{@const operationAlgos = Object.keys(algorithms).filter((k) =>
+						operationAlgoIds.includes(k.toLowerCase())
+					)}
+					{@const statisticsAlgos = Object.keys(algorithms).filter((k) =>
+						statisticsAlgoIds.includes(k.toLowerCase())
 					)}
 
 					<h3 class="title is-3 mt-6">Tools</h3>
@@ -425,6 +446,62 @@
 							</div>
 						{/each}
 					</div>
+
+					{#if operationAlgos.length > 0}
+						<h3 class="title is-3 mt-6">Mathmatics operation add-ons</h3>
+
+						<div class="columns is-multiline is-mobile">
+							{#each operationAlgos as name (name)}
+								{@const algo = algorithms[name]}
+								<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+									<Card
+										linkName="Explore datasets"
+										tag={algorithmCategory[name.toLowerCase()] ?? 'geohub'}
+										title={algo.title as string}
+										description={algo.description as string}
+										url=""
+										accent="yellow"
+										onselect={() => {
+											handleToolSelected({
+												title: algo.title ?? name,
+												type: 'Tool',
+												algorithmId: name,
+												algorithm: algo
+											});
+										}}
+									/>
+								</div>
+							{/each}
+						</div>
+					{/if}
+
+					{#if statisticsAlgos.length > 0}
+						<h3 class="title is-3 mt-6">Statistics add-ons</h3>
+
+						<div class="columns is-multiline is-mobile">
+							{#each statisticsAlgos as name (name)}
+								{@const algo = algorithms[name]}
+								<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+									<Card
+										linkName="Explore datasets"
+										tag={algorithmCategory[name.toLowerCase()] ?? 'geohub'}
+										title={algo.title as string}
+										description={algo.description as string}
+										url=""
+										accent="yellow"
+										onselect={() => {
+											handleToolSelected({
+												title: algo.title ?? name,
+												type: 'Tool',
+												algorithmId: name,
+												algorithm: algo
+											});
+										}}
+									/>
+								</div>
+							{/each}
+						</div>
+					{/if}
 				{/if}
 			{:else if page.type === 'Tool'}
 				<div class="pb-4">
