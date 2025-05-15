@@ -246,7 +246,7 @@
 				const res = await fetch(styleUrl);
 				const style: StyleSpecification = await res.json();
 				if (style.center) {
-					location.center = style.center;
+					location.center = style.center as [number, number];
 				}
 				if (style.zoom) {
 					location.zoom = style.zoom;
@@ -272,7 +272,9 @@
 					mapAnimation: data.config.StorymapChapterTransitionAnimation,
 					mapInteractive: false,
 					mapNavigationPosition: data.config.StorymapChapterNavigationControlPosition,
-					spinGlobe: false,
+					rotateAnimation: lastChapter?.rotateAnimation ?? false,
+					spinGlobe: lastChapter?.spinGlobe ?? false,
+					projection: lastChapter?.projection ?? $configStore.projection ?? undefined,
 					showLegend: true,
 					legendPosition: 'bottom-left',
 					// eslint-disable-next-line @typescript-eslint/ban-ts-comment

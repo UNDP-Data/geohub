@@ -95,6 +95,7 @@ class StorymapManager {
 			a.show_progress as "showProgress",
 			a.hillshade,
 			a.terrain,
+			a.projection,
 			a.createdat, 
 			a.created_user, 
 			a.updatedat, 
@@ -151,6 +152,7 @@ class StorymapManager {
 					c.show_legend as "showLegend",
 					c.hillshade,
 					c.terrain,
+					c.projection,
 					c.createdat, 
 					c.created_user, 
 					c.updatedat, 
@@ -206,6 +208,7 @@ class StorymapManager {
 				a.show_progress,
 				a.hillshade,
 				a.terrain,
+				a.projection,
 				a.createdat, 
 				a.created_user, 
 				a.updatedat, 
@@ -547,7 +550,8 @@ class StorymapManager {
 					mapNavigationPosition: chapter.mapNavigationPosition,
 					mapAnimation: chapter.mapAnimation,
 					rotateAnimation: chapter.rotateAnimation,
-					spinGlobe: chapter.spinGlobe,
+					spinglobe: chapter.spinGlobe,
+					projection: chapter.projection,
 					hidden: chapter.hidden,
 					center: sql.raw(`ST_GeomFromText('POINT(${chapter.location.center.join(' ')})', 4326)`),
 					zoom: chapter.location.zoom,
@@ -592,6 +596,7 @@ class StorymapManager {
 					showProgress: this.storymap.showProgress,
 					hillshade: this.storymap.hillshade ?? false,
 					terrain: this.storymap.terrain ?? false,
+					projection: this.storymap.projection,
 					createdat: this.storymap.createdat,
 					createdUser: this.storymap.created_user
 				})
@@ -616,6 +621,7 @@ class StorymapManager {
 						showProgress: this.storymap.showProgress,
 						hillshade: this.storymap.hillshade ?? false,
 						terrain: this.storymap.terrain ?? false,
+						projection: this.storymap.projection,
 						updatedat: this.storymap.updatedat,
 						updatedUser: this.storymap.updated_user
 					}
