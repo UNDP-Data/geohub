@@ -32,7 +32,7 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				mapInteractive: false,
 				location: {
 					center: [35.446, -0.12],
-					zoom: 2,
+					zoom: 6,
 					bearing: 0,
 					pitch: 0
 				},
@@ -122,8 +122,8 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 					pitch: 0
 				},
 				mapAnimation: 'flyTo',
-				rotateAnimation: false,
-				spinGlobe: false,
+				rotateAnimation: true,
+				spinGlobe: true,
 				hidden: false,
 				style: 'https://dev.undpgeohub.org/api/style/315.json',
 				onChapterEnter: [
@@ -137,7 +137,7 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 					}
 				],
 				legendPosition: 'bottom-right',
-				projection: 'mercator'
+				projection: 'globe'
 			},
 			{
 				id: 'ceei',

@@ -1,5 +1,10 @@
 <script lang="ts">
-	import type { mapProjectionType, StoryMapConfig, StoryMapTemplate } from '$lib/interfaces';
+	import type {
+		mapProjectionType,
+		StoryMapChapterType,
+		StoryMapConfig,
+		StoryMapTemplate
+	} from '$lib/interfaces';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import {
@@ -15,7 +20,7 @@
 	import { Protocol } from 'pmtiles';
 	import scrollama from 'scrollama';
 	import { onMount, setContext } from 'svelte';
-	import { setLayerOpacity } from './helpers';
+	import { layerTypes, setLayerOpacity } from './helpers';
 	import MaplibreLegendControl from './MaplibreLegendControl.svelte';
 	import {
 		createMapStore,
@@ -66,6 +71,7 @@
 	let activeStyleOrigin = $state('');
 	let legendPosition: ControlPosition = $state('bottom-left');
 	let showLegend = $state(false);
+	let activeChapter: StoryMapChapterType | undefined = $state();
 
 	let navigationControl: NavigationControl;
 
@@ -83,7 +89,16 @@
 	const spinGlobe = () => {
 		const center = $mapStore.getCenter();
 		const newCenter: [number, number] = [center.lng + 1, center.lat];
-		$mapStore.easeTo({ center: newCenter, duration: 100, easing: (n) => n }, 'moveend');
+
+		let rotateNumber = $mapStore.getBearing();
+		if (activeChapter && activeChapter.rotateAnimation) {
+			rotateNumber = rotateNumber + 1;
+		}
+
+		$mapStore.easeTo(
+			{ center: newCenter, bearing: rotateNumber, duration: 100, easing: (n) => n },
+			'moveend'
+		);
 		$mapStore.once('moveend', spinGlobe);
 	};
 
@@ -116,10 +131,10 @@
 		}
 
 		let mapProjection: mapProjectionType;
-		if (mapStyle.projection) {
-			mapProjection = mapStyle.projection.type as mapProjectionType;
-		} else if (config.projection) {
+		if (config.projection) {
 			mapProjection = config.projection;
+		} else if (mapStyle.projection) {
+			mapProjection = mapStyle.projection.type as mapProjectionType;
 		} else {
 			mapProjection = 'mercator';
 		}
@@ -189,6 +204,7 @@
 						activeStyleId = '';
 						activeStyleOrigin = '';
 					}
+					activeChapter = chapter;
 
 					if (navigationControl && $mapStore.hasControl(navigationControl)) {
 						$mapStore.removeControl(navigationControl);
@@ -200,14 +216,13 @@
 						$mapStore.addControl(navigationControl, navPosition);
 					}
 
-					if (chapter.spinGlobe) {
-						$mapStore.once('load', spinGlobe);
-					}
+					setChapterConfig(chapter);
 				})
 				.onStepExit((response) => {
 					if (activeId === response.element.id) {
 						if (config.chapters[config.chapters.length - 1].id !== response.element.id) {
 							activeId = '';
+							activeChapter = undefined;
 							$mapStore.off('moveend', spinGlobe);
 						}
 
@@ -235,6 +250,113 @@
 				});
 		});
 	});
+
+	const setChapterConfig = async (chapter: StoryMapChapterType) => {
+		if (!$mapStore) return;
+		if (!chapter) return;
+
+		if (chapter.id !== activeId) return;
+		if (chapter.style) {
+			if ($currentStyle !== chapter.style) {
+				$currentStyle = chapter.style;
+			}
+		} else if ($currentStyle !== config.style) {
+			$currentStyle = config.style;
+		}
+
+		if (typeof $currentStyle === 'string') {
+			const res = await fetch($currentStyle);
+			$currentStyle = await res.json();
+		}
+
+		const eventLength = chapter.onChapterEnter?.length ?? 0;
+		if (eventLength > 0) {
+			const newStyle: StyleSpecification = JSON.parse(JSON.stringify($currentStyle));
+			chapter.onChapterEnter?.forEach((layer) => {
+				const index = newStyle.layers.findIndex((l) => l.id === layer.layer);
+				if (index === -1) return;
+				const l = newStyle.layers[index];
+				const props = layerTypes[l.type];
+				if (props && props.length > 0) {
+					props.forEach((prop) => {
+						newStyle.layers[index].paint[prop] = layer.opacity;
+					});
+				} else {
+					const visibility = layer.opacity === 0 ? 'none' : 'visible';
+					if (!newStyle.layers[index].layout) {
+						newStyle.layers[index].layout = {};
+					}
+					newStyle.layers[index].layout.visibility = visibility;
+				}
+			});
+			$currentStyle = newStyle;
+		}
+
+		let mapProjection: mapProjectionType;
+		if (chapter.projection) {
+			mapProjection = chapter.projection;
+		} else if (config.projection) {
+			mapProjection = config.projection;
+		} else {
+			mapProjection = 'mercator';
+		}
+		if (
+			!(mapProjection && ($currentStyle as StyleSpecification).projection?.type === mapProjection)
+		) {
+			($currentStyle as StyleSpecification).projection = { type: mapProjection };
+		}
+
+		$mapStore.setStyle($currentStyle);
+
+		$mapStore[chapter.mapAnimation || 'flyTo']({
+			center: chapter.location.center,
+			// if spinGlobe is enabled, set lower zoom level
+			zoom: chapter.spinGlobe ? 3 : chapter.location.zoom,
+			bearing: chapter.location.bearing ?? 0,
+			pitch: chapter.location.pitch ?? 0
+		});
+
+		if (chapter.mapInteractive) {
+			$mapStore.scrollZoom.disable(); //disable scrollZoom because it will conflict with scrolling chapters
+			$mapStore.boxZoom.enable();
+			$mapStore.dragRotate.enable();
+			$mapStore.dragPan.enable();
+			$mapStore.keyboard.enable();
+			$mapStore.doubleClickZoom.enable();
+			$mapStore.touchZoomRotate.enable();
+			$mapStore.touchPitch.enable();
+			$mapStore.getCanvas().style.cursor = 'grab';
+		} else {
+			$mapStore.scrollZoom.disable();
+			$mapStore.boxZoom.disable();
+			$mapStore.dragRotate.disable();
+			$mapStore.dragPan.disable();
+			$mapStore.keyboard.disable();
+			$mapStore.doubleClickZoom.disable();
+			$mapStore.touchZoomRotate.disable();
+			$mapStore.touchPitch.disable();
+			$mapStore.getCanvas().style.cursor = 'default';
+		}
+
+		if (chapter.spinGlobe) {
+			if ($mapStore.loaded()) {
+				spinGlobe();
+			} else {
+				$mapStore.once('idle', spinGlobe);
+			}
+		}
+		if (!chapter.spinGlobe && chapter.rotateAnimation) {
+			$mapStore.once('moveend', () => {
+				const rotateNumber = $mapStore.getBearing();
+				$mapStore.rotateTo(rotateNumber + 180, {
+					duration: 30000,
+					easing: function (t) {
+						return t;
+					}
+				});
+			});
+		}
+	};
 
 	const getStyleInfo = (style: StyleSpecification | string) => {
 		if (typeof style !== 'string') return;
@@ -301,7 +423,7 @@
 			if (style.projection) {
 				mapProjection = style.projection;
 			} else if (config.projection) {
-				mapProjection = config.projection;
+				mapProjection = { type: config.projection };
 			} else {
 				mapProjection = { type: 'mercator' };
 			}
@@ -413,6 +535,7 @@
 			bottom: 0;
 			width: 100%;
 			height: 100%;
+			background: linear-gradient(to right, #4286f4, #373b44);
 
 			.slide-progress {
 				position: absolute;
