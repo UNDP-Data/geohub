@@ -11,6 +11,7 @@
 		STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY,
 		StoryMapChapter,
 		StoryMapHeader,
+		type mapProjectionType,
 		type MapStore,
 		type MapStyleStore,
 		type StoryMapConfigStore,
@@ -95,6 +96,18 @@
 				}
 			});
 
+			let mapProjection: mapProjectionType;
+			if (chapter.projection) {
+				mapProjection = chapter.projection;
+			} else if ($configStore.projection) {
+				mapProjection = $configStore.projection;
+			} else {
+				mapProjection = 'mercator';
+			}
+			if (!(mapProjection && (newStyle as StyleSpecification).projection?.type === mapProjection)) {
+				(newStyle as StyleSpecification).projection = { type: mapProjection };
+			}
+
 			return newStyle;
 		} else {
 			if (!mapStyle) {
@@ -113,6 +126,18 @@
 				mapStyle.zoom = $configStore.location.zoom;
 			}
 
+			let mapProjection: mapProjectionType;
+			if ($configStore.projection) {
+				mapProjection = $configStore.projection;
+			} else if (mapStyle.projection) {
+				mapProjection = mapStyle.projection.type as mapProjectionType;
+			} else {
+				mapProjection = 'mercator';
+			}
+			if (mapProjection) {
+				mapStyle.projection = { type: mapProjection };
+			}
+
 			return mapStyle;
 		}
 	};
@@ -125,7 +150,10 @@
 			$mapStore.setBearing(chapter.location.bearing);
 			$mapStore.setPitch(chapter.location.pitch);
 
-			const location = { zoom: chapter.location.zoom, center: chapter.location.center };
+			const location = {
+				zoom: chapter.spinGlobe ? 3 : chapter.location.zoom,
+				center: chapter.location.center
+			};
 			if (chapter.mapAnimation === 'easeTo') {
 				$mapStore.easeTo(location);
 			} else if (chapter.mapAnimation === 'jumpTo') {
@@ -183,20 +211,41 @@
 			$mapStore.getCanvas().style.cursor = 'default';
 		}
 
-		if (chapter.rotateAnimation) {
-			const rotateNumber = $mapStore.getBearing();
-			$mapStore.rotateTo(rotateNumber + 180, {
-				duration: 30000,
-				easing: function (t) {
-					return t;
-				}
+		if (chapter.spinGlobe) {
+			if ($mapStore.loaded()) {
+				spinGlobe();
+			} else {
+				$mapStore.once('idle', spinGlobe);
+			}
+		}
+		if (!chapter.spinGlobe && chapter.rotateAnimation) {
+			$mapStore.once('moveend', () => {
+				const rotateNumber = $mapStore.getBearing();
+				$mapStore.rotateTo(rotateNumber + 180, {
+					duration: 30000,
+					easing: function (t) {
+						return t;
+					}
+				});
 			});
-		} else if (chapter.spinGlobe) {
-			const center = $mapStore.getCenter();
-			const newCenter: [number, number] = [center.lng + 360, center.lat];
-			$mapStore.easeTo({ center: newCenter, duration: 20000, easing: (n) => n });
 		}
 	}, 300);
+
+	const spinGlobe = () => {
+		const center = $mapStore.getCenter();
+		const newCenter: [number, number] = [center.lng + 1, center.lat];
+
+		let rotateNumber = $mapStore.getBearing();
+		if (chapter && chapter.rotateAnimation) {
+			rotateNumber = rotateNumber + 1;
+		}
+
+		$mapStore.easeTo(
+			{ center: newCenter, bearing: rotateNumber, duration: 100, easing: (n) => n },
+			'moveend'
+		);
+		$mapStore.once('moveend', spinGlobe);
+	};
 
 	$effect(() => {
 		if (chapter) {
