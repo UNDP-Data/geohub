@@ -310,6 +310,10 @@
 			($currentStyle as StyleSpecification).projection = { type: mapProjection };
 		}
 
+		if ($mapStore.isMoving()) {
+			$mapStore.stop();
+		}
+
 		$mapStore.setStyle($currentStyle);
 
 		$mapStore[chapter.mapAnimation || 'flyTo']({
@@ -418,9 +422,11 @@
 				? ($configStore.location.pitch ?? 0)
 				: (style.pitch ?? 0);
 
-			$mapStore.setBearing(bearing);
-			$mapStore.setPitch(pitch);
-			$mapStore.flyTo({ center: center, zoom: zoom });
+			if ($mapStore.isMoving()) {
+				$mapStore.stop();
+			}
+
+			$mapStore.flyTo({ center: center, zoom: zoom, bearing: bearing, pitch: pitch });
 
 			let mapProjection: ProjectionSpecification;
 			if (style.projection) {

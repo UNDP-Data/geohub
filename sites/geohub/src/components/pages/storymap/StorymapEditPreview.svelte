@@ -161,6 +161,9 @@
 				zoom: chapter.location.zoom,
 				center: chapter.location.center
 			};
+			if ($mapStore.isMoving()) {
+				$mapStore.stop();
+			}
 			if (chapter.mapAnimation === 'easeTo') {
 				$mapStore.easeTo(location);
 			} else if (chapter.mapAnimation === 'jumpTo') {
@@ -278,7 +281,7 @@
 		{#key chapter}
 			<MaplibreLegendControl
 				bind:map={$mapStore}
-				bind:styleId={chapter.style_id}
+				bind:styleId={chapter.style_id as unknown as string}
 				bind:position={chapter.legendPosition}
 				showInvisibleLayers={false}
 				showInteractive={false}
