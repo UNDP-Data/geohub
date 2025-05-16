@@ -169,7 +169,8 @@ export const storymapInGeohub = geohub.table('storymap', {
 	createdUser: varchar('created_user').notNull(),
 	updatedat: timestamp('updatedat', { withTimezone: true, mode: 'string' }),
 	updatedUser: varchar('updated_user'),
-	showProgress: boolean('show_progress').default(true).notNull()
+	showProgress: boolean('show_progress').default(true).notNull(),
+	projection: varchar('projection')
 });
 
 export const storymapChapterInGeohub = geohub.table('storymap_chapter', {
@@ -206,7 +207,8 @@ export const storymapChapterInGeohub = geohub.table('storymap_chapter', {
 	updatedUser: varchar('updated_user'),
 	cardHidden: boolean('card_hidden').default(false).notNull(),
 	legendPosition: varchar('legend_position').default('bottom-left'),
-	showLegend: boolean('show_legend').default(true).notNull()
+	showLegend: boolean('show_legend').default(true).notNull(),
+	projection: varchar('projection')
 });
 
 export const licenseInGeohub = geohub.table('license', {
