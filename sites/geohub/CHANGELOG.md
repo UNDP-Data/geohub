@@ -1,5 +1,18 @@
 # geohub
 
+## 1.25.0
+
+### Minor Changes
+
+- fad5083: feat: add maplibre Globe mode feature and spinGlobe feature to storymap editor component.
+- fad5083: feat: add projection column to database table, and fixed storymap endpoints
+
+### Patch Changes
+
+- fad5083: fix: change spinGlobe speed dynamically based on current zoom level.
+- fad5083: fix: add debounce for storymap change event to mitigate updating components too much. also try to reuse the same instance
+- 2e76a72: fix: set debounce for textbox of NumberInput component to allow users manually change value correctly.
+
 ## 1.24.0
 
 ### Minor Changes

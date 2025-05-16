@@ -1,5 +1,17 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 1.1.0
+
+### Minor Changes
+
+- fad5083: feat: add maplibre Globe mode feature and spinGlobe feature to storymap component.
+
+### Patch Changes
+
+- fad5083: fix: change spinGlobe speed dynamically based on current zoom level.
+- Updated dependencies [2e76a72]
+  - @undp-data/svelte-undp-components@2.0.11
+
 ## 1.0.13
 
 ### Patch Changes
