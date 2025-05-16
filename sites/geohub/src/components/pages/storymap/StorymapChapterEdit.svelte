@@ -76,6 +76,8 @@
 	let mapInteractive = $state(false);
 	let mapAnimation = $state('flyTo');
 	let rotateAnimation = $state(false);
+	let spinGlobe = $state(false);
+	let isGlobe = $state(false);
 
 	let showLegend = $state(true);
 
@@ -171,8 +173,14 @@
 				mapInteractive = $activeChapterStore.mapInteractive as boolean;
 				mapAnimation = $activeChapterStore.mapAnimation as 'flyTo' | 'easeTo' | 'jumpTo';
 				rotateAnimation = $activeChapterStore.rotateAnimation as boolean;
+				spinGlobe = $activeChapterStore.spinGlobe as boolean;
 				showLegend = $activeChapterStore.showLegend as boolean;
 				cardSize = $activeChapterStore.alignment !== 'full' ? 'default' : 'full';
+				if ($activeChapterStore.projection) {
+					isGlobe = $activeChapterStore.projection === 'globe';
+				} else if ($configStore.projection) {
+					isGlobe = $configStore.projection === 'globe';
+				}
 			}
 		});
 	});
@@ -515,6 +523,63 @@
 									>Starts a slow rotation animation at the end of the map transition when set to
 									true. The map will rotate 90 degrees over 24 seconds.</Help
 								>
+							</div>
+						{/snippet}
+					</Accordion>
+					<Accordion title="Globe mode" bind:isExpanded={expanded['globeMode']}>
+						{#snippet content()}
+							<div>
+								<FieldControl title="Switch between mercator and globe mode" showHelp={false}>
+									{#snippet control()}
+										<div>
+											<Switch
+												toggled={isGlobe}
+												showValue={true}
+												toggledText="Globe mode"
+												untoggledText="Mercator mode"
+												onchange={(toggled) => {
+													isGlobe = toggled;
+													if (!$activeChapterStore) return;
+
+													$activeChapterStore.projection = isGlobe ? 'globe' : 'mercator';
+													if (!isGlobe) {
+														spinGlobe = false;
+														$activeChapterStore.spinGlobe = spinGlobe;
+													}
+													handleChange();
+												}}
+											/>
+										</div>
+									{/snippet}
+								</FieldControl>
+								{#if isGlobe}
+									<FieldControl title="Enable spin globe animation" showHelp={false}>
+										{#snippet control()}
+											<div>
+												<Switch
+													toggled={spinGlobe}
+													showValue={true}
+													toggledText="Spinning globe"
+													untoggledText="Stop spinning globe"
+													onchange={(toggled) => {
+														spinGlobe = toggled;
+														if (!$activeChapterStore) return;
+														$activeChapterStore.spinGlobe = spinGlobe;
+														handleChange();
+													}}
+												/>
+											</div>
+										{/snippet}
+									</FieldControl>
+								{/if}
+							</div>
+						{/snippet}
+						{#snippet buttons()}
+							<div>
+								<Help>
+									Enable globe mode to switch from 2D mercator map to vertical perspective globe
+									map.
+								</Help>
 							</div>
 						{/snippet}
 					</Accordion>

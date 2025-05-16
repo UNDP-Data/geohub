@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 2.0.11
+
+### Patch Changes
+
+- 2e76a72: fix: set debounce for textbox of NumberInput component to allow users manually change value correctly.
+
 ## 2.0.10
 
 ### Patch Changes

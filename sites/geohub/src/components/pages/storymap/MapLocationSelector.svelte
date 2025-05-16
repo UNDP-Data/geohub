@@ -17,7 +17,7 @@
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		type StoryMapConfigStore
 	} from '@undp-data/svelte-maplibre-storymap';
-	import { FieldControl, Slider } from '@undp-data/svelte-undp-components';
+	import { FieldControl, loadMap, Slider } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { Map, Marker, NavigationControl, Popup, type StyleSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
@@ -101,9 +101,9 @@
 		(tempLocation as Location).bearing = mapBearing[0];
 		(tempLocation as Location).pitch = mapPitch[0];
 		if (!chapter) {
-			$configStore.location = tempLocation as Location;
+			$configStore.location = JSON.parse(JSON.stringify(tempLocation)) as Location;
 		} else {
-			chapter.location = tempLocation;
+			chapter.location = JSON.parse(JSON.stringify(tempLocation)) as Location;
 		}
 		if (onchange) onchange();
 	};
@@ -152,35 +152,41 @@
 	onMount(async () => {
 		const style = await applyLayerEvent();
 		if (!locationMapContainer) return;
-		locationMap = new Map({
-			container: locationMapContainer,
-			style: style,
-			attributionControl: false,
-			maxPitch: 85
-		});
-		locationMap.addControl(
-			new NavigationControl({ visualizePitch: true, showCompass: true }),
-			'bottom-right'
-		);
 
-		if (browser) {
-			const { GeocodingControl } = await import('@maptiler/geocoding-control/maplibregl');
-			const apiKey = page.data.maptilerKey;
-			if (apiKey) {
-				const gc = new GeocodingControl({
-					apiKey: apiKey,
-					marker: true,
-					showResultsWhileTyping: false,
-					collapsed: false,
-					limit: 5
-				});
-				gc.fire('pick', handleGeocodingSelected);
-				locationMap.addControl(gc, 'top-left');
+		if (!locationMap) {
+			locationMap = new Map({
+				container: locationMapContainer,
+				style: style,
+				attributionControl: false,
+				maxPitch: 85
+			});
+			locationMap.addControl(
+				new NavigationControl({ visualizePitch: true, showCompass: true }),
+				'bottom-right'
+			);
+
+			if (browser) {
+				const { GeocodingControl } = await import('@maptiler/geocoding-control/maplibregl');
+				const apiKey = page.data.maptilerKey;
+				if (apiKey) {
+					const gc = new GeocodingControl({
+						apiKey: apiKey,
+						marker: true,
+						showResultsWhileTyping: false,
+						collapsed: false,
+						limit: 5
+					});
+					gc.fire('pick', handleGeocodingSelected);
+					locationMap.addControl(gc, 'top-left');
+				}
 			}
-		}
 
-		locationMap.on('moveend', updateMarkerPosition);
-		locationMap.on('pitchend', updateMarkerPosition);
+			locationMap.on('moveend', updateMarkerPosition);
+			locationMap.on('pitchend', updateMarkerPosition);
+		} else {
+			locationMap.setStyle(style);
+			await loadMap(locationMap);
+		}
 	});
 
 	const applyLayerEvent = async () => {
@@ -196,17 +202,19 @@
 		}
 
 		if (chapter) {
-			mapStyle.bearing = chapter.location.bearing;
-			mapStyle.pitch = chapter.location.pitch;
-			mapStyle.center = chapter.location.center;
-			mapStyle.zoom = chapter.location.zoom;
+			const location = JSON.parse(JSON.stringify(chapter.location));
+			mapStyle.bearing = location.bearing;
+			mapStyle.pitch = location.pitch;
+			mapStyle.center = location.center;
+			mapStyle.zoom = location.zoom;
 		} else {
 			if ($configStore.location?.center && $configStore.location.center[0] !== null) {
 				// if center is not undefined, use location from config
-				mapStyle.bearing = $configStore.location.bearing;
-				mapStyle.pitch = $configStore.location.pitch;
-				mapStyle.center = $configStore.location.center;
-				mapStyle.zoom = $configStore.location.zoom;
+				const location = JSON.parse(JSON.stringify($configStore.location));
+				mapStyle.bearing = location.bearing;
+				mapStyle.pitch = location.pitch;
+				mapStyle.center = location.center;
+				mapStyle.zoom = location.zoom;
 			}
 		}
 		tempLocation = {
@@ -215,6 +223,9 @@
 			bearing: mapStyle.bearing ?? 0,
 			pitch: mapStyle.pitch ?? 0
 		};
+
+		mapBearing = [tempLocation.bearing];
+		mapPitch = [tempLocation.pitch];
 
 		chapter?.onChapterEnter?.forEach((layer: { layer: string; opacity: number }) => {
 			const index = mapStyle.layers.findIndex((l) => l.id === layer.layer);

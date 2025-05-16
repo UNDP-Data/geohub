@@ -1,5 +1,6 @@
 import type { StyleSpecification } from 'maplibre-gl';
 import type { StoryMapChapterType } from './StoryMapChapter';
+import type { mapProjectionType } from './mapProjectionType';
 
 export interface StoryMapConfig {
 	/**
@@ -63,4 +64,9 @@ export interface StoryMapConfig {
 		 */
 		bearing?: number;
 	};
+
+	/**
+	 * Projection type either mercator or globe. Default is mercator
+	 */
+	projection?: mapProjectionType;
 }
