@@ -37,6 +37,11 @@ const meta = {
 			type: 'boolean',
 			description: 'If true, become readonly mode.',
 			defaultValue: false
+		},
+		debounceTime: {
+			type: 'number',
+			description: 'decounce time in second. Default is 1000 msec (1sec)',
+			defaultValue: 1000
 		}
 	}
 } satisfies Meta<NumberInput>;
