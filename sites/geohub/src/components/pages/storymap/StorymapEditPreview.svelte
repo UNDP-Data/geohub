@@ -17,6 +17,7 @@
 		type StoryMapConfigStore,
 		type StoryMapTemplate
 	} from '@undp-data/svelte-maplibre-storymap';
+	import { loadMap } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { AttributionControl, Map, NavigationControl, type StyleSpecification } from 'maplibre-gl';
 	import { getContext, onMount, setContext, untrack } from 'svelte';
@@ -67,6 +68,7 @@
 			);
 		} else {
 			$mapStore.setStyle(newStyle);
+			await loadMap($mapStore);
 		}
 
 		updateMapStyle();
@@ -156,7 +158,7 @@
 			$mapStore.setPitch(chapter.location.pitch);
 
 			const location = {
-				zoom: chapter.spinGlobe ? 3 : chapter.location.zoom,
+				zoom: chapter.location.zoom,
 				center: chapter.location.center
 			};
 			if (chapter.mapAnimation === 'easeTo') {
@@ -240,7 +242,11 @@
 	const spinGlobe = () => {
 		if (!$mapStore) return;
 		const center = $mapStore.getCenter();
-		const newCenter: [number, number] = [center.lng + 1, center.lat];
+
+		const zoom = $mapStore.getZoom();
+		const baseDelta = 5;
+		const adjustedDelta = baseDelta / Math.pow(2, zoom - 1);
+		const newCenter: [number, number] = [center.lng + adjustedDelta, center.lat];
 
 		let rotateNumber = $mapStore.getBearing();
 		if (chapter && chapter.rotateAnimation) {

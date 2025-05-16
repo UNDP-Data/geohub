@@ -88,7 +88,11 @@
 
 	const spinGlobe = () => {
 		const center = $mapStore.getCenter();
-		const newCenter: [number, number] = [center.lng + 1, center.lat];
+
+		const zoom = $mapStore.getZoom();
+		const baseDelta = 5;
+		const adjustedDelta = baseDelta / Math.pow(2, zoom - 1);
+		const newCenter: [number, number] = [center.lng + adjustedDelta, center.lat];
 
 		let rotateNumber = $mapStore.getBearing();
 		if (activeChapter && activeChapter.rotateAnimation) {
@@ -310,8 +314,7 @@
 
 		$mapStore[chapter.mapAnimation || 'flyTo']({
 			center: chapter.location.center,
-			// if spinGlobe is enabled, set lower zoom level
-			zoom: chapter.spinGlobe ? 3 : chapter.location.zoom,
+			zoom: chapter.location.zoom,
 			bearing: chapter.location.bearing ?? 0,
 			pitch: chapter.location.pitch ?? 0
 		});

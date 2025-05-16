@@ -17,7 +17,7 @@
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		type StoryMapConfigStore
 	} from '@undp-data/svelte-maplibre-storymap';
-	import { FieldControl, Slider } from '@undp-data/svelte-undp-components';
+	import { FieldControl, loadMap, Slider } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { Map, Marker, NavigationControl, Popup, type StyleSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
@@ -185,6 +185,7 @@
 			locationMap.on('pitchend', updateMarkerPosition);
 		} else {
 			locationMap.setStyle(style);
+			await loadMap(locationMap);
 		}
 	});
 
@@ -201,17 +202,19 @@
 		}
 
 		if (chapter) {
-			mapStyle.bearing = chapter.location.bearing;
-			mapStyle.pitch = chapter.location.pitch;
-			mapStyle.center = chapter.location.center;
-			mapStyle.zoom = chapter.location.zoom;
+			const location = JSON.parse(JSON.stringify(chapter.location));
+			mapStyle.bearing = location.bearing;
+			mapStyle.pitch = location.pitch;
+			mapStyle.center = location.center;
+			mapStyle.zoom = location.zoom;
 		} else {
 			if ($configStore.location?.center && $configStore.location.center[0] !== null) {
 				// if center is not undefined, use location from config
-				mapStyle.bearing = $configStore.location.bearing;
-				mapStyle.pitch = $configStore.location.pitch;
-				mapStyle.center = $configStore.location.center;
-				mapStyle.zoom = $configStore.location.zoom;
+				const location = JSON.parse(JSON.stringify($configStore.location));
+				mapStyle.bearing = location.bearing;
+				mapStyle.pitch = location.pitch;
+				mapStyle.center = location.center;
+				mapStyle.zoom = location.zoom;
 			}
 		}
 		tempLocation = {
@@ -220,6 +223,9 @@
 			bearing: mapStyle.bearing ?? 0,
 			pitch: mapStyle.pitch ?? 0
 		};
+
+		mapBearing = [tempLocation.bearing];
+		mapPitch = [tempLocation.pitch];
 
 		chapter?.onChapterEnter?.forEach((layer: { layer: string; opacity: number }) => {
 			const index = mapStyle.layers.findIndex((l) => l.id === layer.layer);
