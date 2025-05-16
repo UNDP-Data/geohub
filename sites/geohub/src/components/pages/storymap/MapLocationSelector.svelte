@@ -101,9 +101,9 @@
 		(tempLocation as Location).bearing = mapBearing[0];
 		(tempLocation as Location).pitch = mapPitch[0];
 		if (!chapter) {
-			$configStore.location = tempLocation as Location;
+			$configStore.location = JSON.parse(JSON.stringify(tempLocation)) as Location;
 		} else {
-			chapter.location = tempLocation;
+			chapter.location = JSON.parse(JSON.stringify(tempLocation)) as Location;
 		}
 		if (onchange) onchange();
 	};
@@ -152,35 +152,40 @@
 	onMount(async () => {
 		const style = await applyLayerEvent();
 		if (!locationMapContainer) return;
-		locationMap = new Map({
-			container: locationMapContainer,
-			style: style,
-			attributionControl: false,
-			maxPitch: 85
-		});
-		locationMap.addControl(
-			new NavigationControl({ visualizePitch: true, showCompass: true }),
-			'bottom-right'
-		);
 
-		if (browser) {
-			const { GeocodingControl } = await import('@maptiler/geocoding-control/maplibregl');
-			const apiKey = page.data.maptilerKey;
-			if (apiKey) {
-				const gc = new GeocodingControl({
-					apiKey: apiKey,
-					marker: true,
-					showResultsWhileTyping: false,
-					collapsed: false,
-					limit: 5
-				});
-				gc.fire('pick', handleGeocodingSelected);
-				locationMap.addControl(gc, 'top-left');
+		if (!locationMap) {
+			locationMap = new Map({
+				container: locationMapContainer,
+				style: style,
+				attributionControl: false,
+				maxPitch: 85
+			});
+			locationMap.addControl(
+				new NavigationControl({ visualizePitch: true, showCompass: true }),
+				'bottom-right'
+			);
+
+			if (browser) {
+				const { GeocodingControl } = await import('@maptiler/geocoding-control/maplibregl');
+				const apiKey = page.data.maptilerKey;
+				if (apiKey) {
+					const gc = new GeocodingControl({
+						apiKey: apiKey,
+						marker: true,
+						showResultsWhileTyping: false,
+						collapsed: false,
+						limit: 5
+					});
+					gc.fire('pick', handleGeocodingSelected);
+					locationMap.addControl(gc, 'top-left');
+				}
 			}
-		}
 
-		locationMap.on('moveend', updateMarkerPosition);
-		locationMap.on('pitchend', updateMarkerPosition);
+			locationMap.on('moveend', updateMarkerPosition);
+			locationMap.on('pitchend', updateMarkerPosition);
+		} else {
+			locationMap.setStyle(style);
+		}
 	});
 
 	const applyLayerEvent = async () => {

@@ -53,17 +53,22 @@
 		if (!mapContainer) return;
 		const newStyle = await applyLayerEvent();
 
-		$mapStore = new Map({
-			container: mapContainer,
-			style: newStyle,
-			maxPitch: 85,
-			interactive: false,
-			attributionControl: false
-		});
-		$mapStore.addControl(
-			new AttributionControl({ compact: true, customAttribution: attribution }),
-			'bottom-right'
-		);
+		if (!$mapStore) {
+			$mapStore = new Map({
+				container: mapContainer,
+				style: newStyle,
+				maxPitch: 85,
+				interactive: false,
+				attributionControl: false
+			});
+			$mapStore.addControl(
+				new AttributionControl({ compact: true, customAttribution: attribution }),
+				'bottom-right'
+			);
+		} else {
+			$mapStore.setStyle(newStyle);
+		}
+
 		updateMapStyle();
 
 		configStore.subscribe(updateMapStyle);
@@ -220,6 +225,7 @@
 		}
 		if (!chapter.spinGlobe && chapter.rotateAnimation) {
 			$mapStore.once('moveend', () => {
+				if (!$mapStore) return;
 				const rotateNumber = $mapStore.getBearing();
 				$mapStore.rotateTo(rotateNumber + 180, {
 					duration: 30000,
@@ -232,6 +238,7 @@
 	}, 300);
 
 	const spinGlobe = () => {
+		if (!$mapStore) return;
 		const center = $mapStore.getCenter();
 		const newCenter: [number, number] = [center.lng + 1, center.lat];
 

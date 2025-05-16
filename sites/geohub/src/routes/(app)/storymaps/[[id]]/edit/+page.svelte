@@ -41,6 +41,7 @@
 	import { getContext, onMount, setContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 	import type { PageData } from './$types';
+	import { debounce } from 'lodash-es';
 
 	interface Props {
 		data: PageData;
@@ -313,13 +314,13 @@
 		}
 	};
 
-	const handleHeaderChanged = () => {
+	const handleHeaderChanged = debounce(() => {
 		if (!isHeaderSlideActive) return;
 		requireHeaderUpdated = !requireHeaderUpdated;
 		requirePreviewUpdated = !requirePreviewUpdated;
-	};
+	}, 500);
 
-	const handleSlideEdit = (chapter: StoryMapChapter) => {
+	const handleSlideEdit = debounce((chapter: StoryMapChapter) => {
 		if ($activeStorymapChapterStore?.id === chapter.id) {
 			showSlideSetting = !showSlideSetting;
 		} else {
@@ -330,13 +331,13 @@
 			requirePreviewUpdated = !requirePreviewUpdated;
 			requireEditorUpdated = !requireEditorUpdated;
 		}
-	};
+	}, 500);
 
 	const handleSlideEditClosed = () => {
 		showSlideSetting = false;
 	};
 
-	const handleSlideChanged = () => {
+	const handleSlideChanged = debounce(() => {
 		if (!$activeStorymapChapterStore) return;
 
 		for (let i = 0; i < $configStore.chapters.length; i++) {
@@ -347,7 +348,7 @@
 			}
 		}
 		requirePreviewUpdated = !requirePreviewUpdated;
-	};
+	}, 500);
 
 	const handleSlideDuplicated = (chapter: StoryMapChapter) => {
 		const cIndex = $configStore.chapters.findIndex((c) => c.id === chapter.id);
