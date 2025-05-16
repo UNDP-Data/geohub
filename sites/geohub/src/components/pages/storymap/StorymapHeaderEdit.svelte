@@ -19,6 +19,7 @@
 	import StorymapStyleSelector, {
 		type StorymapBaseMapConfig
 	} from './StorymapStyleSelector.svelte';
+	import { Switch } from '@undp-data/svelte-undp-design';
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 
@@ -59,6 +60,8 @@
 	let mapLocationSelector: MapLocationSelector | undefined = $state();
 	let mapLocationChanged = false;
 
+	let isGlobe = $state(false);
+
 	const handleChange = () => {
 		if (onchange) onchange();
 	};
@@ -97,6 +100,7 @@
 			hillshade: ($configStore as StoryMapConfig).hillshade,
 			terrain: ($configStore as StoryMapConfig).terrain
 		};
+		isGlobe = $configStore.projection === 'globe';
 	});
 
 	const handleMapStyleChanged = () => {
@@ -234,6 +238,38 @@
 						{#snippet buttons()}
 							<div>
 								<Help>Move a pin for the map location of the slide by dragging the map.</Help>
+							</div>
+						{/snippet}
+					</Accordion>
+					<Accordion title="Globe mode" bind:isExpanded={expanded['globeMode']}>
+						{#snippet content()}
+							<div>
+								<FieldControl title="Switch between mercator and globe mode" showHelp={false}>
+									{#snippet control()}
+										<div>
+											<Switch
+												toggled={isGlobe}
+												showValue={true}
+												toggledText="Globe mode"
+												untoggledText="Mercator mode"
+												onchange={(toggled) => {
+													isGlobe = toggled;
+													if (!$configStore) return;
+													$configStore.projection = isGlobe ? 'globe' : 'mercator';
+													handleChange();
+												}}
+											/>
+										</div>
+									{/snippet}
+								</FieldControl>
+							</div>
+						{/snippet}
+						{#snippet buttons()}
+							<div>
+								<Help>
+									Enable globe mode to switch from 2D mercator map to vertical perspective globe
+									map.
+								</Help>
 							</div>
 						{/snippet}
 					</Accordion>

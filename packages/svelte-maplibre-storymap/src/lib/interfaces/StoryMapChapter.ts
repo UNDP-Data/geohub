@@ -1,4 +1,5 @@
 import type { ControlPosition, StyleSpecification } from 'maplibre-gl';
+import type { mapProjectionType } from './mapProjectionType';
 
 export interface StoryMapChapterLayerEvent {
 	/**
@@ -122,4 +123,9 @@ export interface StoryMapChapterType {
 	 * Visibility of Legend. Default is true. If true, show legend if style is geohub map.
 	 */
 	showLegend?: boolean;
+
+	/**
+	 * Projection type either mercator or globe. Default is mercator
+	 */
+	projection?: mapProjectionType;
 }

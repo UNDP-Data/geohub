@@ -41,6 +41,7 @@
 	import { getContext, onMount, setContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 	import type { PageData } from './$types';
+	import { debounce } from 'lodash-es';
 
 	interface Props {
 		data: PageData;
@@ -246,7 +247,7 @@
 				const res = await fetch(styleUrl);
 				const style: StyleSpecification = await res.json();
 				if (style.center) {
-					location.center = style.center;
+					location.center = style.center as [number, number];
 				}
 				if (style.zoom) {
 					location.zoom = style.zoom;
@@ -272,7 +273,9 @@
 					mapAnimation: data.config.StorymapChapterTransitionAnimation,
 					mapInteractive: false,
 					mapNavigationPosition: data.config.StorymapChapterNavigationControlPosition,
-					spinGlobe: false,
+					rotateAnimation: lastChapter?.rotateAnimation ?? false,
+					spinGlobe: lastChapter?.spinGlobe ?? false,
+					projection: lastChapter?.projection ?? $configStore.projection ?? undefined,
 					showLegend: true,
 					legendPosition: 'bottom-left',
 					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -311,13 +314,13 @@
 		}
 	};
 
-	const handleHeaderChanged = () => {
+	const handleHeaderChanged = debounce(() => {
 		if (!isHeaderSlideActive) return;
 		requireHeaderUpdated = !requireHeaderUpdated;
 		requirePreviewUpdated = !requirePreviewUpdated;
-	};
+	}, 500);
 
-	const handleSlideEdit = (chapter: StoryMapChapter) => {
+	const handleSlideEdit = debounce((chapter: StoryMapChapter) => {
 		if ($activeStorymapChapterStore?.id === chapter.id) {
 			showSlideSetting = !showSlideSetting;
 		} else {
@@ -328,13 +331,13 @@
 			requirePreviewUpdated = !requirePreviewUpdated;
 			requireEditorUpdated = !requireEditorUpdated;
 		}
-	};
+	}, 500);
 
 	const handleSlideEditClosed = () => {
 		showSlideSetting = false;
 	};
 
-	const handleSlideChanged = () => {
+	const handleSlideChanged = debounce(() => {
 		if (!$activeStorymapChapterStore) return;
 
 		for (let i = 0; i < $configStore.chapters.length; i++) {
@@ -345,7 +348,7 @@
 			}
 		}
 		requirePreviewUpdated = !requirePreviewUpdated;
-	};
+	}, 500);
 
 	const handleSlideDuplicated = (chapter: StoryMapChapter) => {
 		const cIndex = $configStore.chapters.findIndex((c) => c.id === chapter.id);

@@ -164,7 +164,7 @@
 		<div class="overlay">
 			<StoryMapChapter
 				bind:chapter
-				bind:activeId={chapter.id}
+				activeId={chapter.id}
 				bind:template={template_id}
 				size="small"
 			/>
