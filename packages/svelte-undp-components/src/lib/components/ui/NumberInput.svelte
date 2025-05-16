@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { isInt } from '$lib/util/isInt';
 	import BigNumber from 'bignumber.js';
+	import { debounce } from 'lodash-es';
 
 	interface Props {
 		value: number;
@@ -9,6 +10,7 @@
 		step?: number;
 		size?: 'small' | 'normal' | 'medium' | 'large';
 		readonly?: boolean;
+		debounceTime?: number;
 		onchange?: (value: number) => void;
 	}
 
@@ -19,6 +21,7 @@
 		step = $bindable(),
 		size = 'normal',
 		readonly = $bindable(),
+		debounceTime = 1000,
 		onchange = () => {}
 	}: Props = $props();
 
@@ -53,7 +56,7 @@
 		}
 	};
 
-	const handleValueChanged = (e) => {
+	const handleValueChanged = debounce((e) => {
 		let allowNegative = minValue < 0 || maxValue < 0;
 
 		if (isInt(step)) {
@@ -124,7 +127,7 @@
 		}
 		value = Number(round(value, countDecimals(step ?? 1)).toFixed(countDecimals(step ?? 1)));
 		if (onchange) onchange(value);
-	};
+	}, debounceTime);
 
 	// round number based on length of decimal places
 	const round = (val: number, exp: number) => {
