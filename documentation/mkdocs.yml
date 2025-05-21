@@ -196,6 +196,14 @@ nav:
       - sharing/share_map.md
       - sharing/search_maps.md
       - sharing/export_map.md
+  - Storymaps:
+      - storymaps/create_storymap.md
+      - Edit contents:
+          - storymaps/edit_storymap_header.md
+          - storymaps/edit_storymap_chapter.md
+          - storymaps/edit_storymap_footer.md
+      - storymaps/search_storymaps.md
+      - storymaps/share_storymap.md
   - Dashboards:
       - dashboards/index.md
       - dashboards/electricity.md
@@ -248,6 +256,14 @@ nav:
               - sharing/share_map_slide.md
               - sharing/search_maps_slide.md
               - sharing/export_map_slide.md
+          - Storymaps:
+              - storymaps/create_storymap_slide.md
+              - Edit contents:
+                  - storymaps/edit_storymap_header_slide.md
+                  - storymaps/edit_storymap_chapter_slide.md
+                  - storymaps/edit_storymap_footer_slide.md
+              - storymaps/search_storymaps_slide.md
+              - storymaps/share_storymap_slide.md
           - Dashboards:
               - dashboards/index_slide.md
               - dashboards/electricity_slide.md
