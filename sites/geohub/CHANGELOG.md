@@ -1,5 +1,11 @@
 # geohub
 
+## 1.25.1
+
+### Patch Changes
+
+- d5cb3d6: fix: fixed a bug not returning is_star and permission properties from /api/storymaps endpoint.
+
 ## 1.25.0
 
 ### Minor Changes
