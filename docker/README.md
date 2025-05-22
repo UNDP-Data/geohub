@@ -49,9 +49,27 @@ make docker-down
 docker volume rm docker_database
 # launch containers in docker-compose
 make docker-up
-# create database schema and insert initial data
+```
+
+Afterward, creating database by drizzle is required by following the below steps.
+
+```shell
+# move to geohub folder
+cd sites/geohub
+
+# please make sure DATABASE_CONNECTION in .env is pointing to Docker database.
+vi .env
+
+# migrate database schema to Docker
+pnpm drizzle-kit:migrate
+
+# back to the root folder of the repository
+cd ../..
+# insert initial data
 ./backends/database/init.sh
 ```
+
+For drizzle settings, please refer to [CONTRIBUTING.md](https://github.com/UNDP-Data/geohub/tree/develop/sites)
 
 Then, open another terminal to launch sveltekit by the following command at root folder of the repository.
 
