@@ -147,9 +147,6 @@ plugins:
       fallback_to_build_date: false
       enable_creation_date: true
 
-extra_javascript:
-  - js/translate.js
-
 extra_css:
   - stylesheets/extra.css
 
