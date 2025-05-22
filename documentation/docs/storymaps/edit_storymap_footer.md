@@ -2,13 +2,17 @@
 title: Footer
 ---
 
-# Edit Footer
+# Storymap Footer
 
-## Examples of footer
+---
 
-- Show copyright information
+The storymaps footer is used to provide additional information such as credits, copyright, and references. The footer is displayed at the bottom of the storymap.
 
-- Show any citation and references
+---
+
+![Footer Slide Settings Panel - Text](../assets/storymaps/storymaps_footer_slide_settings.png)
+
+---
 
 ## Next step
 
