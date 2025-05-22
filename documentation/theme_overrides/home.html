@@ -1,8 +1,4 @@
-{% extends "main.html" %}
-
-{% block tabs %}
-
-{{ super() }}
+{% extends "main.html" %} {% block tabs %} {{ super() }}
 <style>
   .md-header {
     position: initial;
@@ -73,11 +69,5 @@
   </div>
 </section>
 
-{% endblock %}
-{% block content %}
-{% endblock %}
-{% block footer %}
-<!-- Google Translate widget -->
-<div id="google_translate_element" class="md-footer__button"></div>
-<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-{% endblock %}
+{% endblock %} {% block content %}{% endblock %} {% block footer %}{% endblock
+%}
