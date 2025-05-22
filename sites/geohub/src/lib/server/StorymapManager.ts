@@ -102,10 +102,6 @@ class StorymapManager {
 			a.updated_user,
 			CASE WHEN z.no_stars is not null THEN cast(z.no_stars as integer) ELSE 0 END as no_stars,
 			${
-				excludeChapter === true
-					? `'{}'::integer[] as chapters`
-					: `
-			${
 				user_email
 					? `
 						CASE
@@ -118,11 +114,15 @@ class StorymapManager {
 						`
 					: 'false as is_star,'
 			}
-            ${
-							!is_superuser && user_email
-								? `CASE WHEN p.permission is not null THEN p.permission ELSE null END`
-								: `${is_superuser ? Permission.OWNER : 'null'}`
-						} as permission,
+			${
+				!is_superuser && user_email
+					? `CASE WHEN p.permission is not null THEN p.permission ELSE null END`
+					: `${is_superuser ? Permission.OWNER : 'null'}`
+			} as permission,
+			${
+				excludeChapter === true
+					? `'{}'::integer[] as chapters`
+					: `
 			array_to_json(array_agg(row_to_json((
 				SELECT p FROM (
 				SELECT
