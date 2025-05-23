@@ -8,7 +8,7 @@ title: Searching storymaps
 
 Storymaps created by other users can be searched at GeoHub. This section explains how you can search existing storymaps in various ways.
 
-![Overview of search window](../assets/storymaps/search-storymaps-1.png)
+![Overview of search window](../assets/storymaps/search_storymaps_1.png)
 
 <!-- .element style="height: 400px" -->
 
@@ -41,7 +41,7 @@ Both signed and unsigned users can see this storymaps tab contents. Users can se
 
 Both **Card view** and **List view** can be switched by segment buttons on the top-right of contents.
 
-![Segment buttons to switch view type either Card or List](../assets/storymaps/search-storymaps-2.png)
+![Segment buttons to switch view type either Card or List](../assets/storymaps/search_storymaps_2.png)
 
 <!-- .element style="height: 60px" -->
 
@@ -51,7 +51,7 @@ Both **Card view** and **List view** can be switched by segment buttons on the t
 
 Card view consists of a preview image and story map title. It may help you identify a storymap from visual.
 
-![Card view of storymaps](../assets/storymaps/search-storymaps-3.png)
+![Card view of storymaps](../assets/storymaps/search_storymaps_3.png)
 
 <!-- .element style="height: 400px" -->
 
@@ -71,7 +71,7 @@ List view is a table having the list of storymaps. Each record of a table consis
 
 --
 
-![List view of storymaps](../assets/storymaps/search-storymaps-4.png)
+![List view of storymaps](../assets/storymaps/search_storymaps_4.png)
 
 <!-- .element style="height: 400px" -->
 
@@ -81,7 +81,7 @@ List view is a table having the list of storymaps. Each record of a table consis
 
 The page offers three ways to filter results of storymaps: by keywords, by starred and by access level.
 
-![Filtering result of searched storymaps](../assets/storymaps/search-storymaps-5.png)
+![Filtering result of searched storymaps](../assets/storymaps/search_storymaps_5.png)
 
 <!-- .element style="height: 300px" -->
 
@@ -109,7 +109,7 @@ Like datasets and maps, storymaps also offer data accessibility either private, 
 
 **My storymaps** tab is only available for signed user. The result is filtered by the ownership of signed user. You only can see your created storymaps or stories which you have permission to access.
 
-![List view of My storymap tab](../assets/storymaps/search-storymaps-6.png)
+![List view of My storymap tab](../assets/storymaps/search_storymaps_6.png)
 
 <!-- .element style="height: 400px" -->
 
@@ -123,7 +123,7 @@ The elements of **My storymaps** tab contents is the same with regular **Storyma
 
 If you find a favourite storymap, you can add it to your favourite list.
 
-![Adding storymap to favourites](../assets/storymaps/search-storymaps-7.png)
+![Adding storymap to favourites](../assets/storymaps/search_storymaps_7.png)
 
 <!-- .element style="height: 200px" -->
 
