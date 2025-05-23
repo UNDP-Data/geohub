@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 2.0.12
+
+### Patch Changes
+
+- 7423675: fix: add rows proprety to CopyToClipboard component to set the number of rows if multiline mode.
+
 ## 2.0.11
 
 ### Patch Changes
