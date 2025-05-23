@@ -1,5 +1,11 @@
 # geohub
 
+## 1.25.2
+
+### Patch Changes
+
+- 7423675: fix: add iframe code snippet for storymap
+
 ## 1.25.1
 
 ### Patch Changes
