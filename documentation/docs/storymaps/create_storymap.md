@@ -163,9 +163,37 @@ This is where the user can edit the visibility of the progress bar. The progress
 
 ---
 
+- Apply Button
+
+For the settings to be applied, the user needs to click on the **APPLY** button. The apply button is located at the bottom of the settings panel. On clicking the apply button, the settings will be applied to the storymap.
+
+---
+
+![Settings Modal](../assets/storymaps/storymaps_settings.png)
+
 ### Save
 
-The **SAVE** button is located at the right top corner of the page. On clicking the save button, the storymap will be saved. Users can select access level of the storymap. The access level can be set to public, organisation or private. If the access level is set to public, the storymap will be shown to all users. If the access level is set to private, the storymap will be shown only to the user who created it, and if access level is UNDP, only users with UNDP accounts will be able to view it.
+The **SAVE** button is located at the right top corner of the page. On clicking the save button, the save modal is opened and contains the following elements.
+
+- Access Level Switcher
+
+For this access level switcher, users can choose between three access levels: Public, Private and Organization. The public access level will make the storymap visible to everyone. The private access level will make the storymap visible only to the user. The organization access level will make the storymap visible only to the users in the organization.
+
+---
+
+- Save Button
+
+The save button is located at the bottom of the save modal. On clicking the save button, the storymap will be saved with the selected access level.
+
+---
+
+- Cancel Button
+
+The cancel button is located at the bottom of the save modal. On clicking the cancel button, the save modal will be closed and the storymap will not be saved.
+
+---
+
+![Save Modal](../assets/storymaps/storymaps_save_dialog.png)
 
 ---
 
