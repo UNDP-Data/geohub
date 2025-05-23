@@ -18,6 +18,8 @@ The text of the chapter slide is as follows:
     - Title: The title of the chapter.
     - Description: The description of the chapter. This is where the user describes the information intended to be shown in the chapter.
 
+The text should be written in markdown format. Please read more about [markdown](https://www.markdownguide.org/basic-syntax/) to learn how to format the text. The text can be formatted with bold, italic text and headings. Users can also add hyperlinks, quotes, ordered and unordered lists.
+
 ---
 
 ![Chapter Slide Settings Panel - Text](../assets/storymaps/storymaps_slide_settings_text.png)
@@ -60,10 +62,39 @@ The map style of the chapter. You can choose from the different basemap options 
 
 ---
 
+##### How to select a map style from GeoHub existing maps
+
+---
+
+1. In the Map Style Accordion, switch to the GeoHub Map from the Empty Map tab
+
+![Select Geohub Maps](../assets/storymaps/storymaps_switch_to_geohub_maps.png)
+
+---
+
+2. Click on the **GEOHUB MAP CATALOG** button to open the map catalog. This will open a modal with the maps page. From this page, you can search for a map style or select a map style from the list of maps available in GeoHub.
+When you click on a map style, the map style will be selected and the modal will be closed. The selected map style will be shown in the current slide being edited.
+
+![Select GeoHub map style](../assets/storymaps/storymaps_select_geohub_map_catalog.png)
+
+---
+
+![Search map page](../assets/storymaps/storymaps_map_search_page.png)
+
+---
+
 #### Location
 
 The location of the map. You can search for a location or move the pin on the map to the desired location.
-You can also set the bearing and pitch of the map.
+You can also use the slider to set the bearing and pitch of the map.
+
+---
+
+After setting the location, you should click on the **APPLY TO SLIDE** button to save the location. The location will be saved in the chapter slide settings.
+To reset the location, you can click on the **RESET** button. The location will be reset to the default location.
+
+---
+
 ![Chapter Slide Settings Panel - Location](../assets/storymaps/storymap_slide_location.png)
 
 ---
@@ -86,6 +117,8 @@ User can also set the position of the map controls. The position can be either:
 #### Legend
 
 This is a toggle to enable or disable the legend. If enabled, the legend will be shown on the map for the chapter.
+
+![Chapter Slide Settings Panel - Legend](../assets/storymaps/storymaps_slide_settings_legend.png)
 
 ---
 
@@ -110,6 +143,12 @@ This is a toggle to enable or disable the rotate animation. If enabled, the rota
 #### Globe mode
 
 This is a toggle to enable or disable the globe mode. If enabled, the map of this chapter will be displayed in 3D Globe mode.
+
+There are two options for the globe mode:
+    - **Globe Mode**: The map will be displayed in 3D Globe mode.
+    - **Mercator Mode**: The map will be displayed in 2D Mercator mode.
+
+![Chapter Slide Settings Panel - Globe Mode](../assets/storymaps/storymaps_slide_settings_globemode.png)
 
 ---
 
