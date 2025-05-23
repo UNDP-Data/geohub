@@ -69,8 +69,8 @@ The below code snippet is an example of how to use **iframe** tag.
 
 ```html
 <iframe
-  id="inlineStorymapExample"
-  title="Storymap example"
+  id="storymapIframe"
+  title="Human Development Index (HDI) - Globe mode Demo"
   width="100%"
   height="400"
   src="https://geohub.data.undp.org/storymaps/0c6e778e-fbfe-4314-813e-f6367570db85/viewer?embed=true"
@@ -78,13 +78,15 @@ The below code snippet is an example of how to use **iframe** tag.
 </iframe>
 ```
 
+The **iframe** code snippet is also available to copy from _Copy this code snippet to your website to embed the storymap_ under **SHARE LINK** tab.
+
 --
 
 Embed storymap can look like the below demo.
 
 <iframe
-  id="inlineStorymapExample"
-  title="Storymap example"
+  id="storymapIframe"
+  title="Human Development Index (HDI) - Globe mode Demo"
   width="100%"
   height="400"
   src="https://geohub.data.undp.org/storymaps/0c6e778e-fbfe-4314-813e-f6367570db85/viewer?embed=true"
