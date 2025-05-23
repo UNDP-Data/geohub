@@ -35,6 +35,12 @@
 		 * If enabled, textarea element is used instead of input. Default is false
 		 */
 		isMultiline?: boolean;
+
+		/**
+		 * The number of rows for the textarea element. Default is 5. This property is only used when isMultiline is true.
+		 */
+		rows?: number;
+
 		/**
 		 * Control size
 		 */
@@ -60,6 +66,7 @@
 		width = $bindable('100%'),
 		timeout = 5000,
 		isMultiline = false,
+		rows = 5,
 		size = 'normal',
 		openNewTab = true,
 		openButtonColor = 'has-text-link'
@@ -107,6 +114,7 @@
 			data-testid="textarea-control"
 			class="textarea is-{size} has-fixed-size"
 			{placeholder}
+			{rows}
 			onfocus={handleFocus}
 			{readonly}>{value}</textarea
 		>
