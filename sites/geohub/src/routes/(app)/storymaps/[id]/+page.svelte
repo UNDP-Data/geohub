@@ -57,6 +57,7 @@
 	let storymapLink = $state('');
 	let viewerLink = $state('');
 	let editLink = $state('');
+	let apiLink = $state('');
 
 	const updatePageData = () => {
 		storymap = data.storymap;
@@ -70,7 +71,18 @@
 		storymapLink = storymap.links?.find((l) => l.rel === 'storymap')?.href as string;
 		viewerLink = storymap.links?.find((l) => l.rel === 'viewer')?.href as string;
 		editLink = storymap.links?.find((l) => l.rel === 'edit')?.href as string;
+		apiLink = storymap.links?.find((l) => l.rel === 'self')?.href as string;
 	};
+
+	const iframeCodeSnippet = `<iframe
+  id="storymapIframe"
+  title="{title}"
+  width="100%"
+  height="400"
+  src="{embedUrl}"
+>
+</iframe>
+`;
 
 	let confirmDeleteDialogVisible = $state(false);
 	let deletedStorymapName = $state('');
@@ -342,10 +354,36 @@
 			{/snippet}
 		</FieldControl>
 
+		<FieldControl
+			title="Copy this code snippet to your website to embed the storymap"
+			fontWeight="bold"
+			showHelp={false}
+		>
+			{#snippet control()}
+				<div>
+					<CopyToClipboard
+						value={iframeCodeSnippet
+							.replace('{title}', storymap.title as string)
+							.replace('{embedUrl}', `${viewerLink}?embed=true`)}
+						isMultiline={true}
+						rows={9}
+					/>
+				</div>
+			{/snippet}
+		</FieldControl>
+
 		<FieldControl title="Storymap metadata page" fontWeight="bold" showHelp={false}>
 			{#snippet control()}
 				<div>
 					<CopyToClipboard value={storymapLink} />
+				</div>
+			{/snippet}
+		</FieldControl>
+
+		<FieldControl title="Storymap metadata API" fontWeight="bold" showHelp={false}>
+			{#snippet control()}
+				<div>
+					<CopyToClipboard value={apiLink} />
 				</div>
 			{/snippet}
 		</FieldControl>
