@@ -394,8 +394,8 @@ importers:
         specifier: ^7.8.8
         version: 7.8.8
       svelte-awesome-color-picker:
-        specifier: ^3.1.4
-        version: 3.1.4(svelte@5.28.6)
+        specifier: ^4.0.0
+        version: 4.0.1(svelte@5.28.6)
       svelte-copy:
         specifier: ^2.0.0
         version: 2.0.0(svelte@5.28.6)
@@ -956,8 +956,8 @@ importers:
         specifier: ^5.28.6
         version: 5.28.6
       svelte-awesome-color-picker:
-        specifier: ^3.1.4
-        version: 3.1.4(svelte@5.28.6)
+        specifier: ^4.0.0
+        version: 4.0.1(svelte@5.28.6)
       svelte-carousel:
         specifier: ^1.0.25
         version: 1.0.25
@@ -5550,15 +5550,15 @@ packages:
     peerDependencies:
       svelte: ^5.0.0
 
-  svelte-awesome-color-picker@3.1.4:
-    resolution: {integrity: sha512-tiFakxvSpCwodOSFW6CflnLVSldSlDY77rDipHfW7hvB+4gTP3y6uO+Dm9O9e7P5N7K+CNyNjjdjbZOHYkMyNQ==}
+  svelte-awesome-color-picker@4.0.1:
+    resolution: {integrity: sha512-n9Lcvi8cYCl5RbT1YzjZAL1AeGXZcEynul25xy1tektkII7xW56en5iaqJFKZHmwRLmZ9Wh4CCEqYIXDtq9sDQ==}
     peerDependencies:
-      svelte: ^3.55.1 || ^4.0.0 || ^5.0.0
+      svelte: ^5.0.0
 
-  svelte-awesome-slider@1.1.2:
-    resolution: {integrity: sha512-HFIWwq6rtX6aXyc6ns2R0P6pDLYIr6nRjTPyAddAiTAgZqsohAoEfOEwKKqMmZ6Q+CH48zzcFdyo6lFkBJvyQw==}
+  svelte-awesome-slider@2.0.0:
+    resolution: {integrity: sha512-YBkOdYm1Feaqsn2JkJBRs+Kc/X3Qy/3GuVmI7GmoYDjBaHkjx9uH4khTuED22z57Hg3gGWeDhp/clIjWDdLNaw==}
     peerDependencies:
-      svelte: ^3.54.0 || ^4.0.0 || ^5.0.0
+      svelte: ^5.0.0
 
   svelte-carousel@1.0.25:
     resolution: {integrity: sha512-vR/AbGYwlh3fgWaB5PJg+iqZFvoVCJq4JWdmlXvPtdG9TLlKJWBcoiKlMZt3MnFF7AqNW46tOH/O+uVMWQzyWQ==}
@@ -11202,13 +11202,13 @@ snapshots:
       svelte: 5.28.6
       zimmerframe: 1.1.2
 
-  svelte-awesome-color-picker@3.1.4(svelte@5.28.6):
+  svelte-awesome-color-picker@4.0.1(svelte@5.28.6):
     dependencies:
       colord: 2.9.3
       svelte: 5.28.6
-      svelte-awesome-slider: 1.1.2(svelte@5.28.6)
+      svelte-awesome-slider: 2.0.0(svelte@5.28.6)
 
-  svelte-awesome-slider@1.1.2(svelte@5.28.6):
+  svelte-awesome-slider@2.0.0(svelte@5.28.6):
     dependencies:
       svelte: 5.28.6
 
