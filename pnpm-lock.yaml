@@ -400,8 +400,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0(svelte@5.28.6)
       svelte-range-slider-pips:
-        specifier: ^3.2.2
-        version: 3.2.2(svelte@5.28.6)
+        specifier: ^4.0.0
+        version: 4.0.0(svelte@5.28.6)
       svelte-tippy:
         specifier: ^1.3.2
         version: 1.3.2
@@ -5742,8 +5742,8 @@ packages:
       typescript:
         optional: true
 
-  svelte-range-slider-pips@3.2.2:
-    resolution: {integrity: sha512-Q2+hn5jEP2CtbWFrvFZoThRUURbijWSCsoOR6Z8UUKjA5ftYQI7Z+mHYxHQpnGd3LCb9OlkHX2wM1If+Vbci6g==}
+  svelte-range-slider-pips@4.0.0:
+    resolution: {integrity: sha512-RxkSRQvu94ufhT5OldRSoKmRRA7El3fDtJ7v5qWb0kZyoyqTHN9Vq44wJ5uo/q18heSgPN6/2kJjGvSWfuyHow==}
     peerDependencies:
       svelte: ^4.2.7 || ^5.0.0
 
@@ -11432,7 +11432,7 @@ snapshots:
       sass: 1.88.0
       typescript: 5.8.3
 
-  svelte-range-slider-pips@3.2.2(svelte@5.28.6):
+  svelte-range-slider-pips@4.0.0(svelte@5.28.6):
     dependencies:
       svelte: 5.28.6
 
