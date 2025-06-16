@@ -13,8 +13,8 @@
 		"test": "vitest --run --passWithNoTests",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
-		"storybook": "STORYBOOK_BUILD=true storybook dev -p 6006",
-		"build-storybook": "STORYBOOK_BUILD=true storybook build"
+		"storybook": "storybook dev -p 6006",
+		"build-storybook": "storybook build"
 	},
 	"repository": {
 		"type": "git",
