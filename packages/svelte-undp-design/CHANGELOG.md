@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 3.1.0
+
+### Minor Changes
+
+- 5b07661: feat: upgrade storybook from v8 to v9
+
 ## 3.0.6
 
 ### Patch Changes
