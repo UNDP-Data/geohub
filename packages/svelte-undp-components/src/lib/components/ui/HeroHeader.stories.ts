@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/svelte';
+import type { Meta, StoryObj } from '@storybook/sveltekit';
 import HeroHeader from './HeroHeader.svelte';
 import type { BreadcrumbPage } from './Breadcrumbs.svelte';
 import type { Tab } from './Tabs.svelte';
