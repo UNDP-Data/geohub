@@ -1,5 +1,17 @@
 # @undp-data/svelte-undp-components
 
+## 2.1.0
+
+### Minor Changes
+
+- 5b07661: feat: upgrade storybook from v8 to v9
+
+### Patch Changes
+
+- 26eded2: fix: upgrade svelte-range-slider-pips to v4
+- Updated dependencies [5b07661]
+  - @undp-data/svelte-undp-design@3.1.0
+
 ## 2.0.12
 
 ### Patch Changes

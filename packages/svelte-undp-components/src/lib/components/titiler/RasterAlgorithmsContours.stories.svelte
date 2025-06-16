@@ -65,7 +65,7 @@
 {/snippet}
 
 <Story
-	name="contours"
+	name="Primary"
 	args={{
 		layerId: layer.id,
 		algorithmsApi: 'https://titiler-dev.undpgeohub.org/algorithms',

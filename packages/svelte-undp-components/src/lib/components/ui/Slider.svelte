@@ -57,7 +57,7 @@
 	}, 300);
 </script>
 
-<div class=" range-slider">
+<div class="range-slider">
 	<RangeSlider
 		bind:min
 		bind:max
