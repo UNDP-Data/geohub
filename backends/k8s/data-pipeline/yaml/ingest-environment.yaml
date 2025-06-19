@@ -21,7 +21,7 @@ spec:
           type: "pipeline"
         containers:
           - name: ingest
-            image: undpgeohub.azurecr.io/geohub-data-pipeline:v0.1.1
+            image: undpgeohub.azurecr.io/geohub-data-pipeline:v0.2.0
             imagePullPolicy: Always
             resources:
               limits:
