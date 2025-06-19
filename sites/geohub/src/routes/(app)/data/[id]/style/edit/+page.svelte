@@ -32,6 +32,7 @@
 		ShowDetails,
 		createMapStore,
 		getRandomColormap,
+		loadMap,
 		type BreadcrumbPage,
 		type RasterTileMetadata,
 		type VectorLayerTileStatLayer,
@@ -221,6 +222,9 @@
 				const rescale = JSON.parse(`[${rescaleString}]`) as number[];
 				$rescaleStore = rescale;
 			}
+
+			// wait until the map is loaded
+			await loadMap($map);
 		} finally {
 			isLoading = false;
 		}
@@ -455,22 +459,22 @@
 
 					<div class="layer-editor">
 						{#if layerSpec}
-							{#if is_raster}
-								{#if isRgbTile || (!isRgbTile && selectedBand)}
-									<RasterLegend
-										bind:layerId={layerSpec.id}
-										bind:metadata={rasterMetadata}
-										bind:tags={feature.properties.tags}
-									/>
-								{/if}
-							{:else if isLoading}
+							{#if isLoading}
 								<div class="is-flex is-justify-content-center">
 									<Loader size="small" />
 								</div>
+							{:else if is_raster}
+								{#if isRgbTile || (!isRgbTile && selectedBand)}
+									<RasterLegend
+										bind:layerId={layerSpec.id}
+										bind:metadata={rasterMetadata as RasterTileMetadata}
+										bind:tags={feature.properties.tags}
+									/>
+								{/if}
 							{:else}
 								<VectorLegend
 									bind:layerId={layerSpec.id}
-									bind:metadata={vectorMetadata}
+									bind:metadata={vectorMetadata as VectorTileMetadata}
 									tags={feature.properties.tags as Tag[]}
 								/>
 							{/if}
