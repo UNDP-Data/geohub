@@ -53,4 +53,5 @@ export interface RasterTileMetadata {
 	active_band_no?: string;
 	isMosaicJson?: boolean;
 	scales?: number[];
+	colormap?: { [key: string]: number[] };
 }

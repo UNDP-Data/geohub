@@ -85,6 +85,11 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 
 			const isUniqueValueLayer = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length > 0;
 
+			// colormap_name is set to NULL in some cases.
+			if (colormap_name == null) {
+				colormap_name = undefined;
+			}
+
 			// choose default colormap randomly if colormap is not specified
 			// but use diverging if data is unique value layer
 			colormap =
@@ -135,14 +140,28 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 				params.set(key, `${titilerApiUrlParams[key]}`);
 			});
 
-			const colorMap = {};
+			let colorMap: { [key: string]: number[] } = {};
 			if (isUniqueValueLayer) {
-				const colorMapKeys = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES);
-				const colorsList = chroma.scale(colormap).colors(colorMapKeys.length);
-				colorMapKeys.forEach((key, index) => {
-					const color = chroma(colorsList[index]).rgba();
-					colorMap[key] = [color[0], color[1], color[2], color[3] * 255];
-				});
+				const colorMapKeys = Object.keys(
+					bandMetaStats.STATISTICS_UNIQUE_VALUES as { [key: string]: string }
+				);
+
+				const srcColormap = this.metadata.colormap;
+				if (srcColormap) {
+					// if colormap is available in dataset metadata, force use it
+					colorMap = Object.fromEntries(
+						Object.entries(srcColormap).filter(([key]) => colorMapKeys.includes(key))
+					);
+				} else {
+					const colorsList = chroma
+						.scale(colormap as chroma.BrewerPaletteName)
+						.colors(colorMapKeys.length);
+					colorMapKeys.forEach((key, index) => {
+						const color = chroma(colorsList[index]).rgba();
+						colorMap[key] = [color[0], color[1], color[2], color[3] * 255];
+					});
+				}
+
 				params.delete('colormap_name');
 				params.delete('rescale');
 				params.set('colormap', JSON.stringify(colorMap));
