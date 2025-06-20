@@ -28,6 +28,7 @@
 		HillshadeHighlightColor,
 		HillshadeIlluminationDirection,
 		HillshadeShadowColor,
+		HillshadeMethod,
 		isUniqueValueRaster,
 		MAPSTORE_CONTEXT_KEY,
 		RasterAlgorithms,
@@ -255,6 +256,36 @@
 	{/if}
 
 	{#if layerStyle && layerStyle.type === 'hillshade'}
+		<Accordion title="Hillshade method" bind:isExpanded={expanded['hillshade-method']}>
+			{#snippet content()}
+				<div class="pb-2">
+					<HillshadeMethod {layerId} />
+				</div>
+			{/snippet}
+			{#snippet buttons()}
+				<div>
+					<Help>
+						The hillshade algorithm to use, one of standard, basic, combined, igor, or
+						multidirectional.
+
+						<br /><br />standard: The legacy hillshade method.
+
+						<br />basic: Basic hillshade. Uses a simple physics model where the reflected light
+						intensity is proportional to the cosine of the angle between the incident light and the
+						surface normal.
+
+						<br />combined: Hillshade algorithm whose intensity scales with slope.
+
+						<br />igor: Hillshade algorithm which tries to minimize effects on other map features
+						beneath.
+
+						<br />multidirectional: Hillshade with multiple illumination directions. Uses the basic
+						hillshade model with multiple independent light sources.
+					</Help>
+				</div>
+			{/snippet}
+		</Accordion>
+
 		<Accordion title="Hillshade accent color" bind:isExpanded={expanded['hillshade-accent-color']}>
 			{#snippet content()}
 				<div class="pb-2">

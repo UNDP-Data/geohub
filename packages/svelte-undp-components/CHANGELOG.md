@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 2.2.0
+
+### Minor Changes
+
+- dc18d73: feat: add HillshadeMethod component for hillshade layer.
+
 ## 2.1.1
 
 ### Patch Changes
