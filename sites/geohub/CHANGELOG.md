@@ -1,5 +1,15 @@
 # geohub
 
+## 1.26.0
+
+### Minor Changes
+
+- dc18d73: feat: add Hillshade Method for terrain-rgb and terrarium layer.
+
+### Patch Changes
+
+- 0377570: chore: updated maplbire-gl to 5.6.0, and other dependencies to the latest
+
 ## 1.25.3
 
 ### Patch Changes
