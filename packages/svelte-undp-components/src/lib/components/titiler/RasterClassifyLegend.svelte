@@ -439,11 +439,13 @@
 	data-testid="intervals-view-container"
 	bind:clientWidth={containerWidth}
 >
-	<div class="field">
-		<p class="control" style="width: {colormapPickerWidth}px">
-			<ColorMapPicker bind:colorMapName onchange={handleColorMapChanged} />
-		</p>
-	</div>
+	{#if !(layerHasUniqueValues === true && metadata.colormap !== undefined)}
+		<div class="field">
+			<p class="control" style="width: {colormapPickerWidth}px">
+				<ColorMapPicker bind:colorMapName onchange={handleColorMapChanged} />
+			</p>
+		</div>
+	{/if}
 
 	{#if !layerHasUniqueValues}
 		<div class="columns mb-0">
