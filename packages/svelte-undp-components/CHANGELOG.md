@@ -1,5 +1,12 @@
 # @undp-data/svelte-undp-components
 
+## 2.1.1
+
+### Patch Changes
+
+- 64e9bfb: fix: hide color map picker if raster dataset is unique value and has default colormap
+- 64e9bfb: fix: add colormap property to RasterTileMetadata interface.
+
 ## 2.1.0
 
 ### Minor Changes
