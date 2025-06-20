@@ -1,23 +1,23 @@
 <script module lang="ts">
-	export const hillshadeMethodButtons: SegmentButton[] = [
-		{ title: 'Standard', value: 'standard' },
-		{ title: 'Basic', value: 'basic' },
-		{ title: 'Combined', value: 'combined' },
-		{ title: 'Igor', value: 'igor' },
-		{ title: 'Multidirectional', value: 'multidirectional' }
+	export const hillshadeMethodButtons: Radio[] = [
+		{ label: 'Standard', value: 'standard' },
+		{ label: 'Basic', value: 'basic' },
+		{ label: 'Combined', value: 'combined' },
+		{ label: 'Igor', value: 'igor' },
+		{ label: 'Multidirectional', value: 'multidirectional' }
 	];
 	export type HillshadeMethodType = 'standard' | 'basic' | 'combined' | 'igor' | 'multidirectional';
 </script>
 
 <script lang="ts">
-	import SegmentButtons, { type SegmentButton } from '$lib/components/ui/SegmentButtons.svelte';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores';
+	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
 
 	interface Props {
 		layerId: string;
 		defaultValue?: HillshadeMethodType;
-		buttons?: SegmentButton[];
+		buttons?: Radio[];
 	}
 
 	let {
@@ -45,10 +45,15 @@
 		map.setPaintProperty(layerId, propertyName, selectedValue);
 	});
 
-	const onValueChanged = (value: string | number) => {
-		selectedValue = value as HillshadeMethodType;
-		map.setPaintProperty(layerId, propertyName, value);
+	const onValueChanged = () => {
+		map.setPaintProperty(layerId, propertyName, selectedValue);
 	};
 </script>
 
-<SegmentButtons {buttons} bind:selected={selectedValue} onchange={onValueChanged}></SegmentButtons>
+<Radios
+	radios={buttons}
+	groupName="hillshade-method"
+	bind:value={selectedValue}
+	onchange={onValueChanged}
+	isVertical={true}
+></Radios>
