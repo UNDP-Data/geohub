@@ -1,5 +1,12 @@
 # geohub
 
+## 1.25.3
+
+### Patch Changes
+
+- 64e9bfb: fix: wait until map is loaded in default style edit page.
+- 64e9bfb: fix: use colormap if unique value raster has it own color settings in data metadata.
+
 ## 1.25.2
 
 ### Patch Changes
