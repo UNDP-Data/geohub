@@ -61,6 +61,7 @@
 	let showDropdown = $state(false);
 	let showRenameDialog = $state(false);
 	let inputLayerTitle = $state(layer.name);
+	let accodrionTitle = $state(layer.name);
 
 	let layerOpacity = $state(1);
 
@@ -289,6 +290,7 @@
 
 	const handleLayerNameChanged = () => {
 		layer.name = inputLayerTitle.trim();
+		accodrionTitle = layer.name;
 		showRenameDialog = false;
 	};
 
@@ -452,7 +454,7 @@
 </script>
 
 <Accordion
-	title={clean(layer.name, true, false)}
+	title={clean(accodrionTitle, true, false)}
 	bind:isExpanded
 	isSelected={$editingLayerStore?.id === layer.id}
 	showHoveredColor={true}
