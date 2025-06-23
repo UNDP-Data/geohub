@@ -1,5 +1,11 @@
 # geohub
 
+## 1.26.1
+
+### Patch Changes
+
+- 67845ab: fix: update layer name in accordion title if user rename it.
+
 ## 1.26.0
 
 ### Minor Changes
