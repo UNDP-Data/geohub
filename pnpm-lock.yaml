@@ -501,7 +501,7 @@ importers:
         version: 1.2.0(svelte@5.34.3)
       svelte-preprocess:
         specifier: ^6.0.3
-        version: 6.0.3(@babel/core@7.27.4)(postcss-load-config@5.1.0(postcss@8.5.6))(postcss@8.5.6)(sass@1.89.2)(svelte@5.34.3)(typescript@5.8.3)
+        version: 6.0.3(@babel/core@7.27.4)(postcss-load-config@5.1.0(postcss@8.5.5))(postcss@8.5.5)(sass@1.89.2)(svelte@5.34.3)(typescript@5.8.3)
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
@@ -625,7 +625,7 @@ importers:
         version: 1.2.0(svelte@5.34.3)
       svelte-preprocess:
         specifier: ^6.0.3
-        version: 6.0.3(@babel/core@7.27.4)(postcss-load-config@5.1.0(postcss@8.5.5))(postcss@8.5.5)(sass@1.89.2)(svelte@5.34.3)(typescript@5.8.3)
+        version: 6.0.3(@babel/core@7.27.4)(postcss-load-config@5.1.0(postcss@8.5.6))(postcss@8.5.6)(sass@1.89.2)(svelte@5.34.3)(typescript@5.8.3)
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
@@ -704,8 +704,8 @@ importers:
         version: 3.4.7
     devDependencies:
       '@auth/core':
-        specifier: ^0.39.1
-        version: 0.39.1
+        specifier: ^0.40.0
+        version: 0.40.0
       '@auth/sveltekit':
         specifier: ^1.9.2
         version: 1.9.2(@sveltejs/kit@2.22.0(@sveltejs/vite-plugin-svelte@5.1.0(svelte@5.34.7)(vite@6.3.5(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0)))(svelte@5.34.7)(vite@6.3.5(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0)))(svelte@5.34.7)
@@ -1017,6 +1017,20 @@ packages:
 
   '@auth/core@0.39.1':
     resolution: {integrity: sha512-McD8slui0oOA1pjR5sPjLPl5Zm//nLP/8T3kr8hxIsvNLvsiudYvPHhDFPjh1KcZ2nFxCkZmP6bRxaaPd/AnLA==}
+    peerDependencies:
+      '@simplewebauthn/browser': ^9.0.1
+      '@simplewebauthn/server': ^9.0.2
+      nodemailer: ^6.8.0
+    peerDependenciesMeta:
+      '@simplewebauthn/browser':
+        optional: true
+      '@simplewebauthn/server':
+        optional: true
+      nodemailer:
+        optional: true
+
+  '@auth/core@0.40.0':
+    resolution: {integrity: sha512-n53uJE0RH5SqZ7N1xZoMKekbHfQgjd0sAEyUbE+IYJnmuQkbvuZnXItCU7d+i7Fj8VGOgqvNO7Mw4YfBTlZeQw==}
     peerDependencies:
       '@simplewebauthn/browser': ^9.0.1
       '@simplewebauthn/server': ^9.0.2
@@ -6193,6 +6207,14 @@ snapshots:
       zod: 3.25.67
 
   '@auth/core@0.39.1':
+    dependencies:
+      '@panva/hkdf': 1.2.1
+      jose: 6.0.11
+      oauth4webapi: 3.5.3
+      preact: 10.24.3
+      preact-render-to-string: 6.5.11(preact@10.24.3)
+
+  '@auth/core@0.40.0':
     dependencies:
       '@panva/hkdf': 1.2.1
       jose: 6.0.11
