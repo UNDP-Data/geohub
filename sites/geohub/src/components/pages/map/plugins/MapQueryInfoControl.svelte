@@ -165,7 +165,11 @@
 				features = queriedFeautres.filter(
 					(f) => f && Object.keys(f.properties).filter((key) => key !== 'name').length > 0
 				);
-
+				features = features.filter((f) =>
+					Object.keys(f.properties)
+						.filter((key) => key !== 'name')
+						.some((key) => f.properties[key] !== undefined && f.properties[key] !== null)
+				);
 				if (features.length === 0) {
 					if (popup) {
 						popup.remove();
@@ -340,6 +344,9 @@
 
 		const queryURL = baseUrl.href;
 		const res = await fetch(queryURL);
+		if (!res.ok) {
+			return;
+		}
 		const data = await res.json();
 		let layerHasNoDataValue = false;
 		if (data.values && data.values.length > 0) {
@@ -525,7 +532,7 @@
 									<tbody>
 										{#each Object.keys(feature.properties) as property (property)}
 											{@const value = feature.properties[property]}
-											{#if value}
+											{#if !(value === undefined || value === null)}
 												<tr>
 													{#if typeof value === 'string' && isValidUrl( value, ['jpeg', 'jpg', 'png', 'webp'] )}
 														<td colspan="2">
