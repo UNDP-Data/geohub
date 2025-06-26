@@ -1,5 +1,11 @@
 # geohub
 
+## 1.26.2
+
+### Patch Changes
+
+- f750eb6: fix: fixed bug of not showing property value in query tool if value is zero.
+
 ## 1.26.1
 
 ### Patch Changes
