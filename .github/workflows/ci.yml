@@ -513,7 +513,7 @@ jobs:
       - name: Create Secrets
         uses: actions-hub/kubectl@v1.33.2
         with:
-          args: create secret generic stac-secrets --from-literal=AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }} --from-literal=AZURE_SERVICE_BUS_CONNECTION_STRING=${{ secrets.AZURE_SERVICE_BUS_CONNECTION_STRING }}  --from-literal=AZURE_SERVICE_BUS_QUEUE_NAME=${{ env.AZURE_SERVICE_BUS_QUEUE_NAME }} --from-literal=EOG_USER=${{ secrets.EOG_USER }} --from-literal=EOG_PASSWORD=${{ secrets.EOG_PASSWORD }} -n ${{ env.DEPLOYMENT_NAMESPACE }}
+          args: create secret generic stac-secrets --from-literal=AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }} --from-literal=AZURE_SERVICE_BUS_CONNECTION_STRING=${{ secrets.AZURE_SERVICE_BUS_CONNECTION_STRING }}  --from-literal=AZURE_SERVICE_BUS_QUEUE_NAME=${{ env.AZURE_SERVICE_BUS_QUEUE_NAME }} --from-literal=EOG_CLIENT_ID=${{ secrets.EOG_CLIENT_ID }} --from-literal=EOG_CLIENT_SECRET=${{ secrets.EOG_CLIENT_SECRET }} --from-literal=EOG_USER=${{ secrets.EOG_USER }} --from-literal=EOG_PASSWORD=${{ secrets.EOG_PASSWORD }} -n ${{ env.DEPLOYMENT_NAMESPACE }}
       - name: Deploy ingest to kubernetes
         uses: actions-hub/kubectl@v1.33.2
         env:
