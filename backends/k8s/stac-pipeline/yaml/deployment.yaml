@@ -21,7 +21,7 @@ spec:
           type: "pipeline"
         containers:
           - name: stac
-            image: undpgeohub.azurecr.io/undp-data/geo-undpstac-pipeline:v0.0.9
+            image: undpgeohub.azurecr.io/undp-data/geo-undpstac-pipeline:v0.0.10
             imagePullPolicy: Always
             command: ["python3"]
             args: ["-m", "undpstac_pipeline.cli", "queue", "--force"]
@@ -65,13 +65,15 @@ spec:
     completions: 1
     activeDeadlineSeconds: 300
     backoffLimit: 5
+    # delete job after 3600 seconds (1 hour) of completion
+    ttlSecondsAfterFinished: 3600
     template:
       spec:
         nodeSelector:
           type: "pipeline"
         containers:
           - name: stac
-            image: undpgeohub.azurecr.io/undp-data/geo-undpstac-pipeline:v0.0.9
+            image: undpgeohub.azurecr.io/undp-data/geo-undpstac-pipeline:v0.0.10
             imagePullPolicy: Always
             command: ["python3"]
             # register a message for yesterday into service bus queue
@@ -96,6 +98,8 @@ spec:
         restartPolicy: Never
   pollingInterval: 600 # Optional. set 10 min for interval to ensure only a process is created
   envSourceContainerName: stac # Optional. Default: .spec.JobTargetRef.template.spec.containers[0]
+  successfulJobsHistoryLimit: 0 # Don't keep successful jobs
+  failedJobsHistoryLimit: 10 # keep failed jobs for 10 attempts
   scalingStrategy:
     strategy: default
   triggers:
