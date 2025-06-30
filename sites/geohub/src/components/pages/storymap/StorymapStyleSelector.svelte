@@ -71,11 +71,11 @@
 				styleUrl.searchParams.delete('hillshade');
 			}
 
-			// if (mapConfig.terrain === true) {
-			// 	styleUrl.searchParams.set('terrain', 'true');
-			// } else {
-			styleUrl.searchParams.delete('terrain');
-			// }
+			if (mapConfig.terrain === true) {
+				styleUrl.searchParams.set('terrain', 'true');
+			} else {
+				styleUrl.searchParams.delete('terrain');
+			}
 
 			mapConfig.style = styleUrl.href;
 			if (onchange) onchange(mapConfig);
@@ -112,11 +112,11 @@
 				styleUrl.searchParams.delete('hillshade');
 			}
 
-			// if (mapConfig.terrain === true) {
-			// 	styleUrl.searchParams.set('terrain', 'true');
-			// } else {
-			styleUrl.searchParams.delete('terrain');
-			// }
+			if (mapConfig.terrain === true) {
+				styleUrl.searchParams.set('terrain', 'true');
+			} else {
+				styleUrl.searchParams.delete('terrain');
+			}
 
 			mapConfig.style = styleUrl.href;
 			if (onchange) onchange(mapConfig);
@@ -281,6 +281,25 @@
 						{#snippet help()}
 							<div>
 								<span>Enable hillshade layer in this basemap if the option is enabled.</span>
+							</div>
+						{/snippet}
+					</FieldControl>
+
+					<FieldControl title="Terrain" showHelp={true} showHelpPopup={false}>
+						{#snippet control()}
+							<div>
+								<Switch
+									toggled={mapConfig.terrain}
+									onchange={(toggled) => {
+										mapConfig.terrain = toggled;
+										handleHillshadeAndTerrainChanged();
+									}}
+								/>
+							</div>
+						{/snippet}
+						{#snippet help()}
+							<div>
+								<span>Enable terrain (3D) mode in this basemap if the option is enabled.</span>
 							</div>
 						{/snippet}
 					</FieldControl>
