@@ -128,7 +128,7 @@ export const getStyleById = async (
 			if (['bing', 'terrarium'].includes(srcId)) return; // don't replace to titiler url for these sources
 			// if titiler URL saved in database is different from actual server settings, replace URL origin to env varaible one.
 			const rasterSource = source as RasterSourceSpecification;
-			const tiles = rasterSource.tiles;
+			const tiles = rasterSource.tiles as string[];
 			const titilerUrl = new URL(env.TITILER_ENDPOINT);
 			for (let i = 0; i < tiles.length; i++) {
 				const url = new URL(tiles[i]);
@@ -328,7 +328,16 @@ export const getStyleById = async (
 								for (const tile of source.tiles) {
 									const href = new URL(tile);
 									href.searchParams.set('url', tileUrl);
-									const newTile = `${href.origin}${decodeURIComponent(href.pathname)}${href.search}`;
+									let pathName = decodeURIComponent(href.pathname);
+									const tileMatrixSetId = href.searchParams.get('TileMatrixSetId');
+									if (is_raster && tileMatrixSetId) {
+										// some old map style has tileMatrixSetId in the URL param, but new titiler requires tileMatrixSetId in path param after /cog/tiles
+										// this code will replace the URL to the correct titiler API.
+										pathName = pathName.replace('/cog/tiles', `/cog/tiles/${tileMatrixSetId}`);
+										href.searchParams.delete('TileMatrixSetId');
+									}
+									//cog/tiles/WebMercatorQuad/0/0/0.png
+									const newTile = `${href.origin}${pathName}${href.search}`;
 									newTiles.push(newTile);
 								}
 								source.tiles = newTiles;

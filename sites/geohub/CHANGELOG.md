@@ -1,5 +1,16 @@
 # geohub
 
+## 1.26.3
+
+### Patch Changes
+
+- 5c48bc6: fix: some old map style has tileMatrixSetId in the URL param, but new titiler requires tileMatrixSetId as path param.
+
+  For example, new URL will be like below after replacing old saved URL.
+
+  - Old URL: /cog/tiles/{z}/{x}/{y}.png?TileMatrixSetId=WebMercatorQuad
+  - New URL: /cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png
+
 ## 1.26.2
 
 ### Patch Changes
