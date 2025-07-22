@@ -10,6 +10,7 @@
 	import { AdminControlOptions, MapStyles, attribution } from '$lib/config/AppConfig';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { IntroJsOptions, Layer, VectorLayerSpecification } from '$lib/types';
+	// import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import {
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		HEADER_HEIGHT_CONTEXT_KEY,
@@ -44,7 +45,8 @@
 		type MapOptions,
 		type RasterLayerSpecification,
 		type StyleSpecification,
-		type TerrainSpecification
+		type TerrainSpecification,
+		type IControl
 	} from 'maplibre-gl';
 	import { getContext, onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
@@ -427,6 +429,53 @@
 		}
 	};
 
+	class TextControl implements IControl {
+		constructor(text) {
+			this.text = text;
+			this._container = null;
+		}
+
+		onAdd(map) {
+			this._map = map;
+			this._container = document.createElement('div');
+			this._container.className = 'maplibre-text-control';
+
+			const formattedText = this.text
+				.split('\n')
+				.map((line) => `<div>${line}</div>`)
+				.join('');
+
+			this._container.innerHTML = `
+			<div class="text-box">
+				<div class="text-content">${formattedText}</div>
+				<button class="close-btn" aria-label="Close">&times;</button>
+			</div>
+		`;
+			// this._container.innerHTML = `
+			// <div class="text-box">
+			// 	<span class="text-content">${this.text}</span>
+			// 	<button class="close-btn" aria-label="Close">&times;</button>
+			// </div>
+			// `;
+
+			requestAnimationFrame(() => {
+				const closeBtn = this._container.querySelector('.close-btn');
+				if (closeBtn) {
+					closeBtn.addEventListener('click', () => {
+						this._container.style.display = 'none';
+					});
+				}
+			});
+
+			return this._container;
+		}
+
+		onRemove() {
+			if (this._container) this._container.remove();
+			this._map = undefined;
+		}
+	}
+
 	const mapInitialise = async () => {
 		if (!container) return;
 		mapOptions.container = container;
@@ -474,12 +523,22 @@
 
 		const adminOptions = AdminControlOptions;
 		adminOptions.isHover = false;
-		$map.addControl(new MaplibreCgazAdminControl(adminOptions), 'top-left');
+		$map.addControl(new MaplibreCgazAdminControl(adminOptions), 'top-right');
 
 		styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {
 			defaultStyle: data.config.DefaultMapStyle
 		});
 		$map.addControl(styleSwitcher, 'bottom-left');
+		$map.addControl(
+			new TextControl(
+				'The boundaries and names shown and the designations used on this map do not imply official endorsement or acceptance by the United Nations.' +
+					'\nFinal boundary between the Republic of Sudan and the Republic of South Sudan has not yet been determined.​' +
+					'* \nNon-Self Governing Territories\n' +
+					'** Dotted line represents approximately the Line of Control in Jammu and Kashmir agreed upon by India and Pakistan. The final status of Jammu and Kashmir has not yet been agreed upon by the parties.​\n' +
+					'*** A dispute exists between the Governments of Argentina and the United Kingdom of Great Britain and Northern Ireland concerning sovereignty over the Falkland Islands (Malvinas).'
+			),
+			'top-left'
+		);
 
 		measureControl = new MaplibreMeasureControl({
 			modes: ['render', 'point', 'linestring', 'polygon', 'select', 'delete-selection', 'delete'],
@@ -584,6 +643,21 @@
 		toLocalStorage(layerListStorageKey, newLayerList);
 		toLocalStorage(mapStyleStorageKey, newStyle);
 	};
+
+	// const toastOptions = $state({
+	//     duration: 5000,
+	//     position: 'top-right',
+	//     pauseOnHover: true,
+	//     preventDuplicates: true,
+	//     style: {
+	//         background: '#fff',
+	//         color: '#333',
+	//         borderRadius: '4px',
+	//         boxShadow: '0 1px 2px rgba(0,0,0,0.15)',
+	//         padding: '10px 15px',
+	//         fontSize: '14px'
+	//     }
+	// });
 </script>
 
 <svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight} />
@@ -599,7 +673,7 @@
 	width={mapWidth}
 >
 	{#snippet map()}
-		<div>
+		<div class="map-wrapper">
 			<div
 				bind:this={container}
 				class="map"
@@ -613,6 +687,9 @@
 				{#if $editingMenuShownStore}
 					<LayerEdit />
 				{/if}
+				<!--                <div class="toast-container">-->
+				<!--                    <SvelteToast options={toastOptions} />-->
+				<!--                </div>-->
 			</div>
 		</div>
 	{/snippet}
@@ -655,4 +732,59 @@
 		position: absolute;
 		z-index: 10;
 	}
+
+	:global(.maplibre-text-control) {
+		font:
+			12px/20px 'Helvetica Neue',
+			Arial,
+			sans-serif;
+		background: rgba(255, 255, 255, 0.9);
+		border-radius: 4px;
+		margin: 10px;
+		padding: 6px 10px;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+	}
+
+	:global(.maplibre-text-control .text-box) {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	:global(.maplibre-text-control .text-content) {
+		flex: 1;
+	}
+
+	:global(.maplibregl-ctrl-top-left) {
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		gap: 8px;
+	}
+
+	:global(.maplibre-text-control .close-btn) {
+		background: none;
+		border: none;
+		font-size: 16px;
+		cursor: pointer;
+		color: #555;
+	}
+
+	//:global(.map-wrapper) {
+	//  position: relative;
+	//  width: 100%;
+	//  height: 100%;
+	//}
+
+	//:global(.toast-container) {
+	//  position: absolute;
+	//  top: 10px;
+	//  left: 10px;
+	//  z-index: 2; /* Make sure it's above the map */
+	//  pointer-events: none;
+	//  display: flex;
+	//  flex-direction: column;
+	//  align-items: flex-start;
+	//  max-width: 300px;
+	//}
 </style>
