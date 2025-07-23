@@ -1,5 +1,11 @@
 # geohub
 
+## 1.27.0
+
+### Minor Changes
+
+- 47cca7a: feat: added disclaimer text for the geohub map
+
 ## 1.26.3
 
 ### Patch Changes
