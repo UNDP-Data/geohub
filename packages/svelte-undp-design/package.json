@@ -29,7 +29,7 @@
 		"@eslint/js": "^9.29.0",
 		"@storybook/addon-docs": "^9.0.10",
 		"@storybook/addon-links": "^9.0.10",
-		"@storybook/addon-svelte-csf": "5.0.4",
+		"@storybook/addon-svelte-csf": "5.0.7",
 		"@storybook/source-loader": "^8.6.14",
 		"@storybook/sveltekit": "^9.0.10",
 		"@storybook/test": "^8.6.14",
@@ -39,7 +39,7 @@
 		"@sveltejs/vite-plugin-svelte": "^5.1.0",
 		"@testing-library/svelte": "^5.2.8",
 		"@testing-library/user-event": "^14.6.1",
-		"@typescript-eslint/eslint-plugin": "8.35.0",
+		"@typescript-eslint/eslint-plugin": "8.37.0",
 		"@typescript-eslint/parser": "^8.34.0",
 		"@undp-data/undp-bulma": "workspace:^",
 		"@vitest/coverage-istanbul": "^3.2.3",
@@ -66,7 +66,7 @@
 	"type": "module",
 	"dependencies": {
 		"filesize": "^10.1.6",
-		"marked": "^15.0.12",
+		"marked": "^16.0.0",
 		"svelte-carousel": "^1.0.25",
 		"uuid": "^11.1.0"
 	},
