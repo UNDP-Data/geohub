@@ -1,5 +1,11 @@
 # geohub
 
+## 1.27.1
+
+### Patch Changes
+
+- fbeb29a: refactor: update disclaimer text
+
 ## 1.27.0
 
 ### Minor Changes
