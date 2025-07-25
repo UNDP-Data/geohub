@@ -65,7 +65,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"filesize": "^10.1.6",
+		"filesize": "^11.0.0",
 		"marked": "^16.0.0",
 		"svelte-carousel": "^1.0.25",
 		"uuid": "^11.1.0"
