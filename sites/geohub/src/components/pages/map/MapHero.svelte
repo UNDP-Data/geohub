@@ -86,4 +86,15 @@
 
 <svelte:window bind:innerHeight />
 
-<div bind:this={container} class="map" style="height: {mapHeight}px; width: {width};"></div>
+<div
+	bind:this={container}
+	class="map map-wrapper"
+	style="height: {mapHeight}px; width: {width};"
+></div>
+
+<style lang="scss">
+	:global(.map-wrapper .maplibregl-ctrl-bottom-right) {
+		margin-right: 10px;
+		margin-bottom: 5px;
+	}
+</style>
