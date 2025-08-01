@@ -1,5 +1,11 @@
 # geohub
 
+## 1.27.3
+
+### Patch Changes
+
+- 98fcccc: fix: fixed bug caused by intro.js upgrading when intro.js is loaded in SSR.
+
 ## 1.27.2
 
 ### Patch Changes
