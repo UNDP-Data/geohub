@@ -1,5 +1,15 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 3.0.19
+
+### Patch Changes
+
+- ec6e47f: chore: upgrade vite from v6 to v7
+- Updated dependencies [ec6e47f]
+  - @undp-data/svelte-undp-components@2.2.1
+  - @undp-data/svelte-undp-design@3.1.1
+  - @undp-data/undp-bulma@2.0.4
+
 ## 3.0.18
 
 ### Patch Changes

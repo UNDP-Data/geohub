@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 3.1.1
+
+### Patch Changes
+
+- ec6e47f: chore: upgrade vite from v6 to v7
+
 ## 3.1.0
 
 ### Minor Changes
