@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 2.0.14
+
+### Patch Changes
+
+- ec6e47f: chore: upgrade vite from v6 to v7
+
 ## 2.0.13
 
 ### Patch Changes

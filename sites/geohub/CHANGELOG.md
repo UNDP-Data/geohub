@@ -1,5 +1,11 @@
 # geohub
 
+## 1.27.2
+
+### Patch Changes
+
+- ec6e47f: chore: upgrade vite from v6 to v7
+
 ## 1.27.1
 
 ### Patch Changes

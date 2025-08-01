@@ -1,5 +1,11 @@
 # @undp-data/undp-bulma
 
+## 2.0.4
+
+### Patch Changes
+
+- ec6e47f: chore: upgrade vite from v6 to v7
+
 ## 2.0.3
 
 ### Patch Changes
