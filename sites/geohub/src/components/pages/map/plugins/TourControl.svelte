@@ -49,7 +49,6 @@
 
 <script lang="ts">
 	import type { IntroJsOptions } from '$lib/types';
-	// import introJs from 'intro.js';
 	import 'intro.js/introjs.css';
 
 	interface Props {
