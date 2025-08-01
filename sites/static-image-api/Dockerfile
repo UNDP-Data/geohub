@@ -1,8 +1,8 @@
 # NodeJS 18 setup modified from standard NodeJS bullseye-slim installation
 # borrow Dockerfile from https://github.com/consbio/mbgl-renderer/blob/main/docker/Dockerfile
 # https://github.com/maplibre/maplibre-native/discussions/1091
-FROM ubuntu:22.04 as build
-ENV DEBIAN_FRONTEND noninteractive
+FROM ubuntu:22.04 AS build
+ENV DEBIAN_FRONTEND=noninteractive
 ENV NODE_VERSION=22
 
 # https://github.com/maplibre/maplibre-native/tree/main/platform/linux#prerequisites
@@ -33,7 +33,7 @@ WORKDIR /app/src
 
 COPY package*.json ./
 
-RUN npm install -g npm && npm ci
+RUN npm ci
 
 COPY .  .
 

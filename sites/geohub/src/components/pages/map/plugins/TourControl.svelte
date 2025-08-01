@@ -49,7 +49,6 @@
 
 <script lang="ts">
 	import type { IntroJsOptions } from '$lib/types';
-	import introJs from 'intro.js';
 	import 'intro.js/introjs.css';
 
 	interface Props {
@@ -67,8 +66,13 @@
 	let control: TourControl | undefined;
 	let contentDiv: HTMLButtonElement | undefined = $state();
 
+	let introJs: typeof import('intro.js').default | undefined = $state();
+
 	export const start = (init = true) => {
-		introJs()
+		if (!introJs) return;
+
+		introJs
+			.tour()
 			.setOptions({
 				steps: options.steps,
 				dontShowAgain: init === true ? (options.dontShowAgain ?? false) : false,
@@ -80,11 +84,13 @@
 			.start();
 	};
 
-	onMount(() => {
+	onMount(async () => {
 		if (!map) return;
 		if (!contentDiv) return;
 		control = new TourControl(contentDiv);
 		map.addControl(control, position);
+
+		introJs = (await import('intro.js')).default;
 
 		if (options.showAsDefault === true) {
 			start(true);
