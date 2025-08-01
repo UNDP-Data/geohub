@@ -521,8 +521,8 @@ importers:
   packages/svelte-undp-design:
     dependencies:
       filesize:
-        specifier: ^10.1.6
-        version: 10.1.6
+        specifier: ^11.0.0
+        version: 11.0.2
       marked:
         specifier: ^16.0.0
         version: 16.1.0
@@ -863,8 +863,8 @@ importers:
         specifier: ^3.9.3
         version: 3.9.3(eslint@9.29.0)(svelte@5.34.7)
       filesize:
-        specifier: ^10.1.6
-        version: 10.1.6
+        specifier: ^11.0.0
+        version: 11.0.2
       flag-icons:
         specifier: ^7.5.0
         version: 7.5.0
@@ -3946,8 +3946,8 @@ packages:
     resolution: {integrity: sha512-hn4cQfU6GOT/7cFHXBqeBg2TbrMBgdD0kcjLhvSQYYwm3s4B6cjvBfb7nBALJLAXqmU5xajSa7X2NnUud/VCdw==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
-  filesize@10.1.6:
-    resolution: {integrity: sha512-sJslQKU2uM33qH5nqewAwVB2QgR6w1aMNsYUp3aN5rMRyXEwJGmZvaWzeJFNTOXWlHQyBFCWrdj3fV/fsTOX8w==}
+  filesize@11.0.2:
+    resolution: {integrity: sha512-s/iAeeWLk5BschUIpmdrF8RA8lhFZ/xDZgKw1Tan72oGws1/dFGB06nYEiyyssWUfjKNQTNRlrwMVjO9/hvXDw==}
     engines: {node: '>= 10.4.0'}
 
   fill-range@7.1.1:
@@ -9800,7 +9800,7 @@ snapshots:
 
   filename-reserved-regex@3.0.0: {}
 
-  filesize@10.1.6: {}
+  filesize@11.0.2: {}
 
   fill-range@7.1.1:
     dependencies:
