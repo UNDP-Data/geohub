@@ -18,13 +18,14 @@ export const load: PageServerLoad = async ({ url, fetch, locals }) => {
 			<br>
 			If you encounter <b>Need admin approval</b> error when you sign in, please contact your agency's IT to grant access to GeoHub app.`,
 			icon: '/assets/un-logo-white.svg'
-		},
-		{
-			id: 'github',
-			label: 'GitHub account',
-			description: 'Sign into GeoHub using your GitHub account',
-			icon: 'fa-brands fa-github fa-lg'
 		}
+		// TODO: Temporarily disabled
+		// {
+		// 	id: 'github',
+		// 	label: 'GitHub account',
+		// 	description: 'Sign into GeoHub using your GitHub account',
+		// 	icon: 'fa-brands fa-github fa-lg'
+		// }
 	];
 
 	const res = await fetch(`${url.origin}/auth/providers`);
