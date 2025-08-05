@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 2.0.15
+
+### Patch Changes
+
+- d16d244: fix: fixed the logic of selecting current style as active style selected in the switcher. Previously, it did not consider they are the same style.
+
 ## 2.0.14
 
 ### Patch Changes
