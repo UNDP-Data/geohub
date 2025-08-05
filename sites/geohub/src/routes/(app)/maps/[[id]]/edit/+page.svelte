@@ -599,7 +599,7 @@
 	width={mapWidth}
 >
 	{#snippet map()}
-		<div>
+		<div class="map-wrapper">
 			<div
 				bind:this={container}
 				class="map"

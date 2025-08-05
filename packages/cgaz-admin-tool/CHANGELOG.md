@@ -1,5 +1,11 @@
 # @undp-data/cgaz-admin-tool
 
+## 0.0.15
+
+### Patch Changes
+
+- ec6e47f: chore: upgrade vite from v6 to v7
+
 ## 0.0.14
 
 ### Patch Changes

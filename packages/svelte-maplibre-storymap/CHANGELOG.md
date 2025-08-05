@@ -1,5 +1,14 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 1.1.5
+
+### Patch Changes
+
+- ec6e47f: chore: upgrade vite from v6 to v7
+- Updated dependencies [ec6e47f]
+  - @undp-data/svelte-undp-components@2.2.1
+  - @undp-data/svelte-undp-design@3.1.1
+
 ## 1.1.4
 
 ### Patch Changes

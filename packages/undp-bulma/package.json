@@ -1,6 +1,6 @@
 {
   "name": "@undp-data/undp-bulma",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "This package is to manage customised Bulma css for UNDP GeoHub",
   "type": "module",
   "main": "bulma.scss",
@@ -42,7 +42,7 @@
   "devDependencies": {
     "copyfiles": "^2.4.1",
     "typescript": "^5.8.3",
-    "vite": "^6.3.5"
+    "vite": "^7.0.0"
   },
   "dependencies": {
     "bulma": "^1.0.4",

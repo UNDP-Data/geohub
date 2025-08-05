@@ -1,5 +1,40 @@
 # geohub
 
+## 1.27.3
+
+### Patch Changes
+
+- 98fcccc: fix: fixed bug caused by intro.js upgrading when intro.js is loaded in SSR.
+
+## 1.27.2
+
+### Patch Changes
+
+- ec6e47f: chore: upgrade vite from v6 to v7
+
+## 1.27.1
+
+### Patch Changes
+
+- fbeb29a: refactor: update disclaimer text
+
+## 1.27.0
+
+### Minor Changes
+
+- 47cca7a: feat: added disclaimer text for the geohub map
+
+## 1.26.3
+
+### Patch Changes
+
+- 5c48bc6: fix: some old map style has tileMatrixSetId in the URL param, but new titiler requires tileMatrixSetId as path param.
+
+  For example, new URL will be like below after replacing old saved URL.
+
+  - Old URL: /cog/tiles/{z}/{x}/{y}.png?TileMatrixSetId=WebMercatorQuad
+  - New URL: /cog/tiles/WebMercatorQuad/{z}/{x}/{y}.png
+
 ## 1.26.2
 
 ### Patch Changes
