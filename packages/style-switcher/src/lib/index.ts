@@ -4,9 +4,9 @@ import type {
 	Map as MaplibreMap,
 	StyleSpecification
 } from 'maplibre-gl';
-import stringify from 'json-stable-stringify';
 import tippy, { type Instance as TippyInstance } from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
+import { isEqual, omitBy, isEmpty } from 'lodash-es';
 
 /**
  * Style definition for Maplibre StyleSwitcher control
@@ -102,17 +102,34 @@ export default class MaplibreStyleSwitcherControl implements IControl {
 	 */
 	public async initialise() {
 		if (!this.map) return;
-		const currentStyle = this.map.getStyle();
+
 		for (const style of this.styles) {
 			const res = await fetch(style.uri);
-			style.style = await res.json();
+			style.style = (await res.json()) as StyleSpecification;
+
+			const currentStyle = this.map.getStyle();
+
+			// delete all layers in current map style that are not in the new style oroginally
+			const sourceIds = Object.keys(style.style.sources);
+			currentStyle.layers = currentStyle.layers.filter(
+				(layer) =>
+					('source' in layer && sourceIds.includes(layer.source as string)) ||
+					layer.type === 'background'
+			);
 
 			// check if all layers in secondary style exists in current style
 			let doesAllLayersExists = true;
 			style.style?.layers.forEach((l) => {
 				// voyager and dark style consists of same layer IDs, thus it compares the entire layer object to ensure it is same style or not.
-				const exists = currentStyle.layers?.find((x) => stringify(x) === stringify(l));
-				if (!exists) {
+				const targetLayer = currentStyle.layers.find((x) => x.id === l.id);
+				if (targetLayer) {
+					// some layers may have an empty property, so using omityBy to remove empty properties before comparing.
+					const exists = isEqual(omitBy(targetLayer, isEmpty), omitBy(l, isEmpty));
+					if (!exists) {
+						doesAllLayersExists = false;
+						return;
+					}
+				} else {
 					doesAllLayersExists = false;
 					return;
 				}

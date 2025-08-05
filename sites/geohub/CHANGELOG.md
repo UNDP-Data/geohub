@@ -1,5 +1,16 @@
 # geohub
 
+## 1.27.4
+
+### Patch Changes
+
+- 76273a0: fix: upgrade style package
+- dc87d00: refactor: temporary disabling of GitHub signups and logins.
+
+  This is done to prevent creation of new datasets by external accounts - that is accounts not in the UN system, as we focus on data curation and quality control of existing datasets.
+
+- e2e15cc: fix: upgraded the version of maplibre-gl-terradraw. the previous plugin's cleanStyle function accidentally deleted background layer from the style
+
 ## 1.27.3
 
 ### Patch Changes

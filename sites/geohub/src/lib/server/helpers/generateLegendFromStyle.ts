@@ -335,6 +335,28 @@ const getVectorPropertyNames = async (
 					const image = await clipSprite(data, iconName, spriteImage);
 					shape = image.src;
 				}
+			} else {
+				if (Array.isArray(sprite)) {
+					for (const s of sprite) {
+						const spriteId: string = s.id;
+						let spriteBase = s.url;
+
+						if (spriteId === 'default') {
+							spriteBase = spriteBase.replace('/sprite/sprite', '/sprite-non-sdf/sprite');
+						}
+
+						const data = `${spriteBase}@2x.png`;
+						const spriteJson: { [key: string]: SpriteIcon } = (await fetchUrl(
+							`${spriteBase}@2x.json`
+						)) as unknown as { [key: string]: SpriteIcon };
+
+						const spriteImage = spriteJson[iconName];
+						if (spriteImage) {
+							const image = await clipSprite(data, iconName, spriteImage);
+							shape = image.src;
+						}
+					}
+				}
 			}
 		}
 	}
