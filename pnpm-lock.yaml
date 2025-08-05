@@ -504,7 +504,7 @@ importers:
         version: 1.2.0(svelte@5.34.3)
       svelte-preprocess:
         specifier: ^6.0.3
-        version: 6.0.3(@babel/core@7.27.4)(postcss-load-config@5.1.0(postcss@8.5.6))(postcss@8.5.6)(sass@1.89.2)(svelte@5.34.3)(typescript@5.8.3)
+        version: 6.0.3(@babel/core@7.27.4)(postcss-load-config@5.1.0(postcss@8.5.5))(postcss@8.5.5)(sass@1.89.2)(svelte@5.34.3)(typescript@5.8.3)
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
@@ -628,7 +628,7 @@ importers:
         version: 1.2.0(svelte@5.34.3)
       svelte-preprocess:
         specifier: ^6.0.3
-        version: 6.0.3(@babel/core@7.27.4)(postcss-load-config@5.1.0(postcss@8.5.5))(postcss@8.5.5)(sass@1.89.2)(svelte@5.34.3)(typescript@5.8.3)
+        version: 6.0.3(@babel/core@7.27.4)(postcss-load-config@5.1.0(postcss@8.5.6))(postcss@8.5.6)(sass@1.89.2)(svelte@5.34.3)(typescript@5.8.3)
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
@@ -682,8 +682,8 @@ importers:
         specifier: ^2.0.4
         version: 2.0.4
       '@undp-data/style':
-        specifier: ^2.4.3
-        version: 2.4.3
+        specifier: ^2.4.4
+        version: 2.4.4
       crypto-js:
         specifier: ^4.2.0
         version: 4.2.0
@@ -2811,8 +2811,8 @@ packages:
     peerDependencies:
       svelte: ^3.24.0 || ^4.0.0
 
-  '@undp-data/style@2.4.3':
-    resolution: {integrity: sha512-SCRUfraX9vrLMUAd5tmxl7zbMYyZahW3OlafMAXuG5+oT1r35mR0iKHb4f1Mtj7v0r0JXlvFD82KhxLfflb/Tg==}
+  '@undp-data/style@2.4.4':
+    resolution: {integrity: sha512-VugpXgBfJGMuaSshgsYD0Ul9VULylXiBaisja8qiQuvoXqcPfb5mwNBk5wao4JnmcEn59o2Tp+JvPvrzhOAFBw==}
     engines: {pnpm: ^10.0.0}
 
   '@undp-data/svelte-file-dropzone@2.0.3':
@@ -8555,7 +8555,7 @@ snapshots:
     dependencies:
       svelte: 5.34.3
 
-  '@undp-data/style@2.4.3': {}
+  '@undp-data/style@2.4.4': {}
 
   '@undp-data/svelte-file-dropzone@2.0.3(svelte@5.34.3)':
     dependencies:
