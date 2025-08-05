@@ -1,5 +1,11 @@
 # geohub
 
+## 1.27.5
+
+### Patch Changes
+
+- 24aac2e: fix: upgarded base style to v2.4.4 to add terririum-hillshade source only for hillshade layer.
+
 ## 1.27.4
 
 ### Patch Changes
