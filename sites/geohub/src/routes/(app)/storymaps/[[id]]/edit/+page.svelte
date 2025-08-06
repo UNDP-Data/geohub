@@ -260,7 +260,7 @@
 				}
 			}
 
-			$configStore.chapters = [
+			($configStore.chapters as StoryMapChapter[]) = [
 				...$configStore.chapters,
 				{
 					id: uuidv4(),
@@ -278,6 +278,10 @@
 					projection: lastChapter?.projection ?? $configStore.projection ?? undefined,
 					showLegend: true,
 					legendPosition: 'bottom-left',
+					hillshade: lastChapter?.hillshade ?? false,
+					terrain: lastChapter?.terrain ?? false,
+					onChapterEnter: lastChapter?.onChapterEnter ?? undefined,
+					onChapterExit: lastChapter?.onChapterExit ?? undefined,
 					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 					// @ts-ignore
 					style_id: lastChapter?.style_id ?? style_id,

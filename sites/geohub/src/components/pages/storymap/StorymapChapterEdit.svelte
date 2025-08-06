@@ -152,7 +152,6 @@
 			}
 		}
 		activeChapterStore.set($activeChapterStore);
-		console.log($activeChapterStore);
 		mapLocationSelector?.updateMapStyle();
 
 		if (onchange) onchange();
