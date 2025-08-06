@@ -5,13 +5,11 @@ const disclaimerText = `
   of the Secretariat of the United Nations or UNDP concerning the legal status of any country, territory, city or area or its authorities,<br>
   or concerning the delimitation of its frontiers or boundaries.
 </span>
-
-
 `;
 
 export const attribution = `<span>${disclaimerText}</span>`;
 
 export const getAttribution = (isLink = false) => {
-	const label = `© ${new Date().getFullYear()}`;
-	return isLink ? ` ` : label;
+	const label = `© ${new Date().getFullYear()} United Nations Development Programme`;
+	return isLink ? `<a target="_top" rel="noopener" href="https://undp.org">${label}</a>` : label;
 };
