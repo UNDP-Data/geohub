@@ -1,5 +1,11 @@
 # geohub
 
+## 1.27.6
+
+### Patch Changes
+
+- 1d9f34c: fix: add terrain switch for style selector of storymap editor.
+
 ## 1.27.5
 
 ### Patch Changes
