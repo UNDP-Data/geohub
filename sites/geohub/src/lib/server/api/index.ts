@@ -47,12 +47,12 @@ const api = new API(
 			scheme: 'oauth',
 			description: 'Access to /auth/signin to sign in to Azure AD with your UNDP account.'
 		});
-		r.registerComponent('securitySchemes', 'API access token', {
+		r.registerComponent('securitySchemes', 'API access token from header', {
 			type: 'apiKey',
-			name: 'token',
-			in: 'query',
+			name: 'Authorization',
+			in: 'header',
 			description:
-				'API access token to authenticate users. Please get an access token from /api/token endpoint. Or sign in at your browser.'
+				'API access token to authenticate users. Please get an access token from /api/token endpoint. Or sign in at your browser. The token should be prefixed with "Bearer ", e.g. "Bearer YOUR_TOKEN_HERE"'
 		});
 	}
 );

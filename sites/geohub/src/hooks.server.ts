@@ -75,7 +75,7 @@ const handleAccessToken: Handle = async ({ event, resolve }) => {
 		!url.pathname.startsWith('/api/token') &&
 		!url.pathname.startsWith('/api/mapstyle')
 	) {
-		const token = url.searchParams.get('token');
+		const token = event.request.headers.get('Authorization')?.replace(/^Bearer\s+/i, '');
 		if (token) {
 			const payload: TokenPayload = await verifyJWT(token);
 			if (payload) {
