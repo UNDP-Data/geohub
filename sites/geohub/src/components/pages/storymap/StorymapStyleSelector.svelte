@@ -102,25 +102,25 @@
 	};
 
 	const handleHillshadeAndTerrainChanged = () => {
+		const styleUrl = new URL(mapConfig.style as string);
+
 		if (mapConfig.base_style_id) {
-			const styleUrl = new URL(mapConfig.style as string);
 			styleUrl.searchParams.set('basemap', mapConfig.base_style_id);
-
-			if (mapConfig.hillshade === true) {
-				styleUrl.searchParams.set('hillshade', 'true');
-			} else {
-				styleUrl.searchParams.delete('hillshade');
-			}
-
-			if (mapConfig.terrain === true) {
-				styleUrl.searchParams.set('terrain', 'true');
-			} else {
-				styleUrl.searchParams.delete('terrain');
-			}
-
-			mapConfig.style = styleUrl.href;
-			if (onchange) onchange(mapConfig);
 		}
+		if (mapConfig.hillshade === true) {
+			styleUrl.searchParams.set('hillshade', 'true');
+		} else {
+			styleUrl.searchParams.delete('hillshade');
+		}
+
+		if (mapConfig.terrain === true) {
+			styleUrl.searchParams.set('terrain', 'true');
+		} else {
+			styleUrl.searchParams.delete('terrain');
+		}
+
+		mapConfig.style = styleUrl.href;
+		if (onchange) onchange(mapConfig);
 	};
 
 	onMount(() => {
