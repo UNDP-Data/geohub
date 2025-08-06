@@ -429,7 +429,7 @@ export const getStyleById = async (
 	if (style.style) {
 		if (hillshade === true) {
 			const hillshadeLayerIndex = style.style.layers.findIndex(
-				(l) => l.type === 'hillshade' && l.source === 'terrarium'
+				(l) => l.type === 'hillshade' && l.source === 'terrarium-hillshade'
 			);
 			if (hillshadeLayerIndex !== -1) {
 				if (style.style.layers[hillshadeLayerIndex].layout) {
