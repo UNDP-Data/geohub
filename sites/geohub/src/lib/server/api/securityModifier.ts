@@ -4,7 +4,8 @@ export const AddSecurictyModifier: RouteModifier = (c) => {
 	c.security = [
 		{
 			'Azure AD authentication': [],
-			'API access token': []
+			'API access token': [],
+			'API access token from header': []
 		}
 	];
 	return c;

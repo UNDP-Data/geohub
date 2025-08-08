@@ -114,7 +114,6 @@ jobs:
           reviewers: |
             iferencik
             Thuhaa
-            JinIgarashi
 
       - name: Throw error if changeset file exists at the end
         run: |
