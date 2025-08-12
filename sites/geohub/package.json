@@ -144,7 +144,7 @@
 		"@azure/web-pubsub": "^1.2.0",
 		"@mapbox/geo-viewport": "^0.5.0",
 		"@mapbox/vector-tile": "^2.0.4",
-		"@undp-data/style": "^2.4.4",
+		"@undp-data/style": "^2.5.0",
 		"crypto-js": "^4.2.0",
 		"drizzle-orm": "^0.44.2",
 		"flatgeobuf": "^4.0.2",
