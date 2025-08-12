@@ -1,5 +1,12 @@
 # geohub
 
+## 1.27.7
+
+### Patch Changes
+
+- 10d997b: refactor: implement token submission through a request header
+- 57004a1: fix: add UNDP attribution to getAttribution so it can be used in storymaps"
+
 ## 1.27.6
 
 ### Patch Changes
