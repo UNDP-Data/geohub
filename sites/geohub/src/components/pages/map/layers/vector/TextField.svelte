@@ -50,7 +50,7 @@
 
 	const setTextField = () => {
 		if (!style && !textFieldValue) return;
-		if (!style && layer.parentId) {
+		if (layer.parentId) {
 			const parentStyle = getLayerStyle($map, layer.parentId);
 
 			const childLayer: SymbolLayerSpecification = {
@@ -81,7 +81,6 @@
 			}
 			style = childLayer;
 		}
-
 		if (style.type !== 'symbol') return;
 		if (textFieldValue) {
 			// variable label placement settings: https://docs.mapbox.com/mapbox-gl-js/example/variable-label-placement/
