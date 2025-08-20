@@ -56,6 +56,7 @@
 	let { layer = $bindable(), metadata = $bindable() }: Props = $props();
 
 	let parentLayerId = $state(layer.id);
+
 	let style: LayerSpecification = getLayerStyle($map, layer.id);
 	let textFieldValue = $state('');
 	let onlyNumberFields = $state(false);
@@ -85,6 +86,7 @@
 
 	onMount(() => {
 		targetLayer = style.type === 'symbol' ? layer : undefined;
+
 		let targetLayerId = targetLayer ? layer.id : `${parentLayerId}-label`;
 		if (!targetLayer) {
 			layer.children?.forEach((child) => {
