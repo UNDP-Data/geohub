@@ -52,6 +52,7 @@
 		if (!style && !textFieldValue) return;
 		if (!style && layer.parentId) {
 			const parentStyle = getLayerStyle($map, layer.parentId);
+
 			const childLayer: SymbolLayerSpecification = {
 				id: layerId,
 				type: 'symbol',
@@ -68,6 +69,10 @@
 					'text-halo-width': Number(config.LabelHaloWidth)
 				}
 			};
+
+			if (parentStyle.filter) {
+				childLayer.filter = parentStyle.filter;
+			}
 			if (parentStyle.minzoom) {
 				childLayer.minzoom = parentStyle.minzoom;
 			}
