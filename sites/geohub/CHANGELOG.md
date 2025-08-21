@@ -1,5 +1,11 @@
 # geohub
 
+## 1.27.8
+
+### Patch Changes
+
+- 2b081f0: fix: applying labels after filtering now shows labels for only the showing polygons
+
 ## 1.27.7
 
 ### Patch Changes
