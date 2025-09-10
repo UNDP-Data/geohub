@@ -17,10 +17,6 @@ export const Query = z.object({
 		.openapi({ example: 'zambia.poverty' })
 });
 
-export const Param = z.object({
-	source: z.enum(['pgtileserv']).describe('source type').openapi({ example: 'pgtileserv' })
-});
-
 export const Error = {
 	400: apiError(400, 'Invalid parameter')
 };
@@ -32,30 +28,21 @@ export const Modifier: RouteModifier = (c) => {
 	return c;
 };
 
-export default new Endpoint({ Query, Param, Output, Modifier }).handle(async (param) => {
-	const source = param.source;
+export default new Endpoint({ Query, Output, Modifier }).handle(async (param) => {
 	const table = param.table;
 
 	if (!table) {
 		error(400, { message: `Missing table parameter` });
 	}
 
-	let tilejson: TileJson;
 	let metadatajson: VectorTileMetadata;
-	switch (source) {
-		case 'pgtileserv':
-			tilejson = await getPgtileservTileJson(table, env.PGTILESERV_API_ENDPOINT);
-			if (tilejson.vector_layers.length === 0) {
-				metadatajson = await generateMetadataJson(tilejson);
-				if (metadatajson && metadatajson.json) {
-					tilejson.vector_layers = metadatajson.json.vector_layers;
-					tilejson.geometrytype = metadatajson.json.tilestats?.layers[0].geometry;
-				}
-			}
-			break;
-		default:
-			error(400, { message: `Invalid source parameter.` });
+	const tilejson: TileJson = await getPgtileservTileJson(table, env.PGTILESERV_API_ENDPOINT);
+	if (tilejson.vector_layers.length === 0) {
+		metadatajson = await generateMetadataJson(tilejson);
+		if (metadatajson && metadatajson.json) {
+			tilejson.vector_layers = metadatajson.json.vector_layers;
+			tilejson.geometrytype = metadatajson.json.tilestats?.layers[0].geometry;
+		}
 	}
-
 	return tilejson;
 });
