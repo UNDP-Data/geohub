@@ -53,7 +53,7 @@ export default new Endpoint({ Query, Param, Output, Modifier }).handle(async (pa
 	let metadatajson: VectorTileMetadata;
 	switch (source) {
 		case 'pgtileserv':
-			tilejson = await getPgtileservTileJson(table, type, env.PGTILESERV_API_ENDPOINT);
+			tilejson = await getPgtileservTileJson(table, env.PGTILESERV_API_ENDPOINT);
 			if (tilejson.vector_layers.length === 0) {
 				metadatajson = await generateMetadataJson(tilejson);
 				if (metadatajson && metadatajson.json) {

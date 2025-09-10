@@ -19,11 +19,6 @@ export const Query = z.object({
 		.optional()
 		.describe('table name. only available for source = pgtileserv')
 		.openapi({ example: 'zambia.poverty' }),
-	type: z
-		.enum(['table', 'function'])
-		.optional()
-		.describe('type name. only available for source = pgtileserv')
-		.openapi({ example: 'table' }),
 	pbfpath: z.string().optional().describe('pbf path. only available for soruce = azstorage')
 });
 
@@ -48,7 +43,7 @@ export const Modifier: RouteModifier = (c) => {
 export default new Endpoint({ Query, Param, Output, Modifier }).handle(async (param, { url }) => {
 	const source = param.source;
 	const table = param.table;
-	const type = param.type;
+	// const type = param.type;
 	const pbfpath = param.pbfpath;
 
 	let tilejson: TileJson;
@@ -61,11 +56,7 @@ export default new Endpoint({ Query, Param, Output, Modifier }).handle(async (pa
 			metadatajson = await getStaticPbfMetadataJson(url.origin, pbfpath);
 			break;
 		case 'pgtileserv':
-			tilejson = await getPgtileservTileJson(
-				table as string,
-				type as string,
-				env.PGTILESERV_API_ENDPOINT
-			);
+			tilejson = await getPgtileservTileJson(table as string, env.PGTILESERV_API_ENDPOINT);
 			metadatajson = await generateMetadataJson(tilejson);
 			break;
 		default:
