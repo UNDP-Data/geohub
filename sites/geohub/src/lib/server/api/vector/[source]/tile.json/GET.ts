@@ -14,11 +14,7 @@ export const Query = z.object({
 	table: z
 		.string()
 		.describe('table name. only available for source = pgtileserv')
-		.openapi({ example: 'zambia.poverty' }),
-	type: z
-		.enum(['table', 'function'])
-		.describe('type name. only available for source = pgtileserv')
-		.openapi({ example: 'table' })
+		.openapi({ example: 'zambia.poverty' })
 });
 
 export const Param = z.object({
@@ -39,14 +35,9 @@ export const Modifier: RouteModifier = (c) => {
 export default new Endpoint({ Query, Param, Output, Modifier }).handle(async (param) => {
 	const source = param.source;
 	const table = param.table;
-	const type = param.type;
 
 	if (!table) {
 		error(400, { message: `Missing table parameter` });
-	}
-
-	if (source === 'pgtileserv' && !['table', 'function'].includes(type)) {
-		error(400, { message: `type should be either table or function` });
 	}
 
 	let tilejson: TileJson;
