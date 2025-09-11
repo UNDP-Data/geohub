@@ -3,7 +3,7 @@ import type { PgtileservDetailJson } from '$lib/types/PgtileservDetailJson';
 import type { PgtileservIndexJson } from '$lib/types/PgtileservIndexJson';
 import type { TileJson } from '$lib/types/TileJson';
 
-export const getPgtileservTileJson = async (table: string, type: string, pgtileservUrl: string) => {
+export const getPgtileservTileJson = async (table: string, pgtileservUrl: string) => {
 	const indexJson = await getIndexJson(table, pgtileservUrl);
 	const detailUrl: string = indexJson.detailurl;
 	const tilejson = await getTileJson(detailUrl);
