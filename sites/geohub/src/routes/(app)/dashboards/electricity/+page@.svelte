@@ -59,7 +59,7 @@
 		createElectricityDataTypeStore,
 		ELECTRICITY_DATATYPE_CONTEXT_KEY
 	} from './stores/electricityDataType';
-	import { loadAdmin, setAdminUrl, unloadAdmin } from './utils/adminLayer';
+	import { isLoaded, loadAdmin, setAdminUrl, unloadAdmin } from './utils/adminLayer';
 
 	interface Props {
 		data: PageData;
@@ -162,27 +162,16 @@
 			}
 		}
 
+		await isLoaded(map);
+		map.resize();
+
+		await styleSwitcher.initialise();
+
+		AdminControlOptions.isHover = false;
+		map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
+		mapStore.set(map);
+		loadLayers();
 		isInitialized = true;
-
-		map.on('load', () => {
-			map.resize();
-
-			styleSwitcher.initialise();
-
-			const adminOptions = AdminControlOptions;
-			adminOptions.isHover = false;
-			map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
-		});
-
-		mapStore.update(() => map);
-
-		mapStore.subscribe(() => {
-			if ($mapStore) {
-				$mapStore.on('load', () => {
-					loadLayers();
-				});
-			}
-		});
 	});
 
 	const loadDatasets = () => {
