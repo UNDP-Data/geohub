@@ -1,13 +1,12 @@
-import type {
-	SourceSpecification,
-	FillLayerSpecification,
-	LineLayerSpecification,
-	ExpressionSpecification,
-	PointLike
+import maplibregl, {
+	type ExpressionSpecification,
+	type FillLayerSpecification,
+	type LineLayerSpecification,
+	type PointLike,
+	type SourceSpecification
 } from 'maplibre-gl';
-import { admin } from '../stores';
+import { admin, map as mapStore } from '../stores';
 import { get } from 'svelte/store';
-import { map as mapStore } from '../stores';
 import { MapStyles } from '$lib/config/AppConfig';
 
 const ADM_ID = 'admin';
@@ -40,7 +39,7 @@ const getAdminLevel = () => {
 	const map = get(mapStore);
 	const zoom = map.getZoom();
 	if (zoom < 3) return 0;
-	if (zoom < 4) return 1;
+	if (zoom < 7) return 1;
 	return 2;
 };
 
@@ -109,7 +108,7 @@ const onMouseLeave = () => {
 	hoveredStateId = null;
 };
 
-const onZoom = ({ originalEvent }) => {
+const onZoom = async ({ originalEvent }) => {
 	const map = get(mapStore);
 	if (!originalEvent) return;
 	loadAdmin(choropleth);
@@ -120,7 +119,7 @@ const onZoom = ({ originalEvent }) => {
 	if (features.length > 0) onMouseMove({ features });
 
 	map.setPaintProperty(ADM_ID, 'fill-opacity', opacity);
-	reloadAdmin(scaleColorList, adminLabelsLoaded, colorExpression);
+	await reloadAdmin(scaleColorList, adminLabelsLoaded, colorExpression);
 };
 
 const loadAdmin0 = () => {
@@ -158,7 +157,25 @@ export const loadAdmin = (isChoropleth: boolean) => {
 	map.on('zoom', onZoom);
 };
 
-export const reloadAdmin = (
+function sleep(ms: number) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export const isLoaded = async (map: maplibregl.Map, checkInterval = 100, timeout = 30000) => {
+	const start = Date.now();
+
+	while (!map.loaded()) {
+		if (Date.now() - start > timeout) {
+			// throw new Error("Map did not finish loading within timeout.");
+			map.triggerRepaint();
+		}
+		await sleep(checkInterval);
+	}
+
+	return true;
+};
+
+export const reloadAdmin = async (
 	colorScales: string[],
 	loadAdminLabels: boolean = true,
 	newColorExpression?
@@ -168,6 +185,8 @@ export const reloadAdmin = (
 	colorExpression = newColorExpression;
 
 	const map = get(mapStore);
+	await isLoaded(map);
+
 	if (!map.getLayer(ADM_ID)) return;
 
 	if (choropleth) {
@@ -178,15 +197,25 @@ export const reloadAdmin = (
 
 		const mapZoom = map.getZoom();
 		const labelId = // TODO: change to dynamic param name
-			mapZoom <= 1.9
+			mapZoom < 3
 				? 'place_continent'
-				: mapZoom >= 2 && mapZoom <= 3.9
-					? 'place_country_1'
+				: mapZoom >= 3 && mapZoom <= 7
+					? 'place_state'
 					: 'place_city_dot_r2';
+
 		if (loadAdminLabels) {
-			const layer = MapStyles[0].style.layers.find((i) => i.id === labelId);
+			const mapLayers = map.getStyle().layers;
+			if (!map.getSource('carto')) {
+				map.addSource('carto', {
+					type: 'vector',
+					url: 'https://tiles.basemaps.cartocdn.com/vector/carto.streets/v1/tiles.json'
+				});
+			}
+			const style = MapStyles.find((i) => i.id === 'style');
+			const layer = style.style.layers.find((i) => i.id === labelId);
+			const lastLayerId = mapLayers[mapLayers.length - 1].id;
 			map.getLayer(labelId) && map.removeLayer(labelId);
-			map.addLayer(layer);
+			map.addLayer(layer, lastLayerId);
 		} else {
 			map.getLayer(labelId) && map.removeLayer(labelId);
 		}
@@ -214,28 +243,28 @@ const getFillColor = (
 
 	const defaultProperty = property || `hrea_${year};`;
 
-	const defaultExpression = colorExpression || [
-		'case',
-		['==', ['get', defaultProperty], null],
-		'hsla(0, 0%, 0%, 0)',
-		[
-			'interpolate',
-			['linear'],
-			['get', property],
-			0,
-			['to-color', defaultColors[0]],
-			0.25,
-			['to-color', defaultColors[1]],
-			0.5,
-			['to-color', defaultColors[2]],
-			0.75,
-			['to-color', defaultColors[3]],
-			1,
-			['to-color', defaultColors[4]]
+	return (
+		colorExpression || [
+			'case',
+			['==', ['get', defaultProperty], null],
+			'hsla(0, 0%, 0%, 0)',
+			[
+				'interpolate',
+				['linear'],
+				['get', property],
+				0,
+				['to-color', defaultColors[0]],
+				0.25,
+				['to-color', defaultColors[1]],
+				0.5,
+				['to-color', defaultColors[2]],
+				0.75,
+				['to-color', defaultColors[3]],
+				1,
+				['to-color', defaultColors[4]]
+			]
 		]
-	];
-
-	return defaultExpression;
+	);
 };
 
 const loadAdminChoropleth = () => {
@@ -243,10 +272,10 @@ const loadAdminChoropleth = () => {
 	const lvl = getAdminLevel();
 	let maxzoom = 0;
 	if (lvl == 1) {
-		maxzoom = 6;
+		maxzoom = 7;
 	}
 	if (lvl == 2) {
-		maxzoom = 10;
+		maxzoom = 22;
 	}
 
 	const layerSource: SourceSpecification = {

@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ url }) => {
 	const content = 'Electricity dashboard';
 	const site_description = `The 'Affordable and clean energy' dashboard helps identify vulnerable areas in the world that have limited or no access to energy.`;
 
-	const adminUrl = `${azureUrl}/hrea/admin/v4`;
+	const adminUrl = `${azureUrl}/hrea/admin/v5`;
 
 	return {
 		azureUrl,

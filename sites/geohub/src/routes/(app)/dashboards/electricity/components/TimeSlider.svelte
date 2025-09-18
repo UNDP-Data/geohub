@@ -10,6 +10,7 @@
 	import { reloadAdmin, setAdminUrl, setTargetTear } from '../utils/adminLayer';
 
 	const adminUrl = page.data.adminUrl;
+
 	setAdminUrl(adminUrl);
 
 	import { getBase64EncodedUrl } from '$lib/helper';
