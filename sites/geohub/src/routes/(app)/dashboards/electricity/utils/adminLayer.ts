@@ -202,7 +202,9 @@ export const reloadAdmin = async (
 				: mapZoom >= 3 && mapZoom <= 7
 					? 'place_state'
 					: 'place_city_dot_r2';
+
 		if (loadAdminLabels) {
+			const mapLayers = map.getStyle().layers;
 			if (!map.getSource('carto')) {
 				map.addSource('carto', {
 					type: 'vector',
@@ -211,8 +213,9 @@ export const reloadAdmin = async (
 			}
 			const style = MapStyles.find((i) => i.id === 'style');
 			const layer = style.style.layers.find((i) => i.id === labelId);
+			const lastLayerId = mapLayers[mapLayers.length - 1].id;
 			map.getLayer(labelId) && map.removeLayer(labelId);
-			map.addLayer(layer);
+			map.addLayer(layer, lastLayerId);
 		} else {
 			map.getLayer(labelId) && map.removeLayer(labelId);
 		}
@@ -269,10 +272,10 @@ const loadAdminChoropleth = () => {
 	const lvl = getAdminLevel();
 	let maxzoom = 0;
 	if (lvl == 1) {
-		maxzoom = 6;
+		maxzoom = 7;
 	}
 	if (lvl == 2) {
-		maxzoom = 10;
+		maxzoom = 22;
 	}
 
 	const layerSource: SourceSpecification = {
