@@ -39,7 +39,7 @@
 		"@sveltejs/vite-plugin-svelte": "^6.0.0",
 		"@testing-library/svelte": "^5.2.8",
 		"@testing-library/user-event": "^14.6.1",
-		"@typescript-eslint/eslint-plugin": "8.43.0",
+		"@typescript-eslint/eslint-plugin": "8.44.0",
 		"@typescript-eslint/parser": "^8.34.0",
 		"@undp-data/undp-bulma": "workspace:^",
 		"@vitest/coverage-istanbul": "^3.2.3",
