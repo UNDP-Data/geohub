@@ -29,7 +29,7 @@
 		"@eslint/js": "^9.29.0",
 		"@storybook/addon-docs": "^9.0.10",
 		"@storybook/addon-links": "^9.0.10",
-		"@storybook/addon-svelte-csf": "5.0.8",
+		"@storybook/addon-svelte-csf": "5.0.9",
 		"@storybook/source-loader": "^8.6.14",
 		"@storybook/sveltekit": "^9.0.10",
 		"@storybook/test": "^8.6.14",
