@@ -422,8 +422,8 @@ importers:
         specifier: ^9.0.10
         version: 9.0.10(react@19.1.0)(storybook@9.0.10(@testing-library/dom@10.4.0)(prettier@3.5.3))
       '@storybook/addon-svelte-csf':
-        specifier: 5.0.9
-        version: 5.0.9(@storybook/svelte@9.0.10(storybook@9.0.10(@testing-library/dom@10.4.0)(prettier@3.5.3))(svelte@5.34.3))(@sveltejs/vite-plugin-svelte@6.1.0(svelte@5.34.3)(vite@7.0.7(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0)))(storybook@9.0.10(@testing-library/dom@10.4.0)(prettier@3.5.3))(svelte@5.34.3)(vite@7.0.7(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0))
+        specifier: 5.0.10
+        version: 5.0.10(@storybook/svelte@9.0.10(storybook@9.0.10(@testing-library/dom@10.4.0)(prettier@3.5.3))(svelte@5.34.3))(@sveltejs/vite-plugin-svelte@6.1.0(svelte@5.34.3)(vite@7.0.7(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0)))(storybook@9.0.10(@testing-library/dom@10.4.0)(prettier@3.5.3))(svelte@5.34.3)(vite@7.0.7(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0))
       '@storybook/sveltekit':
         specifier: ^9.0.10
         version: 9.0.10(@sveltejs/vite-plugin-svelte@6.1.0(svelte@5.34.3)(vite@7.0.7(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0)))(storybook@9.0.10(@testing-library/dom@10.4.0)(prettier@3.5.3))(svelte@5.34.3)(vite@7.0.7(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0))
@@ -546,8 +546,8 @@ importers:
         specifier: ^9.0.10
         version: 9.0.10(react@19.1.0)(storybook@9.0.10(@testing-library/dom@10.4.0)(prettier@3.5.3))
       '@storybook/addon-svelte-csf':
-        specifier: 5.0.9
-        version: 5.0.9(@storybook/svelte@9.0.10(storybook@9.0.10(@testing-library/dom@10.4.0)(prettier@3.5.3))(svelte@5.34.3))(@sveltejs/vite-plugin-svelte@6.1.0(svelte@5.34.3)(vite@7.0.7(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0)))(storybook@9.0.10(@testing-library/dom@10.4.0)(prettier@3.5.3))(svelte@5.34.3)(vite@7.0.7(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0))
+        specifier: 5.0.10
+        version: 5.0.10(@storybook/svelte@9.0.10(storybook@9.0.10(@testing-library/dom@10.4.0)(prettier@3.5.3))(svelte@5.34.3))(@sveltejs/vite-plugin-svelte@6.1.0(svelte@5.34.3)(vite@7.0.7(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0)))(storybook@9.0.10(@testing-library/dom@10.4.0)(prettier@3.5.3))(svelte@5.34.3)(vite@7.0.7(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0))
       '@storybook/source-loader':
         specifier: ^8.6.14
         version: 8.6.14(storybook@9.0.10(@testing-library/dom@10.4.0)(prettier@3.5.3))
@@ -2367,8 +2367,8 @@ packages:
       react:
         optional: true
 
-  '@storybook/addon-svelte-csf@5.0.9':
-    resolution: {integrity: sha512-bPY/rLbxt723ckY90gDVxgwrr1UEXnN27Zul5doef1zAlAtL4ZumaOpQ6q3+6Mj1ZJLFxyPt4L+e2FyEo25WQg==}
+  '@storybook/addon-svelte-csf@5.0.10':
+    resolution: {integrity: sha512-poSvTS7VdaQ42ZoqW5e4+2Hv1iLO0mekH9fwn/QuBNse48R4WlTyR8XFbHRTfatl9gdc9ZYC4uWzazrmV6zGIA==}
     peerDependencies:
       '@storybook/svelte': ^0.0.0-0 || ^8.2.0 || ^9.0.0 || ^9.1.0-0 || ^10.0.0-0
       '@sveltejs/vite-plugin-svelte': ^4.0.0 || ^5.0.0 || ^6.0.0
@@ -7822,7 +7822,7 @@ snapshots:
     optionalDependencies:
       react: 19.1.0
 
-  '@storybook/addon-svelte-csf@5.0.9(@storybook/svelte@9.0.10(storybook@9.0.10(@testing-library/dom@10.4.0)(prettier@3.5.3))(svelte@5.34.3))(@sveltejs/vite-plugin-svelte@6.1.0(svelte@5.34.3)(vite@7.0.7(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0)))(storybook@9.0.10(@testing-library/dom@10.4.0)(prettier@3.5.3))(svelte@5.34.3)(vite@7.0.7(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0))':
+  '@storybook/addon-svelte-csf@5.0.10(@storybook/svelte@9.0.10(storybook@9.0.10(@testing-library/dom@10.4.0)(prettier@3.5.3))(svelte@5.34.3))(@sveltejs/vite-plugin-svelte@6.1.0(svelte@5.34.3)(vite@7.0.7(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0)))(storybook@9.0.10(@testing-library/dom@10.4.0)(prettier@3.5.3))(svelte@5.34.3)(vite@7.0.7(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0))':
     dependencies:
       '@storybook/csf': 0.1.13
       '@storybook/svelte': 9.0.10(storybook@9.0.10(@testing-library/dom@10.4.0)(prettier@3.5.3))(svelte@5.34.3)
