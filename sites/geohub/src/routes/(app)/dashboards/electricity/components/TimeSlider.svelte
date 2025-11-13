@@ -69,7 +69,7 @@
 		if (electricitySelected !== 'NONE') {
 			loadRasterLayer(url, `${yearValue}`);
 		}
-		reloadAdmin(scaleColorList, loadAdminLabels, newColorExpression);
+		reloadAdmin();
 	}
 
 	const invisibleRasterLayer = () => {

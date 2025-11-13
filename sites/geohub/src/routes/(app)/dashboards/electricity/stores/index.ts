@@ -8,3 +8,8 @@ export const map = writable<Map>(undefined);
 export const admin = writable({});
 
 export const hrea = writable<DashBoardDataset[]>(undefined);
+
+export const colorMap = writable({
+	value: 'pubu',
+	isReversed: false
+});
