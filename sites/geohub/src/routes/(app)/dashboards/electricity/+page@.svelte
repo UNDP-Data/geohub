@@ -109,7 +109,7 @@
 
 	let isTimeSliderActive = $state(false);
 	let isInitialized = $state(false);
-
+	let mapIsLoading = $state(true);
 	let timeSliderControl: TimeSliderControl | undefined = $state();
 
 	onMount(async () => {
@@ -165,8 +165,15 @@
 		}
 
 		await isLoaded(map);
-		map.resize();
 
+		map.on('dataloading', () => {
+			mapIsLoading = true;
+		});
+		map.on('idle', () => {
+			mapIsLoading = false;
+		});
+
+		map.resize();
 		await styleSwitcher.initialise();
 
 		AdminControlOptions.isHover = false;
@@ -336,12 +343,12 @@
 			{#if showIntro}
 				<IntroductionPanel
 					bind:dashboardSelections
+					{mapIsLoading}
 					onclick={() => {
 						showIntro = false;
 						activeDashboard = dashboardSelections.find((d) => d.show === true);
 						if (activeDashboard.name === 'compare') {
 							electricitySelected = electricityChoices[0].name;
-							// unloadAdmin();
 						} else {
 							electricitySelected = NONE_ID;
 						}

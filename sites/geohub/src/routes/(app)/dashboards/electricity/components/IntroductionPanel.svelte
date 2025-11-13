@@ -10,14 +10,15 @@
 			text: string;
 		}[];
 		onclick: () => void;
+		mapIsLoading?: boolean;
 	}
 
-	let { dashboardSelections = $bindable(), onclick = () => {} }: Props = $props();
+	let { dashboardSelections = $bindable(), onclick = () => {}, mapIsLoading }: Props = $props();
 	const hideIntro = () => {
 		onclick();
 	};
 
-	let disabled = $derived(!($hrea?.length > 0));
+	let disabled = $derived(!($hrea?.length > 0) || mapIsLoading);
 
 	let showDialog = $state(false);
 	const modalHandler = () => {

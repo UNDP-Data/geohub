@@ -1,6 +1,7 @@
 import maplibregl, {
 	type ExpressionSpecification,
 	type FillLayerSpecification,
+	type LineLayerSpecification,
 	type SourceSpecification
 } from 'maplibre-gl';
 import { admin, colorMap, map as mapStore } from '../stores';
@@ -8,15 +9,13 @@ import { get } from 'svelte/store';
 import chroma from 'chroma-js';
 
 const ADM_ID = 'admin';
-// const ADM0_ID = 'admin0';
-const adminLevel = 0;
+const ADM0_ID = 'adm0';
 let hoveredStateId: string;
 const choropleth = true;
-// const opacity = 0.8;
+
 let adminUrl = '';
 let year = '2020';
-// let scaleColorList: string[] = [];
-// let adminLabelsLoaded: boolean = true;
+
 let colorExpression: ExpressionSpecification | undefined = undefined;
 
 export const setAdminUrl = (url: string) => {
@@ -26,13 +25,6 @@ export const setAdminUrl = (url: string) => {
 export const setTargetTear = (value: number) => {
 	year = `${value}`;
 };
-// const getAdminLevel = () => {
-// 	const map = get(mapStore);
-// 	const zoom = map.getZoom();
-// 	if (zoom < 3) return 0;
-// 	if (zoom < 7) return 1;
-// 	return 2;
-// };
 
 const getAdminLevelForZoom = (zoom: number) => {
 	if (zoom < 3) return 0;
@@ -40,129 +32,60 @@ const getAdminLevelForZoom = (zoom: number) => {
 	return 2;
 };
 
-const getAdminLayer = () => {
-	return `adm${adminLevel}_polygons`;
-};
-
 export const onInteraction = () => {
-	const map = get(mapStore);
+	const map = getMap();
 	map.on('mousemove', ADM_ID, onMouseMove);
 	map.on('mouseleave', ADM_ID, onMouseLeave);
 };
 
 export const offInteraction = () => {
-	const map = get(mapStore);
+	const map = getMap();
 	map.off('mousemove', ADM_ID, onMouseMove);
 	map.off('mouseleave', ADM_ID, onMouseLeave);
 };
 
 const onMouseMove = (e) => {
-	const map = get(mapStore);
-	const zoom = map.getZoom();
-	if (e.features.length > 0) {
-		if (hoveredStateId) {
-			map.setFeatureState(
-				{
-					source: ADM_ID,
-					sourceLayer: getAdminLayer(),
-					id: hoveredStateId
-				},
-				{ hover: false }
-			);
-			admin.set({});
-		}
+	const map = getMap();
+	const lvl = getAdminLevelForZoom(map.getZoom());
+	const promoteId = `adm${lvl}_id`;
+	const sourceLayer = `adm${lvl}_polygons`;
 
-		const adminLevel = getAdminLevelForZoom(zoom);
-		hoveredStateId = e.features[0][`adm${adminLevel}_id`];
+	const feature = e.features?.[0];
+	if (!feature) return;
 
-		if (hoveredStateId) {
-			map.setFeatureState(
-				{
-					source: ADM_ID,
-					sourceLayer: getAdminLayer(),
-					id: hoveredStateId
-				},
-				{ hover: true }
-			);
-		}
+	const featureId = feature.properties[promoteId];
+	if (!featureId) return;
 
-		admin.set(e.features[0].properties);
+	if (hoveredStateId && hoveredStateId !== featureId) {
+		map.setFeatureState({ source: ADM_ID, sourceLayer, id: hoveredStateId }, { hover: false });
 	}
+
+	hoveredStateId = featureId;
+
+	map.setFeatureState({ source: ADM_ID, sourceLayer, id: hoveredStateId }, { hover: true });
+
+	admin.set(feature.properties);
 };
 
 const onMouseLeave = () => {
-	const map = get(mapStore);
+	const map = getMap();
+	const lvl = getAdminLevelForZoom(map.getZoom());
+	const sourceLayer = `adm${lvl}_polygons`;
+
 	if (hoveredStateId) {
-		map.setFeatureState(
-			{
-				source: ADM_ID,
-				sourceLayer: getAdminLayer(),
-				id: hoveredStateId
-			},
-			{ hover: false }
-		);
+		map.setFeatureState({ source: ADM_ID, sourceLayer, id: hoveredStateId }, { hover: false });
 		admin.set({});
 	}
+
 	hoveredStateId = null;
 };
 
 const onZoom = async ({ originalEvent }) => {
 	if (!originalEvent) return;
-	console.log('onZoom');
-	// const map = getMap()
-	// console.log(map.getLayer(ADM_ID), 'map.getLayer(ADM_ID)')
 	loadAdmin();
 };
 
-// export const onZoomBivariate = async ({ originalEvent } ) => {
-//     if (!originalEvent) return;
-//     const map = get(mapStore);
-//     const layer = map.getLayer(ADM_ID);
-//     const expression = layer?.paint?.['fill-color'] as ExpressionSpecification;
-// 	upsertBivariateAdmin(expression as ExpressionSpecification);
-// }
-
 const getMap = () => get(mapStore);
-
-// const getAdminMeta = (zoom: number) => {
-// 	const level = zoom < 3 ? 0 : zoom < 7 ? 1 : 2;
-// 	const maxzoom = level === 1 ? 7 : level === 2 ? 22 : 3;
-// 	return { level, maxzoom };
-// };
-
-// const createAdminLayer = (colorExpression?: ExpressionSpecification) => {
-// 	const map = getMap();
-// 	const zoom = map.getZoom();
-// 	const { level, maxzoom } = getAdminMeta(zoom);
-// 	adminLevel = level;
-//
-// 	const source: SourceSpecification = {
-// 		type: 'vector',
-// 		promoteId: `adm${level}_id`,
-// 		url: `pmtiles://${adminUrl}/adm${level}_polygons.pmtiles`
-// 	};
-//
-// 	const fill: FillLayerSpecification = {
-// 		id: ADM_ID,
-// 		type: 'fill',
-// 		source: ADM_ID,
-// 		'source-layer': `adm${level}_polygons`,
-// 		maxzoom,
-// 		paint: {
-// 			'fill-color': colorExpression ?? generateFillColorExpressionFromColormap(),
-// 			'fill-opacity': opacity,
-// 			'fill-outline-color': [
-// 				'case',
-// 				['boolean', ['feature-state', 'hover'], false],
-// 				'hsla(0, 0%, 0%, 1)',
-// 				'hsla(0, 0%, 100%, 0.5)'
-// 			]
-// 		}
-// 	};
-//
-// 	map.addSource(ADM_ID, source);
-// 	map.addLayer(fill);
-// };
 
 export const loadAdmin = () => {
 	const map = getMap();
@@ -185,7 +108,6 @@ export const isLoaded = async (map: maplibregl.Map, checkInterval = 100, timeout
 
 	while (!map.loaded()) {
 		if (Date.now() - start > timeout) {
-			// throw new Error("Map did not finish loading within timeout.");
 			map.triggerRepaint();
 		}
 		await sleep(checkInterval);
@@ -200,8 +122,6 @@ export const upsertBivariateAdmin = (exp: ExpressionSpecification) => {
 	if (existing) {
 		map.removeLayer(ADM_ID);
 		map.removeSource(ADM_ID);
-		// map.setPaintProperty(ADM_ID, 'fill-color', exp);
-		// return;
 	}
 	loadAdminChoropleth(exp);
 	onInteraction();
@@ -216,7 +136,7 @@ const onZoomBivariate = async ({ originalEvent }) => {
 };
 
 export const reloadAdmin = async () => {
-	const map = get(mapStore);
+	const map = getMap();
 	await isLoaded(map);
 
 	if (!map.getLayer(ADM_ID)) return;
@@ -227,43 +147,15 @@ export const reloadAdmin = async () => {
 		if (fillColorExpression) {
 			map.setPaintProperty(ADM_ID, 'fill-color', fillColorExpression);
 		}
-
-		// const mapZoom = map.getZoom();
-		// const labelId = // TODO: change to dynamic param name
-		// 	mapZoom < 3
-		// 		? 'place_continent'
-		// 		: mapZoom >= 3 && mapZoom <= 7
-		// 			? 'place_state'
-		// 			: 'place_city_dot_r2';
-
-		// if (loadAdminLabels) {
-		// 	const mapLayers = map.getStyle().layers;
-		// 	if (!map.getSource('carto')) {
-		// 		map.addSource('carto', {
-		// 			type: 'vector',
-		// 			url: 'https://tiles.basemaps.cartocdn.com/vector/carto.streets/v1/tiles.json'
-		// 		});
-		// 	}
-		// 	const style = MapStyles.find((i) => i.id === 'style');
-		// 	const layer = style.style.layers.find((i) => i.id === labelId);
-		// 	const lastLayerId = mapLayers[mapLayers.length - 1].id;
-		// 	map.getLayer(labelId) && map.removeLayer(labelId);
-		// 	map.addLayer(layer, lastLayerId);
-		// } else {
-		// 	map.getLayer(labelId) && map.removeLayer(labelId);
-		// }
 	}
 };
 
 export const unloadAdmin = () => {
-	const map = get(mapStore);
+	const map = getMap();
 	offInteraction();
 	map.off('zoom', onZoom);
 	map.off('zoom', onZoomBivariate);
 
-	// TODO: AS we are not using admin0 outlines, we can remove the below lines
-	// map.getLayer(ADM0_ID) && map.removeLayer(ADM0_ID);
-	// map.getSource(ADM0_ID) && map.removeSource(ADM0_ID);
 	map.getLayer(ADM_ID) && map.removeLayer(ADM_ID);
 	map.getSource(ADM_ID) && map.removeSource(ADM_ID);
 };
@@ -301,8 +193,8 @@ const generateFillColorExpressionFromColormap = (property: string = `hrea_${year
 	return colorExpression as ExpressionSpecification;
 };
 
-const loadAdminChoropleth = (expression) => {
-	const map = get(mapStore);
+const loadAdminChoropleth = (expression: ExpressionSpecification) => {
+	const map = getMap();
 	const zoom = map.getZoom();
 	const lvl = getAdminLevelForZoom(zoom);
 	let maxzoom = 0;
@@ -327,7 +219,7 @@ const loadAdminChoropleth = (expression) => {
 		maxzoom: maxzoom,
 		paint: {
 			'fill-color': expression ?? generateFillColorExpressionFromColormap(),
-			'fill-opacity': 0.9,
+			'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 1.0, 0.9],
 			'fill-outline-color': [
 				'case',
 				['boolean', ['feature-state', 'hover'], false],
@@ -337,44 +229,35 @@ const loadAdminChoropleth = (expression) => {
 		}
 	};
 	map.addSource(ADM_ID, layerSource);
-	// map.getLayer(ADM_ID) && map.removeLayer(ADM_ID);
 	map.addLayer(layerFill);
-
-	// TODO: What is the need for admin0 outlines?
-	// loadAdmin0Outlines();
+	loadAdmin0Outline();
 };
 
-// const loadAdminHover = () => {
-// 	const map = get(mapStore);
-// 	const lvl = getAdminLevel();
-//
-//
-// 	const layerSource: SourceSpecification = {
-// 		type: 'vector',
-// 		promoteId: `adm${lvl}_id`,
-// 		url: `pmtiles://${adminUrl}/adm${lvl}_polygons.pmtiles`
-// 	};
-//
-// 	const layerFill: FillLayerSpecification = {
-// 		id: ADM_ID,
-// 		type: 'fill',
-// 		source: ADM_ID,
-// 		'source-layer': `adm${lvl}_polygons`,
-// 		paint: {
-// 			'fill-color': [
-// 				'case',
-// 				['boolean', ['feature-state', 'hover'], false],
-// 				'hsla(0, 0%, 0%, 0.05)',
-// 				'hsla(0, 0%, 0%, 0)'
-// 			],
-// 			'fill-outline-color': [
-// 				'case',
-// 				['boolean', ['feature-state', 'hover'], false],
-// 				'hsla(0, 0%, 0%, 1)',
-// 				'hsla(0, 0%, 0%, 0)'
-// 			]
-// 		}
-// 	};
-// 	map.addSource(ADM_ID, layerSource);
-// 	map.addLayer(layerFill);
-// };
+const loadAdmin0Outline = () => {
+	const map = getMap();
+	const ADM0_ID_OUTLINE = 'adm0-outline';
+	const adminLevel = getAdminLevelForZoom(map.getZoom());
+	const promoteId = `adm${adminLevel}_id`;
+
+	const layerSource: SourceSpecification = {
+		type: 'vector',
+		promoteId: promoteId,
+		url: `pmtiles://${adminUrl}/adm0_polygons.pmtiles`
+	};
+	const layerLine: LineLayerSpecification = {
+		id: ADM0_ID_OUTLINE,
+		type: 'line',
+		source: ADM0_ID,
+		'source-layer': 'adm0_polygons',
+		paint: {
+			'line-color': 'hsla(0, 0%, 100%, 0.9)'
+		},
+		filter: ['has', 'hrea_2020']
+	};
+	if (map.getSource(ADM0_ID)) {
+		map.removeLayer(ADM0_ID_OUTLINE);
+		map.removeSource(ADM0_ID);
+	}
+	map.addSource(ADM0_ID, layerSource);
+	map.addLayer(layerLine);
+};
