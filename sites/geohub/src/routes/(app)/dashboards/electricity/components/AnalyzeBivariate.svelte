@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { map } from '../stores';
-	import { loadAdmin, reloadAdmin } from '../utils/adminLayer';
+	import { unloadAdmin, upsertBivariateAdmin } from '../utils/adminLayer';
 	import { UNDP_DASHBOARD_RASTER_LAYER_ID } from './TimeSlider.svelte';
+	import type { ExpressionSpecification } from 'maplibre-gl';
 
 	interface Props {
 		loadAdminLabels?: boolean;
@@ -13,9 +14,7 @@
 		selectedCol?: number | null;
 		showLegend?: boolean;
 	}
-
 	let {
-		loadAdminLabels = true,
 		propertyA = `hrea_2020`,
 		propertyB = `hrea_2012`,
 		selectedRow = $bindable(null),
@@ -76,7 +75,7 @@
 			['step', ['get', propertyA], ...expression]
 		];
 
-		reloadAdmin(undefined, loadAdminLabels, colorExpression);
+		upsertBivariateAdmin(colorExpression as ExpressionSpecification);
 		return colorExpression;
 	};
 
@@ -100,10 +99,15 @@
 				}
 			}
 		}
-
-		loadAdmin(true);
-		reloadAdmin(undefined, loadAdminLabels, colorExpression);
 		colorExpression = updateColorExpression(propertyA, propertyB, selectedRow, selectedCol);
+		upsertBivariateAdmin(colorExpression as ExpressionSpecification);
+		// $map.on('zoomend', () => {
+		//     upsertBivariateAdmin(colorExpression as ExpressionSpecification)
+		// });
+	});
+
+	onDestroy(() => {
+		unloadAdmin();
 	});
 </script>
 

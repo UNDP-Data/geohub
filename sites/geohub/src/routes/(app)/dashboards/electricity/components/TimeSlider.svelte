@@ -30,11 +30,8 @@
 	}
 
 	let {
-		scaleColorList = $bindable([]),
 		rasterColorMapName = $bindable(''),
 		electricitySelected = $bindable(),
-		loadAdminLabels = $bindable(),
-		newColorExpression = $bindable(),
 		isActive = $bindable(false)
 	}: Props = $props();
 
@@ -69,7 +66,7 @@
 		if (electricitySelected !== 'NONE') {
 			loadRasterLayer(url, `${yearValue}`);
 		}
-		reloadAdmin(scaleColorList, loadAdminLabels, newColorExpression);
+		reloadAdmin();
 	}
 
 	const invisibleRasterLayer = () => {
