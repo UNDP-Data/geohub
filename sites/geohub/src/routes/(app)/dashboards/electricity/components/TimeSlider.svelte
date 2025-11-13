@@ -30,11 +30,8 @@
 	}
 
 	let {
-		scaleColorList = $bindable([]),
 		rasterColorMapName = $bindable(''),
 		electricitySelected = $bindable(),
-		loadAdminLabels = $bindable(),
-		newColorExpression = $bindable(),
 		isActive = $bindable(false)
 	}: Props = $props();
 

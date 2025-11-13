@@ -60,6 +60,7 @@
 	} from './stores/electricityDataType';
 	import { isLoaded, setAdminUrl } from './utils/adminLayer';
 	import ElectricityDataExplore from './components/ElectricityDataExplore.svelte';
+	import ElectricityDataTimelineControl from './components/ElectricityDataTimelineControl.svelte';
 
 	interface Props {
 		data: PageData;
@@ -99,13 +100,10 @@
 	let map: Map = $state();
 
 	let showIntro = $state(true);
-	let showMapLabels = $state(true);
 	let electricitySelected: string = $state('');
 	let drawerWidth = $state(355);
 
 	let colormapName = $state('pubu');
-	let scaleColorList: string[] = $state([]);
-	let newColorExpression = $state(undefined);
 
 	let isTimeSliderActive = $state(false);
 	let isInitialized = $state(false);
@@ -378,12 +376,9 @@
 
 							{#if dbs.show && dbs.name === 'explore'}
 								<ElectricityDataExplore bind:electricityDataType={$electricityDataType} />
-								<!--								<ElectricityControl bind:electricityDataType={$electricityDataType} />-->
-								<!--								<ExploreEvolution bind:showMapLabels bind:scaleColorList />-->
 							{:else if dbs.show && dbs.name === 'compare'}
 								<div>
-									<!--									<ElectricityControl bind:electricityDataType={$electricityDataType} />-->
-
+									<ElectricityDataTimelineControl bind:electricityDataType={$electricityDataType} />
 									<div class="electricity-legend">
 										<div
 											class="is-flex is-flex-direction-column mt-2"
@@ -425,10 +420,7 @@
 							bind:this={timeSliderControl}
 							bind:map
 							bind:electricitySelected
-							bind:scaleColorList
 							bind:rasterColorMapName={colormapName}
-							bind:loadAdminLabels={showMapLabels}
-							bind:newColorExpression
 							bind:isActive={isTimeSliderActive}
 						/>
 					{/if}

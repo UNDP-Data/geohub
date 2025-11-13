@@ -1,5 +1,6 @@
 <script module lang="ts">
 	import type { ControlPosition, IControl, Map } from 'maplibre-gl';
+
 	class TimeSliderControl implements IControl {
 		private map: Map | undefined;
 		private controlContainer: HTMLElement | undefined;
@@ -34,8 +35,7 @@
 		}
 
 		getDefaultPosition(): ControlPosition {
-			const defaultPosition = 'top-right';
-			return defaultPosition;
+			return 'top-right';
 		}
 	}
 </script>
@@ -56,11 +56,9 @@
 
 	let {
 		map = $bindable(),
-		scaleColorList = $bindable([]),
 		rasterColorMapName = $bindable(''),
 		electricitySelected = $bindable(),
-		loadAdminLabels = $bindable(undefined),
-		newColorExpression = $bindable(undefined),
+
 		isActive = $bindable(false)
 	}: Props = $props();
 
@@ -82,21 +80,14 @@
 	});
 
 	let timeSlider: TimeSlider | undefined = $state();
-
-	export const loadRasterLayer = () => {
-		timeSlider?.loadLayer();
-	};
 </script>
 
 <div class="time-slider-control {isActive ? 'is-active' : ''}" bind:this={controlElement}>
 	<TimeSlider
 		bind:this={timeSlider}
 		bind:electricitySelected
-		bind:scaleColorList
 		bind:rasterColorMapName
 		bind:isActive
-		bind:loadAdminLabels
-		bind:newColorExpression
 	/>
 </div>
 
