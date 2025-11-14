@@ -30,7 +30,7 @@ jobs:
         node-version: [22]
     steps:
       - name: checkout code repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - uses: pnpm/action-setup@v4.2.0
@@ -67,7 +67,7 @@ jobs:
     name: Production Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: main
       - name: Reset production branch
