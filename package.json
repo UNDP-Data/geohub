@@ -29,7 +29,7 @@
   "type": "module",
   "devDependencies": {
     "@changesets/cli": "^2.29.4",
-    "lefthook": "^1.11.12"
+    "lefthook": "^2.0.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
