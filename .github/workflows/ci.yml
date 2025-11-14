@@ -36,7 +36,7 @@ jobs:
       cogserver: ${{ steps.changes.outputs.cogserver }}
       stacpipeline: ${{ steps.changes.outputs.stacpipeline }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: dorny/paths-filter@v3
         id: changes
@@ -97,10 +97,10 @@ jobs:
         node-version: [22]
     steps:
       - name: checkout code repository
-        uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4.1.0
+        uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4.2.0
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
@@ -129,7 +129,7 @@ jobs:
       IMAGE_NAME: undp-data/geohub
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Log into ACR
         uses: docker/login-action@v3
@@ -170,12 +170,12 @@ jobs:
 
     steps:
       - name: checkout code repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4.1.0
+      - uses: pnpm/action-setup@v4.2.0
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
@@ -217,12 +217,12 @@ jobs:
 
     steps:
       - name: checkout code repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4.1.0
+      - uses: pnpm/action-setup@v4.2.0
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
@@ -261,10 +261,10 @@ jobs:
 
     steps:
       - name: checkout code repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
       - name: Install dependecies
         working-directory: ./documentation
         run: |
@@ -336,7 +336,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Log into ACR
         uses: docker/login-action@v3
@@ -374,7 +374,7 @@ jobs:
       IMAGE_NAME: ${{ github.repository_owner }}/${{ vars.IMAGE_NAME }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Log into GHCR
         uses: docker/login-action@v3
@@ -410,19 +410,19 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Deploy pgtileserv to kubernetes
-        uses: actions-hub/kubectl@v1.33.4
+        uses: actions-hub/kubectl@v1.34.2
         with:
           args: apply -f backends/k8s/pgtileserv/yaml/pgtileserv-deployment.yaml
 
       - name: Delete Secrets for pgtileserv
-        uses: actions-hub/kubectl@v1.33.4
+        uses: actions-hub/kubectl@v1.34.2
         with:
           args: delete secret pgtileserv-secrets --ignore-not-found -n ${{ env.PGTILESERV_NAMESPACE }}
       - name: Create Secrets for pgtileserv
-        uses: actions-hub/kubectl@v1.33.4
+        uses: actions-hub/kubectl@v1.34.2
         with:
           args: create secret generic pgtileserv-secrets --from-literal=DATABASE_URL=${{ secrets.DATABASE_URL }}  -n ${{ env.PGTILESERV_NAMESPACE }}
 
@@ -438,17 +438,17 @@ jobs:
       name: K8S data-pipeline
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Delete Secrets
-        uses: actions-hub/kubectl@v1.33.4
+        uses: actions-hub/kubectl@v1.34.2
         with:
           args: delete secret ingest-secrets --ignore-not-found -n ${{ env.DEPLOYMENT_NAMESPACE }}
       - name: Create Secrets
-        uses: actions-hub/kubectl@v1.33.4
+        uses: actions-hub/kubectl@v1.34.2
         with:
           args: create secret generic ingest-secrets --from-literal=AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }} --from-literal=SERVICE_BUS_CONNECTION_STRING=${{ secrets.SERVICE_BUS_CONNECTION_STRING }}  --from-literal=AZURE_WEBPUBSUB_CONNECTION_STRING=${{ secrets.AZURE_WEBPUBSUB_CONNECTION_STRING }} -n ${{ env.DEPLOYMENT_NAMESPACE }}
       - name: Deploy ingest to kubernetes
-        uses: actions-hub/kubectl@v1.33.4
+        uses: actions-hub/kubectl@v1.34.2
         env:
           SERVICE_BUS_CONNECTION_STRING: ${{ secrets.SERVICE_BUS_CONNECTION_STRING }}
         with:
@@ -466,10 +466,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Deploy cogserver-dev to kubernetes
-        uses: actions-hub/kubectl@v1.33.4
+        uses: actions-hub/kubectl@v1.34.2
         with:
           args: apply -f backends/k8s/cogserver/yaml/cogserver-dev-deployment.yaml
 
@@ -485,10 +485,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Deploy cogserver to kubernetes
-        uses: actions-hub/kubectl@v1.33.4
+        uses: actions-hub/kubectl@v1.34.2
         with:
           args: apply -f backends/k8s/cogserver/yaml/cogserver-deployment.yaml
 
@@ -505,17 +505,17 @@ jobs:
       name: K8S stac-pipeline
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Delete Secrets
-        uses: actions-hub/kubectl@v1.33.4
+        uses: actions-hub/kubectl@v1.34.2
         with:
           args: delete secret stac-secrets --ignore-not-found -n ${{ env.DEPLOYMENT_NAMESPACE }}
       - name: Create Secrets
-        uses: actions-hub/kubectl@v1.33.4
+        uses: actions-hub/kubectl@v1.34.2
         with:
           args: create secret generic stac-secrets --from-literal=AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }} --from-literal=AZURE_SERVICE_BUS_CONNECTION_STRING=${{ secrets.AZURE_SERVICE_BUS_CONNECTION_STRING }}  --from-literal=AZURE_SERVICE_BUS_QUEUE_NAME=${{ env.AZURE_SERVICE_BUS_QUEUE_NAME }} --from-literal=EOG_CLIENT_ID=${{ secrets.EOG_CLIENT_ID }} --from-literal=EOG_CLIENT_SECRET=${{ secrets.EOG_CLIENT_SECRET }} --from-literal=EOG_USER=${{ secrets.EOG_USER }} --from-literal=EOG_PASSWORD=${{ secrets.EOG_PASSWORD }} -n ${{ env.DEPLOYMENT_NAMESPACE }}
       - name: Deploy ingest to kubernetes
-        uses: actions-hub/kubectl@v1.33.4
+        uses: actions-hub/kubectl@v1.34.2
         env:
           AZURE_SERVICE_BUS_CONNECTION_STRING: ${{ secrets.AZURE_SERVICE_BUS_CONNECTION_STRING }}
         with:

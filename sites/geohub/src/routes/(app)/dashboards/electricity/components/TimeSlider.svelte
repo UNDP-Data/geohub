@@ -10,6 +10,7 @@
 	import { reloadAdmin, setAdminUrl, setTargetTear } from '../utils/adminLayer';
 
 	const adminUrl = page.data.adminUrl;
+
 	setAdminUrl(adminUrl);
 
 	import { getBase64EncodedUrl } from '$lib/helper';
@@ -29,11 +30,8 @@
 	}
 
 	let {
-		scaleColorList = $bindable([]),
 		rasterColorMapName = $bindable(''),
 		electricitySelected = $bindable(),
-		loadAdminLabels = $bindable(),
-		newColorExpression = $bindable(),
 		isActive = $bindable(false)
 	}: Props = $props();
 
@@ -68,7 +66,7 @@
 		if (electricitySelected !== 'NONE') {
 			loadRasterLayer(url, `${yearValue}`);
 		}
-		reloadAdmin(scaleColorList, loadAdminLabels, newColorExpression);
+		reloadAdmin();
 	}
 
 	const invisibleRasterLayer = () => {

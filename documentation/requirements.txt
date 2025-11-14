@@ -1,8 +1,8 @@
 mkdocs==1.6.1
-mkdocs-material==9.6.17
+mkdocs-material==9.7.0
 importlib-metadata==8.7.0
 mkdocs-video==1.5.0
-pillow==11.3.0
+pillow==12.0.0
 cairosvg==2.8.2
 mkdocs-git-authors-plugin==0.10.0
 mkdocs-caption==1.3.0

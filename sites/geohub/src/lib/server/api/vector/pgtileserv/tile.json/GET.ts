@@ -14,15 +14,7 @@ export const Query = z.object({
 	table: z
 		.string()
 		.describe('table name. only available for source = pgtileserv')
-		.openapi({ example: 'zambia.poverty' }),
-	type: z
-		.enum(['table', 'function'])
-		.describe('type name. only available for source = pgtileserv')
-		.openapi({ example: 'table' })
-});
-
-export const Param = z.object({
-	source: z.enum(['pgtileserv']).describe('source type').openapi({ example: 'pgtileserv' })
+		.openapi({ example: 'zambia.poverty' })
 });
 
 export const Error = {
@@ -36,35 +28,21 @@ export const Modifier: RouteModifier = (c) => {
 	return c;
 };
 
-export default new Endpoint({ Query, Param, Output, Modifier }).handle(async (param) => {
-	const source = param.source;
+export default new Endpoint({ Query, Output, Modifier }).handle(async (param) => {
 	const table = param.table;
-	const type = param.type;
 
 	if (!table) {
 		error(400, { message: `Missing table parameter` });
 	}
 
-	if (source === 'pgtileserv' && !['table', 'function'].includes(type)) {
-		error(400, { message: `type should be either table or function` });
-	}
-
-	let tilejson: TileJson;
 	let metadatajson: VectorTileMetadata;
-	switch (source) {
-		case 'pgtileserv':
-			tilejson = await getPgtileservTileJson(table, type, env.PGTILESERV_API_ENDPOINT);
-			if (tilejson.vector_layers.length === 0) {
-				metadatajson = await generateMetadataJson(tilejson);
-				if (metadatajson && metadatajson.json) {
-					tilejson.vector_layers = metadatajson.json.vector_layers;
-					tilejson.geometrytype = metadatajson.json.tilestats?.layers[0].geometry;
-				}
-			}
-			break;
-		default:
-			error(400, { message: `Invalid source parameter.` });
+	const tilejson: TileJson = await getPgtileservTileJson(table, env.PGTILESERV_API_ENDPOINT);
+	if (tilejson.vector_layers.length === 0) {
+		metadatajson = await generateMetadataJson(tilejson);
+		if (metadatajson && metadatajson.json) {
+			tilejson.vector_layers = metadatajson.json.vector_layers;
+			tilejson.geometrytype = metadatajson.json.tilestats?.layers[0].geometry;
+		}
 	}
-
 	return tilejson;
 });

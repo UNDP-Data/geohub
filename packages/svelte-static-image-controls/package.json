@@ -40,7 +40,7 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.26.0",
-		"@sveltejs/adapter-auto": "^6.0.1",
+		"@sveltejs/adapter-auto": "^7.0.0",
 		"@sveltejs/kit": "^2.21.0",
 		"@sveltejs/package": "^2.3.11",
 		"@sveltejs/vite-plugin-svelte": "^6.0.0",
@@ -73,7 +73,7 @@
 		"@undp-data/svelte-undp-components": "workspace:^",
 		"@undp-data/svelte-undp-design": "workspace:^",
 		"@undp-data/undp-bulma": "workspace:^",
-		"debounce": "^2.2.0",
+		"debounce": "^3.0.0",
 		"maplibre-gl": "^5.5.0"
 	}
 }

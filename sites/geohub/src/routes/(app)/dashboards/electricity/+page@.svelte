@@ -28,6 +28,7 @@
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
+
 	import {
 		type ControlOptions,
 		MaplibreStaticImageControl
@@ -49,8 +50,6 @@
 	import type { PageData } from './$types';
 	import AnalyzeBivariate from './components/AnalyzeBivariate.svelte';
 	import Charts from './components/Charts.svelte';
-	import ElectricityControl from './components/ElectricityControl.svelte';
-	import ExploreEvolution from './components/ExploreEvolution.svelte';
 	import IntroductionPanel from './components/IntroductionPanel.svelte';
 	import TimeSliderControl from './components/TimeSliderControl.svelte';
 	import { ELECTRICITY_DATASETS } from './constansts';
@@ -59,7 +58,9 @@
 		createElectricityDataTypeStore,
 		ELECTRICITY_DATATYPE_CONTEXT_KEY
 	} from './stores/electricityDataType';
-	import { loadAdmin, setAdminUrl, unloadAdmin } from './utils/adminLayer';
+	import { isLoaded, setAdminUrl } from './utils/adminLayer';
+	import ElectricityDataExplore from './components/ElectricityDataExplore.svelte';
+	import ElectricityDataTimelineControl from './components/ElectricityDataTimelineControl.svelte';
 
 	interface Props {
 		data: PageData;
@@ -99,16 +100,15 @@
 	let map: Map = $state();
 
 	let showIntro = $state(true);
-	let showMapLabels = $state(true);
 	let electricitySelected: string = $state('');
 	let drawerWidth = $state(355);
 
 	let colormapName = $state('pubu');
-	let scaleColorList: string[] = $state([]);
-	let newColorExpression = $state(undefined);
 
 	let isTimeSliderActive = $state(false);
 	let isInitialized = $state(false);
+	let mapIsLoading = $state(true);
+	let timeSliderControl: TimeSliderControl | undefined = $state();
 
 	onMount(async () => {
 		let protocol = new Protocol();
@@ -162,27 +162,22 @@
 			}
 		}
 
+		await isLoaded(map);
+
+		map.on('dataloading', () => {
+			mapIsLoading = true;
+		});
+		map.on('idle', () => {
+			mapIsLoading = false;
+		});
+
+		map.resize();
+		await styleSwitcher.initialise();
+
+		AdminControlOptions.isHover = false;
+		map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
+		mapStore.set(map);
 		isInitialized = true;
-
-		map.on('load', () => {
-			map.resize();
-
-			styleSwitcher.initialise();
-
-			const adminOptions = AdminControlOptions;
-			adminOptions.isHover = false;
-			map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
-		});
-
-		mapStore.update(() => map);
-
-		mapStore.subscribe(() => {
-			if ($mapStore) {
-				$mapStore.on('load', () => {
-					loadLayers();
-				});
-			}
-		});
 	});
 
 	const loadDatasets = () => {
@@ -215,12 +210,6 @@
 		return {
 			hrea: hreaData
 		};
-	};
-
-	let timeSliderControl: TimeSliderControl | undefined = $state();
-	let loadLayers = () => {
-		timeSliderControl?.loadRasterLayer();
-		loadAdmin(false);
 	};
 
 	// Electricity Dashboard v2 -- start
@@ -310,7 +299,6 @@
 		isTimeSliderActive = setTimeSliderActive();
 		if (dashboardSelections[index].name === 'compare') {
 			electricitySelected = electricityChoices[0].name;
-			unloadAdmin();
 		} else {
 			electricitySelected = NONE_ID;
 		}
@@ -353,12 +341,12 @@
 			{#if showIntro}
 				<IntroductionPanel
 					bind:dashboardSelections
+					{mapIsLoading}
 					onclick={() => {
 						showIntro = false;
 						activeDashboard = dashboardSelections.find((d) => d.show === true);
 						if (activeDashboard.name === 'compare') {
 							electricitySelected = electricityChoices[0].name;
-							unloadAdmin();
 						} else {
 							electricitySelected = NONE_ID;
 						}
@@ -387,12 +375,10 @@
 							</button>
 
 							{#if dbs.show && dbs.name === 'explore'}
-								<ElectricityControl bind:electricityDataType={$electricityDataType} />
-								<ExploreEvolution bind:showMapLabels bind:scaleColorList />
+								<ElectricityDataExplore bind:electricityDataType={$electricityDataType} />
 							{:else if dbs.show && dbs.name === 'compare'}
 								<div>
-									<ElectricityControl bind:electricityDataType={$electricityDataType} />
-
+									<ElectricityDataTimelineControl bind:electricityDataType={$electricityDataType} />
 									<div class="electricity-legend">
 										<div
 											class="is-flex is-flex-direction-column mt-2"
@@ -434,10 +420,7 @@
 							bind:this={timeSliderControl}
 							bind:map
 							bind:electricitySelected
-							bind:scaleColorList
 							bind:rasterColorMapName={colormapName}
-							bind:loadAdminLabels={showMapLabels}
-							bind:newColorExpression
 							bind:isActive={isTimeSliderActive}
 						/>
 					{/if}

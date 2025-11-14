@@ -30,12 +30,12 @@ jobs:
         node-version: [22]
     steps:
       - name: checkout code repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4.1.0
+      - uses: pnpm/action-setup@v4.2.0
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
@@ -67,7 +67,7 @@ jobs:
     name: Production Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: main
       - name: Reset production branch
