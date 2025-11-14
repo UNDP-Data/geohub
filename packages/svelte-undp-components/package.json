@@ -65,7 +65,7 @@
 		"eslint-plugin-storybook": "^9.0.10",
 		"eslint-plugin-svelte": "^3.9.2",
 		"globals": "^16.2.0",
-		"jsdom": "^26.1.0",
+		"jsdom": "^27.0.0",
 		"pmtiles": "^4.3.0",
 		"prettier": "^3.5.3",
 		"prettier-plugin-svelte": "^3.4.0",
