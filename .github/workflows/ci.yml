@@ -36,7 +36,7 @@ jobs:
       cogserver: ${{ steps.changes.outputs.cogserver }}
       stacpipeline: ${{ steps.changes.outputs.stacpipeline }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: dorny/paths-filter@v3
         id: changes
@@ -97,7 +97,7 @@ jobs:
         node-version: [22]
     steps:
       - name: checkout code repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4.2.0
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -129,7 +129,7 @@ jobs:
       IMAGE_NAME: undp-data/geohub
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Log into ACR
         uses: docker/login-action@v3
@@ -170,7 +170,7 @@ jobs:
 
     steps:
       - name: checkout code repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - uses: pnpm/action-setup@v4.2.0
@@ -217,7 +217,7 @@ jobs:
 
     steps:
       - name: checkout code repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - uses: pnpm/action-setup@v4.2.0
@@ -261,7 +261,7 @@ jobs:
 
     steps:
       - name: checkout code repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - uses: actions/setup-python@v6
@@ -336,7 +336,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Log into ACR
         uses: docker/login-action@v3
@@ -374,7 +374,7 @@ jobs:
       IMAGE_NAME: ${{ github.repository_owner }}/${{ vars.IMAGE_NAME }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Log into GHCR
         uses: docker/login-action@v3
@@ -410,7 +410,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Deploy pgtileserv to kubernetes
         uses: actions-hub/kubectl@v1.34.1
@@ -438,7 +438,7 @@ jobs:
       name: K8S data-pipeline
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Delete Secrets
         uses: actions-hub/kubectl@v1.34.1
         with:
@@ -466,7 +466,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Deploy cogserver-dev to kubernetes
         uses: actions-hub/kubectl@v1.34.1
@@ -485,7 +485,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Deploy cogserver to kubernetes
         uses: actions-hub/kubectl@v1.34.1
@@ -505,7 +505,7 @@ jobs:
       name: K8S stac-pipeline
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Delete Secrets
         uses: actions-hub/kubectl@v1.34.1
         with:
