@@ -1,5 +1,16 @@
 # geohub
 
+## 1.28.0
+
+### Minor Changes
+
+- d7b9fa6: fix: refactor double loading of layers in electricity dashboard
+
+### Patch Changes
+
+- 243fcf9: refactor: updated /api/metadata.json code to separate azstorage and pgtileserv
+- f532edb: feat: updated electricity dashboards datasets
+
 ## 1.27.8
 
 ### Patch Changes
