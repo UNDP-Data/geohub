@@ -533,8 +533,8 @@ importers:
         specifier: ^1.0.25
         version: 1.0.25
       uuid:
-        specifier: ^11.1.0
-        version: 11.1.0
+        specifier: ^13.0.0
+        version: 13.0.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.29.0
@@ -986,8 +986,8 @@ importers:
         specifier: ^8.34.1
         version: 8.34.1(eslint@9.29.0)(typescript@5.8.3)
       uuid:
-        specifier: ^11.1.0
-        version: 11.1.0
+        specifier: ^13.0.0
+        version: 13.0.0
       valid-filename:
         specifier: ^4.0.0
         version: 4.0.0
@@ -4509,6 +4509,7 @@ packages:
 
   intersection-observer@0.12.2:
     resolution: {integrity: sha512-7m1vEcPCxXYI8HqnL8CKI6siDyD+eIWSwgB3DZA+ZTogxk9I4CDnj4wilt9x/+/QbHI4YG5YZNmC6458/e9Ktg==}
+    deprecated: The Intersection Observer polyfill is no longer needed and can safely be removed. Intersection Observer has been Baseline since 2019.
 
   intro.js@8.3.2:
     resolution: {integrity: sha512-+QsuU8P7Z/O7stAwZ8Uj6CPyKsY6xVx/7hKTVLjlIEPYHaT43XnEUUYHCln6Ehr7GlDuwczh6I8PD/HGf4EG0A==}
@@ -6165,8 +6166,8 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  uuid@11.1.0:
-    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
+  uuid@13.0.0:
+    resolution: {integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==}
     hasBin: true
 
   valid-filename@4.0.0:
@@ -12315,7 +12316,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  uuid@11.1.0: {}
+  uuid@13.0.0: {}
 
   valid-filename@4.0.0:
     dependencies:
