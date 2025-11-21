@@ -17,8 +17,4 @@
 <div class="mt-2 p-4 has-background-light">
 	<p class="mb-2">Electricity access</p>
 	<ColorMapPicker colorMapName={$colorMap.value} onchange={colorPickerChangeHandler} />
-	<!--	<label class="checkbox mt-2">-->
-	<!--		<input type="checkbox" onchange={showLabelsHandler} checked={showMapLabels} />-->
-	<!--		Show Labels-->
-	<!--	</label>-->
 </div>
