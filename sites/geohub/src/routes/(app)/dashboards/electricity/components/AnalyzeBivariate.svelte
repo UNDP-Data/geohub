@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { onDestroy, onMount } from 'svelte';
-	import { map } from '../stores';
+	import { map, selectedAdminDataset } from '../stores';
 	import { unloadAdmin, upsertBivariateAdmin } from '../utils/adminLayer';
 	import { UNDP_DASHBOARD_RASTER_LAYER_ID } from './TimeSlider.svelte';
 	import type { ExpressionSpecification } from 'maplibre-gl';
@@ -91,6 +91,7 @@
 	};
 
 	onMount(() => {
+		selectedAdminDataset.set('Electricity Access with Wealth indicator');
 		if ($map) {
 			const style = $map.getStyle();
 			for (const layer of style.layers) {
@@ -101,12 +102,10 @@
 		}
 		colorExpression = updateColorExpression(propertyA, propertyB, selectedRow, selectedCol);
 		upsertBivariateAdmin(colorExpression as ExpressionSpecification);
-		// $map.on('zoomend', () => {
-		//     upsertBivariateAdmin(colorExpression as ExpressionSpecification)
-		// });
 	});
 
 	onDestroy(() => {
+		selectedAdminDataset.set(undefined);
 		unloadAdmin();
 	});
 </script>
