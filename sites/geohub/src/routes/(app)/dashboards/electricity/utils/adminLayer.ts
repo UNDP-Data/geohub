@@ -2,15 +2,17 @@ import maplibregl, {
 	type ExpressionSpecification,
 	type FillLayerSpecification,
 	type LineLayerSpecification,
+	type Popup,
 	type SourceSpecification
 } from 'maplibre-gl';
-import { admin, colorMap, map as mapStore } from '../stores';
+import { admin, colorMap, selectedAdminDataset, map as mapStore } from '../stores';
 import { get } from 'svelte/store';
 import chroma from 'chroma-js';
 
 const ADM_ID = 'admin';
 const ADM0_ID = 'adm0';
-let hoveredStateId: string;
+let hoverPopup: Popup | null = null;
+let lastFeatureId: null;
 const choropleth = true;
 
 let adminUrl = '';
@@ -44,27 +46,103 @@ export const offInteraction = () => {
 	map.off('mouseleave', ADM_ID, onMouseLeave);
 };
 
+let lastUpdate = 0;
+
+const getAdminLevelName = () => {
+	const map = getMap();
+	const zoom = map.getZoom();
+	if (zoom < 3) return 'Country';
+	if (zoom < 7) return 'State';
+	return 'District';
+};
+
+const addPopUp = ({ map, lngLat, name, levelName, year, value }) => {
+	if (!hoverPopup) {
+		hoverPopup = new maplibregl.Popup({
+			closeButton: false,
+			closeOnClick: false
+		}).trackPointer();
+	}
+
+	hoverPopup
+		.setLngLat(lngLat)
+		.setHTML(
+			`
+            <div style="padding:10px 12px; background:#fff; border-radius:10px; 
+                box-shadow:0 2px 6px rgba(0,0,0,0.15); font-size:13px;">
+                <div style="font-weight:600; margin-bottom:4px;">${get(selectedAdminDataset)}</div>
+                <hr style="border:0; border-top:1px solid #e0e0e0; margin:6px 0;">
+                <div style="font-weight:400; margin-bottom:4px;">${levelName}: ${name}</div>
+                <div>${year}: ${(value * 100).toFixed(1)}%</div>
+            </div>
+        `
+		)
+		.addTo(map);
+
+	const el = hoverPopup.getElement().querySelector('.maplibregl-popup-content');
+	el.style.cssText = 'background:transparent;border:none;box-shadow:none;padding:0;';
+};
+
 const onMouseMove = (e) => {
+	if (!maplibregl) return;
+
+	const now = performance.now();
+	if (now - lastUpdate < 50) {
+		hoverPopup?.setLngLat(e.lngLat);
+		return;
+	}
+	lastUpdate = now;
+
 	const map = getMap();
 	const lvl = getAdminLevelForZoom(map.getZoom());
 	const promoteId = `adm${lvl}_id`;
 	const sourceLayer = `adm${lvl}_polygons`;
-
 	const feature = e.features?.[0];
-	if (!feature) return;
 
-	const featureId = feature.properties[promoteId];
-	if (!featureId) return;
+	if (!feature) {
+		hoverPopup?.remove();
+		hoverPopup = null;
 
-	if (hoveredStateId && hoveredStateId !== featureId) {
-		map.setFeatureState({ source: ADM_ID, sourceLayer, id: hoveredStateId }, { hover: false });
+		if (lastFeatureId !== null) {
+			map.setFeatureState({ source: ADM_ID, sourceLayer, id: lastFeatureId }, { hover: false });
+			lastFeatureId = null;
+			admin.set({});
+		}
+		return;
 	}
 
-	hoveredStateId = featureId;
+	const currentId = feature.properties[promoteId];
+	const name = feature.properties[`adm${lvl}_name`];
+	const value = feature.properties[`hrea_${year}`];
+	const isWealthMode = get(selectedAdminDataset) === 'Electricity Access with Wealth indicator';
 
-	map.setFeatureState({ source: ADM_ID, sourceLayer, id: hoveredStateId }, { hover: true });
+	if (currentId !== lastFeatureId) {
+		if (!isWealthMode) {
+			addPopUp({
+				map,
+				lngLat: e.lngLat,
+				name,
+				levelName: getAdminLevelName(),
+				year,
+				value
+			});
+		} else {
+			hoverPopup?.remove();
+			hoverPopup = null;
+		}
 
-	admin.set(feature.properties);
+		if (lastFeatureId != null) {
+			map.setFeatureState({ source: ADM_ID, sourceLayer, id: lastFeatureId }, { hover: false });
+		}
+		map.setFeatureState({ source: ADM_ID, sourceLayer, id: currentId }, { hover: true });
+
+		lastFeatureId = currentId;
+		admin.set(feature.properties);
+	} else {
+		if (!isWealthMode && hoverPopup) {
+			hoverPopup.setLngLat(e.lngLat);
+		}
+	}
 };
 
 const onMouseLeave = () => {
@@ -72,12 +150,16 @@ const onMouseLeave = () => {
 	const lvl = getAdminLevelForZoom(map.getZoom());
 	const sourceLayer = `adm${lvl}_polygons`;
 
-	if (hoveredStateId) {
-		map.setFeatureState({ source: ADM_ID, sourceLayer, id: hoveredStateId }, { hover: false });
+	if (lastFeatureId !== null) {
+		map.setFeatureState({ source: ADM_ID, sourceLayer, id: lastFeatureId }, { hover: false });
+		lastFeatureId = null;
 		admin.set({});
 	}
 
-	hoveredStateId = null;
+	if (hoverPopup) {
+		hoverPopup.remove();
+		hoverPopup = null;
+	}
 };
 
 const onZoom = async ({ originalEvent }) => {
@@ -85,7 +167,7 @@ const onZoom = async ({ originalEvent }) => {
 	loadAdmin();
 };
 
-const getMap = () => get(mapStore);
+export const getMap = () => get(mapStore);
 
 export const loadAdmin = () => {
 	const map = getMap();
@@ -96,6 +178,7 @@ export const loadAdmin = () => {
 	}
 	loadAdminChoropleth(null);
 	onInteraction();
+
 	map.on('zoom', onZoom);
 };
 

@@ -13,3 +13,10 @@ export const colorMap = writable({
 	value: 'pubu',
 	isReversed: false
 });
+
+export const selectedAdminDataset = writable<
+	| 'Settlement-Level Electricity Access'
+	| 'Electricity Access Forecast'
+	| 'Electricity Access with Wealth indicator'
+	| undefined
+>(undefined);
