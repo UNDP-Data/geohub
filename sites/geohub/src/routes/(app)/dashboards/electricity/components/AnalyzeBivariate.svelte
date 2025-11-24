@@ -101,6 +101,7 @@
 			}
 		}
 		colorExpression = updateColorExpression(propertyA, propertyB, selectedRow, selectedCol);
+
 		upsertBivariateAdmin(colorExpression as ExpressionSpecification);
 	});
 

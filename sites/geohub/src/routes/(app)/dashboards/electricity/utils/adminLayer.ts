@@ -56,12 +56,39 @@ const getAdminLevelName = () => {
 	return 'District';
 };
 
+const addPopUp = ({ map, lngLat, name, levelName, year, value }) => {
+	if (!hoverPopup) {
+		hoverPopup = new maplibregl.Popup({
+			closeButton: false,
+			closeOnClick: false
+		}).trackPointer();
+	}
+
+	hoverPopup
+		.setLngLat(lngLat)
+		.setHTML(
+			`
+            <div style="padding:10px 12px; background:#fff; border-radius:10px; 
+                box-shadow:0 2px 6px rgba(0,0,0,0.15); font-size:13px;">
+                <div style="font-weight:600; margin-bottom:4px;">${get(selectedAdminDataset)}</div>
+                <hr style="border:0; border-top:1px solid #e0e0e0; margin:6px 0;">
+                <div style="font-weight:400; margin-bottom:4px;">${levelName}: ${name}</div>
+                <div>${year}: ${(value * 100).toFixed(1)}%</div>
+            </div>
+        `
+		)
+		.addTo(map);
+
+	const el = hoverPopup.getElement().querySelector('.maplibregl-popup-content');
+	el.style.cssText = 'background:transparent;border:none;box-shadow:none;padding:0;';
+};
+
 const onMouseMove = (e) => {
 	if (!maplibregl) return;
 
 	const now = performance.now();
 	if (now - lastUpdate < 50) {
-		if (hoverPopup) hoverPopup.setLngLat(e.lngLat);
+		hoverPopup?.setLngLat(e.lngLat);
 		return;
 	}
 	lastUpdate = now;
@@ -73,7 +100,8 @@ const onMouseMove = (e) => {
 	const feature = e.features?.[0];
 
 	if (!feature) {
-		if (hoverPopup) hoverPopup.remove();
+		hoverPopup?.remove();
+		hoverPopup = null;
 
 		if (lastFeatureId !== null) {
 			map.setFeatureState({ source: ADM_ID, sourceLayer, id: lastFeatureId }, { hover: false });
@@ -83,44 +111,37 @@ const onMouseMove = (e) => {
 		return;
 	}
 
-	if (!hoverPopup) {
-		hoverPopup = new maplibregl.Popup({
-			closeButton: false,
-			closeOnClick: false
-		}).trackPointer();
-	}
-
-	const nameColumn = feature.properties[`adm${lvl}_name`];
-	const valueColumn = feature.properties[`hrea_${year}`];
 	const currentId = feature.properties[promoteId];
+	const name = feature.properties[`adm${lvl}_name`];
+	const value = feature.properties[`hrea_${year}`];
+	const isWealthMode = get(selectedAdminDataset) === 'Electricity Access with Wealth indicator';
 
 	if (currentId !== lastFeatureId) {
-		hoverPopup
-			.setHTML(
-				`
-                    <div style="padding:10px 12px; background:#fff; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.15); font-size:13px;">
-                        <div style="font-weight:600; margin-bottom:4px;">${get(selectedAdminDataset)}</div>
-                        <hr style="border:0; border-top:1px solid #e0e0e0; margin:6px 0;">
-                        <div style="font-weight:400; margin-bottom:4px;">${getAdminLevelName()}: ${nameColumn}</div>
-                        <div>${year}: ${(valueColumn * 100).toFixed(1)}%</div>
-                    </div>
-                `
-			)
-			.addTo(map);
-
-		if (lastFeatureId || lastFeatureId === 0) {
-			map.setFeatureState({ source: ADM_ID, sourceLayer, id: lastFeatureId }, { hover: false });
+		if (!isWealthMode) {
+			addPopUp({
+				map,
+				lngLat: e.lngLat,
+				name,
+				levelName: getAdminLevelName(),
+				year,
+				value
+			});
+		} else {
+			hoverPopup?.remove();
+			hoverPopup = null;
 		}
 
+		if (lastFeatureId != null) {
+			map.setFeatureState({ source: ADM_ID, sourceLayer, id: lastFeatureId }, { hover: false });
+		}
 		map.setFeatureState({ source: ADM_ID, sourceLayer, id: currentId }, { hover: true });
-
-		const el = hoverPopup.getElement().querySelector('.maplibregl-popup-content');
-		el.style.cssText = 'background:transparent;border:none;box-shadow:none;padding:0;';
 
 		lastFeatureId = currentId;
 		admin.set(feature.properties);
 	} else {
-		hoverPopup.setLngLat(e.lngLat);
+		if (!isWealthMode && hoverPopup) {
+			hoverPopup.setLngLat(e.lngLat);
+		}
 	}
 };
 
@@ -137,6 +158,7 @@ const onMouseLeave = () => {
 
 	if (hoverPopup) {
 		hoverPopup.remove();
+		hoverPopup = null;
 	}
 };
 
