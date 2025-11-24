@@ -302,8 +302,6 @@
 		} else {
 			electricitySelected = NONE_ID;
 		}
-
-		console.log('electricitySelected', electricitySelected);
 	};
 
 	const setTimeSliderActive = () => {
