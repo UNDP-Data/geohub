@@ -1,5 +1,15 @@
 # geohub
 
+## 1.29.0
+
+### Minor Changes
+
+- 3e35215: feat: added popup to show values in electricity dashboard
+
+### Patch Changes
+
+- 4e21df1: fix: remove popup when bivariate data in dashboard is shown
+
 ## 1.28.0
 
 ### Minor Changes
