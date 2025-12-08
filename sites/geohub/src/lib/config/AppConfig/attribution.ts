@@ -3,7 +3,7 @@ const disclaimerText = `
 <span class="mr-2">
   The designations employed and the presentation of material on this map do not imply the expression of any opinion whatsoever on the part<br>
   of the Secretariat of the United Nations or UNDP concerning the legal status of any country, territory, city or area or its authorities,<br>
-  or concerning the delimitation of its frontiers or boundaries.
+  or concerning the delimitation of its frontiers or boundaries. References to Kosovo shall be understood to be in the context of Security Council resolution 1244 (1999).
 </span>
 `;
 
