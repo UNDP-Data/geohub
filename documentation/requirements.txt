@@ -1,6 +1,6 @@
 mkdocs==1.6.1
 mkdocs-material==9.7.1
-importlib-metadata==8.7.0
+importlib-metadata==8.7.1
 mkdocs-video==1.5.0
 pillow==12.0.0
 cairosvg==2.8.2
