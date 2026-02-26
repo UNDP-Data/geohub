@@ -132,9 +132,6 @@
 				source: 'CEEI' + '-source',
 				layout: {
 					visibility: 'visible'
-				},
-				paint: {
-					'fill-outline-color': '#000000'
 				}
 			},
 			isMapLoaded: false,
