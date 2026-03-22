@@ -713,8 +713,8 @@ importers:
         specifier: ^1.9.2
         version: 1.9.2(@sveltejs/kit@2.53.3(@sveltejs/vite-plugin-svelte@6.1.0(svelte@5.53.5)(vite@7.0.8(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0)))(svelte@5.53.5)(typescript@5.8.3)(vite@7.0.8(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0)))(svelte@5.53.5)
       '@azure/web-pubsub-client':
-        specifier: 1.0.2
-        version: 1.0.2
+        specifier: 1.0.4
+        version: 1.0.4
       '@carbon/charts-svelte':
         specifier: 1.22.0
         version: 1.22.0(svelte@5.53.5)
@@ -1134,9 +1134,9 @@ packages:
     resolution: {integrity: sha512-IQjj9RIzAKatmNca3D6bT0qJ+Pkox1WZGOg2esJF2YLHb45pQKOwGPIAV+w3rfgkj7zV3RMxpn/c6iftzSOZJQ==}
     engines: {node: '>=18.0.0'}
 
-  '@azure/web-pubsub-client@1.0.2':
-    resolution: {integrity: sha512-aV5HpxY5EXRpJeNQcMdJKVgJqVKYSMkEQuXPJoql3bWafWMp42hyUrDm4T3faOl6oHaLN8TMef1mwfsd8tVldw==}
-    engines: {node: '>=18.0.0'}
+  '@azure/web-pubsub-client@1.0.4':
+    resolution: {integrity: sha512-xnByN8E7EgZ3CmCFcD73YtxIIlPy0ShlJJtuSgpGuMQ2hCDqTVl1TczqM2lJyqFo+MDzJvMPh18dDHxjjzG5KA==}
+    engines: {node: '>=20.0.0'}
 
   '@azure/web-pubsub@1.2.0':
     resolution: {integrity: sha512-s5QYFVpXy6fl8ppv1vTKyTTgOaKo7fx9WGxORRQukKKZovuOXA1jQ3zdRIBF9DjwggZCqwxHzbzZrUJYmelK2w==}
@@ -6701,18 +6701,6 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
-  ws@7.5.10:
-    resolution: {integrity: sha512-+dbF1tHwZpXcbOJdVOkzLDxZP1ailvSxM6ZweXTegylPny803bFhA+vqBYw4s31NSAk4S2Qz+AKXK9a4wkdjcQ==}
-    engines: {node: '>=8.3.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: ^5.0.2
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
-
   ws@8.18.3:
     resolution: {integrity: sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==}
     engines: {node: '>=10.0.0'}
@@ -7018,7 +7006,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@azure/web-pubsub-client@1.0.2':
+  '@azure/web-pubsub-client@1.0.4':
     dependencies:
       '@azure/abort-controller': 2.1.2
       '@azure/core-util': 1.12.0
@@ -7026,7 +7014,7 @@ snapshots:
       buffer: 6.0.3
       events: 3.3.0
       tslib: 2.8.1
-      ws: 7.5.10
+      ws: 8.19.0
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -12884,8 +12872,6 @@ snapshots:
       strip-ansi: 7.1.0
 
   wrappy@1.0.2: {}
-
-  ws@7.5.10: {}
 
   ws@8.18.3: {}
 
