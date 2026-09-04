@@ -713,8 +713,8 @@ importers:
         specifier: ^1.9.2
         version: 1.9.2(@sveltejs/kit@2.70.2(@sveltejs/vite-plugin-svelte@6.1.0(svelte@5.55.7(@typescript-eslint/types@8.57.1))(vite@7.3.5(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0)))(svelte@5.55.7(@typescript-eslint/types@8.57.1))(typescript@5.8.3)(vite@7.3.5(@types/node@24.0.3)(sass-embedded@1.83.4)(sass@1.89.2)(yaml@2.8.0)))(svelte@5.55.7(@typescript-eslint/types@8.57.1))
       '@azure/web-pubsub-client':
-        specifier: 1.0.4
-        version: 1.0.4
+        specifier: 1.1.0
+        version: 1.1.0
       '@carbon/charts-svelte':
         specifier: 1.22.0
         version: 1.22.0(svelte@5.55.7(@typescript-eslint/types@8.57.1))
@@ -1134,9 +1134,9 @@ packages:
     resolution: {integrity: sha512-IQjj9RIzAKatmNca3D6bT0qJ+Pkox1WZGOg2esJF2YLHb45pQKOwGPIAV+w3rfgkj7zV3RMxpn/c6iftzSOZJQ==}
     engines: {node: '>=18.0.0'}
 
-  '@azure/web-pubsub-client@1.0.4':
-    resolution: {integrity: sha512-xnByN8E7EgZ3CmCFcD73YtxIIlPy0ShlJJtuSgpGuMQ2hCDqTVl1TczqM2lJyqFo+MDzJvMPh18dDHxjjzG5KA==}
-    engines: {node: '>=20.0.0'}
+  '@azure/web-pubsub-client@1.1.0':
+    resolution: {integrity: sha512-qMGXwq+bf94tTTCItD57+J2gt21/cRUuCz8nPmoVeFFt6ibLa17lg4s0GU40zt7DS5S1F0PB0V7590tByvY5dw==}
+    engines: {node: '>=22.0.0'}
 
   '@azure/web-pubsub@1.2.0':
     resolution: {integrity: sha512-s5QYFVpXy6fl8ppv1vTKyTTgOaKo7fx9WGxORRQukKKZovuOXA1jQ3zdRIBF9DjwggZCqwxHzbzZrUJYmelK2w==}
@@ -6886,7 +6886,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@azure/web-pubsub-client@1.0.4':
+  '@azure/web-pubsub-client@1.1.0':
     dependencies:
       '@azure/abort-controller': 2.1.2
       '@azure/core-util': 1.12.0
