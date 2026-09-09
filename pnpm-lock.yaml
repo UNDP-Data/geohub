@@ -882,7 +882,7 @@ importers:
         version: 8.3.2
       joi:
         specifier: ^18.0.0
-        version: 18.2.1
+        version: 18.2.5
       jose:
         specifier: ^6.0.11
         version: 6.0.11
@@ -1213,8 +1213,8 @@ packages:
     resolution: {integrity: sha512-ETyHEk2VHHvl9b9jZP5IHPavHYk57EhanlRRuae9XCpb/j5bDCbPPMOBfCWhnl/7EDJz0jEMCi/RhccCE8r1+Q==}
     engines: {node: '>=6.9.0'}
 
-  '@bufbuild/protobuf@2.14.0':
-    resolution: {integrity: sha512-C3UGsiCwSprE2NKIIFA3hCDlpXTMCAXRZuEVp88L1GY36Y41+rYL5fryE+nOFhp4p4JPQvdV8PQ4DWgHgeTE+w==}
+  '@bufbuild/protobuf@2.14.1':
+    resolution: {integrity: sha512-agRJn3+EJDUe8AvxTx/LnHA/GErvLE62pSaSk7+MwFOtOv8eWBu/qCq2qoZjBjVZ3C2aiFJCveuSs17KMkYGOw==}
 
   '@carbon/charts-svelte@1.22.0':
     resolution: {integrity: sha512-sVYoHz9AuA45Sccuo0QGE8U/dLC7IwpiJ0+oNknBMGeF0MxQywL8bYo+H0T03MzsmjWwBNIu3u5JrTt1k1ggLg==}
@@ -4853,8 +4853,8 @@ packages:
   javascript-natural-sort@0.7.1:
     resolution: {integrity: sha512-nO6jcEfZWQXDhOiBtG2KvKyEptz7RVbpGP4vTD2hLBdmNQSsCiicO2Ioinv6UI4y9ukqnBpy+XZ9H6uLNgJTlw==}
 
-  joi@18.2.1:
-    resolution: {integrity: sha512-2/OKlogiESf2Nh3TFCrRjrr9z1DRHeW0I+KReF67+4J0Ns+8hBtHRmoWAZ2OFU6I5+TWLEe6sVlSdXPjHm5UbQ==}
+  joi@18.2.5:
+    resolution: {integrity: sha512-+gEA7rLfaNWx9JzawWPrPetSZwT16NUqHtECDgjyAJreXcs4TM7tx2Pa+VVJJK0YHM83ybrVdaT6UekHH50FJQ==}
     engines: {node: '>= 20'}
 
   jose@6.0.11:
@@ -7023,7 +7023,7 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.27.1
 
-  '@bufbuild/protobuf@2.14.0':
+  '@bufbuild/protobuf@2.14.1':
     optional: true
 
   '@carbon/charts-svelte@1.22.0(svelte@5.55.7(@typescript-eslint/types@8.69.0))':
@@ -10765,7 +10765,7 @@ snapshots:
 
   javascript-natural-sort@0.7.1: {}
 
-  joi@18.2.1:
+  joi@18.2.5:
     dependencies:
       '@hapi/address': 5.1.1
       '@hapi/formula': 3.0.2
@@ -11762,7 +11762,7 @@ snapshots:
 
   sass-embedded@1.83.4:
     dependencies:
-      '@bufbuild/protobuf': 2.14.0
+      '@bufbuild/protobuf': 2.14.1
       buffer-builder: 0.2.0
       colorjs.io: 0.5.2
       immutable: 5.1.9
