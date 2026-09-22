@@ -42,7 +42,7 @@
 		"@typescript-eslint/eslint-plugin": "8.69.0",
 		"@typescript-eslint/parser": "^8.34.0",
 		"@undp-data/undp-bulma": "workspace:^",
-		"@vitest/coverage-istanbul": "^3.2.3",
+		"@vitest/coverage-istanbul": "^5.0.0",
 		"eslint": "^9.29.0",
 		"eslint-config-prettier": "^10.1.5",
 		"eslint-plugin-storybook": "^9.0.10",
