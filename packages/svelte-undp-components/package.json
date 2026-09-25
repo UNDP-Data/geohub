@@ -95,7 +95,7 @@
 		"esm-env": "^1.2.2",
 		"hex-to-css-filter": "^6.0.0",
 		"lodash-es": "^4.17.21",
-		"maplibre-gl": "^5.6.0",
+		"maplibre-gl": "^6.0.0",
 		"simple-statistics": "^7.8.8",
 		"svelte-awesome-color-picker": "^3.1.4",
 		"svelte-copy": "^2.0.0",
