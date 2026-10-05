@@ -26,7 +26,7 @@
 	},
 	"homepage": "https://github.com/UNDP-Data/geohub#readme",
 	"devDependencies": {
-		"@eslint/js": "^9.29.0",
+		"@eslint/js": "^10.0.0",
 		"@storybook/addon-docs": "^9.0.10",
 		"@storybook/addon-links": "^9.0.10",
 		"@storybook/addon-svelte-csf": "5.1.2",
@@ -43,7 +43,7 @@
 		"@typescript-eslint/parser": "^8.34.0",
 		"@undp-data/undp-bulma": "workspace:^",
 		"@vitest/coverage-istanbul": "^3.2.3",
-		"eslint": "^9.29.0",
+		"eslint": "^10.0.0",
 		"eslint-config-prettier": "^10.1.5",
 		"eslint-plugin-storybook": "^9.0.10",
 		"eslint-plugin-svelte": "^3.9.2",
