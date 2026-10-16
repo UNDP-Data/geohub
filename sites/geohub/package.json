@@ -94,7 +94,7 @@
 		"eslint-plugin-svelte": "^3.9.3",
 		"filesize": "^11.0.0",
 		"flag-icons": "^7.5.0",
-		"globals": "^16.2.0",
+		"globals": "^17.0.0",
 		"hex-to-css-filter": "^6.0.0",
 		"intro.js": "^8.0.0",
 		"joi": "^18.0.0",
