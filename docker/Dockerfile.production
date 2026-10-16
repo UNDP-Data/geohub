@@ -1,5 +1,5 @@
 # build the entire application
-FROM node:22 AS app_build
+FROM node:24 AS app_build
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -27,7 +27,7 @@ RUN pnpm build
 RUN cp ./sites/geohub/package.json ./sites/geohub/build/package.json
 
 # Build only geohub dependencies in node_modules
-FROM node:22 AS prod_build
+FROM node:24 AS prod_build
 
 ENV NODE_ENV=production
 RUN npm install pnpm -g
