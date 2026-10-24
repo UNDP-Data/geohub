@@ -47,7 +47,7 @@
 	"type": "module",
 	"dependencies": {
 		"lodash-es": "^4.17.21",
-		"maplibre-gl": "^5.5.0",
+		"maplibre-gl": "^6.0.0",
 		"tippy.js": "^6.3.7"
 	},
 	"files": [
