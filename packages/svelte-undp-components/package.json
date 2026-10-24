@@ -50,7 +50,7 @@
 		"@storybook/addon-svelte-csf": "5.1.2",
 		"@storybook/sveltekit": "^9.0.10",
 		"@sveltejs/adapter-auto": "^7.0.0",
-		"@sveltejs/kit": "^2.21.5",
+		"@sveltejs/kit": "^3.0.0",
 		"@sveltejs/package": "^2.3.11",
 		"@sveltejs/vite-plugin-svelte": "^6.0.0",
 		"@testing-library/svelte": "^5.2.8",
