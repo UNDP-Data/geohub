@@ -882,7 +882,7 @@ importers:
         version: 8.3.2
       joi:
         specifier: ^18.0.0
-        version: 18.2.9
+        version: 18.3.1
       jose:
         specifier: ^6.0.11
         version: 6.0.11
@@ -4860,8 +4860,8 @@ packages:
   javascript-natural-sort@0.7.1:
     resolution: {integrity: sha512-nO6jcEfZWQXDhOiBtG2KvKyEptz7RVbpGP4vTD2hLBdmNQSsCiicO2Ioinv6UI4y9ukqnBpy+XZ9H6uLNgJTlw==}
 
-  joi@18.2.9:
-    resolution: {integrity: sha512-2mD929bUVKUhOLQQEVhlf6EZ0Mlo0DeRb5MO7cViR9AXLtBauuccEtB1py9Ocxpo/P7ucnh442iY/iOwrh3IQw==}
+  joi@18.3.1:
+    resolution: {integrity: sha512-mV9M4Llh4va3NT90p7KBtQhoZqjs8xLX7EWYE4y/GG3yLF6REbIBEHSUb0UX1JXRht2w5tiLSsvmpYc5akiqIw==}
     engines: {node: '>= 20'}
 
   jose@6.0.11:
@@ -6227,8 +6227,8 @@ packages:
   symbol-tree@3.2.4:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}
 
-  sync-child-process@1.1.0:
-    resolution: {integrity: sha512-1LMf/x0kU0CKFSesh5DfYktvj1KhiqYi5LAh5HU2G4SkKk1TGDhsMFBOL47g/E+mNfYpgs365pVNlIYOIHPvlQ==}
+  sync-child-process@1.1.1:
+    resolution: {integrity: sha512-54zMOnH5qgjdKW8SGpCx3daSP+v+TtTfOxgPdhUE3P0hytMMpknZfP67S4JeRcx5IQRWJERz6890yO4dkTywww==}
     engines: {node: '>=16.0.0'}
 
   sync-message-port@1.2.0:
@@ -6354,6 +6354,9 @@ packages:
 
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
+
+  tslib@2.9.1:
+    resolution: {integrity: sha512-a4Ux9VKuIMHsOS7ENbEq6hK2ZGYIT27Rtl0E4eD9KqwxhKiQeMZE/9xb3IdYwWaSOyIBQLExhQgXDTYoiCxnWA==}
 
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
@@ -10795,7 +10798,7 @@ snapshots:
 
   javascript-natural-sort@0.7.1: {}
 
-  joi@18.2.9:
+  joi@18.3.1:
     dependencies:
       '@hapi/address': 5.1.1
       '@hapi/formula': 3.0.2
@@ -11716,7 +11719,7 @@ snapshots:
 
   rxjs@7.8.2:
     dependencies:
-      tslib: 2.8.1
+      tslib: 2.9.1
     optional: true
 
   sade@1.8.1:
@@ -11797,7 +11800,7 @@ snapshots:
       immutable: 5.1.9
       rxjs: 7.8.2
       supports-color: 8.1.1
-      sync-child-process: 1.1.0
+      sync-child-process: 1.1.1
       varint: 6.0.0
     optionalDependencies:
       sass-embedded-android-arm: 1.83.4
@@ -12250,7 +12253,7 @@ snapshots:
 
   symbol-tree@3.2.4: {}
 
-  sync-child-process@1.1.0:
+  sync-child-process@1.1.1:
     dependencies:
       sync-message-port: 1.2.0
     optional: true
@@ -12349,6 +12352,9 @@ snapshots:
   ts-dedent@2.2.0: {}
 
   tslib@2.8.1: {}
+
+  tslib@2.9.1:
+    optional: true
 
   type-check@0.4.0:
     dependencies:
