@@ -74,6 +74,6 @@
 		"@undp-data/svelte-undp-design": "workspace:^",
 		"@undp-data/undp-bulma": "workspace:^",
 		"debounce": "^3.0.0",
-		"maplibre-gl": "^5.5.0"
+		"maplibre-gl": "^6.0.0"
 	}
 }
